@@ -1,14 +1,60 @@
-import 'package:flutter/material.dart';
-import 'package:wabot_utils/src/utils/colors.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
 
-class HomePage extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:telephony/telephony.dart';
+import 'package:uuid/uuid.dart';
+
+import '../injection.dart';
+import '../model/model/sms_model.dart';
+import '../utils/colors.dart';
+
+final _telephony = Telephony.instance;
+
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    _telephony.listenIncomingSms(
+      listenInBackground: false,
+      onNewMessage: (message) {
+        log("""
+        id : ${message.id}\n  
+        address : ${message.address}\n  
+        body : ${message.body}\n  
+        date : ${message.date}\n  
+        dateSent : ${message.dateSent}\n  
+        read : ${message.read}\n  
+        seen : ${message.seen}\n  
+        serviceCenterAddress : ${message.serviceCenterAddress}\n  
+        status : ${message.status}\n  
+        subject : ${message.subject}\n  
+        subscriptionId : ${message.subscriptionId}\n  
+        threadId : ${message.threadId}\n  
+        type : ${message.type}\n  
+        """);
+        const uuid = Uuid();
+        final model = SMSModel(
+          id: uuid.v4(),
+          address: message.address ?? "",
+          date: DateTime.fromMillisecondsSinceEpoch(message.date ?? 0),
+          body: message.body ?? '',
+        );
+        ref.read(smsNotifier.notifier).insert(model);
+      },
+    );
+  }
+
   int _selectedIndex = 0;
 
   final _destinations = <NavigationDestination>[
@@ -17,11 +63,11 @@ class _HomePageState extends State<HomePage> {
       selectedIcon: const Icon(Icons.sms, color: Colors.white),
       label: "SMS",
     ),
-    NavigationDestination(
-      icon: Icon(Icons.call_outlined, color: Colors.white.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.call, color: Colors.white),
-      label: "Call",
-    ),
+    // NavigationDestination(
+    //   icon: Icon(Icons.call_outlined, color: Colors.white.withOpacity(.5)),
+    //   selectedIcon: const Icon(Icons.call, color: Colors.white),
+    //   label: "Call",
+    // ),
     NavigationDestination(
       icon: Icon(Icons.settings_outlined, color: Colors.white.withOpacity(.5)),
       selectedIcon: const Icon(Icons.settings, color: Colors.white),
@@ -31,7 +77,7 @@ class _HomePageState extends State<HomePage> {
 
   final _pages = [
     const SMSPage(),
-    const CallPage(),
+    // const CallPage(),
     const SettingPage(),
   ];
 
@@ -52,46 +98,80 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-const _items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-
-class SMSPage extends StatelessWidget {
+class SMSPage extends ConsumerWidget {
   const SMSPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(smsNotifier).items;
     return ListView.separated(
-      itemCount: _items.length,
+      itemCount: items.length,
       padding: const EdgeInsets.all(16.0),
       shrinkWrap: true,
       reverse: true,
       separatorBuilder: (context, index) => const Divider(),
       itemBuilder: (context, index) {
-        final item = _items[index];
-
+        final item = items[index];
+        final dateFormat = DateFormat("dd/MM/yyyy hh:mm:ss");
         return Card(
           margin: const EdgeInsets.only(),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ListTile(
-              contentPadding: const EdgeInsets.only(),
-              leading: CircleAvatar(child: Text("${index + 1}")),
-              title: const Text("089111222333"),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text("Ini isi SMS $index"),
-                ],
-              ),
-              trailing: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.delete_outline,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ListTile(
+                  contentPadding: const EdgeInsets.only(),
+                  title: Text("${index + 1}. ${item.address}"),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 16.0),
+                      _RowBody(
+                        title: "Content",
+                        content: item.body,
+                      ),
+                      const SizedBox(height: 16.0),
+                      _RowBody(
+                        title: "Date",
+                        content: dateFormat.format(item.date),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 16.0),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    await ref.read(smsNotifier.notifier).delete(item.id);
+                  },
+                  icon: const Icon(Icons.delete_outline),
+                  label: const Text("Hapus"),
+                ),
+              ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _RowBody extends StatelessWidget {
+  const _RowBody({
+    Key? key,
+    required this.title,
+    required this.content,
+  }) : super(key: key);
+  final String title;
+  final String content;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(child: Text(title)),
+        Expanded(flex: 2, child: Text(content)),
+      ],
     );
   }
 }
@@ -106,7 +186,7 @@ class CallPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [const Text("call")],
+          children: const [Text("call")],
         ),
       ),
     );
@@ -123,7 +203,7 @@ class SettingPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [const Text("setting")],
+          children: const [Text("setting")],
         ),
       ),
     );
