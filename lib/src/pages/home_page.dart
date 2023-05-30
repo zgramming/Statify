@@ -1,11 +1,13 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:telephony/telephony.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wabot_utils/src/utils/event_channel.dart';
 
 import '../injection.dart';
 import '../model/model/sms_model.dart';
@@ -21,9 +23,12 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  StreamSubscription? _subscriptionCallReceiver;
   @override
   void initState() {
     super.initState();
+
+    listenIncomingCall();
 
     _telephony.listenIncomingSms(
       listenInBackground: false,
@@ -52,7 +57,33 @@ class _HomePageState extends ConsumerState<HomePage> {
         );
         ref.read(smsNotifier.notifier).insert(model);
       },
+      // onBackgroundMessage: (message) {},
     );
+  }
+
+  @override
+  void dispose() {
+    _subscriptionCallReceiver?.cancel();
+    super.dispose();
+  }
+
+  void listenIncomingCall() {
+    Permission.phone.request().then((value) {
+      if (value == PermissionStatus.granted) {
+        _subscriptionCallReceiver =
+            EventChannelUtils.listenIncomingCall().listen(
+          (event) {
+            log("event : $event");
+          },
+          onDone: () {
+            log("onDone");
+          },
+          onError: (error) {
+            log("error : $error");
+          },
+        );
+      }
+    });
   }
 
   int _selectedIndex = 0;
@@ -181,12 +212,12 @@ class CallPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: const [Text("call")],
+          children: [Text("call")],
         ),
       ),
     );
@@ -198,12 +229,12 @@ class SettingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: const [Text("setting")],
+          children: [Text("setting")],
         ),
       ),
     );

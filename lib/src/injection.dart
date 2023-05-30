@@ -8,8 +8,10 @@ import 'utils/constant.dart';
 
 final smsNotifier = StateNotifierProvider<SMSNotifier, SMSState>(
     (ref) => SMSNotifier(repository: ref.watch(_smsRepository)));
+
 final _smsRepository = Provider(
     (ref) => SMSRepository(localDatasource: ref.watch(_smsLocalDatasource)));
+
 final _smsLocalDatasource =
     Provider((ref) => SMSLocalDatasource(box: ref.watch(_smsBox)));
 

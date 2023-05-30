@@ -26,4 +26,18 @@ class SMSModel extends Equatable {
 
   @override
   bool get stringify => true;
+
+  SMSModel copyWith({
+    String? id,
+    String? address,
+    String? body,
+    DateTime? date,
+  }) {
+    return SMSModel(
+      id: id ?? this.id,
+      address: address ?? this.address,
+      body: body ?? this.body,
+      date: date ?? this.date,
+    );
+  }
 }
