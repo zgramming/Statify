@@ -7,11 +7,11 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:telephony/telephony.dart';
 import 'package:uuid/uuid.dart';
-import 'package:wabot_utils/src/utils/event_channel.dart';
 
 import '../injection.dart';
 import '../model/model/sms_model.dart';
 import '../utils/colors.dart';
+import '../utils/event_channel.dart';
 
 final _telephony = Telephony.instance;
 
@@ -71,17 +71,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     Permission.phone.request().then((value) {
       if (value == PermissionStatus.granted) {
         _subscriptionCallReceiver =
-            EventChannelUtils.listenIncomingCall().listen(
-          (event) {
-            log("event : $event");
-          },
-          onDone: () {
-            log("onDone");
-          },
-          onError: (error) {
-            log("error : $error");
-          },
-        );
+            EventChannelUtils.listenIncomingCall().listen((event) {
+          log("message : $event");
+        });
       }
     });
   }

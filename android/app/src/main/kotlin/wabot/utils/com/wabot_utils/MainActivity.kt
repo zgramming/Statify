@@ -23,24 +23,9 @@ class MainActivity : FlutterActivity() {
         val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
             EventChannel(executor.binaryMessenger, callReceiverChannel)
         }
-
-        eventChannel?.setStreamHandler(object : EventChannel.StreamHandler {
-
-            override fun onListen(arguments: Any?, eventSink: EventChannel.EventSink) {
-
-                // Pass the eventSink to the CallReceiver for communication
-                callReceiver = CallReceiver()
-                callReceiver.setEventSink(eventSink)
-                registerReceiver(callReceiver,
-                    IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
-            }
-
-            override fun onCancel(arguments: Any?) {
-                callReceiver = CallReceiver()
-                callReceiver.cleanUp();
-            }
-        })
-
+        callReceiver = CallReceiver()
+        registerReceiver(callReceiver, IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
+        eventChannel?.setStreamHandler(callReceiver)
     }
 
 

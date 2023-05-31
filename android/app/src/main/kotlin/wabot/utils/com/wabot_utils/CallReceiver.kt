@@ -8,19 +8,10 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import io.flutter.plugin.common.EventChannel
 
-class CallReceiver : BroadcastReceiver() {
+class CallReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
     private var eventSink: EventChannel.EventSink? = null
 
-    fun setEventSink(eventSink: EventChannel.EventSink?) {
-        this.eventSink = eventSink
-    }
-
-    fun cleanUp() {
-        this.eventSink = null;
-    }
-
     override fun onReceive(context: Context, intent: Intent) {
-        println("ON CREATE LOG ON RECEIVE");
 
         if (intent.action == TelephonyManager.ACTION_PHONE_STATE_CHANGED) {
             val extras = intent.extras
@@ -30,9 +21,18 @@ class CallReceiver : BroadcastReceiver() {
 
                 // Send the call state and incoming number to Flutter
                 val eventData = mapOf("state" to state, "number" to incomingNumber)
+                println("CallReceiver: $eventData")
                 eventSink?.success(eventData)
             }
         }
+    }
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        eventSink = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        eventSink = null
     }
 
 //    override fun onReceive(context: Context, intent: Intent) {
