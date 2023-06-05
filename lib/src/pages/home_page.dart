@@ -4,9 +4,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:telephony/telephony.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wabot_utils/src/model/datasource/phone_local_datasource.dart';
+import 'package:wabot_utils/src/model/model/phone_model.dart';
 
 import '../injection.dart';
 import '../model/model/sms_model.dart';
@@ -24,6 +25,24 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   StreamSubscription? _subscriptionCallReceiver;
+
+  void listenIncomingCall() {
+    _subscriptionCallReceiver =
+        EventChannelUtils.listenIncomingCall().listen((event) {
+      final phoneNumber = event.number;
+      if (phoneNumber != null && event.state == "RINGING") {
+        final id = const Uuid().v4();
+        final model = PhoneModel(
+          id: id,
+          date: DateTime.now(),
+          number: phoneNumber,
+        );
+        ref.read(phoneNotifier.notifier).insert(model);
+        log("message : $event");
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +76,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         );
         ref.read(smsNotifier.notifier).insert(model);
       },
-      // onBackgroundMessage: (message) {},
     );
   }
 
@@ -65,17 +83,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   void dispose() {
     _subscriptionCallReceiver?.cancel();
     super.dispose();
-  }
-
-  void listenIncomingCall() {
-    Permission.phone.request().then((value) {
-      if (value == PermissionStatus.granted) {
-        _subscriptionCallReceiver =
-            EventChannelUtils.listenIncomingCall().listen((event) {
-          log("message : $event");
-        });
-      }
-    });
   }
 
   int _selectedIndex = 0;
@@ -86,11 +93,11 @@ class _HomePageState extends ConsumerState<HomePage> {
       selectedIcon: const Icon(Icons.sms, color: Colors.white),
       label: "SMS",
     ),
-    // NavigationDestination(
-    //   icon: Icon(Icons.call_outlined, color: Colors.white.withOpacity(.5)),
-    //   selectedIcon: const Icon(Icons.call, color: Colors.white),
-    //   label: "Call",
-    // ),
+    NavigationDestination(
+      icon: Icon(Icons.call_outlined, color: Colors.white.withOpacity(.5)),
+      selectedIcon: const Icon(Icons.call, color: Colors.white),
+      label: "Call",
+    ),
     NavigationDestination(
       icon: Icon(Icons.settings_outlined, color: Colors.white.withOpacity(.5)),
       selectedIcon: const Icon(Icons.settings, color: Colors.white),
@@ -100,14 +107,36 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   final _pages = [
     const SMSPage(),
-    // const CallPage(),
+    const CallPage(),
     const SettingPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: _pages[_selectedIndex]),
+      body: Builder(builder: (_) {
+        final permissionFuture = ref.watch(checkPermissionNotifier);
+
+        return permissionFuture.when(
+          data: (_) => SafeArea(child: _pages[_selectedIndex]),
+          error: (error, stackTrace) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(error.toString()),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () async {
+                    ref.invalidate(checkPermissionNotifier);
+                  },
+                  child: const Text("Coba Lagi"),
+                ),
+              ],
+            ),
+          ),
+          loading: () => const Center(child: CircularProgressIndicator()),
+        );
+      }),
       bottomNavigationBar: NavigationBar(
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         selectedIndex: _selectedIndex,
@@ -199,19 +228,55 @@ class _RowBody extends StatelessWidget {
   }
 }
 
-class CallPage extends StatelessWidget {
+class CallPage extends ConsumerWidget {
   const CallPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [Text("call")],
-        ),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(phoneNotifier).items;
+    return ListView.separated(
+      itemCount: items.length,
+      padding: const EdgeInsets.all(16.0),
+      shrinkWrap: true,
+      reverse: true,
+      separatorBuilder: (context, index) => const Divider(),
+      itemBuilder: (context, index) {
+        final item = items[index];
+        final dateFormat = DateFormat("dd/MM/yyyy hh:mm:ss");
+        return Card(
+          margin: const EdgeInsets.only(),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ListTile(
+                  contentPadding: const EdgeInsets.only(),
+                  title: Text("${index + 1}. ${item.number}"),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 16.0),
+                      _RowBody(
+                        title: "Date",
+                        content: dateFormat.format(item.date),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    await ref.read(phoneNotifier.notifier).delete(item.id);
+                  },
+                  icon: const Icon(Icons.delete_outline),
+                  label: const Text("Hapus"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
