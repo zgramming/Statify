@@ -6,7 +6,9 @@ import 'model/datasource/phone_local_datasource.dart';
 import 'model/datasource/sms_local_datasource.dart';
 import 'model/model/phone_model.dart';
 import 'model/model/sms_model.dart';
+import 'model/repository/sms_repository.dart';
 import 'utils/constant.dart';
+import 'view_model/sms_view_model.dart';
 
 final smsNotifier = StateNotifierProvider<SMSNotifier, SMSState>(
     (ref) => SMSNotifier(repository: ref.watch(_smsRepository)));
