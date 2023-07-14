@@ -19,6 +19,7 @@ class SplashPage extends ConsumerWidget {
         data: (data) async {
           if (data.isIntroductionDone) {
             context.goNamed(routeLogin);
+            // context.goNamed(routeWelcome);
           } else {
             context.goNamed(routeIntroduction);
           }

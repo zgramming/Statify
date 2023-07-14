@@ -1,3 +1,4 @@
+const kIsDevelopment = true;
 const hiveSMSBox = 'smsBox';
 const hivePhoneBox = 'phoneBox';
 const hiveApplicationConfigBox = 'applicationConfigBox';

@@ -11,20 +11,21 @@ import '../../model/datasource/phone_local_datasource.dart';
 import '../../model/model/phone_model.dart';
 import '../../model/model/sms_model.dart';
 import '../../utils/event_channel.dart';
-import 'call/call_page.dart';
-import 'setting/setting_page.dart';
-import 'sms/sms_page.dart';
+import 'home/home_page.dart';
+import 'long_distance_access/long_distance_access_page.dart';
+import 'statistic/statistic_page.dart';
+import 'whatsapp/whatsapp_page.dart';
 
 final _telephony = Telephony.instance;
 
-class HomePage extends ConsumerStatefulWidget {
-  const HomePage({super.key});
+class WelcomePage extends ConsumerStatefulWidget {
+  const WelcomePage({super.key});
 
   @override
-  createState() => _HomePageState();
+  createState() => _WelcomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _WelcomePageState extends ConsumerState<WelcomePage> {
   StreamSubscription? _subscriptionCallReceiver;
 
   void listenIncomingCall() {
@@ -90,26 +91,35 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   final _destinations = <NavigationDestination>[
     NavigationDestination(
-      icon: Icon(Icons.sms_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.sms, color: Colors.white),
-      label: "SMS",
+      icon: Icon(Icons.home_outlined, color: Colors.grey.withOpacity(.5)),
+      selectedIcon: const Icon(Icons.home, color: Colors.white),
+      label: "Home",
     ),
     NavigationDestination(
-      icon: Icon(Icons.call_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.call, color: Colors.white),
-      label: "Call",
+      icon: Icon(Icons.phone_outlined, color: Colors.grey.withOpacity(.5)),
+      selectedIcon: const Icon(Icons.phone, color: Colors.white),
+      label: "Whatsapp",
     ),
     NavigationDestination(
-      icon: Icon(Icons.settings_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.settings, color: Colors.white),
-      label: "Setting",
+      icon: Icon(Icons.bar_chart_outlined, color: Colors.grey.withOpacity(.5)),
+      selectedIcon: const Icon(Icons.bar_chart, color: Colors.white),
+      label: "Statistic",
+    ),
+    NavigationDestination(
+      icon: Icon(
+        Icons.accessibility_new_outlined,
+        color: Colors.grey.withOpacity(.5),
+      ),
+      selectedIcon: const Icon(Icons.accessibility_new, color: Colors.white),
+      label: "L.D.A",
     ),
   ];
 
   final _pages = [
-    const SMSPage(),
-    const CallPage(),
-    const SettingPage(),
+    const HomePage(),
+    const WhatsAppPage(),
+    const StatisticPage(),
+    const LongDistanceAccessPage(),
   ];
 
   @override

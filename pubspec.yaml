@@ -33,6 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   dartz: ^0.10.1
   equatable: ^2.0.5
+  fl_chart: ^0.63.0
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.3.6
@@ -90,7 +91,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true

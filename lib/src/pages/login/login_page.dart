@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       password: $password
 """);
 
-    context.goNamed(routeHome);
+    context.goNamed(routeWelcome);
   }
 
   @override
