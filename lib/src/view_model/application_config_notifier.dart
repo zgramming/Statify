@@ -5,13 +5,13 @@ import '../model/model/application_config_model.dart';
 import '../model/repository/application_config_repository.dart';
 
 class ApplicationConfigState extends Equatable {
-  final ApplicationConfigModel item;
+  final AsyncValue<ApplicationConfigModel> item;
 
   final AsyncValue<String?> onIntroductionSaved;
   final AsyncValue<String?> onDarkModeSaved;
 
   const ApplicationConfigState({
-    this.item = const ApplicationConfigModel(),
+    this.item = const AsyncData(ApplicationConfigModel()),
     this.onIntroductionSaved = const AsyncData(null),
     this.onDarkModeSaved = const AsyncData(null),
   });
@@ -23,7 +23,7 @@ class ApplicationConfigState extends Equatable {
   bool get stringify => true;
 
   ApplicationConfigState copyWith({
-    ApplicationConfigModel? item,
+    AsyncValue<ApplicationConfigModel>? item,
     AsyncValue<String?>? onIntroductionSaved,
     AsyncValue<String?>? onDarkModeSaved,
   }) {
@@ -44,8 +44,9 @@ class ApplicationConfigNotifier extends StateNotifier<ApplicationConfigState> {
   }
 
   Future<void> getApplicationConfig() async {
+    state = state.copyWith(item: const AsyncLoading());
     final result = await repository.getApplicationConfig();
-    state = state.copyWith(item: result);
+    state = state.copyWith(item: AsyncData(result));
   }
 
   Future<void> saveIntroduction(bool value) async {

@@ -69,7 +69,7 @@ class IntroductionPage extends ConsumerWidget {
         final notifier = ref.read(applicationConfigNotifier.notifier);
         await notifier.saveIntroduction(true);
         if (context.mounted) {
-          context.goNamed(routeHome);
+          context.goNamed(routeLogin);
         }
       },
       onChange: (value) {},

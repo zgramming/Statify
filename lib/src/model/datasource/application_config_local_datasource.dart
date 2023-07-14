@@ -10,11 +10,17 @@ class ApplicationConfigLocalDatasource {
 
   final key = 'application_config';
 
-  ApplicationConfigModel getApplicationConfig() {
+  Future<ApplicationConfigModel> getApplicationConfig() async {
     final result = box.get(
       key,
       defaultValue: const ApplicationConfigModel(),
-    )!;
+    );
+
+    if (result == null) {
+      const value = ApplicationConfigModel();
+      await box.put(key, value);
+      return value;
+    }
 
     return result;
   }
