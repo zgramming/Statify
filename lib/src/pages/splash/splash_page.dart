@@ -16,7 +16,7 @@ class SplashPage extends ConsumerWidget {
       await Future.delayed(const Duration(seconds: 2));
       if (context.mounted) {
         if (config.isIntroductionDone) {
-          context.goNamed(routeHome);
+          context.goNamed(routeLogin);
         } else {
           context.goNamed(routeIntroduction);
         }
@@ -24,7 +24,7 @@ class SplashPage extends ConsumerWidget {
     });
 
     return const Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: darkPrimaryColor,
       body: Center(
         child: CircularProgressIndicator(color: Colors.white),
       ),

@@ -3,12 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'pages/home/home_page.dart';
 import 'pages/home/sms/send_sms/send_sms_page.dart';
 import 'pages/introduction/introduction_page.dart';
+import 'pages/login/login_page.dart';
 import 'pages/splash/splash_page.dart';
 
 const routeHome = "home";
 const routeSplash = "splash";
 const routeSendSMS = "sms/send";
 const routeIntroduction = "introduction";
+const routeLogin = "login";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -25,6 +27,11 @@ final _routes = <RouteBase>[
     path: "/introduction",
     name: routeIntroduction,
     builder: (context, state) => const IntroductionPage(),
+  ),
+  GoRoute(
+    path: '/login',
+    name: routeLogin,
+    builder: (context, state) => const LoginPage(),
   ),
   GoRoute(
     path: "/home",
