@@ -1,9 +1,16 @@
 import 'package:flutter/animation.dart';
 
-const primary = Color(0xFFdb2b39);
-const primary2 = Color(0xFFFC4D51);
-const primary3 = Color(0xFFFF6C6A);
-const primary4 = Color(0xFFFF8A84);
-const primary5 = Color(0xFFFFA89F);
-const secondary = Color(0xFF7AB0E0);
+const kGradientColor = [
+  Color(0xFF3B3AC6),
+  Color(0xFF1E81D6),
+  Color(0xFF08B9E3)
+];
+const primaryColor = Color(0xFF5ADCFE);
+const darkPrimaryColor = Color(0xFF00A5C5);
+
+const primaryColor2 = Color(0xFF00AECF);
+const primaryColor3 = Color(0xFF0083A2);
+const primaryColor4 = Color(0xFF005A77);
+const primaryColor5 = Color(0xFF00334F);
+const secondary = Color(0xFF56BFFB);
 const black = Color(0xFF3D4856);

@@ -10,7 +10,7 @@ ButtonStyle elevatedButtonStyle({
 }) =>
     ElevatedButton.styleFrom(
       padding: padding ?? const EdgeInsets.all(16.0),
-      backgroundColor: backgroundColor ?? primary,
+      backgroundColor: backgroundColor ?? primaryColor,
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(10.0),
       ),

@@ -68,6 +68,9 @@ class SMSPage extends ConsumerWidget {
                         onPressed: () async {
                           await ref.read(smsNotifier.notifier).delete(item.id);
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
                         icon: const Icon(Icons.delete_outline),
                         label: const Text("Hapus"),
                       ),

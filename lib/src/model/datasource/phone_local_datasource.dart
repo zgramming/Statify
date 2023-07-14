@@ -5,9 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:wabot_utils/src/model/model/phone_model.dart';
-
 import '../../utils/failure.dart';
+import '../model/phone_model.dart';
 
 class PhoneLocalDatasource {
   final Box<PhoneModel> box;

@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:wabot_utils/src/model/model/incoming_call_model.dart';
+import '../model/model/incoming_call_model.dart';
 
 class EventChannelUtils {
   static const _callReceiverEventChannel =

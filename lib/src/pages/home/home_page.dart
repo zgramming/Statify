@@ -5,12 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:telephony/telephony.dart';
 import 'package:uuid/uuid.dart';
-import 'package:wabot_utils/src/model/datasource/phone_local_datasource.dart';
-import 'package:wabot_utils/src/model/model/phone_model.dart';
 
 import '../../injection.dart';
+import '../../model/datasource/phone_local_datasource.dart';
+import '../../model/model/phone_model.dart';
 import '../../model/model/sms_model.dart';
-import '../../utils/colors.dart';
 import '../../utils/event_channel.dart';
 import 'call/call_page.dart';
 import 'setting/setting_page.dart';
@@ -91,17 +90,17 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   final _destinations = <NavigationDestination>[
     NavigationDestination(
-      icon: Icon(Icons.sms_outlined, color: Colors.white.withOpacity(.5)),
+      icon: Icon(Icons.sms_outlined, color: Colors.grey.withOpacity(.5)),
       selectedIcon: const Icon(Icons.sms, color: Colors.white),
       label: "SMS",
     ),
     NavigationDestination(
-      icon: Icon(Icons.call_outlined, color: Colors.white.withOpacity(.5)),
+      icon: Icon(Icons.call_outlined, color: Colors.grey.withOpacity(.5)),
       selectedIcon: const Icon(Icons.call, color: Colors.white),
       label: "Call",
     ),
     NavigationDestination(
-      icon: Icon(Icons.settings_outlined, color: Colors.white.withOpacity(.5)),
+      icon: Icon(Icons.settings_outlined, color: Colors.grey.withOpacity(.5)),
       selectedIcon: const Icon(Icons.settings, color: Colors.white),
       label: "Setting",
     ),
@@ -140,10 +139,8 @@ class _HomePageState extends ConsumerState<HomePage> {
         );
       }),
       bottomNavigationBar: NavigationBar(
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         selectedIndex: _selectedIndex,
         destinations: _destinations,
-        backgroundColor: primary,
         onDestinationSelected: (value) {
           setState(() => _selectedIndex = value);
         },

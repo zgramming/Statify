@@ -17,9 +17,16 @@ class MyApp extends StatelessWidget {
       theme: theme.copyWith(
         textTheme: bodyFontTheme(theme.textTheme),
         scaffoldBackgroundColor: Colors.white,
-        primaryColor: primary,
+        primaryColor: primaryColor,
+        navigationBarTheme: const NavigationBarThemeData(
+          backgroundColor: Colors.white,
+          elevation: 10,
+          indicatorColor: primaryColor,
+          iconTheme:
+              MaterialStatePropertyAll(IconThemeData(color: Colors.black)),
+        ),
         colorScheme: theme.colorScheme.copyWith(
-          primary: primary,
+          primary: primaryColor,
           secondary: secondary,
         ),
       ),
