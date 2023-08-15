@@ -9,6 +9,12 @@ import 'src/utils/constant.dart';
 import 'src/app.dart';
 import 'src/model/model/sms_model.dart';
 
+// factory AuthenticationResponseModel.fromJson(Map<String, dynamic> json) =>
+//     _$AuthenticationResponseModelFromJson(json);
+
+// /// Connect the generated [_$AuthenticationResponseModelToJson] function to the `toJson` method.
+// Map<String, dynamic> toJson() => _$AuthenticationResponseModelToJson(this);
+
 // dart run build_runner watch --delete-conflicting-outputs
 Future<void> backgrounMessageHandler(SmsMessage message) async {
   //Handle background message

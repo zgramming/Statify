@@ -1,7 +1,7 @@
 import 'package:flutter/animation.dart';
 
 const kGradientColor = [
-  Color(0xFF3B3AC6),
+  Color(0xFF3943C9),
   Color(0xFF1E81D6),
   Color(0xFF08B9E3)
 ];

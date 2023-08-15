@@ -129,7 +129,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
         final permissionFuture = ref.watch(checkPermissionNotifier);
 
         return permissionFuture.when(
-          data: (_) => SafeArea(child: _pages[_selectedIndex]),
+          data: (_) => _pages[_selectedIndex],
           error: (error, stackTrace) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

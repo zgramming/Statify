@@ -20,7 +20,13 @@ class CustomAppbar extends StatelessWidget {
       child: Container(
         height: 120,
         width: double.infinity,
-        color: darkPrimaryColor,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: kGradientColor,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         alignment: Alignment.center,
         child: Text(
           title,
