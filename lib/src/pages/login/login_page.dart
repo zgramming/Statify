@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,11 +30,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     final username = usernameController.text;
     final password = passwordController.text;
-
-    log("""
-      username: $username
-      password: $password
-""");
 
     final notifier = ref.read(authenticationNotifier.notifier);
     await notifier.login(username: username, password: password);

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -50,7 +49,6 @@ class MachineResponseSettingRemoteDatasource {
 
     final body = response.body;
     final decode = Map.from(jsonDecode(body));
-    log('getAll $decode');
 
     if (response.statusCode == 200) {
       final data = decode['data'];

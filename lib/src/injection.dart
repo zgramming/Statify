@@ -21,6 +21,8 @@ import 'model/repository/machine_repository.dart';
 import 'model/repository/machine_response_setting_repository.dart';
 import 'model/repository/machine_whatsapp_repository.dart';
 import 'model/repository/sms_repository.dart';
+import 'model/repository/survey_repository.dart';
+import 'model/repository/survey_response_repository.dart';
 import 'utils/constant.dart';
 import 'utils/http_client.dart';
 import 'view_model/application_config_notifier.dart';
@@ -29,6 +31,8 @@ import 'view_model/machine_notifier.dart';
 import 'view_model/machine_response_setting_notifier.dart';
 import 'view_model/machine_whatsapp_notifier.dart';
 import 'view_model/sms_view_notifier.dart';
+import 'view_model/survey_notifier.dart';
+import 'view_model/survey_response_notifier.dart';
 
 final surveyNotifier = StateNotifierProvider<SurveyNotifier, SurveyState>(
   (ref) => SurveyNotifier(repository: ref.watch(_surveyRepository)),

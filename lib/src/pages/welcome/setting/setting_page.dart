@@ -28,6 +28,8 @@ class _SettingPageState extends ConsumerState<SettingPage> {
     // final machineResponseSetting =
     //     ref.read(machineResponseSettingNotifier.notifier);
     // final user = ref.read(authenticationNotifier).user!;
+    // final survey = ref.read(surveyNotifier.notifier);
+    // final surveyResponse = ref.read(surveyResponseNotifier.notifier);
 
     // await machine.getAll(user.id);
     // await machine.getById(
@@ -52,9 +54,26 @@ class _SettingPageState extends ConsumerState<SettingPage> {
 
     // await machineResponseSetting.create(
     //   idMachine: "0f273631-d24f-444d-a9e7-3be786e70648",
-    //   key: "3",
-    //   type: "regular",
-    //   value: "ini value",
+    //   key: "welcome",
+    //   type: "welcome",
+    //   value: "Selamat datang pemirsa",
+    //   // key: "3",
+    //   // type: "regular",
+    //   // value: "ini value",
+    // );
+
+    // await survey.create(
+    //   number: "111222333111",
+    //   machineId: "0f273631-d24f-444d-a9e7-3be786e70648",
+    // );
+
+    // await surveyResponse.getResponse(
+    //     machineId: "0f273631-d24f-444d-a9e7-3be786e70648");
+
+    // await surveyResponse.create(
+    //   surveyId: "94320477-c45e-428e-ba77-f0f9eefa75d5",
+    //   key: "2",
+    //   type: "whatsapp",
     // );
   }
 
