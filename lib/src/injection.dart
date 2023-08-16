@@ -16,10 +16,18 @@ import 'model/model/application_config_model.dart';
 import 'model/model/phone_model.dart';
 import 'model/model/sms_model.dart';
 import 'model/repository/application_config_repository.dart';
+import 'model/repository/authentication_repository.dart';
+import 'model/repository/machine_repository.dart';
+import 'model/repository/machine_response_setting_repository.dart';
+import 'model/repository/machine_whatsapp_repository.dart';
 import 'model/repository/sms_repository.dart';
 import 'utils/constant.dart';
 import 'utils/http_client.dart';
 import 'view_model/application_config_notifier.dart';
+import 'view_model/authentication_notifier.dart';
+import 'view_model/machine_notifier.dart';
+import 'view_model/machine_response_setting_notifier.dart';
+import 'view_model/machine_whatsapp_notifier.dart';
 import 'view_model/sms_view_notifier.dart';
 
 final surveyNotifier = StateNotifierProvider<SurveyNotifier, SurveyState>(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../utils/fonts.dart';
 import '../../widgets/custom_appbar.dart';
 
-class MachineModel {
+class _MachineModel {
   final int id;
   final String name;
   final double totalSMSSent;
@@ -13,7 +13,7 @@ class MachineModel {
   final double totalChoose2;
   final double totalChoose3;
 
-  const MachineModel({
+  const _MachineModel({
     required this.id,
     required this.name,
     required this.totalSMSSent,
@@ -26,7 +26,7 @@ class MachineModel {
 }
 
 final _machines = [
-  const MachineModel(
+  const _MachineModel(
     id: 1,
     name: 'Machine 1',
     totalSMSSent: 1,
@@ -36,7 +36,7 @@ final _machines = [
     totalChoose2: 0,
     totalChoose3: 0,
   ),
-  const MachineModel(
+  const _MachineModel(
     id: 2,
     name: 'Machine 2',
     totalSMSSent: 0,
@@ -46,7 +46,7 @@ final _machines = [
     totalChoose2: 0,
     totalChoose3: 0,
   ),
-  const MachineModel(
+  const _MachineModel(
     id: 3,
     name: 'Machine 3',
     totalSMSSent: 0,
