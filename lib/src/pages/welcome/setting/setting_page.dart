@@ -22,6 +22,50 @@ class _SettingPageState extends ConsumerState<SettingPage> {
     }
   }
 
+  Future<void> init() async {
+    // final machine = ref.read(machineNotifier.notifier);
+    // final machineWhatsapp = ref.read(machineWhatsappNotifier.notifier);
+    // final machineResponseSetting =
+    //     ref.read(machineResponseSettingNotifier.notifier);
+    // final user = ref.read(authenticationNotifier).user!;
+
+    // await machine.getAll(user.id);
+    // await machine.getById(
+    //   userId: user.id,
+    //   machineId: "0f273631-d24f-444d-a9e7-3be786e70648",
+    // );
+
+    // await machine.create(
+    //   number: "123467889",
+    //   license: 'License 123',
+    //   action: 'whatsapp',
+    //   smsSetting: 'both',
+    //   userId: user.id,
+    // );
+
+    // await machineWhatsapp.create(
+    //   number: "111222333",
+    //   machineId: "0f273631-d24f-444d-a9e7-3be786e70648",
+    // );
+
+    // await machineResponseSetting.getAll("0f273631-d24f-444d-a9e7-3be786e70648");
+
+    // await machineResponseSetting.create(
+    //   idMachine: "0f273631-d24f-444d-a9e7-3be786e70648",
+    //   key: "3",
+    //   type: "regular",
+    //   value: "ini value",
+    // );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      init();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

@@ -17,14 +17,12 @@ class MachineRemoteDatasource {
     required this.client,
   });
 
-  Future<List<MachineModel>> getAll({
-    String userId = '',
-  }) async {
+  Future<List<MachineModel>> getAll(String userId) async {
     final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines');
     final response = await client.get(uri);
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
-      final data = response.body;
-      final decoded = Map<String, dynamic>.from(jsonDecode(data));
       final list = decoded['data'] as List;
       final machines = list.map((e) => MachineModel.fromJson(e)).toList();
       return machines;
@@ -39,10 +37,12 @@ class MachineRemoteDatasource {
   }) async {
     final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines/$machineId');
     final response = await client.get(uri);
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+
     if (response.statusCode == 200) {
-      final data = response.body;
-      final decoded = Map<String, dynamic>.from(jsonDecode(data));
-      final machine = MachineModel.fromJson(decoded['data']);
+      final data = decoded['data'];
+      final machine = MachineModel.fromJson(data);
       return machine;
     } else {
       throw Exception('Failed to load machine');
@@ -55,10 +55,12 @@ class MachineRemoteDatasource {
   }) async {
     final uri = Uri.parse('$kBaseApiUrl/machines/$machineNumber');
     final response = await client.get(uri);
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+
     if (response.statusCode == 200) {
-      final data = response.body;
-      final decodedData = Map<String, dynamic>.from(jsonDecode(data));
-      final machine = MachineModel.fromJson(decodedData['data']);
+      final data = decoded['data'];
+      final machine = MachineModel.fromJson(data);
       return machine;
     } else {
       throw Exception('Failed to load machine');
@@ -70,13 +72,11 @@ class MachineRemoteDatasource {
     required String license,
     required String action,
     required String smsSetting,
+    required String userId,
   }) async {
-    final uri = Uri.parse('$kBaseApiUrl/machines');
+    final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines');
     final response = await client.post(
       uri,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
       body: {
         'number': number,
         'license': license,
@@ -85,15 +85,17 @@ class MachineRemoteDatasource {
       },
     );
 
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
-      final body = response.body;
-      final decodedData = Map<String, dynamic>.from(jsonDecode(body));
-      final data = decodedData['data'];
-
+      final data = decoded['data'];
       final result = MachineCreateResponseModel.fromJson(data);
       return result;
     } else {
-      throw Exception('Failed to create machine');
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to create machine';
+      throw Exception(message);
     }
   }
 }
@@ -104,13 +106,9 @@ class MachineRepository {
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, List<MachineModel>>> getAll({
-    String userId = '',
-  }) async {
+  Future<Either<Failure, List<MachineModel>>> getAll(String userId) async {
     try {
-      final result = await remoteDatasource.getAll(
-        userId: userId,
-      );
+      final result = await remoteDatasource.getAll(userId);
       return Right(result);
     } catch (e) {
       return Left(CommonFailure(e.toString()));
@@ -152,6 +150,7 @@ class MachineRepository {
     required String license,
     required String action,
     required String smsSetting,
+    required String userId,
   }) async {
     try {
       final result = await remoteDatasource.create(
@@ -159,6 +158,7 @@ class MachineRepository {
         license: license,
         action: action,
         smsSetting: smsSetting,
+        userId: userId,
       );
       return Right(result);
     } catch (e) {
@@ -206,13 +206,9 @@ class MachineNotifier extends StateNotifier<MachineState> {
     required this.repository,
   }) : super(const MachineState());
 
-  Future<void> getAll({
-    String userId = '',
-  }) async {
+  Future<void> getAll(String userId) async {
     state = state.copyWith(onGetAll: const AsyncLoading());
-    final result = await repository.getAll(
-      userId: userId,
-    );
+    final result = await repository.getAll(userId);
     result.fold(
       (failure) => state =
           state.copyWith(onGetAll: AsyncError(failure, StackTrace.current)),
@@ -257,6 +253,7 @@ class MachineNotifier extends StateNotifier<MachineState> {
     required String license,
     required String action,
     required String smsSetting,
+    required String userId,
   }) async {
     state = state.copyWith(onCreate: const AsyncLoading());
     final result = await repository.create(
@@ -264,6 +261,7 @@ class MachineNotifier extends StateNotifier<MachineState> {
       license: license,
       action: action,
       smsSetting: smsSetting,
+      userId: userId,
     );
     result.fold(
       (failure) => state =

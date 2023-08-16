@@ -8,7 +8,6 @@ part 'machine_model.g.dart';
   fieldRename: FieldRename.snake,
 )
 class MachineModel extends Equatable {
-  final List<MachineWhatsappModel> whatsapps;
   final String id;
   final String userId;
   final String number;
@@ -19,6 +18,7 @@ class MachineModel extends Equatable {
   final int replied;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<MachineWhatsappModel> whatsapps;
 
   const MachineModel({
     required this.whatsapps,

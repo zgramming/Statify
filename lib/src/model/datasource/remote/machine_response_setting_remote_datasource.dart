@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -20,9 +21,9 @@ class MachineResponseSettingRemoteDatasource {
     final uri = Uri.parse("$kBaseApiUrl/machines/$idMachine/response-settings");
     final response = await client.get(uri);
 
+    final body = response.body;
+    final decode = Map.from(jsonDecode(body));
     if (response.statusCode == 200) {
-      final body = response.body;
-      final decode = Map.from(jsonDecode(body));
       final list = decode['data'] as List;
 
       final result =
@@ -51,14 +52,19 @@ class MachineResponseSettingRemoteDatasource {
       },
     );
 
+    final body = response.body;
+    final decode = Map.from(jsonDecode(body));
+    log('getAll $decode');
+
     if (response.statusCode == 200) {
-      final body = response.body;
-      final decode = Map.from(jsonDecode(body));
       final data = decode['data'];
       final result = MachineResponseSettingCreateResponseModel.fromJson(data);
       return result;
     } else {
-      throw Exception('Failed to load data');
+      final message = decode.containsKey('message')
+          ? decode['message']
+          : 'Failed to load data';
+      throw Exception(message);
     }
   }
 }
@@ -141,6 +147,27 @@ class MachineResponseSettingNotifier
       (failure) => state =
           state.copyWith(onGetAll: AsyncError(failure, StackTrace.current)),
       (data) => state = state.copyWith(onGetAll: AsyncData(data)),
+    );
+  }
+
+  Future<void> create({
+    required String key,
+    required String value,
+    required String type,
+    required String idMachine,
+  }) async {
+    state = state.copyWith(onCreate: const AsyncLoading());
+    final result = await repository.create(
+      key: key,
+      value: value,
+      type: type,
+      idMachine: idMachine,
+    );
+
+    result.fold(
+      (failure) => state =
+          state.copyWith(onCreate: AsyncError(failure, StackTrace.current)),
+      (data) => state = state.copyWith(onCreate: AsyncData(data)),
     );
   }
 }

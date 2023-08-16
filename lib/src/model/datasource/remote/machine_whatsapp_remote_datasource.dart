@@ -30,9 +30,9 @@ class MachineWhatsappRemoteDatasource {
       },
     );
 
+    final body = response.body;
+    final decodedData = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
-      final body = response.body;
-      final decodedData = Map<String, dynamic>.from(jsonDecode(body));
       final data = decodedData['data'];
       return MachineWhatsappCreateResponseModel.fromJson(data);
     } else {
@@ -51,13 +51,10 @@ class MachineWhatsappRemoteDatasource {
     );
 
     final request = http.MultipartRequest('POST', uri)..files.add(fileBody);
-
     final response = await request.send();
-
+    final data = await response.stream.bytesToString();
+    final decodedData = Map<String, dynamic>.from(jsonDecode(data));
     if (response.statusCode == 200) {
-      final data = await response.stream.bytesToString();
-      final decodedData = Map<String, dynamic>.from(jsonDecode(data));
-
       return decodedData;
     } else {
       throw Exception('Failed to send QR Code');
@@ -70,10 +67,9 @@ class MachineWhatsappRemoteDatasource {
     final uri = Uri.parse("$kBaseApiUrl/machine-whatsapp/$machineId/connect");
     final response = await client.patch(uri);
 
+    final data = response.body;
+    final decodedData = Map<String, dynamic>.from(jsonDecode(data));
     if (response.statusCode == 200) {
-      final data = response.body;
-      final decodedData = Map<String, dynamic>.from(jsonDecode(data));
-
       return decodedData;
     } else {
       throw Exception('Failed to connect machine');
@@ -87,10 +83,9 @@ class MachineWhatsappRemoteDatasource {
         Uri.parse("$kBaseApiUrl/machine-whatsapp/$machineId/disconnect");
     final response = await client.patch(uri);
 
+    final data = response.body;
+    final decodedData = Map<String, dynamic>.from(jsonDecode(data));
     if (response.statusCode == 200) {
-      final data = response.body;
-      final decodedData = Map<String, dynamic>.from(jsonDecode(data));
-
       return decodedData;
     } else {
       throw Exception('Failed to disconnect machine');
