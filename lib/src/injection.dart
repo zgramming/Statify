@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart' as http;
 import 'package:telephony/telephony.dart';
 
 import 'model/datasource/application_config_local_datasource.dart';
+import 'model/datasource/local/authentication_local_datasource.dart';
 import 'model/datasource/phone_local_datasource.dart';
 import 'model/datasource/remote/authentication_remote_datasource.dart';
 import 'model/datasource/remote/machine_remote_datasource.dart';
@@ -18,37 +18,36 @@ import 'model/model/sms_model.dart';
 import 'model/repository/application_config_repository.dart';
 import 'model/repository/sms_repository.dart';
 import 'utils/constant.dart';
+import 'utils/http_client.dart';
 import 'view_model/application_config_notifier.dart';
 import 'view_model/sms_view_notifier.dart';
 
-final surveyNotifier =
-    StateNotifierProvider.autoDispose<SurveyNotifier, SurveyState>(
+final surveyNotifier = StateNotifierProvider<SurveyNotifier, SurveyState>(
   (ref) => SurveyNotifier(repository: ref.watch(_surveyRepository)),
 );
-final surveyResponseNotifier = StateNotifierProvider.autoDispose<
-    SurveyResponseNotifier, SurveyResponseState>(
+final surveyResponseNotifier =
+    StateNotifierProvider<SurveyResponseNotifier, SurveyResponseState>(
   (ref) => SurveyResponseNotifier(
     repository: ref.watch(_surveyResponseRepository),
   ),
 );
-final machineResponseSettingNotifier = StateNotifierProvider.autoDispose<
+final machineResponseSettingNotifier = StateNotifierProvider<
     MachineResponseSettingNotifier, MachineResponseSettingState>(
   (ref) => MachineResponseSettingNotifier(
     repository: ref.watch(_machineResponseSettingRepository),
   ),
 );
-final machineWhatsappNotifier = StateNotifierProvider.autoDispose<
-    MachineWhatsappNotifier, MachineWhatsappState>(
+final machineWhatsappNotifier =
+    StateNotifierProvider<MachineWhatsappNotifier, MachineWhatsappState>(
   (ref) => MachineWhatsappNotifier(
     repository: ref.watch(_machineWhatsappRepository),
   ),
 );
-final machineNotifier =
-    StateNotifierProvider.autoDispose<MachineNotifier, MachineState>(
+final machineNotifier = StateNotifierProvider<MachineNotifier, MachineState>(
   (ref) => MachineNotifier(repository: ref.watch(_machineRepository)),
 );
-final authenticationNotifier = StateNotifierProvider.autoDispose<
-    AuthenticationNotifier, AuthenticationState>(
+final authenticationNotifier =
+    StateNotifierProvider<AuthenticationNotifier, AuthenticationState>(
   (ref) => AuthenticationNotifier(
     repository: ref.watch(_authenticationRepository),
   ),
@@ -64,22 +63,23 @@ final phoneNotifier = StateNotifierProvider<PhoneNotifier, PhoneState>(
 
 // repository
 
-final _surveyRepository = Provider.autoDispose((ref) =>
+final _surveyRepository = Provider((ref) =>
     SurveyRepository(remoteDatasource: ref.watch(_surveyRemoteDatasource)));
-final _surveyResponseRepository = Provider.autoDispose((ref) =>
-    SurveyResponseRepository(
-        remoteDatasource: ref.watch(_surveyResponseRemoteDatasource)));
-final _machineResponseSettingRepository = Provider.autoDispose((ref) =>
+final _surveyResponseRepository = Provider((ref) => SurveyResponseRepository(
+    remoteDatasource: ref.watch(_surveyResponseRemoteDatasource)));
+final _machineResponseSettingRepository = Provider((ref) =>
     MachineResponseSettingRepository(
         remoteDatasource: ref.watch(_machineResponseSettingRemoteDatasource)));
-final _machineWhatsappRepository = Provider.autoDispose((ref) =>
-    MachineWhatsappRepository(
-        remoteDatasource: ref.watch(_machineWhatsappRemoteDatasource)));
-final _machineRepository = Provider.autoDispose((ref) =>
+final _machineWhatsappRepository = Provider((ref) => MachineWhatsappRepository(
+    remoteDatasource: ref.watch(_machineWhatsappRemoteDatasource)));
+final _machineRepository = Provider((ref) =>
     MachineRepository(remoteDatasource: ref.watch(_machineRemoteDatasource)));
-final _authenticationRepository = Provider.autoDispose((ref) =>
-    AuthenticationRepository(
-        remoteDatasource: ref.watch(_authenticationRemoteDatasource)));
+final _authenticationRepository = Provider(
+  (ref) => AuthenticationRepository(
+    remoteDatasource: ref.watch(_authenticationRemoteDatasource),
+    localDatasource: ref.watch(_authenticationLocalDatasource),
+  ),
+);
 final _applicationConfigRepository = Provider((ref) =>
     ApplicationConfigRepository(
         localDatasource: ref.watch(_applicationConfigLocalDatasource)));
@@ -90,20 +90,22 @@ final _phoneRepository = Provider((ref) =>
 
 // remote datasource
 
-final _surveyResponseRemoteDatasource = Provider.autoDispose(
+final _surveyResponseRemoteDatasource = Provider(
     (ref) => SurveyResponseRemoteDatasource(client: ref.watch(_httpClient)));
-final _surveyRemoteDatasource = Provider.autoDispose(
-    (ref) => SurveyRemoteDatasource(client: ref.watch(_httpClient)));
-final _machineResponseSettingRemoteDatasource = Provider.autoDispose((ref) =>
+final _surveyRemoteDatasource =
+    Provider((ref) => SurveyRemoteDatasource(client: ref.watch(_httpClient)));
+final _machineResponseSettingRemoteDatasource = Provider((ref) =>
     MachineResponseSettingRemoteDatasource(client: ref.watch(_httpClient)));
-final _machineWhatsappRemoteDatasource = Provider.autoDispose(
+final _machineWhatsappRemoteDatasource = Provider(
     (ref) => MachineWhatsappRemoteDatasource(client: ref.watch(_httpClient)));
-final _machineRemoteDatasource = Provider.autoDispose(
-    (ref) => MachineRemoteDatasource(client: ref.watch(_httpClient)));
-final _authenticationRemoteDatasource = Provider.autoDispose(
+final _machineRemoteDatasource =
+    Provider((ref) => MachineRemoteDatasource(client: ref.watch(_httpClient)));
+final _authenticationRemoteDatasource = Provider(
     (ref) => AuthenticationRemoteDatasource(client: ref.watch(_httpClient)));
 
 // local datasource
+final _authenticationLocalDatasource =
+    Provider((ref) => AuthenticationLocalDatasource());
 final _applicationConfigLocalDatasource = Provider((ref) =>
     ApplicationConfigLocalDatasource(box: ref.watch(_applicationConfigBox)));
 final _smsLocalDatasource =
@@ -117,8 +119,9 @@ final _applicationConfigBox = Provider(
 final _phoneBox = Provider((ref) => Hive.box<PhoneModel>(hivePhoneBox));
 final _smsBox = Provider((ref) => Hive.box<SMSModel>(hiveSMSBox));
 
-final _httpClient = Provider.autoDispose((ref) {
-  final client = http.Client();
+final _httpClient = Provider((ref) {
+  final client = CustomHTTPClient();
+
   ref.onDispose(() => client.close());
 
   return client;

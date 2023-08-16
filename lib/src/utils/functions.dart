@@ -10,5 +10,8 @@ void showSnackbar({
     backgroundColor: backgroundColor,
   );
 
+  // Hide current snackbar if any
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }

@@ -16,12 +16,12 @@ class FlutterSecureStorageUtils {
         .write(key: kTokenAuth, value: token);
   }
 
-  static Future<String> getTokenAuth() async {
+  static Future<String?> getTokenAuth() async {
     final result =
         await FlutterSecureStorageUtils()._storage.read(key: kTokenAuth);
 
     if (result == null) {
-      throw Exception('Token not found');
+      return null;
     }
 
     return result;
@@ -40,12 +40,12 @@ class FlutterSecureStorageUtils {
         );
   }
 
-  static Future<UserModel> getUserAuth() async {
+  static Future<UserModel?> getUserAuth() async {
     final result =
         await FlutterSecureStorageUtils()._storage.read(key: kUserAuth);
 
     if (result == null) {
-      throw Exception('User not found');
+      return null;
     }
 
     final decode = jsonDecode(result);

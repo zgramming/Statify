@@ -39,14 +39,14 @@ class ApplicationConfigNotifier extends StateNotifier<ApplicationConfigState> {
   final ApplicationConfigRepository repository;
   ApplicationConfigNotifier({
     required this.repository,
-  }) : super(const ApplicationConfigState()) {
-    getApplicationConfig();
-  }
+  }) : super(const ApplicationConfigState());
 
-  Future<void> getApplicationConfig() async {
+  Future<ApplicationConfigModel> getApplicationConfig() async {
     state = state.copyWith(item: const AsyncLoading());
     final result = await repository.getApplicationConfig();
     state = state.copyWith(item: AsyncData(result));
+
+    return result;
   }
 
   Future<void> saveIntroduction(bool value) async {

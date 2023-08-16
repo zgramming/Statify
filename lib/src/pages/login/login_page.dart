@@ -1,21 +1,24 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../injection.dart';
 import '../../router.dart';
 import '../../utils/colors.dart';
 import '../../utils/fonts.dart';
+import '../../utils/functions.dart';
 import '../../utils/styles.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false;
@@ -35,7 +38,8 @@ class _LoginPageState extends State<LoginPage> {
       password: $password
 """);
 
-    context.goNamed(routeWelcome);
+    final notifier = ref.read(authenticationNotifier.notifier);
+    await notifier.login(username: username, password: password);
   }
 
   @override
@@ -47,6 +51,35 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(authenticationNotifier.select((value) => value.onLogin),
+        (previous, next) {
+      next.when(
+        data: (data) {
+          showSnackbar(
+            context: context,
+            message: "Login berhasil",
+            backgroundColor: Colors.green,
+          );
+
+          context.goNamed(routeWelcome);
+        },
+        error: (error, stackTrace) {
+          showSnackbar(
+            context: context,
+            message: error.toString(),
+            backgroundColor: Colors.red,
+          );
+        },
+        loading: () {
+          showSnackbar(
+            context: context,
+            message: "Loading...",
+            backgroundColor: Colors.blue,
+          );
+        },
+      );
+    });
+
     final h = MediaQuery.of(context).size.height;
     const border = OutlineInputBorder(
       borderSide: BorderSide(color: darkPrimaryColor),

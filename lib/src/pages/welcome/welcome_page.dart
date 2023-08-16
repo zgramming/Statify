@@ -13,6 +13,7 @@ import '../../model/model/sms_model.dart';
 import '../../utils/event_channel.dart';
 import 'home/home_page.dart';
 import 'long_distance_access/long_distance_access_page.dart';
+import 'setting/setting_page.dart';
 import 'statistic/statistic_page.dart';
 import 'whatsapp/whatsapp_page.dart';
 
@@ -113,6 +114,14 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
       selectedIcon: const Icon(Icons.accessibility_new, color: Colors.white),
       label: "L.D.A",
     ),
+    NavigationDestination(
+      icon: Icon(
+        Icons.settings_outlined,
+        color: Colors.grey.withOpacity(.5),
+      ),
+      selectedIcon: const Icon(Icons.settings, color: Colors.white),
+      label: "Setting",
+    ),
   ];
 
   final _pages = [
@@ -120,6 +129,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
     const WhatsAppPage(),
     const StatisticPage(),
     const LongDistanceAccessPage(),
+    const SettingPage(),
   ];
 
   @override
@@ -129,7 +139,10 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
         final permissionFuture = ref.watch(checkPermissionNotifier);
 
         return permissionFuture.when(
-          data: (_) => _pages[_selectedIndex],
+          data: (_) => IndexedStack(
+            index: _selectedIndex,
+            children: _pages,
+          ),
           error: (error, stackTrace) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
