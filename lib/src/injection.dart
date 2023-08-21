@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:telephony/telephony.dart';
@@ -13,6 +14,7 @@ import 'model/datasource/remote/survey_remote_datasource.dart';
 import 'model/datasource/remote/survey_response_remote_datasource.dart';
 import 'model/datasource/sms_local_datasource.dart';
 import 'model/model/application_config_model.dart';
+import 'model/model/machine/machine_whatsapp_model.dart';
 import 'model/model/phone_model.dart';
 import 'model/model/sms_model.dart';
 import 'model/repository/application_config_repository.dart';
@@ -33,6 +35,20 @@ import 'view_model/machine_whatsapp_notifier.dart';
 import 'view_model/sms_view_notifier.dart';
 import 'view_model/survey_notifier.dart';
 import 'view_model/survey_response_notifier.dart';
+
+// Custom Provider
+final getMachineWhatsApp =
+    Provider.family<List<MachineWhatsappModel>, String>((ref, machineId) {
+  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull;
+
+  if (machines == null) return [];
+
+  final result =
+      machines.firstWhereOrNull((element) => element.id == machineId);
+  final whatsapps = result?.whatsapps ?? [];
+  return whatsapps;
+});
+// End Custom Provider
 
 final surveyNotifier = StateNotifierProvider<SurveyNotifier, SurveyState>(
   (ref) => SurveyNotifier(repository: ref.watch(_surveyRepository)),

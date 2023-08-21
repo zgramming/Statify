@@ -74,11 +74,23 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                                   value: "edit",
                                   child: Text("Edit"),
                                 ),
+                                const PopupMenuItem(
+                                  value: "machine_whatsapp",
+                                  child: Text("Machine WhatsApp"),
+                                ),
                               ];
                             },
                             onSelected: (value) async {
                               switch (value) {
                                 case "edit":
+                                  break;
+                                case "machine_whatsapp":
+                                  context.pushNamed(
+                                    routeMachineWhatsApp,
+                                    pathParameters: {
+                                      "idMachine": item.id,
+                                    },
+                                  );
                                   break;
                                 default:
                               }
