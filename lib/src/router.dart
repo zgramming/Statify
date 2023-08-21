@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 
 import 'pages/welcome/machine/machine_form_page.dart';
+import 'pages/welcome/machine/machine_response_setting_form_page.dart';
+import 'pages/welcome/machine/machine_response_setting_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_page.dart';
 import 'pages/welcome/sms/send_sms/send_sms_page.dart';
@@ -16,7 +18,12 @@ const routeIntroduction = "introduction";
 const routeLogin = "login";
 
 // Experimental routes
-const routeMachineForm = "machine/form";
+const routeMachineForm = "machine/form/:id";
+
+const routeMachineResponseSetting = "machine/:idMachine/response_setting";
+const routeMachineResponseSettingForm =
+    "machine/:idMachine/response_setting/form/:id";
+
 const routeMachineWhatsApp = "machine/:idMachine/whatsapp";
 const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
 
@@ -78,6 +85,25 @@ final _routes = <RouteBase>[
       final id = state.pathParameters['id'] ?? "-1";
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
       return MachineWhatsAppFormPage(idMachine: idMachine, id: id);
+    },
+  ),
+
+  GoRoute(
+    path: "/machine/:idMachine/response_setting",
+    name: routeMachineResponseSetting,
+    builder: (context, state) {
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return MachineResponseSettingPage(idMachine: idMachine);
+    },
+  ),
+
+  GoRoute(
+    path: "/machine/:idMachine/response_setting/form/:id",
+    name: routeMachineResponseSettingForm,
+    builder: (context, state) {
+      final id = state.pathParameters['id'] ?? "-1";
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return MachineResponseSettingFormPage(idMachine: idMachine, id: id);
     },
   ),
 ];

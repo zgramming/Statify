@@ -8,6 +8,8 @@ enum MachineSMSSettingEnum {
 
 enum MachineActionEnum { sms, whatsapp, whatsappPriority, whatappSMS }
 
+enum MachineResponseSettingTypeEnum { welcome, regular }
+
 extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
   String get valueString {
     switch (this) {
@@ -64,6 +66,26 @@ extension MachineActionEnumEXT on MachineActionEnum {
         return 'Whatsapp Priority';
       case MachineActionEnum.whatappSMS:
         return 'Whatsapp SMS';
+    }
+  }
+}
+
+extension MachineResponseSettingTypeEnumEXT on MachineResponseSettingTypeEnum {
+  String get valueString {
+    switch (this) {
+      case MachineResponseSettingTypeEnum.welcome:
+        return 'welcome';
+      case MachineResponseSettingTypeEnum.regular:
+        return 'regular';
+    }
+  }
+
+  String get valueStringReadable {
+    switch (this) {
+      case MachineResponseSettingTypeEnum.welcome:
+        return 'Welcome';
+      case MachineResponseSettingTypeEnum.regular:
+        return 'Regular';
     }
   }
 }
