@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:developer';
 
@@ -11,11 +12,8 @@ import '../../model/datasource/phone_local_datasource.dart';
 import '../../model/model/phone_model.dart';
 import '../../model/model/sms_model.dart';
 import '../../utils/event_channel.dart';
-import 'home/home_page.dart';
-import 'long_distance_access/long_distance_access_page.dart';
+import 'machine/machine_page.dart';
 import 'setting/setting_page.dart';
-import 'statistic/statistic_page.dart';
-import 'whatsapp/whatsapp_page.dart';
 
 final _telephony = Telephony.instance;
 
@@ -91,29 +89,29 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   int _selectedIndex = 0;
 
   final _destinations = <NavigationDestination>[
-    NavigationDestination(
-      icon: Icon(Icons.home_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.home, color: Colors.white),
-      label: "Home",
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.phone_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.phone, color: Colors.white),
-      label: "Whatsapp",
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.bar_chart_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.bar_chart, color: Colors.white),
-      label: "Statistic",
-    ),
-    NavigationDestination(
-      icon: Icon(
-        Icons.accessibility_new_outlined,
-        color: Colors.grey.withOpacity(.5),
-      ),
-      selectedIcon: const Icon(Icons.accessibility_new, color: Colors.white),
-      label: "L.D.A",
-    ),
+    // NavigationDestination(
+    //   icon: Icon(Icons.home_outlined, color: Colors.grey.withOpacity(.5)),
+    //   selectedIcon: const Icon(Icons.home, color: Colors.white),
+    //   label: "Home",
+    // ),
+    // NavigationDestination(
+    //   icon: Icon(Icons.phone_outlined, color: Colors.grey.withOpacity(.5)),
+    //   selectedIcon: const Icon(Icons.phone, color: Colors.white),
+    //   label: "Whatsapp",
+    // ),
+    // NavigationDestination(
+    //   icon: Icon(Icons.bar_chart_outlined, color: Colors.grey.withOpacity(.5)),
+    //   selectedIcon: const Icon(Icons.bar_chart, color: Colors.white),
+    //   label: "Statistic",
+    // ),
+    // NavigationDestination(
+    //   icon: Icon(
+    //     Icons.accessibility_new_outlined,
+    //     color: Colors.grey.withOpacity(.5),
+    //   ),
+    //   selectedIcon: const Icon(Icons.accessibility_new, color: Colors.white),
+    //   label: "L.D.A",
+    // ),
     NavigationDestination(
       icon: Icon(
         Icons.settings_outlined,
@@ -122,14 +120,24 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
       selectedIcon: const Icon(Icons.settings, color: Colors.white),
       label: "Setting",
     ),
+
+    NavigationDestination(
+      icon: Icon(
+        Icons.device_hub_outlined,
+        color: Colors.grey.withOpacity(.5),
+      ),
+      selectedIcon: const Icon(Icons.device_hub, color: Colors.white),
+      label: "Machine",
+    ),
   ];
 
   final _pages = [
-    const HomePage(),
-    const WhatsAppPage(),
-    const StatisticPage(),
-    const LongDistanceAccessPage(),
+    // const HomePage(),
+    // const WhatsAppPage(),
+    // const StatisticPage(),
+    // const LongDistanceAccessPage(),
     const SettingPage(),
+    const MachinePage(),
   ];
 
   @override

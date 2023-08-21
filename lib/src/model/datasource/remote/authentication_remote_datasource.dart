@@ -21,7 +21,12 @@ class AuthenticationRemoteDatasource {
     final response = await client.post(uri, body: {
       'username': username,
       'password': password,
-    });
+    }).timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        throw Exception('Connection timeout');
+      },
+    );
 
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));

@@ -65,10 +65,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         },
         loading: () {
           showSnackbar(
-            context: context,
-            message: "Loading...",
-            backgroundColor: Colors.blue,
-          );
+              context: context,
+              message: "Loading...",
+              backgroundColor: Colors.blue,
+              duration: const Duration(days: 1));
         },
       );
     });
@@ -157,9 +157,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       : Icons.visibility_off,
                                 ),
                                 onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
+                                  setState(() =>
+                                      _isPasswordVisible = !_isPasswordVisible);
                                 },
                               ),
                             ),

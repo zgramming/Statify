@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/sms/send_sms/send_sms_page.dart';
 import 'pages/welcome/welcome_page.dart';
 import 'pages/introduction/introduction_page.dart';
@@ -11,6 +12,9 @@ const routeSplash = "splash";
 const routeSendSMS = "sms/send";
 const routeIntroduction = "introduction";
 const routeLogin = "login";
+
+// Experimental routes
+const routeMachineForm = "machine/form";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -42,5 +46,15 @@ final _routes = <RouteBase>[
     path: "/sms/send",
     name: routeSendSMS,
     builder: (context, state) => const SendSMSPage(),
+  ),
+
+  //  Experimental routes
+  GoRoute(
+    path: "/machine/form/:id",
+    name: routeMachineForm,
+    builder: (context, state) {
+      final id = state.pathParameters['id'] ?? "-1";
+      return MachineFormPage(id: id);
+    },
   ),
 ];
