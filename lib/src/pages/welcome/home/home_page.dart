@@ -1,128 +1,104 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../injection.dart';
 import '../../../utils/fonts.dart';
 import '../../widgets/custom_appbar.dart';
+import '../../widgets/row_body.dart';
 
-class _MachineModel {
-  final int id;
-  final String name;
-  final double totalSMSSent;
-  final double totalReply;
-  final double totalFinished;
-  final double totalChoose1;
-  final double totalChoose2;
-  final double totalChoose3;
-
-  const _MachineModel({
-    required this.id,
-    required this.name,
-    required this.totalSMSSent,
-    required this.totalReply,
-    required this.totalFinished,
-    required this.totalChoose1,
-    required this.totalChoose2,
-    required this.totalChoose3,
-  });
-}
-
-final _machines = [
-  const _MachineModel(
-    id: 1,
-    name: 'Machine 1',
-    totalSMSSent: 1,
-    totalReply: 2,
-    totalFinished: 3,
-    totalChoose1: 0,
-    totalChoose2: 0,
-    totalChoose3: 0,
-  ),
-  const _MachineModel(
-    id: 2,
-    name: 'Machine 2',
-    totalSMSSent: 0,
-    totalReply: 0,
-    totalFinished: 0,
-    totalChoose1: 0,
-    totalChoose2: 0,
-    totalChoose3: 0,
-  ),
-  const _MachineModel(
-    id: 3,
-    name: 'Machine 3',
-    totalSMSSent: 0,
-    totalReply: 0,
-    totalFinished: 0,
-    totalChoose1: 0,
-    totalChoose2: 0,
-    totalChoose3: 0,
-  ),
-];
-
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const CustomAppbar(title: "Home"),
-        Expanded(
-          child: ListView.separated(
-            itemCount: _machines.length,
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(16.0),
-            separatorBuilder: (context, index) => const Divider(),
-            itemBuilder: (context, index) {
-              final item = _machines[index];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final machinesAsync = ref.watch(machineNotifier).onGetAll;
 
-              return Card(
-                margin: const EdgeInsets.only(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16.0,
-                    horizontal: 8.0,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "${index + 1}. ${item.name}",
-                          style: headerFont.copyWith(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+    return machinesAsync.when(
+      data: (items) {
+        return Column(
+          children: [
+            const CustomAppbar(title: "Home"),
+            Expanded(
+              child: ListView.separated(
+                itemCount: items.length,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(16.0),
+                separatorBuilder: (context, index) => const Divider(),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+
+                  return Card(
+                    margin: const EdgeInsets.only(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 8.0,
                       ),
-                      const SizedBox(width: 16.0),
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text("Total SMS Sent: ${item.totalSMSSent}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Reply: ${item.totalReply}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Finished: ${item.totalFinished}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Choose 1: ${item.totalChoose1}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Choose 2: ${item.totalChoose2}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Choose 3: ${item.totalChoose3}"),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "${index + 1}. ${item.number}",
+                              style: headerFont.copyWith(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                RowBody(
+                                  title: "SMS Sent",
+                                  content: "${item.send}",
+                                  titleFlex: 2,
+                                  contentFlex: 1,
+                                ),
+                                const SizedBox(height: 8.0),
+                                RowBody(
+                                  title: "Total Reply",
+                                  content: "${item.replied}",
+                                  titleFlex: 2,
+                                  contentFlex: 1,
+                                ),
+                                const SizedBox(height: 8.0),
+                                const RowBody(
+                                  title: "Total Finished",
+                                  content: "0",
+                                  titleFlex: 2,
+                                  contentFlex: 1,
+                                ),
+                                const SizedBox(height: 8.0),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+      error: (error, stackTrace) {
+        return Center(
+          child: Text(
+            error.toString(),
+            style: const TextStyle(color: Colors.red),
           ),
-        ),
-      ],
+        );
+      },
+      loading: () {
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 }

@@ -39,7 +39,8 @@ class _MachineResponseSettingFormPageState
     final id = widget.id;
     final isCreate = id == "-1";
 
-    final notifier = ref.read(machineResponseSettingNotifier.notifier);
+    final notifier =
+        ref.read(machineResponseSettingNotifier(idMachine).notifier);
     final key = keyController.text;
     final value = valueController.text;
 
@@ -47,7 +48,6 @@ class _MachineResponseSettingFormPageState
       await notifier.create(
         key: key,
         value: value,
-        idMachine: idMachine,
         type: selectedType.valueString,
       );
     }
@@ -69,8 +69,9 @@ class _MachineResponseSettingFormPageState
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(machineResponseSettingNotifier.select((value) => value.onCreate),
-        (previous, next) {
+    ref.listen(
+        machineResponseSettingNotifier(widget.idMachine)
+            .select((value) => value.onCreate), (previous, next) {
       next.when(
         data: (data) {
           showSnackbar(
@@ -85,9 +86,10 @@ class _MachineResponseSettingFormPageState
           _formKey.currentState?.reset();
 
           // Reload data
-          final notifier = ref.read(machineResponseSettingNotifier.notifier);
           final idMachine = widget.idMachine;
-          Future.microtask(() => notifier.getAll(idMachine));
+          final notifier =
+              ref.read(machineResponseSettingNotifier(idMachine).notifier);
+          Future.microtask(() => notifier.getAll());
         },
         error: (error, stackTrace) {
           showSnackbar(

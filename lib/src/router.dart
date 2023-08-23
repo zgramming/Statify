@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 
 import 'pages/welcome/machine/machine_form_page.dart';
+import 'pages/welcome/machine/machine_page.dart';
 import 'pages/welcome/machine/machine_response_setting_form_page.dart';
 import 'pages/welcome/machine/machine_response_setting_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
@@ -18,6 +19,7 @@ const routeIntroduction = "introduction";
 const routeLogin = "login";
 
 // Experimental routes
+const routeMachine = "machine";
 const routeMachineForm = "machine/form/:id";
 
 const routeMachineResponseSetting = "machine/:idMachine/response_setting";
@@ -60,6 +62,13 @@ final _routes = <RouteBase>[
   ),
 
   //  Experimental routes
+
+  GoRoute(
+    path: "/machine",
+    name: routeMachine,
+    builder: (context, state) => const MachinePage(),
+  ),
+
   GoRoute(
     path: "/machine/form/:id",
     name: routeMachineForm,

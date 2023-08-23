@@ -12,8 +12,11 @@ import '../../model/datasource/phone_local_datasource.dart';
 import '../../model/model/phone_model.dart';
 import '../../model/model/sms_model.dart';
 import '../../utils/event_channel.dart';
-import 'machine/machine_page.dart';
+import 'home/home_page.dart';
+import 'long_distance_access/long_distance_access_page.dart';
 import 'setting/setting_page.dart';
+import 'statistic/statistic_page.dart';
+import 'whatsapp/whatsapp_page.dart';
 
 final _telephony = Telephony.instance;
 
@@ -26,6 +29,12 @@ class WelcomePage extends ConsumerStatefulWidget {
 
 class _WelcomePageState extends ConsumerState<WelcomePage> {
   StreamSubscription? _subscriptionCallReceiver;
+
+  Future<void> loadMachine() async {
+    final user = ref.read(authenticationNotifier).user;
+    final notifier = ref.read(machineNotifier.notifier);
+    await notifier.getAll(user!.id);
+  }
 
   void listenIncomingCall() {
     _subscriptionCallReceiver =
@@ -44,12 +53,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    listenIncomingCall();
-
+  void listenIncomingSMS() {
     _telephony.listenIncomingSms(
       listenInBackground: false,
       onNewMessage: (message) {
@@ -81,6 +85,17 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      listenIncomingCall();
+      listenIncomingSMS();
+      loadMachine();
+    });
+  }
+
+  @override
   void dispose() {
     _subscriptionCallReceiver?.cancel();
     super.dispose();
@@ -89,29 +104,29 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   int _selectedIndex = 0;
 
   final _destinations = <NavigationDestination>[
-    // NavigationDestination(
-    //   icon: Icon(Icons.home_outlined, color: Colors.grey.withOpacity(.5)),
-    //   selectedIcon: const Icon(Icons.home, color: Colors.white),
-    //   label: "Home",
-    // ),
-    // NavigationDestination(
-    //   icon: Icon(Icons.phone_outlined, color: Colors.grey.withOpacity(.5)),
-    //   selectedIcon: const Icon(Icons.phone, color: Colors.white),
-    //   label: "Whatsapp",
-    // ),
-    // NavigationDestination(
-    //   icon: Icon(Icons.bar_chart_outlined, color: Colors.grey.withOpacity(.5)),
-    //   selectedIcon: const Icon(Icons.bar_chart, color: Colors.white),
-    //   label: "Statistic",
-    // ),
-    // NavigationDestination(
-    //   icon: Icon(
-    //     Icons.accessibility_new_outlined,
-    //     color: Colors.grey.withOpacity(.5),
-    //   ),
-    //   selectedIcon: const Icon(Icons.accessibility_new, color: Colors.white),
-    //   label: "L.D.A",
-    // ),
+    NavigationDestination(
+      icon: Icon(Icons.home_outlined, color: Colors.grey.withOpacity(.5)),
+      selectedIcon: const Icon(Icons.home, color: Colors.white),
+      label: "Home",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.phone_outlined, color: Colors.grey.withOpacity(.5)),
+      selectedIcon: const Icon(Icons.phone, color: Colors.white),
+      label: "Whatsapp",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.bar_chart_outlined, color: Colors.grey.withOpacity(.5)),
+      selectedIcon: const Icon(Icons.bar_chart, color: Colors.white),
+      label: "Statistic",
+    ),
+    NavigationDestination(
+      icon: Icon(
+        Icons.accessibility_new_outlined,
+        color: Colors.grey.withOpacity(.5),
+      ),
+      selectedIcon: const Icon(Icons.accessibility_new, color: Colors.white),
+      label: "L.D.A",
+    ),
     NavigationDestination(
       icon: Icon(
         Icons.settings_outlined,
@@ -121,23 +136,23 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
       label: "Setting",
     ),
 
-    NavigationDestination(
-      icon: Icon(
-        Icons.device_hub_outlined,
-        color: Colors.grey.withOpacity(.5),
-      ),
-      selectedIcon: const Icon(Icons.device_hub, color: Colors.white),
-      label: "Machine",
-    ),
+    // NavigationDestination(
+    //   icon: Icon(
+    //     Icons.device_hub_outlined,
+    //     color: Colors.grey.withOpacity(.5),
+    //   ),
+    //   selectedIcon: const Icon(Icons.device_hub, color: Colors.white),
+    //   label: "Machine",
+    // ),
   ];
 
   final _pages = [
-    // const HomePage(),
-    // const WhatsAppPage(),
-    // const StatisticPage(),
-    // const LongDistanceAccessPage(),
+    const HomePage(),
+    const WhatsAppPage(),
+    const StatisticPage(),
+    const LongDistanceAccessPage(),
     const SettingPage(),
-    const MachinePage(),
+    // const MachinePage(),
   ];
 
   @override

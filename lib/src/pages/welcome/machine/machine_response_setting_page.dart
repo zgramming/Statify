@@ -26,9 +26,10 @@ class _MachineResponseSettingPageState
   @override
   void initState() {
     super.initState();
-    final notifier = ref.read(machineResponseSettingNotifier.notifier);
     final idMachine = widget.idMachine;
-    Future.microtask(() => notifier.getAll(idMachine));
+    final notifier =
+        ref.read(machineResponseSettingNotifier(idMachine).notifier);
+    Future.microtask(() => notifier.getAll());
   }
 
   @override
@@ -40,8 +41,9 @@ class _MachineResponseSettingPageState
           const CustomAppbar(title: "Machine Response Setting"),
           Expanded(
             child: Builder(builder: (context) {
-              final settingsAsync =
-                  ref.watch(machineResponseSettingNotifier).onGetAll;
+              final settingsAsync = ref
+                  .watch(machineResponseSettingNotifier(widget.idMachine))
+                  .onGetAll;
 
               return settingsAsync.when(
                 data: (items) {

@@ -37,6 +37,14 @@ import 'view_model/survey_notifier.dart';
 import 'view_model/survey_response_notifier.dart';
 
 // Custom Provider
+
+final getOnlyWhatsAppMachine = Provider((ref) {
+  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
+  final result = machines.map((e) => e.whatsapps).toList();
+  final flatten = result.expand((element) => element).toList();
+  return flatten;
+});
+
 final getMachineWhatsApp =
     Provider.family<List<MachineWhatsappModel>, String>((ref, machineId) {
   final machines = ref.watch(machineNotifier).onGetAll.valueOrNull;
@@ -59,10 +67,11 @@ final surveyResponseNotifier =
     repository: ref.watch(_surveyResponseRepository),
   ),
 );
-final machineResponseSettingNotifier = StateNotifierProvider<
-    MachineResponseSettingNotifier, MachineResponseSettingState>(
-  (ref) => MachineResponseSettingNotifier(
+final machineResponseSettingNotifier = StateNotifierProvider.family<
+    MachineResponseSettingNotifier, MachineResponseSettingState, String>(
+  (ref, idMachine) => MachineResponseSettingNotifier(
     repository: ref.watch(_machineResponseSettingRepository),
+    idMachine: idMachine,
   ),
 );
 final machineWhatsappNotifier =

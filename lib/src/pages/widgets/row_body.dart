@@ -5,16 +5,21 @@ class RowBody extends StatelessWidget {
     Key? key,
     required this.title,
     required this.content,
+    this.titleFlex,
+    this.contentFlex,
   }) : super(key: key);
+
   final String title;
   final String content;
+  final int? titleFlex;
+  final int? contentFlex;
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(child: Text(title)),
-        Expanded(flex: 2, child: Text(content)),
+        Expanded(flex: titleFlex ?? 1, child: Text(title)),
+        Expanded(flex: contentFlex ?? 2, child: Text(content)),
       ],
     );
   }

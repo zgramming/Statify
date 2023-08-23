@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
 import '../../../router.dart';
+import '../../widgets/custom_appbar.dart';
 
 class SettingPage extends ConsumerStatefulWidget {
   const SettingPage({super.key});
@@ -88,20 +89,45 @@ class _SettingPageState extends ConsumerState<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SizedBox.expand(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const CustomAppbar(title: "Setting"),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.grey)),
+                    ),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Machine'),
+                      subtitle: const Text('Manage machine'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        context.pushNamed(routeMachine);
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
               onPressed: onLogout,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
               child: const Text('Logout'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

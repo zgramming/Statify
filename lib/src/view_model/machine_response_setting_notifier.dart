@@ -34,12 +34,14 @@ class MachineResponseSettingState extends Equatable {
 class MachineResponseSettingNotifier
     extends StateNotifier<MachineResponseSettingState> {
   final MachineResponseSettingRepository repository;
+  final String idMachine;
 
   MachineResponseSettingNotifier({
     required this.repository,
+    required this.idMachine,
   }) : super(const MachineResponseSettingState());
 
-  Future<void> getAll(String idMachine) async {
+  Future<void> getAll() async {
     state = state.copyWith(onGetAll: const AsyncLoading());
     final result = await repository.getAll(idMachine);
 
@@ -54,7 +56,6 @@ class MachineResponseSettingNotifier
     required String key,
     required String value,
     required String type,
-    required String idMachine,
   }) async {
     state = state.copyWith(onCreate: const AsyncLoading());
     final result = await repository.create(

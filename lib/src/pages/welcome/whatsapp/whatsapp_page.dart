@@ -1,83 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../injection.dart';
 import '../../../utils/fonts.dart';
 import '../../widgets/custom_appbar.dart';
+import '../../widgets/row_body.dart';
 
-class WhatsAppModel {
-  final int id;
-  final String name;
-  final String status;
-  final double totalReceived;
-  final double totalRespond;
-  final double totalFinished;
-  final double totalChoose1;
-  final double totalChoose2;
-  final double totalChoose3;
-  const WhatsAppModel({
-    required this.id,
-    required this.name,
-    required this.status,
-    required this.totalReceived,
-    required this.totalRespond,
-    required this.totalFinished,
-    required this.totalChoose1,
-    required this.totalChoose2,
-    required this.totalChoose3,
-  });
-}
-
-final _whatsAppList = [
-  const WhatsAppModel(
-    id: 1,
-    name: 'WhatsApp 1',
-    status: 'Connected',
-    totalReceived: 1,
-    totalRespond: 2,
-    totalFinished: 3,
-    totalChoose1: 0,
-    totalChoose2: 0,
-    totalChoose3: 0,
-  ),
-  const WhatsAppModel(
-    id: 2,
-    name: 'WhatsApp 2',
-    status: 'Connected',
-    totalReceived: 0,
-    totalRespond: 0,
-    totalFinished: 0,
-    totalChoose1: 0,
-    totalChoose2: 0,
-    totalChoose3: 0,
-  ),
-  const WhatsAppModel(
-    id: 3,
-    name: 'WhatsApp 3',
-    status: 'Connected',
-    totalReceived: 0,
-    totalRespond: 0,
-    totalFinished: 0,
-    totalChoose1: 0,
-    totalChoose2: 0,
-    totalChoose3: 0,
-  ),
-];
-
-class WhatsAppPage extends StatelessWidget {
+class WhatsAppPage extends ConsumerWidget {
   const WhatsAppPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final machineWhatsApps = ref.watch(getOnlyWhatsAppMachine);
     return Column(
       children: [
         const CustomAppbar(title: 'WhatsApp'),
         Expanded(
           child: ListView.separated(
-            itemCount: _whatsAppList.length,
+            itemCount: machineWhatsApps.length,
             shrinkWrap: true,
             padding: const EdgeInsets.all(16.0),
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, index) {
-              final item = _whatsAppList[index];
+              final item = machineWhatsApps[index];
 
               return Card(
                 margin: const EdgeInsets.only(),
@@ -111,7 +56,7 @@ class WhatsAppPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              item.name,
+                              item.number,
                               textAlign: TextAlign.center,
                               style: bodyFont.copyWith(
                                 fontSize: 12.0,
@@ -127,19 +72,11 @@ class WhatsAppPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text("WhatsApp Status: ${item.status}"),
+                            RowBody(
+                              title: "Status",
+                              content: item.status,
+                            ),
                             const SizedBox(height: 8.0),
-                            Text("Total Receive: ${item.totalReceived}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Respond: ${item.totalRespond}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Finished: ${item.totalFinished}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Choose 1: ${item.totalChoose1}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Choose 2: ${item.totalChoose2}"),
-                            const SizedBox(height: 8.0),
-                            Text("Total Choose 3: ${item.totalChoose3}"),
                           ],
                         ),
                       )
