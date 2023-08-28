@@ -31,7 +31,10 @@ class MachineWhatsappRemoteDatasource {
       final data = decodedData['data'];
       return MachineWhatsappCreateResponseModel.fromJson(data);
     } else {
-      throw Exception('Failed to create machine');
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to create machine whatsapp';
+      throw Exception(message);
     }
   }
 
