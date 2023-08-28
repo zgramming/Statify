@@ -31,7 +31,10 @@ class _MachinePageState extends ConsumerState<MachinePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const CustomAppbar(title: "Mesin"),
+          const CustomAppbar(
+            title: "Mesin",
+            withBackButton: true,
+          ),
           Expanded(
             child: Builder(
               builder: (context) {

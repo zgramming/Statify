@@ -38,7 +38,10 @@ class _MachineResponseSettingPageState
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const CustomAppbar(title: "Machine Response Setting"),
+          const CustomAppbar(
+            title: "Machine Response Setting",
+            withBackButton: true,
+          ),
           Expanded(
             child: Builder(builder: (context) {
               final settingsAsync = ref

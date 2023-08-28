@@ -22,7 +22,7 @@ class MachineWhatsAppPage extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const CustomAppbar(title: "Machine WhatsApp"),
+          const CustomAppbar(title: "Machine WhatsApp", withBackButton: true),
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(16.0),
