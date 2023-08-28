@@ -77,9 +77,18 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
             backgroundColor: Colors.green,
           );
 
+          // Reset form
+          _numberController.clear();
+          _licenseController.clear();
+          selectedAction = MachineActionEnum.sms;
+          selectedSMSSetting = MachineSMSSettingEnum.sim1;
+          _formKey.currentState?.reset();
+
           // Reload data
           final userId = ref.read(authenticationNotifier).user?.id ?? "";
           ref.read(machineNotifier.notifier).getAll(userId);
+
+          setState(() {});
         },
         error: (error, stackTrace) {
           showSnackbar(
