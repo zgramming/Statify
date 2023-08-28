@@ -42,8 +42,8 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
     );
 
     result.fold(
-      (failure) => state =
-          state.copyWith(onCreate: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onCreate: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onCreate: AsyncData(data)),
     );
   }

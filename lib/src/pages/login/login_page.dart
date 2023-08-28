@@ -65,10 +65,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         },
         loading: () {
           showSnackbar(
-              context: context,
-              message: "Loading...",
-              backgroundColor: Colors.blue,
-              duration: const Duration(days: 1));
+            context: context,
+            message: "Loading...",
+            backgroundColor: Colors.blue,
+            duration: const Duration(days: 1),
+          );
         },
       );
     });

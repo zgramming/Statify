@@ -46,8 +46,8 @@ class MachineResponseSettingNotifier
     final result = await repository.getAll(idMachine);
 
     result.fold(
-      (failure) => state =
-          state.copyWith(onGetAll: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onGetAll: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onGetAll: AsyncData(data)),
     );
   }
@@ -66,8 +66,8 @@ class MachineResponseSettingNotifier
     );
 
     result.fold(
-      (failure) => state =
-          state.copyWith(onCreate: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onCreate: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onCreate: AsyncData(data)),
     );
   }

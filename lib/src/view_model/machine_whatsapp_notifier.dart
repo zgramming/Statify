@@ -36,7 +36,7 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
 
     result.fold(
       (failure) => state = MachineWhatsappState(
-          onCreate: AsyncError(failure, StackTrace.current)),
+          onCreate: AsyncError(failure.message, StackTrace.current)),
       (data) => state = MachineWhatsappState(onCreate: AsyncData(data)),
     );
   }

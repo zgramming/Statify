@@ -65,8 +65,8 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
       password: password,
     );
     result.fold(
-      (failure) => state =
-          state.copyWith(onLogin: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onLogin: AsyncError(failure.message, StackTrace.current)),
       (data) {
         final (authenticationResponseModel, user) = data;
         return state = state.copyWith(
@@ -81,8 +81,8 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
     state = state.copyWith(onMe: const AsyncLoading());
     final result = await repository.me(token);
     result.fold(
-      (failure) =>
-          state = state.copyWith(onMe: AsyncError(failure, StackTrace.current)),
+      (failure) => state =
+          state.copyWith(onMe: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onMe: AsyncData(data)),
     );
   }
@@ -91,8 +91,8 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
     state = state.copyWith(onLogout: const AsyncLoading());
     final result = await repository.logout();
     result.fold(
-      (failure) => state =
-          state.copyWith(onLogout: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onLogout: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onLogout: AsyncData(data)),
     );
   }

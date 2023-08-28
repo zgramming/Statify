@@ -48,8 +48,8 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
       type: type,
     );
     result.fold(
-      (failure) => state =
-          state.copyWith(onCreate: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onCreate: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onCreate: AsyncData(data)),
     );
   }
@@ -63,7 +63,7 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
     );
     result.fold(
       (failure) => state = state.copyWith(
-          onGetResponse: AsyncError(failure, StackTrace.current)),
+          onGetResponse: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onGetResponse: AsyncData(data)),
     );
   }

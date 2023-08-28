@@ -48,8 +48,8 @@ class MachineNotifier extends StateNotifier<MachineState> {
     state = state.copyWith(onGetAll: const AsyncLoading());
     final result = await repository.getAll(userId);
     result.fold(
-      (failure) => state =
-          state.copyWith(onGetAll: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onGetAll: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onGetAll: AsyncData(data)),
     );
   }
@@ -64,8 +64,8 @@ class MachineNotifier extends StateNotifier<MachineState> {
       machineId: machineId,
     );
     result.fold(
-      (failure) => state =
-          state.copyWith(onGetById: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onGetById: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onGetById: AsyncData(data)),
     );
   }
@@ -81,7 +81,7 @@ class MachineNotifier extends StateNotifier<MachineState> {
     );
     result.fold(
       (failure) => state = state.copyWith(
-          onGetByNumber: AsyncError(failure, StackTrace.current)),
+          onGetByNumber: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onGetByNumber: AsyncData(data)),
     );
   }
@@ -102,8 +102,8 @@ class MachineNotifier extends StateNotifier<MachineState> {
       userId: userId,
     );
     result.fold(
-      (failure) => state =
-          state.copyWith(onCreate: AsyncError(failure, StackTrace.current)),
+      (failure) => state = state.copyWith(
+          onCreate: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onCreate: AsyncData(data)),
     );
   }
