@@ -50,7 +50,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         data: (data) {
           showSnackbar(
             context: context,
-            message: "Login berhasil",
+            message: "Success Login",
             backgroundColor: Colors.green,
           );
 
@@ -100,7 +100,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Selamat Datang",
+                      "Welcome Back",
                       style: bodyFont.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -131,7 +131,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "Username tidak boleh kosong";
+                                return "Username not be empty";
                               }
                               return null;
                             },
@@ -167,7 +167,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "Password tidak boleh kosong";
+                                return "Password not be empty";
                               }
                               return null;
                             },

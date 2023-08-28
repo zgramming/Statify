@@ -9,6 +9,7 @@ import '../../model/authentication/user_model.dart';
 
 class AuthenticationRemoteDatasource {
   final http.Client client;
+
   const AuthenticationRemoteDatasource({
     required this.client,
   });
@@ -23,12 +24,10 @@ class AuthenticationRemoteDatasource {
       'password': password,
     }).timeout(
       const Duration(seconds: 10),
-      onTimeout: () {
-        throw Exception('Connection timeout');
-      },
+      onTimeout: () => throw Exception('Connection timeout'),
     );
-
     final body = response.body;
+
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final data = decoded['data'];

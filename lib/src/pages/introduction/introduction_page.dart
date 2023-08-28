@@ -13,10 +13,11 @@ class IntroductionPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return IntroductionScreen(
       pages: [
+        // Convert text to english
         PageViewModel(
-          title: 'Design Menarik',
+          title: 'Minimalist design',
           body:
-              'Dengan design yang menarik, membuat aplikasi ini nyaman digunakan',
+              'With an attractive design, this application is comfortable to use.',
           image: Image.asset(
             'assets/image/intro/1.intro.png',
           ),
@@ -31,9 +32,8 @@ class IntroductionPage extends ConsumerWidget {
           ),
         ),
         PageViewModel(
-          title: 'Melacak Aktivitas',
-          body:
-              'Dengan aplikasi ini, kamu dapat melacak aktivitas yang user lakukan',
+          title: 'Tracking Activity',
+          body: 'With this application, you can track user activity.',
           image: Center(
             child: Image.asset(
               'assets/image/intro/2.intro.png',
@@ -41,9 +41,9 @@ class IntroductionPage extends ConsumerWidget {
           ),
         ),
         PageViewModel(
-          title: 'Statistik',
+          title: 'Statistics',
           body:
-              'Dengan aplikasi ini, kamu dapat melihat statistik dari aktivitas yang user lakukan',
+              'With this application, you can view statistics from user activity.',
           image: Center(
             child: Image.asset(
               'assets/image/intro/3.intro.png',
@@ -51,8 +51,8 @@ class IntroductionPage extends ConsumerWidget {
           ),
         ),
         PageViewModel(
-          title: 'Selesai',
-          body: 'Selamat menggunakan aplikasi ini',
+          title: 'Done',
+          body: 'Enjoy using this application',
           image: Center(
             child: Image.asset(
               'assets/image/intro/4.intro.png',
