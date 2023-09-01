@@ -17,3 +17,21 @@ void showSnackbar({
 
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
+
+Widget Function(BuildContext, Widget, ImageChunkEvent?)?
+    imageNetworkLoadingBuilder() {
+  return (context, child, loadingProgress) {
+    if (loadingProgress == null) {
+      return child;
+    }
+
+    return Center(
+      child: CircularProgressIndicator(
+        value: loadingProgress.expectedTotalBytes != null
+            ? loadingProgress.cumulativeBytesLoaded /
+                loadingProgress.expectedTotalBytes!
+            : null,
+      ),
+    );
+  };
+}

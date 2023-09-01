@@ -23,7 +23,10 @@ class MachineRemoteDatasource {
       final machines = list.map((e) => MachineModel.fromJson(e)).toList();
       return machines;
     } else {
-      throw Exception('Failed to load machines');
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to load machine';
+      throw Exception(message);
     }
   }
 
@@ -41,7 +44,10 @@ class MachineRemoteDatasource {
       final machine = MachineModel.fromJson(data);
       return machine;
     } else {
-      throw Exception('Failed to load machine');
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to load machine';
+      throw Exception(message);
     }
   }
 
@@ -59,7 +65,10 @@ class MachineRemoteDatasource {
       final machine = MachineModel.fromJson(data);
       return machine;
     } else {
-      throw Exception('Failed to load machine');
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to load machine';
+      throw Exception(message);
     }
   }
 

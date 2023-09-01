@@ -4,6 +4,8 @@ import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
 import 'pages/welcome/machine/machine_response_setting_form_page.dart';
 import 'pages/welcome/machine/machine_response_setting_page.dart';
+import 'pages/welcome/machine/machine_survey_form_page.dart';
+import 'pages/welcome/machine/machine_survey_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_page.dart';
 import 'pages/welcome/sms/send_sms/send_sms_page.dart';
@@ -28,6 +30,9 @@ const routeMachineResponseSettingForm =
 
 const routeMachineWhatsApp = "machine/:idMachine/whatsapp";
 const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
+
+const routeMachineSurvey = "machine/:idMachine/survey";
+const routeMachineSurveyForm = "machine/:idMachine/survey/form/:id";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -68,7 +73,6 @@ final _routes = <RouteBase>[
     name: routeMachine,
     builder: (context, state) => const MachinePage(),
   ),
-
   GoRoute(
     path: "/machine/form/:id",
     name: routeMachineForm,
@@ -86,7 +90,6 @@ final _routes = <RouteBase>[
       return MachineWhatsAppPage(idMachine: idMachine);
     },
   ),
-
   GoRoute(
     path: "/machine/:idMachine/whatsapp/form/:id",
     name: routeMachineWhatsAppForm,
@@ -105,7 +108,6 @@ final _routes = <RouteBase>[
       return MachineResponseSettingPage(idMachine: idMachine);
     },
   ),
-
   GoRoute(
     path: "/machine/:idMachine/response_setting/form/:id",
     name: routeMachineResponseSettingForm,
@@ -113,6 +115,24 @@ final _routes = <RouteBase>[
       final id = state.pathParameters['id'] ?? "-1";
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
       return MachineResponseSettingFormPage(idMachine: idMachine, id: id);
+    },
+  ),
+
+  GoRoute(
+    path: "/machine/:idMachine/survey",
+    name: routeMachineSurvey,
+    builder: (context, state) {
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return MachineSurveyPage(idMachine: idMachine);
+    },
+  ),
+  GoRoute(
+    path: "/machine/:idMachine/survey/form/:id",
+    name: routeMachineSurveyForm,
+    builder: (context, state) {
+      final id = state.pathParameters['id'] ?? "-1";
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return MachineSurveyFormPage(idMachine: idMachine, id: id);
     },
   ),
 ];
