@@ -22,7 +22,11 @@ class MachineResponseSettingRemoteDatasource {
       final list = decode['data'] as List;
 
       final result =
-          list.map((e) => MachineResponseSettingModel.fromJson(e)).toList();
+          list.map((e) => MachineResponseSettingModel.fromJson(e)).map((e) {
+        return e.copyWith(
+          value: Uri.decodeComponent(e.value),
+        );
+      }).toList();
 
       return result;
     } else {

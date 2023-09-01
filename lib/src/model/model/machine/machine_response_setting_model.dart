@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -46,4 +47,24 @@ class MachineResponseSettingModel extends Equatable {
 
   @override
   bool get stringify => true;
+
+  MachineResponseSettingModel copyWith({
+    String? id,
+    String? machineId,
+    String? key,
+    String? value,
+    String? type,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return MachineResponseSettingModel(
+      id: id ?? this.id,
+      machineId: machineId ?? this.machineId,
+      key: key ?? this.key,
+      value: value ?? this.value,
+      type: type ?? this.type,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }

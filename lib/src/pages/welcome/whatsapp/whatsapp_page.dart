@@ -7,11 +7,49 @@ import '../../../utils/functions.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
-class WhatsAppPage extends ConsumerWidget {
+class WhatsAppPage extends ConsumerStatefulWidget {
   const WhatsAppPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WhatsAppPage> createState() => _WhatsAppPageState();
+}
+
+class _WhatsAppPageState extends ConsumerState<WhatsAppPage> {
+  void onClickQRCode(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("QR Code"),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AspectRatio(
+                aspectRatio: 1.0,
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  loadingBuilder: imageNetworkLoadingBuilder(),
+                ),
+              )
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Close"),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final machineWhatsApps = ref.watch(getOnlyWhatsAppMachine);
     return Column(
       children: [
@@ -88,15 +126,10 @@ class WhatsAppPage extends ConsumerWidget {
                       ),
                       if (item.qrCode != null) ...[
                         const SizedBox(height: 16.0),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.network(
-                            item.qrCode!,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            loadingBuilder: imageNetworkLoadingBuilder(),
-                          ),
+                        ElevatedButton.icon(
+                          onPressed: () => onClickQRCode(item.qrCode!),
+                          icon: const Icon(Icons.qr_code),
+                          label: const Text("QR Code"),
                         ),
                       ]
                     ],
