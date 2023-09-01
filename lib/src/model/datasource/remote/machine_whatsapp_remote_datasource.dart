@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -6,6 +7,7 @@ import 'package:http_parser/http_parser.dart';
 
 import '../../../utils/constant.dart';
 import '../../model/machine/machine_whatsapp_create_response_model.dart';
+import '../../model/machine/machine_whatsapp_send_qrcode_response_model.dart';
 
 class MachineWhatsappRemoteDatasource {
   final http.Client client;
@@ -38,11 +40,14 @@ class MachineWhatsappRemoteDatasource {
     }
   }
 
-  Future<dynamic> sendQRCode({required File file}) async {
-    final uri = Uri.parse("$kBaseApiUrl/machine-whatsapp/send-qr-code");
+  Future<MachineWhatsappSendQRCodeResponseModel> sendQRCode({
+    required File file,
+    required String number,
+  }) async {
+    final uri = Uri.parse("$kBaseApiUrl/machine-whatsapps/$number/qr-code");
 
     final fileBody = await http.MultipartFile.fromPath(
-      'file',
+      'qr_code',
       file.path,
       filename: file.path.split('/').last,
       contentType: MediaType('image', 'png'),
@@ -53,16 +58,20 @@ class MachineWhatsappRemoteDatasource {
     final data = await response.stream.bytesToString();
     final decodedData = Map<String, dynamic>.from(jsonDecode(data));
     if (response.statusCode == 200) {
-      return decodedData;
+      final data = decodedData['data'];
+      return MachineWhatsappSendQRCodeResponseModel.fromJson(data);
     } else {
-      throw Exception('Failed to send QR Code');
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to send qr code';
+      throw Exception(message);
     }
   }
 
   Future<dynamic> connect({
     required String machineId,
   }) async {
-    final uri = Uri.parse("$kBaseApiUrl/machine-whatsapp/$machineId/connect");
+    final uri = Uri.parse("$kBaseApiUrl/machine-whatsapps/$machineId/connect");
     final response = await client.patch(uri);
 
     final data = response.body;
@@ -70,7 +79,10 @@ class MachineWhatsappRemoteDatasource {
     if (response.statusCode == 200) {
       return decodedData;
     } else {
-      throw Exception('Failed to connect machine');
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to connect machine';
+      throw Exception(message);
     }
   }
 
@@ -78,7 +90,7 @@ class MachineWhatsappRemoteDatasource {
     required String machineId,
   }) async {
     final uri =
-        Uri.parse("$kBaseApiUrl/machine-whatsapp/$machineId/disconnect");
+        Uri.parse("$kBaseApiUrl/machine-whatsapps/$machineId/disconnect");
     final response = await client.patch(uri);
 
     final data = response.body;
@@ -86,7 +98,10 @@ class MachineWhatsappRemoteDatasource {
     if (response.statusCode == 200) {
       return decodedData;
     } else {
-      throw Exception('Failed to disconnect machine');
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to disconnect machine';
+      throw Exception(message);
     }
   }
 }

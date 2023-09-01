@@ -24,7 +24,6 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
 
 Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
     <String, dynamic>{
-      'whatsapps': instance.whatsapps,
       'id': instance.id,
       'user_id': instance.userId,
       'number': instance.number,
@@ -35,4 +34,5 @@ Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
       'replied': instance.replied,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
+      'whatsapps': instance.whatsapps,
     };

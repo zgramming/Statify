@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
 import '../../../utils/fonts.dart';
-import '../../../utils/functions.dart';
 import '../../widgets/custom_appbar.dart';
+import '../../widgets/dialog_view_qrcode.dart';
 import '../../widgets/row_body.dart';
 
 class WhatsAppPage extends ConsumerStatefulWidget {
@@ -18,33 +18,7 @@ class _WhatsAppPageState extends ConsumerState<WhatsAppPage> {
   void onClickQRCode(String imageUrl) {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("QR Code"),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AspectRatio(
-                aspectRatio: 1.0,
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  loadingBuilder: imageNetworkLoadingBuilder(),
-                ),
-              )
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Close"),
-            )
-          ],
-        );
-      },
+      builder: (context) => DialogViewQRCode(imageUrl: imageUrl),
     );
   }
 
@@ -124,14 +98,12 @@ class _WhatsAppPageState extends ConsumerState<WhatsAppPage> {
                           )
                         ],
                       ),
-                      if (item.qrCode != null) ...[
-                        const SizedBox(height: 16.0),
-                        ElevatedButton.icon(
-                          onPressed: () => onClickQRCode(item.qrCode!),
-                          icon: const Icon(Icons.qr_code),
-                          label: const Text("QR Code"),
-                        ),
-                      ]
+                      const SizedBox(height: 16.0),
+                      ElevatedButton.icon(
+                        onPressed: () => onClickQRCode(item.qrCode!),
+                        icon: const Icon(Icons.qr_code),
+                        label: const Text("QR Code"),
+                      ),
                     ],
                   ),
                 ),
