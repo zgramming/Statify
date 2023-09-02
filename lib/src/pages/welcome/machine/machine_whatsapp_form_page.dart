@@ -71,8 +71,7 @@ class _MachineWhatsAppFormPageState
           _numberController.clear();
 
           // Refresh data
-          final userId = ref.read(authenticationNotifier).user?.id ?? "";
-          ref.read(machineNotifier.notifier).getAll(userId);
+          ref.invalidate(machineNotifier);
         },
         error: (error, stackTrace) {
           showSnackbar(

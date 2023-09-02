@@ -81,7 +81,13 @@ final machineWhatsappNotifier =
   ),
 );
 final machineNotifier = StateNotifierProvider<MachineNotifier, MachineState>(
-  (ref) => MachineNotifier(repository: ref.watch(_machineRepository)),
+  (ref) {
+    final userId = ref.watch(authenticationNotifier).user?.id ?? '';
+    return MachineNotifier(
+      repository: ref.watch(_machineRepository),
+      userId: userId,
+    );
+  },
 );
 final authenticationNotifier =
     StateNotifierProvider<AuthenticationNotifier, AuthenticationState>(

@@ -30,12 +30,6 @@ class WelcomePage extends ConsumerStatefulWidget {
 class _WelcomePageState extends ConsumerState<WelcomePage> {
   StreamSubscription? _subscriptionCallReceiver;
 
-  Future<void> loadMachine() async {
-    final user = ref.read(authenticationNotifier).user;
-    final notifier = ref.read(machineNotifier.notifier);
-    await notifier.getAll(user!.id);
-  }
-
   void listenIncomingCall() {
     _subscriptionCallReceiver =
         EventChannelUtils.listenIncomingCall().listen((event) {
@@ -91,7 +85,6 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
     Future.microtask(() {
       listenIncomingCall();
       listenIncomingSMS();
-      loadMachine();
     });
   }
 

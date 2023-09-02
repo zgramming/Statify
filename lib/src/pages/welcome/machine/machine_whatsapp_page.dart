@@ -85,11 +85,8 @@ class _DialogUploadQRCodeState extends ConsumerState<DialogUploadQRCode> {
               backgroundColor: Colors.green,
             );
 
-            // Refresh data machine
-
-            final notifier = ref.read(machineNotifier.notifier);
-            final userId = ref.read(authenticationNotifier).user?.id;
-            notifier.getAll(userId ?? "");
+            // Refresh data
+            ref.invalidate(machineNotifier);
           },
           error: (error, stackTrace) => showSnackbar(
             context: context,
@@ -241,29 +238,34 @@ class _MachineWhatsAppPageState extends ConsumerState<MachineWhatsAppPage> {
         children: [
           const CustomAppbar(title: "Machine WhatsApp", withBackButton: true),
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16.0),
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: whatsapps.length,
-              itemBuilder: (context, index) {
-                final item = whatsapps[index];
-                final order = index + 1;
-                return ListTile(
-                  leading: Text("$order"),
-                  title: Text(item.number),
-                  subtitle: Text(item.status),
-                  trailing: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8.0,
-                    children: [
-                      IconButton(
-                        onPressed: () => onQRCodeButtonClick(item),
-                        icon: const Icon(Icons.qr_code),
-                      )
-                    ],
-                  ),
-                );
+            child: RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(machineNotifier);
               },
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16.0),
+                separatorBuilder: (context, index) => const Divider(),
+                itemCount: whatsapps.length,
+                itemBuilder: (context, index) {
+                  final item = whatsapps[index];
+                  final order = index + 1;
+                  return ListTile(
+                    leading: Text("$order"),
+                    title: Text(item.number),
+                    subtitle: Text(item.status),
+                    trailing: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8.0,
+                      children: [
+                        IconButton(
+                          onPressed: () => onQRCodeButtonClick(item),
+                          icon: const Icon(Icons.qr_code),
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],

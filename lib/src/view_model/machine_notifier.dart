@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,11 +41,15 @@ class MachineState extends Equatable {
 
 class MachineNotifier extends StateNotifier<MachineState> {
   final MachineRepository repository;
+  final String userId;
   MachineNotifier({
     required this.repository,
-  }) : super(const MachineState());
+    required this.userId,
+  }) : super(const MachineState()) {
+    getAll();
+  }
 
-  Future<void> getAll(String userId) async {
+  Future<void> getAll() async {
     state = state.copyWith(onGetAll: const AsyncLoading());
     final result = await repository.getAll(userId);
     result.fold(
@@ -55,7 +60,6 @@ class MachineNotifier extends StateNotifier<MachineState> {
   }
 
   Future<void> getById({
-    required String userId,
     required String machineId,
   }) async {
     state = state.copyWith(onGetById: const AsyncLoading());
@@ -71,7 +75,6 @@ class MachineNotifier extends StateNotifier<MachineState> {
   }
 
   Future<void> getByNumber({
-    required String userId,
     required String machineNumber,
   }) async {
     state = state.copyWith(onGetByNumber: const AsyncLoading());
@@ -91,7 +94,6 @@ class MachineNotifier extends StateNotifier<MachineState> {
     required String license,
     required String action,
     required String smsSetting,
-    required String userId,
   }) async {
     state = state.copyWith(onCreate: const AsyncLoading());
     final result = await repository.create(

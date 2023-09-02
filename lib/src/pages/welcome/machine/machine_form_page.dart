@@ -35,7 +35,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     final isCreate = id == "-1";
 
     final notifier = ref.read(machineNotifier.notifier);
-    final user = ref.read(authenticationNotifier).user;
 
     final number = _numberController.text;
     final license = _licenseController.text;
@@ -46,7 +45,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
         license: license,
         action: selectedAction.valueString,
         smsSetting: selectedSMSSetting.valueString,
-        userId: user?.id ?? "",
       );
     }
   }
@@ -85,8 +83,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
           _formKey.currentState?.reset();
 
           // Reload data
-          final userId = ref.read(authenticationNotifier).user?.id ?? "";
-          ref.read(machineNotifier.notifier).getAll(userId);
+          ref.invalidate(machineNotifier);
 
           setState(() {});
         },

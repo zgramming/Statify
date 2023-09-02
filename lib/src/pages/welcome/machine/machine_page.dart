@@ -52,15 +52,6 @@ class _MachinePageState extends ConsumerState<MachinePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    final user = ref.read(authenticationNotifier).user;
-    Future.microtask(() {
-      ref.read(machineNotifier.notifier).getAll(user?.id ?? "");
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final machine = ref.watch(machineNotifier).onGetAll;
     return Scaffold(

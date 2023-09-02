@@ -20,69 +20,74 @@ class HomePage extends ConsumerWidget {
           children: [
             const CustomAppbar(title: "Home"),
             Expanded(
-              child: ListView.separated(
-                itemCount: items.length,
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(16.0),
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  final item = items[index];
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(machineNotifier);
+                },
+                child: ListView.separated(
+                  itemCount: items.length,
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(16.0),
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
 
-                  return Card(
-                    margin: const EdgeInsets.only(),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 8.0,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "${index + 1}. ${item.number}",
-                              style: headerFont.copyWith(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                    return Card(
+                      margin: const EdgeInsets.only(),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16.0,
+                          horizontal: 8.0,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "${index + 1}. ${item.number}",
+                                style: headerFont.copyWith(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                RowBody(
-                                  title: "SMS Sent",
-                                  content: "${item.send}",
-                                  titleFlex: 2,
-                                  contentFlex: 1,
-                                ),
-                                const SizedBox(height: 8.0),
-                                RowBody(
-                                  title: "Total Reply",
-                                  content: "${item.replied}",
-                                  titleFlex: 2,
-                                  contentFlex: 1,
-                                ),
-                                const SizedBox(height: 8.0),
-                                const RowBody(
-                                  title: "Total Finished",
-                                  content: "0",
-                                  titleFlex: 2,
-                                  contentFlex: 1,
-                                ),
-                                const SizedBox(height: 8.0),
-                              ],
-                            ),
-                          )
-                        ],
+                            const SizedBox(width: 16.0),
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  RowBody(
+                                    title: "SMS Sent",
+                                    content: "${item.send}",
+                                    titleFlex: 2,
+                                    contentFlex: 1,
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  RowBody(
+                                    title: "Total Reply",
+                                    content: "${item.replied}",
+                                    titleFlex: 2,
+                                    contentFlex: 1,
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  const RowBody(
+                                    title: "Total Finished",
+                                    content: "0",
+                                    titleFlex: 2,
+                                    contentFlex: 1,
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],
