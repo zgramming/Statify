@@ -139,7 +139,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     return null;
                   },
                   decoration: inputDecorationRounded().copyWith(
-                    hintText: "Masukkan License",
+                    hintText: 'Masukkan License',
                   ),
                 ),
                 const SizedBox(height: 20),

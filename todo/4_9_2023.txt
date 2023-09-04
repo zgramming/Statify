@@ -1,0 +1,7 @@
+
+A. Halaman depan Whatsapps
+
+1. Tombol tambah mesin whatsapp dipindahkan ke dalam menu whatsapp di halaman depan, popupmenubutton machine whatsapp dihapus saja
+    1.1. Karena tambah mesin whatsapp dipindah ke halaman depan, nanti form-nya harus ditambahkan dropdown mesin yang mau dipilih untuk ditambahkan whatsappnya 
+        1.1.1. + Tambah Dropdown Mesin (untuk dapatkan ID Mesinnya)
+2. Tambahkan input search untuk filter by nomor , name dll  
