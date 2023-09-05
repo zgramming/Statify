@@ -5,8 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import '../../../utils/constant.dart';
-import '../../model/machine/machine_whatsapp_create_response_model.dart';
-import '../../model/machine/machine_whatsapp_send_qrcode_response_model.dart';
+import '../../model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
+import '../../model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
+import '../../model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
+import '../../model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
+import '../../model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
 
 class MachineWhatsappRemoteDatasource {
   final http.Client client;
@@ -39,6 +42,24 @@ class MachineWhatsappRemoteDatasource {
     }
   }
 
+  Future<MachineWhatsappDeleteResponseModel> delete(
+      String machineWhatsappId) async {
+    final uri = Uri.parse("$kBaseApiUrl/machine-whatsapps/$machineWhatsappId");
+    final response = await client.delete(uri);
+
+    final body = response.body;
+    final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    if (response.statusCode == 200) {
+      final data = decodedData['data'];
+      return MachineWhatsappDeleteResponseModel.fromJson(data);
+    } else {
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to delete machine whatsapp';
+      throw Exception(message);
+    }
+  }
+
   Future<MachineWhatsappSendQRCodeResponseModel> sendQRCode({
     required File file,
     required String number,
@@ -67,16 +88,19 @@ class MachineWhatsappRemoteDatasource {
     }
   }
 
-  Future<dynamic> connect({
-    required String machineId,
+  Future<MachineWhatsappConnectedResponseModel> connect({
+    required String machineWhatsappId,
   }) async {
-    final uri = Uri.parse("$kBaseApiUrl/machine-whatsapps/$machineId/connect");
+    final uri =
+        Uri.parse("$kBaseApiUrl/machine-whatsapps/$machineWhatsappId/connect");
     final response = await client.patch(uri);
 
     final data = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(data));
     if (response.statusCode == 200) {
-      return decodedData;
+      final data = decodedData['data'];
+      final result = MachineWhatsappConnectedResponseModel.fromJson(data);
+      return result;
     } else {
       final message = decodedData.containsKey('message')
           ? decodedData['message']
@@ -85,17 +109,19 @@ class MachineWhatsappRemoteDatasource {
     }
   }
 
-  Future<dynamic> disconnect({
-    required String machineId,
+  Future<MachineWhatsappDisconnectedResponseModel> disconnect({
+    required String machineWhatsappId,
   }) async {
-    final uri =
-        Uri.parse("$kBaseApiUrl/machine-whatsapps/$machineId/disconnect");
+    final uri = Uri.parse(
+        "$kBaseApiUrl/machine-whatsapps/$machineWhatsappId/disconnect");
     final response = await client.patch(uri);
 
     final data = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(data));
     if (response.statusCode == 200) {
-      return decodedData;
+      final data = decodedData['data'];
+      final result = MachineWhatsappDisconnectedResponseModel.fromJson(data);
+      return result;
     } else {
       final message = decodedData.containsKey('message')
           ? decodedData['message']

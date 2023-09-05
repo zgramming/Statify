@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../utils/failure.dart';
 import '../datasource/remote/machine_remote_datasource.dart';
 import '../model/machine/machine_create_response_model.dart';
+import '../model/machine/machine_delete_response_model.dart';
 import '../model/machine/machine_model.dart';
 
 class MachineRepository {
@@ -65,6 +66,17 @@ class MachineRepository {
         smsSetting: smsSetting,
         userId: userId,
       );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MachineDeleteResponseModel>> delete(
+    String userId,
+  ) async {
+    try {
+      final result = await remoteDatasource.delete(userId);
       return Right(result);
     } catch (e) {
       return Left(CommonFailure(e.toString()));

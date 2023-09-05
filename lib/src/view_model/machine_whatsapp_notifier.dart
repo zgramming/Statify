@@ -1,25 +1,60 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/model/machine/machine_whatsapp_create_response_model.dart';
-import '../model/model/machine/machine_whatsapp_send_qrcode_response_model.dart';
+import '../model/model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
+import '../model/model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
+import '../model/model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
+import '../model/model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
+import '../model/model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
 import '../model/repository/machine_whatsapp_repository.dart';
 
 class MachineWhatsappState extends Equatable {
   final AsyncValue<MachineWhatsappCreateResponseModel?> onCreate;
+  final AsyncValue<MachineWhatsappDeleteResponseModel?> onDelete;
   final AsyncValue<MachineWhatsappSendQRCodeResponseModel?> onSendQRCode;
+  final AsyncValue<MachineWhatsappDisconnectedResponseModel?> onDisconnect;
+  final AsyncValue<MachineWhatsappConnectedResponseModel?> onConnect;
+
   const MachineWhatsappState({
     this.onCreate = const AsyncData(null),
+    this.onDelete = const AsyncData(null),
     this.onSendQRCode = const AsyncData(null),
+    this.onDisconnect = const AsyncData(null),
+    this.onConnect = const AsyncData(null),
   });
 
   @override
-  List<Object> get props => [onCreate];
+  List<Object> get props {
+    return [
+      onCreate,
+      onDelete,
+      onSendQRCode,
+      onDisconnect,
+      onConnect,
+    ];
+  }
 
   @override
   bool get stringify => true;
+
+  MachineWhatsappState copyWith({
+    AsyncValue<MachineWhatsappCreateResponseModel?>? onCreate,
+    AsyncValue<MachineWhatsappDeleteResponseModel?>? onDelete,
+    AsyncValue<MachineWhatsappSendQRCodeResponseModel?>? onSendQRCode,
+    AsyncValue<MachineWhatsappDisconnectedResponseModel?>? onDisconnect,
+    AsyncValue<MachineWhatsappConnectedResponseModel?>? onConnect,
+  }) {
+    return MachineWhatsappState(
+      onCreate: onCreate ?? this.onCreate,
+      onDelete: onDelete ?? this.onDelete,
+      onSendQRCode: onSendQRCode ?? this.onSendQRCode,
+      onDisconnect: onDisconnect ?? this.onDisconnect,
+      onConnect: onConnect ?? this.onConnect,
+    );
+  }
 }
 
 class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
@@ -46,6 +81,18 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
     );
   }
 
+  Future<void> delete(String machineWhatsappId) async {
+    state = const MachineWhatsappState(onDelete: AsyncLoading());
+
+    final result = await repository.delete(machineWhatsappId);
+
+    result.fold(
+      (failure) => state = MachineWhatsappState(
+          onDelete: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = MachineWhatsappState(onDelete: AsyncData(data)),
+    );
+  }
+
   Future<void> sendQRCode({
     required String number,
     required File file,
@@ -61,6 +108,38 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
       (failure) => state = MachineWhatsappState(
           onSendQRCode: AsyncError(failure.message, StackTrace.current)),
       (data) => state = MachineWhatsappState(onSendQRCode: AsyncData(data)),
+    );
+  }
+
+  Future<void> disconnect({
+    required String machineWhatsappId,
+  }) async {
+    state = const MachineWhatsappState(onDisconnect: AsyncLoading());
+
+    final result = await repository.disconnect(
+      machineWhatsappId: machineWhatsappId,
+    );
+
+    result.fold(
+      (failure) => state = MachineWhatsappState(
+          onDisconnect: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = MachineWhatsappState(onDisconnect: AsyncData(data)),
+    );
+  }
+
+  Future<void> connect({
+    required String machineWhatsappId,
+  }) async {
+    state = const MachineWhatsappState(onConnect: AsyncLoading());
+
+    final result = await repository.connect(
+      machineWhatsappId: machineWhatsappId,
+    );
+
+    result.fold(
+      (failure) => state = MachineWhatsappState(
+          onConnect: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = MachineWhatsappState(onConnect: AsyncData(data)),
     );
   }
 }

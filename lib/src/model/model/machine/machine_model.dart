@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'machine_whatsapp_model.dart';
+
+import '../machine_whatsapp/machine_whatsapp_model.dart';
 
 part 'machine_model.g.dart';
 

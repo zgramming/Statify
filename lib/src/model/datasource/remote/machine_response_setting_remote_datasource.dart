@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../../../utils/constant.dart';
 import '../../model/machine/machine_response_setting_create_response_model.dart';
 import '../../model/machine/machine_response_setting_model.dart';
+import '../../model/machine_response_setting/machine_response_setting_delete_response_model.dart';
 
 class MachineResponseSettingRemoteDatasource {
   final http.Client client;
@@ -57,6 +58,32 @@ class MachineResponseSettingRemoteDatasource {
     if (response.statusCode == 200) {
       final data = decode['data'];
       final result = MachineResponseSettingCreateResponseModel.fromJson(data);
+      return result;
+    } else {
+      final message = decode.containsKey('message')
+          ? decode['message']
+          : 'Failed to load data';
+      throw Exception(message);
+    }
+  }
+
+  // Delete response setting
+
+  Future<MachineResponseSettingDeleteResponseModel> delete({
+    required String idMachine,
+    required String idResponseSetting,
+  }) async {
+    final uri = Uri.parse(
+        "$kBaseApiUrl/machines/$idMachine/response-settings/$idResponseSetting");
+
+    final response = await client.delete(uri);
+
+    final body = response.body;
+    final decode = Map.from(jsonDecode(body));
+
+    if (response.statusCode == 200) {
+      final data = decode['data'];
+      final result = MachineResponseSettingDeleteResponseModel.fromJson(data);
       return result;
     } else {
       final message = decode.containsKey('message')

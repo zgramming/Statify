@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
-import '../../../model/model/machine/machine_whatsapp_model.dart';
+import '../../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../../../router.dart';
 import '../../../utils/functions.dart';
 import '../../widgets/custom_appbar.dart';

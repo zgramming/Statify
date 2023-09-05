@@ -14,7 +14,7 @@ import 'model/datasource/remote/survey_remote_datasource.dart';
 import 'model/datasource/remote/survey_response_remote_datasource.dart';
 import 'model/datasource/sms_local_datasource.dart';
 import 'model/model/application_config_model.dart';
-import 'model/model/machine/machine_whatsapp_model.dart';
+import 'model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import 'model/model/phone_model.dart';
 import 'model/model/sms_model.dart';
 import 'model/repository/application_config_repository.dart';

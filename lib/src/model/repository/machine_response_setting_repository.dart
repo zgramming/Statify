@@ -4,6 +4,7 @@ import '../../utils/failure.dart';
 import '../datasource/remote/machine_response_setting_remote_datasource.dart';
 import '../model/machine/machine_response_setting_create_response_model.dart';
 import '../model/machine/machine_response_setting_model.dart';
+import '../model/machine_response_setting/machine_response_setting_delete_response_model.dart';
 
 class MachineResponseSettingRepository {
   final MachineResponseSettingRemoteDatasource remoteDatasource;
@@ -33,6 +34,21 @@ class MachineResponseSettingRepository {
         value: value,
         type: type,
         idMachine: idMachine,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MachineResponseSettingDeleteResponseModel>> delete({
+    required String idMachine,
+    required String idResponseSetting,
+  }) async {
+    try {
+      final result = await remoteDatasource.delete(
+        idMachine: idMachine,
+        idResponseSetting: idResponseSetting,
       );
       return Right(result);
     } catch (e) {

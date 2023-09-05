@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/model/machine/machine_create_response_model.dart';
+import '../model/model/machine/machine_delete_response_model.dart';
 import '../model/model/machine/machine_model.dart';
 import '../model/repository/machine_repository.dart';
 
@@ -11,15 +12,26 @@ class MachineState extends Equatable {
   final AsyncValue<MachineModel?> onGetById;
   final AsyncValue<MachineModel?> onGetByNumber;
   final AsyncValue<MachineCreateResponseModel?> onCreate;
+  final AsyncValue<MachineDeleteResponseModel?> onDelete;
+
   const MachineState({
     this.onGetAll = const AsyncData([]),
     this.onGetById = const AsyncData(null),
     this.onGetByNumber = const AsyncData(null),
     this.onCreate = const AsyncData(null),
+    this.onDelete = const AsyncData(null),
   });
 
   @override
-  List<Object> get props => [onGetAll, onGetById, onGetByNumber, onCreate];
+  List<Object> get props {
+    return [
+      onGetAll,
+      onGetById,
+      onGetByNumber,
+      onCreate,
+      onDelete,
+    ];
+  }
 
   @override
   bool get stringify => true;
@@ -29,12 +41,14 @@ class MachineState extends Equatable {
     AsyncValue<MachineModel?>? onGetById,
     AsyncValue<MachineModel?>? onGetByNumber,
     AsyncValue<MachineCreateResponseModel?>? onCreate,
+    AsyncValue<MachineDeleteResponseModel?>? onDelete,
   }) {
     return MachineState(
       onGetAll: onGetAll ?? this.onGetAll,
       onGetById: onGetById ?? this.onGetById,
       onGetByNumber: onGetByNumber ?? this.onGetByNumber,
       onCreate: onCreate ?? this.onCreate,
+      onDelete: onDelete ?? this.onDelete,
     );
   }
 }
@@ -107,6 +121,16 @@ class MachineNotifier extends StateNotifier<MachineState> {
       (failure) => state = state.copyWith(
           onCreate: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onCreate: AsyncData(data)),
+    );
+  }
+
+  Future<void> delete() async {
+    state = state.copyWith(onDelete: const AsyncLoading());
+    final result = await repository.delete(userId);
+    result.fold(
+      (failure) => state = state.copyWith(
+          onDelete: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onDelete: AsyncData(data)),
     );
   }
 }

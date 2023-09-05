@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
 import '../../model/machine/machine_create_response_model.dart';
+import '../../model/machine/machine_delete_response_model.dart';
 import '../../model/machine/machine_model.dart';
 
 class MachineRemoteDatasource {
@@ -100,6 +101,23 @@ class MachineRemoteDatasource {
       final message = decoded.containsKey('message')
           ? decoded['message']
           : 'Failed to create machine';
+      throw Exception(message);
+    }
+  }
+
+  Future<MachineDeleteResponseModel> delete(String userId) async {
+    final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines');
+    final response = await client.delete(uri);
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    if (response.statusCode == 200) {
+      final data = decoded['data'];
+      final result = MachineDeleteResponseModel.fromJson(data);
+      return result;
+    } else {
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to delete machine';
       throw Exception(message);
     }
   }

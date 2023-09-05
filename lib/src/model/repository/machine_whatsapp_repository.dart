@@ -4,8 +4,11 @@ import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
 import '../datasource/remote/machine_whatsapp_remote_datasource.dart';
-import '../model/machine/machine_whatsapp_create_response_model.dart';
-import '../model/machine/machine_whatsapp_send_qrcode_response_model.dart';
+import '../model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
+import '../model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
+import '../model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
+import '../model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
+import '../model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
 
 class MachineWhatsappRepository {
   final MachineWhatsappRemoteDatasource remoteDatasource;
@@ -29,6 +32,18 @@ class MachineWhatsappRepository {
     }
   }
 
+  Future<Either<Failure, MachineWhatsappDeleteResponseModel>> delete(
+    String machineWhatsappId,
+  ) async {
+    try {
+      final result = await remoteDatasource.delete(machineWhatsappId);
+
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
   Future<Either<Failure, MachineWhatsappSendQRCodeResponseModel>> sendQRCode({
     required String number,
     required File file,
@@ -38,6 +53,32 @@ class MachineWhatsappRepository {
         number: number,
         file: file,
       );
+
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MachineWhatsappDisconnectedResponseModel>> disconnect({
+    required String machineWhatsappId,
+  }) async {
+    try {
+      final result = await remoteDatasource.disconnect(
+          machineWhatsappId: machineWhatsappId);
+
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MachineWhatsappConnectedResponseModel>> connect({
+    required String machineWhatsappId,
+  }) async {
+    try {
+      final result =
+          await remoteDatasource.connect(machineWhatsappId: machineWhatsappId);
 
       return Right(result);
     } on Exception catch (e) {
