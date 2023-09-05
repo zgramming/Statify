@@ -10,6 +10,11 @@ enum MachineActionEnum { sms, whatsapp, whatsappPriority, whatappSMS }
 
 enum MachineResponseSettingTypeEnum { welcome, regular }
 
+enum MachineWhatsappStatusEnum {
+  connected,
+  disconnected,
+}
+
 extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
   String get valueString {
     switch (this) {
@@ -86,6 +91,26 @@ extension MachineResponseSettingTypeEnumEXT on MachineResponseSettingTypeEnum {
         return 'Welcome';
       case MachineResponseSettingTypeEnum.regular:
         return 'Regular';
+    }
+  }
+}
+
+extension MachineWhatsappStatusEXT on MachineWhatsappStatusEnum {
+  String get valueString {
+    switch (this) {
+      case MachineWhatsappStatusEnum.connected:
+        return 'connected';
+      case MachineWhatsappStatusEnum.disconnected:
+        return 'disconnected';
+    }
+  }
+
+  String get valueStringReadable {
+    switch (this) {
+      case MachineWhatsappStatusEnum.connected:
+        return 'Connected';
+      case MachineWhatsappStatusEnum.disconnected:
+        return 'Disconnected';
     }
   }
 }

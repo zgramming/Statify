@@ -13,7 +13,7 @@ MachineWhatsappModel _$MachineWhatsappModelFromJson(
       machineId: json['machine_id'] as String,
       number: json['number'] as String,
       qrCode: json['qr_code'] as String?,
-      status: json['status'] as String,
+      status: $enumDecode(_$MachineWhatsappStatusEnumEnumMap, json['status']),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -25,7 +25,12 @@ Map<String, dynamic> _$MachineWhatsappModelToJson(
       'machine_id': instance.machineId,
       'number': instance.number,
       'qr_code': instance.qrCode,
-      'status': instance.status,
+      'status': _$MachineWhatsappStatusEnumEnumMap[instance.status]!,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
     };
+
+const _$MachineWhatsappStatusEnumEnumMap = {
+  MachineWhatsappStatusEnum.connected: 'connected',
+  MachineWhatsappStatusEnum.disconnected: 'disconnected',
+};

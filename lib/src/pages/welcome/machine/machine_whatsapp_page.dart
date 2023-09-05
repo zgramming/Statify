@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../../../router.dart';
+import '../../../utils/enum.dart';
 import '../../../utils/functions.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/dialog_view_qrcode.dart';
@@ -252,7 +253,7 @@ class _MachineWhatsAppPageState extends ConsumerState<MachineWhatsAppPage> {
                   return ListTile(
                     leading: Text("$order"),
                     title: Text(item.number),
-                    subtitle: Text(item.status),
+                    subtitle: Text(item.status.valueStringReadable),
                     trailing: Wrap(
                       alignment: WrapAlignment.center,
                       spacing: 8.0,

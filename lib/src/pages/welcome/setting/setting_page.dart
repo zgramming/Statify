@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../router.dart';
 import '../../widgets/custom_appbar.dart';
+import '../../widgets/listtile_setting_menu.dart';
 
 class SettingPage extends ConsumerStatefulWidget {
   const SettingPage({super.key});
@@ -91,27 +92,30 @@ class _SettingPageState extends ConsumerState<SettingPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const CustomAppbar(title: "Setting"),
+        const CustomAppbar(title: "Admin Setting"),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.grey)),
-                  ),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Machine'),
-                    subtitle: const Text('Manage machine'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      context.pushNamed(routeMachine);
-                    },
-                  ),
-                )
+                ListTileSettingMenu(
+                  onTap: () {},
+                  title: "My Account",
+                  subtitle: "Manage your account",
+                  leadingIcon: Icons.person,
+                  leadingBackgroundColor: Colors.blue,
+                ),
+                const SizedBox(height: 16),
+                ListTileSettingMenu(
+                  onTap: () {
+                    context.pushNamed(routeMachine);
+                  },
+                  title: "Machine",
+                  subtitle: "Manage machine",
+                  leadingIcon: Icons.devices_rounded,
+                  leadingBackgroundColor: Colors.green,
+                ),
               ],
             ),
           ),

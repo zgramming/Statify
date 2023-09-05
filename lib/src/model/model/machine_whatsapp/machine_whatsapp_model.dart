@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../utils/enum.dart';
+
 part 'machine_whatsapp_model.g.dart';
 
 @JsonSerializable(
@@ -11,7 +13,7 @@ class MachineWhatsappModel extends Equatable {
   final String machineId;
   final String number;
   final String? qrCode;
-  final String status;
+  final MachineWhatsappStatusEnum status;
   final DateTime createdAt;
   final DateTime updatedAt;
 

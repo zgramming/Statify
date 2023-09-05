@@ -4,8 +4,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
 import '../../../utils/enum.dart';
+import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
+
+class _FormBodyRow extends StatelessWidget {
+  const _FormBodyRow({
+    Key? key,
+    required this.title,
+    required this.child,
+  }) : super(key: key);
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(flex: 5, child: Text(title)),
+        Expanded(flex: 7, child: child),
+      ],
+    );
+  }
+}
 
 class MachineFormPage extends ConsumerStatefulWidget {
   const MachineFormPage({
@@ -22,6 +44,7 @@ class MachineFormPage extends ConsumerStatefulWidget {
 class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   final _formKey = GlobalKey<FormState>();
 
+  late final TextEditingController _nameController;
   late final TextEditingController _numberController;
   late final TextEditingController _licenseController;
   MachineActionEnum selectedAction = MachineActionEnum.sms;
@@ -52,12 +75,14 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController();
     _numberController = TextEditingController();
     _licenseController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _nameController.dispose();
     _numberController.dispose();
     _licenseController.dispose();
     super.dispose();
@@ -118,28 +143,43 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 20),
-                TextFormField(
-                    controller: _numberController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Nomor tidak boleh kosong";
-                      }
-                      return null;
-                    },
+                _FormBodyRow(
+                  title: "Machine Name",
+                  child: TextFormField(
+                    controller: _nameController,
+                    style: bodyFont.copyWith(fontSize: 14.0),
                     decoration: inputDecorationRounded().copyWith(
-                      hintText: "Masukkan Nomor",
-                    )),
+                      border: const UnderlineInputBorder(),
+                      fillColor: Colors.transparent,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
-                TextFormField(
-                  controller: _licenseController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "License tidak boleh kosong";
-                    }
-                    return null;
-                  },
-                  decoration: inputDecorationRounded().copyWith(
-                    hintText: 'Masukkan License',
+                _FormBodyRow(
+                  title: "No Serial Machine",
+                  child: TextFormField(
+                    controller: _numberController,
+                    style: bodyFont.copyWith(fontSize: 14.0),
+                    keyboardType: TextInputType.phone,
+                    decoration: inputDecorationRounded().copyWith(
+                      border: const UnderlineInputBorder(),
+                      fillColor: Colors.transparent,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _FormBodyRow(
+                  title: "Activation License",
+                  child: TextFormField(
+                    controller: _licenseController,
+                    style: bodyFont.copyWith(fontSize: 14.0),
+                    decoration: inputDecorationRounded().copyWith(
+                      border: const UnderlineInputBorder(),
+                      fillColor: Colors.transparent,
+                      contentPadding: EdgeInsets.zero,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
