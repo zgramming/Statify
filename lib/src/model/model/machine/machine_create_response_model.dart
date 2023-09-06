@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -10,6 +11,7 @@ class MachineCreateResponseModel extends Equatable {
   final String id;
   final int send;
   final int replied;
+  final String name;
   final String number;
   final String license;
   final String action;
@@ -23,6 +25,7 @@ class MachineCreateResponseModel extends Equatable {
     required this.id,
     required this.send,
     required this.replied,
+    required this.name,
     required this.number,
     required this.license,
     required this.action,
@@ -45,6 +48,7 @@ class MachineCreateResponseModel extends Equatable {
       id,
       send,
       replied,
+      name,
       number,
       license,
       action,
@@ -58,6 +62,36 @@ class MachineCreateResponseModel extends Equatable {
 
   @override
   bool get stringify => true;
+
+  MachineCreateResponseModel copyWith({
+    String? id,
+    int? send,
+    int? replied,
+    String? name,
+    String? number,
+    String? license,
+    String? action,
+    String? smsSetting,
+    String? userId,
+    DateTime? updatedAt,
+    DateTime? createdAt,
+    MachineCreateResponseModelUser? user,
+  }) {
+    return MachineCreateResponseModel(
+      id: id ?? this.id,
+      send: send ?? this.send,
+      replied: replied ?? this.replied,
+      name: name ?? this.name,
+      number: number ?? this.number,
+      license: license ?? this.license,
+      action: action ?? this.action,
+      smsSetting: smsSetting ?? this.smsSetting,
+      userId: userId ?? this.userId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      createdAt: createdAt ?? this.createdAt,
+      user: user ?? this.user,
+    );
+  }
 }
 
 @JsonSerializable(

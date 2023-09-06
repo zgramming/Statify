@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -9,6 +10,7 @@ part 'machine_delete_response_model.g.dart';
 class MachineDeleteResponseModel extends Equatable {
   final String id;
   final String userId;
+  final String name;
   final String number;
   final String license;
   final String action;
@@ -21,6 +23,7 @@ class MachineDeleteResponseModel extends Equatable {
   const MachineDeleteResponseModel({
     required this.id,
     required this.userId,
+    required this.name,
     required this.number,
     required this.license,
     required this.action,
@@ -42,6 +45,7 @@ class MachineDeleteResponseModel extends Equatable {
     return [
       id,
       userId,
+      name,
       number,
       license,
       action,
@@ -59,6 +63,7 @@ class MachineDeleteResponseModel extends Equatable {
   MachineDeleteResponseModel copyWith({
     String? id,
     String? userId,
+    String? name,
     String? number,
     String? license,
     String? action,
@@ -71,6 +76,7 @@ class MachineDeleteResponseModel extends Equatable {
     return MachineDeleteResponseModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      name: name ?? this.name,
       number: number ?? this.number,
       license: license ?? this.license,
       action: action ?? this.action,

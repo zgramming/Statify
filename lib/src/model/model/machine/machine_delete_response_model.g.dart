@@ -11,6 +11,7 @@ MachineDeleteResponseModel _$MachineDeleteResponseModelFromJson(
     MachineDeleteResponseModel(
       id: json['id'] as String,
       userId: json['user_id'] as String,
+      name: json['name'] as String,
       number: json['number'] as String,
       license: json['license'] as String,
       action: json['action'] as String,
@@ -26,6 +27,7 @@ Map<String, dynamic> _$MachineDeleteResponseModelToJson(
     <String, dynamic>{
       'id': instance.id,
       'user_id': instance.userId,
+      'name': instance.name,
       'number': instance.number,
       'license': instance.license,
       'action': instance.action,

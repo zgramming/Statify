@@ -4,9 +4,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
+import '../../model/form/machine_create_update_form_model.dart';
 import '../../model/machine/machine_create_response_model.dart';
 import '../../model/machine/machine_delete_response_model.dart';
 import '../../model/machine/machine_model.dart';
+import '../../model/machine/machine_update_response_model.dart';
 
 class MachineRemoteDatasource {
   final http.Client client;
@@ -74,20 +76,18 @@ class MachineRemoteDatasource {
   }
 
   Future<MachineCreateResponseModel> create({
-    required String number,
-    required String license,
-    required String action,
-    required String smsSetting,
+    required FormMachineCreateUpdateModel form,
     required String userId,
   }) async {
     final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines');
     final response = await client.post(
       uri,
       body: {
-        'number': number,
-        'license': license,
-        'action': action,
-        'sms_setting': smsSetting,
+        'name': form.name,
+        'number': form.number,
+        'license': form.license,
+        'action': form.action,
+        'sms_setting': form.smsSetting,
       },
     );
 
@@ -105,8 +105,41 @@ class MachineRemoteDatasource {
     }
   }
 
-  Future<MachineDeleteResponseModel> delete(String userId) async {
-    final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines');
+  Future<MachineUpdateResponseModel> update({
+    required FormMachineCreateUpdateModel form,
+    required String machineId,
+    required String userId,
+  }) async {
+    final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines/$machineId');
+    final response = await client.patch(
+      uri,
+      body: {
+        'name': form.name,
+        'number': form.number,
+        'license': form.license,
+        'action': form.action,
+        'sms_setting': form.smsSetting,
+      },
+    );
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    if (response.statusCode == 200) {
+      final data = decoded['data'];
+      final result = MachineUpdateResponseModel.fromJson(data);
+      return result;
+    } else {
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to update machine';
+      throw Exception(message);
+    }
+  }
+
+  Future<MachineDeleteResponseModel> delete({
+    required String userId,
+    required String machineId,
+  }) async {
+    final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines/$machineId');
     final response = await client.delete(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));

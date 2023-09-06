@@ -1,49 +1,46 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'machine_create_response_model.dart';
+part of 'machine_update_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-MachineCreateResponseModel _$MachineCreateResponseModelFromJson(
+MachineUpdateResponseModel _$MachineUpdateResponseModelFromJson(
         Map<String, dynamic> json) =>
-    MachineCreateResponseModel(
+    MachineUpdateResponseModel(
       id: json['id'] as String,
-      send: json['send'] as int,
-      replied: json['replied'] as int,
+      userId: json['user_id'] as String,
       name: json['name'] as String,
       number: json['number'] as String,
       license: json['license'] as String,
       action: json['action'] as String,
       smsSetting: json['sms_setting'] as String,
-      userId: json['user_id'] as String,
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      send: json['send'] as int,
+      replied: json['replied'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
-      user: MachineCreateResponseModelUser.fromJson(
-          json['user'] as Map<String, dynamic>),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$MachineCreateResponseModelToJson(
-        MachineCreateResponseModel instance) =>
+Map<String, dynamic> _$MachineUpdateResponseModelToJson(
+        MachineUpdateResponseModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'send': instance.send,
-      'replied': instance.replied,
+      'user_id': instance.userId,
       'name': instance.name,
       'number': instance.number,
       'license': instance.license,
       'action': instance.action,
       'sms_setting': instance.smsSetting,
-      'user_id': instance.userId,
-      'updated_at': instance.updatedAt.toIso8601String(),
+      'send': instance.send,
+      'replied': instance.replied,
       'created_at': instance.createdAt.toIso8601String(),
-      'user': instance.user,
+      'updated_at': instance.updatedAt.toIso8601String(),
     };
 
-MachineCreateResponseModelUser _$MachineCreateResponseModelUserFromJson(
+MachineUpdateResponseModelUser _$MachineUpdateResponseModelUserFromJson(
         Map<String, dynamic> json) =>
-    MachineCreateResponseModelUser(
+    MachineUpdateResponseModelUser(
       id: json['id'] as String,
       email: json['email'] as String?,
       username: json['username'] as String,
@@ -52,8 +49,8 @@ MachineCreateResponseModelUser _$MachineCreateResponseModelUserFromJson(
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$MachineCreateResponseModelUserToJson(
-        MachineCreateResponseModelUser instance) =>
+Map<String, dynamic> _$MachineUpdateResponseModelUserToJson(
+        MachineUpdateResponseModelUser instance) =>
     <String, dynamic>{
       'id': instance.id,
       'email': instance.email,

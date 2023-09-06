@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../model/model/machine/machine_model.dart';
 import '../../../router.dart';
+import '../../../utils/fonts.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
@@ -20,8 +21,15 @@ class _MachinePageState extends ConsumerState<MachinePage> {
     String value, {
     required MachineModel item,
   }) async {
+    final notifier = ref.read(machineNotifier.notifier);
     switch (value) {
       case "edit":
+        context.pushNamed(
+          routeMachineForm,
+          pathParameters: {
+            "id": item.id,
+          },
+        );
         break;
       case "machine_response_setting":
         context.pushNamed(
@@ -46,6 +54,12 @@ class _MachinePageState extends ConsumerState<MachinePage> {
             "idMachine": item.id,
           },
         );
+        break;
+
+      case "delete":
+        await notifier.delete(machineId: item.id);
+        ref.invalidate(machineNotifier);
+
         break;
       default:
     }
@@ -115,7 +129,16 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                                 const PopupMenuItem(
                                   value: "machine_survey",
                                   child: Text("Machine Survey"),
-                                )
+                                ),
+                                PopupMenuItem(
+                                  value: "delete",
+                                  child: Text(
+                                    "Delete Machine",
+                                    style: bodyFont.copyWith(
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
                               ];
                             },
                             onSelected: (value) =>

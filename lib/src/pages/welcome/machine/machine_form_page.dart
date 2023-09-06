@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
+import '../../../model/model/form/machine_create_update_form_model.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
@@ -59,16 +60,22 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
 
     final notifier = ref.read(machineNotifier.notifier);
 
+    final name = _nameController.text;
     final number = _numberController.text;
     final license = _licenseController.text;
 
+    final form = FormMachineCreateUpdateModel(
+      name: name,
+      number: number,
+      license: license,
+      action: selectedAction.valueString,
+      smsSetting: selectedSMSSetting.valueString,
+    );
+
     if (isCreate) {
-      await notifier.create(
-        number: number,
-        license: license,
-        action: selectedAction.valueString,
-        smsSetting: selectedSMSSetting.valueString,
-      );
+      await notifier.create(form);
+    } else {
+      await notifier.update(machineId: id, form: form);
     }
   }
 
@@ -78,6 +85,14 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     _nameController = TextEditingController();
     _numberController = TextEditingController();
     _licenseController = TextEditingController();
+
+    // Load Machine detail if id is not -1
+    final id = widget.id;
+    if (id != "-1") {
+      Future.microtask(() {
+        ref.read(machineNotifier.notifier).getById(machineId: id);
+      });
+    }
   }
 
   @override
@@ -90,6 +105,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Listen to onCreate
     ref.listen(machineNotifier.select((value) => value.onCreate),
         (previous, next) {
       next.when(
@@ -106,9 +122,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
           selectedAction = MachineActionEnum.sms;
           selectedSMSSetting = MachineSMSSettingEnum.sim1;
           _formKey.currentState?.reset();
-
-          // Reload data
-          ref.invalidate(machineNotifier);
 
           setState(() {});
         },
@@ -130,116 +143,171 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
       );
     });
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Form Mesin"),
-      ),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                _FormBodyRow(
-                  title: "Machine Name",
-                  child: TextFormField(
-                    controller: _nameController,
-                    style: bodyFont.copyWith(fontSize: 14.0),
-                    decoration: inputDecorationRounded().copyWith(
-                      border: const UnderlineInputBorder(),
-                      fillColor: Colors.transparent,
-                      contentPadding: EdgeInsets.zero,
+    // Listen to onUpdate
+
+    ref.listen(
+      machineNotifier.select((value) => value.onUpdate),
+      (previous, next) {
+        next.when(
+          data: (data) {
+            showSnackbar(
+              context: context,
+              message: "Berhasil mengubah mesin dengan nomor ${data?.number}",
+              backgroundColor: Colors.green,
+            );
+          },
+          error: (error, stackTrace) {
+            showSnackbar(
+              context: context,
+              message: error.toString(),
+              backgroundColor: Colors.red,
+            );
+          },
+          loading: () {
+            showSnackbar(
+              context: context,
+              message: "Loading...",
+              backgroundColor: Colors.blue,
+              duration: const Duration(days: 1),
+            );
+          },
+        );
+      },
+    );
+
+    // Listen to onGetById
+    ref.listen(
+      machineNotifier.select((value) => value.onGetById),
+      (previous, next) {
+        next.whenData((value) {
+          _nameController.text = value?.name ?? "";
+          _numberController.text = value?.number ?? "";
+          _licenseController.text = value?.license ?? "";
+          selectedAction = MachineActionEnum.values.byName(value?.action ?? "");
+          selectedSMSSetting =
+              MachineSMSSettingEnum.values.byName(value?.smsSetting ?? "");
+
+          setState(() {});
+        });
+      },
+    );
+
+    return WillPopScope(
+      onWillPop: () {
+        ref.invalidate(machineNotifier);
+        return Future.value(true);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Form Mesin"),
+        ),
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 20),
+                  _FormBodyRow(
+                    title: "Machine Name",
+                    child: TextFormField(
+                      controller: _nameController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        border: const UnderlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: EdgeInsets.zero,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                _FormBodyRow(
-                  title: "No Serial Machine",
-                  child: TextFormField(
-                    controller: _numberController,
-                    style: bodyFont.copyWith(fontSize: 14.0),
-                    keyboardType: TextInputType.phone,
-                    decoration: inputDecorationRounded().copyWith(
-                      border: const UnderlineInputBorder(),
-                      fillColor: Colors.transparent,
-                      contentPadding: EdgeInsets.zero,
+                  const SizedBox(height: 20),
+                  _FormBodyRow(
+                    title: "No Serial Machine",
+                    child: TextFormField(
+                      controller: _numberController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      keyboardType: TextInputType.phone,
+                      decoration: inputDecorationRounded().copyWith(
+                        border: const UnderlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: EdgeInsets.zero,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                _FormBodyRow(
-                  title: "Activation License",
-                  child: TextFormField(
-                    controller: _licenseController,
-                    style: bodyFont.copyWith(fontSize: 14.0),
-                    decoration: inputDecorationRounded().copyWith(
-                      border: const UnderlineInputBorder(),
-                      fillColor: Colors.transparent,
-                      contentPadding: EdgeInsets.zero,
+                  const SizedBox(height: 20),
+                  _FormBodyRow(
+                    title: "Activation License",
+                    child: TextFormField(
+                      controller: _licenseController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        border: const UnderlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: EdgeInsets.zero,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                DropdownButtonFormField<MachineActionEnum>(
-                  value: selectedAction,
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() {
-                      selectedAction = value;
-                    });
-                  },
-                  decoration: inputDecorationRounded(),
-                  items: MachineActionEnum.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.valueStringReadable),
-                        ),
-                      )
-                      .toList(),
-                  validator: (value) {
-                    if (value == null) {
-                      return "Action tidak boleh kosong";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                DropdownButtonFormField<MachineSMSSettingEnum>(
-                  value: selectedSMSSetting,
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() {
-                      selectedSMSSetting = value;
-                    });
-                  },
-                  decoration: inputDecorationRounded(),
-                  items: MachineSMSSettingEnum.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.valueStringReadable),
-                        ),
-                      )
-                      .toList(),
-                  validator: (value) {
-                    if (value == null) {
-                      return "SMS Setting tidak boleh kosong";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: onSubmit,
-                  style: elevatedButtonStyle(),
-                  child: const Text("Submit"),
-                ),
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<MachineActionEnum>(
+                    value: selectedAction,
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() {
+                        selectedAction = value;
+                      });
+                    },
+                    decoration: inputDecorationRounded(),
+                    items: MachineActionEnum.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.valueStringReadable),
+                          ),
+                        )
+                        .toList(),
+                    validator: (value) {
+                      if (value == null) {
+                        return "Action tidak boleh kosong";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<MachineSMSSettingEnum>(
+                    value: selectedSMSSetting,
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() {
+                        selectedSMSSetting = value;
+                      });
+                    },
+                    decoration: inputDecorationRounded(),
+                    items: MachineSMSSettingEnum.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.valueStringReadable),
+                          ),
+                        )
+                        .toList(),
+                    validator: (value) {
+                      if (value == null) {
+                        return "SMS Setting tidak boleh kosong";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: onSubmit,
+                    style: elevatedButtonStyle(),
+                    child: const Text("Submit"),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),

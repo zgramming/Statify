@@ -2,14 +2,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../machine_whatsapp/machine_whatsapp_model.dart';
-
-part 'machine_model.g.dart';
+part 'machine_update_response_model.g.dart';
 
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class MachineModel extends Equatable {
+class MachineUpdateResponseModel extends Equatable {
   final String id;
   final String userId;
   final String name;
@@ -21,9 +19,8 @@ class MachineModel extends Equatable {
   final int replied;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<MachineWhatsappModel> whatsapps;
 
-  const MachineModel({
+  const MachineUpdateResponseModel({
     required this.id,
     required this.userId,
     required this.name,
@@ -35,14 +32,13 @@ class MachineModel extends Equatable {
     required this.replied,
     required this.createdAt,
     required this.updatedAt,
-    required this.whatsapps,
   });
 
-  factory MachineModel.fromJson(Map<String, dynamic> json) =>
-      _$MachineModelFromJson(json);
+  factory MachineUpdateResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$MachineUpdateResponseModelFromJson(json);
 
-  /// Connect the generated [_$MachineModelToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$MachineModelToJson(this);
+  /// Connect the generated [_$MachineUpdateResponseModelToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$MachineUpdateResponseModelToJson(this);
 
   @override
   List<Object> get props {
@@ -58,14 +54,13 @@ class MachineModel extends Equatable {
       replied,
       createdAt,
       updatedAt,
-      whatsapps,
     ];
   }
 
   @override
   bool get stringify => true;
 
-  MachineModel copyWith({
+  MachineUpdateResponseModel copyWith({
     String? id,
     String? userId,
     String? name,
@@ -77,9 +72,8 @@ class MachineModel extends Equatable {
     int? replied,
     DateTime? createdAt,
     DateTime? updatedAt,
-    List<MachineWhatsappModel>? whatsapps,
   }) {
-    return MachineModel(
+    return MachineUpdateResponseModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       name: name ?? this.name,
@@ -91,7 +85,48 @@ class MachineModel extends Equatable {
       replied: replied ?? this.replied,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      whatsapps: whatsapps ?? this.whatsapps,
     );
   }
+}
+
+@JsonSerializable(
+  fieldRename: FieldRename.snake,
+)
+class MachineUpdateResponseModelUser extends Equatable {
+  final String id;
+  final String? email;
+  final String username;
+  final String? name;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  const MachineUpdateResponseModelUser({
+    required this.id,
+    required this.email,
+    required this.username,
+    required this.name,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory MachineUpdateResponseModelUser.fromJson(Map<String, dynamic> json) =>
+      _$MachineUpdateResponseModelUserFromJson(json);
+
+  /// Connect the generated [_$MachineUpdateResponseModelUserToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$MachineUpdateResponseModelUserToJson(this);
+
+  @override
+  List<Object?> get props {
+    return [
+      id,
+      email,
+      username,
+      name,
+      createdAt,
+      updatedAt,
+    ];
+  }
+
+  @override
+  bool get stringify => true;
 }

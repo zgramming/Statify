@@ -2,9 +2,11 @@ import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
 import '../datasource/remote/machine_remote_datasource.dart';
+import '../model/form/machine_create_update_form_model.dart';
 import '../model/machine/machine_create_response_model.dart';
 import '../model/machine/machine_delete_response_model.dart';
 import '../model/machine/machine_model.dart';
+import '../model/machine/machine_update_response_model.dart';
 
 class MachineRepository {
   final MachineRemoteDatasource remoteDatasource;
@@ -52,18 +54,12 @@ class MachineRepository {
   }
 
   Future<Either<Failure, MachineCreateResponseModel>> create({
-    required String number,
-    required String license,
-    required String action,
-    required String smsSetting,
+    required FormMachineCreateUpdateModel form,
     required String userId,
   }) async {
     try {
       final result = await remoteDatasource.create(
-        number: number,
-        license: license,
-        action: action,
-        smsSetting: smsSetting,
+        form: form,
         userId: userId,
       );
       return Right(result);
@@ -72,11 +68,32 @@ class MachineRepository {
     }
   }
 
-  Future<Either<Failure, MachineDeleteResponseModel>> delete(
-    String userId,
-  ) async {
+  Future<Either<Failure, MachineUpdateResponseModel>> update({
+    required String machineId,
+    required String userId,
+    required FormMachineCreateUpdateModel form,
+  }) async {
     try {
-      final result = await remoteDatasource.delete(userId);
+      final result = await remoteDatasource.update(
+        form: form,
+        userId: userId,
+        machineId: machineId,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MachineDeleteResponseModel>> delete({
+    required String userId,
+    required String machineId,
+  }) async {
+    try {
+      final result = await remoteDatasource.delete(
+        userId: userId,
+        machineId: machineId,
+      );
       return Right(result);
     } catch (e) {
       return Left(CommonFailure(e.toString()));
