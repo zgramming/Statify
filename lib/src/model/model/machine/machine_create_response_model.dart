@@ -11,6 +11,7 @@ class MachineCreateResponseModel extends Equatable {
   final String id;
   final int send;
   final int replied;
+  final String serialNumber;
   final String name;
   final String number;
   final String license;
@@ -25,6 +26,7 @@ class MachineCreateResponseModel extends Equatable {
     required this.id,
     required this.send,
     required this.replied,
+    required this.serialNumber,
     required this.name,
     required this.number,
     required this.license,
@@ -48,6 +50,7 @@ class MachineCreateResponseModel extends Equatable {
       id,
       send,
       replied,
+      serialNumber,
       name,
       number,
       license,
@@ -67,6 +70,7 @@ class MachineCreateResponseModel extends Equatable {
     String? id,
     int? send,
     int? replied,
+    String? serialNumber,
     String? name,
     String? number,
     String? license,
@@ -81,6 +85,7 @@ class MachineCreateResponseModel extends Equatable {
       id: id ?? this.id,
       send: send ?? this.send,
       replied: replied ?? this.replied,
+      serialNumber: serialNumber ?? this.serialNumber,
       name: name ?? this.name,
       number: number ?? this.number,
       license: license ?? this.license,

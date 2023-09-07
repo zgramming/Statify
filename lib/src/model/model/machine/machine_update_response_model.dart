@@ -10,6 +10,7 @@ part 'machine_update_response_model.g.dart';
 class MachineUpdateResponseModel extends Equatable {
   final String id;
   final String userId;
+  final String serialNumber;
   final String name;
   final String number;
   final String license;
@@ -23,6 +24,7 @@ class MachineUpdateResponseModel extends Equatable {
   const MachineUpdateResponseModel({
     required this.id,
     required this.userId,
+    required this.serialNumber,
     required this.name,
     required this.number,
     required this.license,
@@ -45,6 +47,7 @@ class MachineUpdateResponseModel extends Equatable {
     return [
       id,
       userId,
+      serialNumber,
       name,
       number,
       license,
@@ -63,6 +66,7 @@ class MachineUpdateResponseModel extends Equatable {
   MachineUpdateResponseModel copyWith({
     String? id,
     String? userId,
+    String? serialNumber,
     String? name,
     String? number,
     String? license,
@@ -76,6 +80,7 @@ class MachineUpdateResponseModel extends Equatable {
     return MachineUpdateResponseModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      serialNumber: serialNumber ?? this.serialNumber,
       name: name ?? this.name,
       number: number ?? this.number,
       license: license ?? this.license,

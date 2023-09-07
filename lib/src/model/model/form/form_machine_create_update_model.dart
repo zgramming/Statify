@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 
 class FormMachineCreateUpdateModel extends Equatable {
   const FormMachineCreateUpdateModel({
+    required this.serialNumber,
     required this.name,
     required this.number,
     required this.license,
@@ -10,6 +11,7 @@ class FormMachineCreateUpdateModel extends Equatable {
     required this.smsSetting,
   });
 
+  final String serialNumber;
   final String name;
   final String number;
   final String license;
@@ -19,6 +21,7 @@ class FormMachineCreateUpdateModel extends Equatable {
   @override
   List<Object> get props {
     return [
+      serialNumber,
       name,
       number,
       license,
@@ -28,6 +31,7 @@ class FormMachineCreateUpdateModel extends Equatable {
   }
 
   FormMachineCreateUpdateModel copyWith({
+    String? serialNumber,
     String? name,
     String? number,
     String? license,
@@ -35,6 +39,7 @@ class FormMachineCreateUpdateModel extends Equatable {
     String? smsSetting,
   }) {
     return FormMachineCreateUpdateModel(
+      serialNumber: serialNumber ?? this.serialNumber,
       name: name ?? this.name,
       number: number ?? this.number,
       license: license ?? this.license,

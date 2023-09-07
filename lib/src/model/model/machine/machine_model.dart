@@ -12,6 +12,7 @@ part 'machine_model.g.dart';
 class MachineModel extends Equatable {
   final String id;
   final String userId;
+  final String serialNumber;
   final String name;
   final String number;
   final String license;
@@ -26,6 +27,7 @@ class MachineModel extends Equatable {
   const MachineModel({
     required this.id,
     required this.userId,
+    required this.serialNumber,
     required this.name,
     required this.number,
     required this.license,
@@ -49,6 +51,7 @@ class MachineModel extends Equatable {
     return [
       id,
       userId,
+      serialNumber,
       name,
       number,
       license,
@@ -68,6 +71,7 @@ class MachineModel extends Equatable {
   MachineModel copyWith({
     String? id,
     String? userId,
+    String? serialNumber,
     String? name,
     String? number,
     String? license,
@@ -82,6 +86,7 @@ class MachineModel extends Equatable {
     return MachineModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      serialNumber: serialNumber ?? this.serialNumber,
       name: name ?? this.name,
       number: number ?? this.number,
       license: license ?? this.license,

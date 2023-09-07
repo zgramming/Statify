@@ -9,6 +9,7 @@ part of 'machine_model.dart';
 MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
       id: json['id'] as String,
       userId: json['user_id'] as String,
+      serialNumber: json['serial_number'] as String,
       name: json['name'] as String,
       number: json['number'] as String,
       license: json['license'] as String,
@@ -27,6 +28,7 @@ Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'user_id': instance.userId,
+      'serial_number': instance.serialNumber,
       'name': instance.name,
       'number': instance.number,
       'license': instance.license,

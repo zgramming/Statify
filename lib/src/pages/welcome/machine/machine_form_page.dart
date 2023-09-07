@@ -48,36 +48,10 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   late final TextEditingController _nameController;
   late final TextEditingController _numberController;
   late final TextEditingController _licenseController;
+  late final TextEditingController _serialNumberController;
+
   MachineActionEnum selectedAction = MachineActionEnum.sms;
   MachineSMSSettingEnum selectedSMSSetting = MachineSMSSettingEnum.sim1;
-
-  Future<void> onSubmit() async {
-    final isValid = _formKey.currentState?.validate() ?? false;
-    if (!isValid) return;
-
-    final id = widget.id;
-    final isCreate = id == "-1";
-
-    final notifier = ref.read(machineNotifier.notifier);
-
-    final name = _nameController.text;
-    final number = _numberController.text;
-    final license = _licenseController.text;
-
-    final form = FormMachineCreateUpdateModel(
-      name: name,
-      number: number,
-      license: license,
-      action: selectedAction.valueString,
-      smsSetting: selectedSMSSetting.valueString,
-    );
-
-    if (isCreate) {
-      await notifier.create(form);
-    } else {
-      await notifier.update(machineId: id, form: form);
-    }
-  }
 
   @override
   void initState() {
@@ -85,6 +59,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     _nameController = TextEditingController();
     _numberController = TextEditingController();
     _licenseController = TextEditingController();
+    _serialNumberController = TextEditingController();
 
     // Load Machine detail if id is not -1
     final id = widget.id;
@@ -100,7 +75,38 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     _nameController.dispose();
     _numberController.dispose();
     _licenseController.dispose();
+    _serialNumberController.dispose();
     super.dispose();
+  }
+
+  Future<void> onSubmit() async {
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (!isValid) return;
+
+    final id = widget.id;
+    final isCreate = id == "-1";
+
+    final notifier = ref.read(machineNotifier.notifier);
+
+    final name = _nameController.text;
+    final number = _numberController.text;
+    final license = _licenseController.text;
+    final serialNumber = _serialNumberController.text;
+
+    final form = FormMachineCreateUpdateModel(
+      serialNumber: serialNumber,
+      name: name,
+      number: number,
+      license: license,
+      action: selectedAction.valueString,
+      smsSetting: selectedSMSSetting.valueString,
+    );
+
+    if (isCreate) {
+      await notifier.create(form);
+    } else {
+      await notifier.update(machineId: id, form: form);
+    }
   }
 
   @override
@@ -241,6 +247,19 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     title: "Activation License",
                     child: TextFormField(
                       controller: _licenseController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        border: const UnderlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _FormBodyRow(
+                    title: "Serial Number",
+                    child: TextFormField(
+                      controller: _serialNumberController,
                       style: bodyFont.copyWith(fontSize: 14.0),
                       decoration: inputDecorationRounded().copyWith(
                         border: const UnderlineInputBorder(),
