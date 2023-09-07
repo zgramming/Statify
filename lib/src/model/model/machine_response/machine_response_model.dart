@@ -12,7 +12,7 @@ part 'machine_response_model.g.dart';
 class MachineResponseModel extends Equatable {
   final String id;
   final String machineId;
-  final MachineResponsePlatform platform;
+  final MachineResponsePlatformEnum platform;
   final String key;
   final String value;
   final String type;
@@ -56,7 +56,7 @@ class MachineResponseModel extends Equatable {
   MachineResponseModel copyWith({
     String? id,
     String? machineId,
-    MachineResponsePlatform? platform,
+    MachineResponsePlatformEnum? platform,
     String? key,
     String? value,
     String? type,

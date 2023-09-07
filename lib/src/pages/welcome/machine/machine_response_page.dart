@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
+import '../../../model/model/machine_response/machine_response_model.dart';
 import '../../../router.dart';
+import '../../../utils/fonts.dart';
 import '../../widgets/custom_appbar.dart';
-import '../../widgets/row_body.dart';
 
 class MachineResponsePage extends ConsumerStatefulWidget {
   const MachineResponsePage({
@@ -30,6 +31,24 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
     Future.microtask(() => notifier.getAll());
   }
 
+  Future<void> onSelected(
+    String value, {
+    required MachineResponseModel item,
+  }) async {
+    final notifier =
+        ref.read(machineResponseNotifier(widget.idMachine).notifier);
+    switch (value) {
+      case "delete":
+        await notifier.delete(responseId: item.id);
+
+        // Reload data
+        ref.invalidate(machineResponseNotifier(widget.idMachine));
+
+        break;
+      default:
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,10 +61,10 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
           ),
           Expanded(
             child: Builder(builder: (context) {
-              final settingsAsync =
+              final responseAsync =
                   ref.watch(machineResponseNotifier(widget.idMachine)).onGetAll;
 
-              return settingsAsync.when(
+              return responseAsync.when(
                 data: (items) {
                   return ListView.separated(
                     separatorBuilder: (context, index) {
@@ -55,18 +74,63 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final item = items[index];
-                      return ListTile(
-                        title: Text(item.key),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RowBody(title: "Value", content: item.value),
-                            RowBody(
-                              title: "Type",
-                              content: item.type,
+                      return Stack(
+                        children: [
+                          Card(
+                            margin: EdgeInsets.zero,
+                            child: ListTile(
+                              title: Text(item.key),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ...[
+                                    const SizedBox(height: 10.0),
+                                    Text(
+                                      "Type :",
+                                      style: bodyFontBold,
+                                    ),
+                                    const SizedBox(
+                                      height: 8.0,
+                                    ),
+                                    Text(item.type),
+                                  ],
+                                  ...[
+                                    const SizedBox(height: 10.0),
+                                    Text(
+                                      "Value :",
+                                      style: bodyFontBold,
+                                    ),
+                                    const SizedBox(
+                                      height: 8.0,
+                                    ),
+                                    Text(item.value),
+                                  ],
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: PopupMenuButton(
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem(
+                                    value: "delete",
+                                    child: Text(
+                                      "Delete Response",
+                                      style: bodyFont.copyWith(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ];
+                              },
+                              onSelected: (value) =>
+                                  onSelected(value, item: item),
+                            ),
+                          )
+                        ],
                       );
                     },
                   );
@@ -89,12 +153,12 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          context.pushNamed(routeMachineResponseSettingForm, pathParameters: {
+          context.pushNamed(routeMachineResponseForm, pathParameters: {
             "idMachine": widget.idMachine,
             "id": "-1",
           });
         },
-        label: const Text("Tambah Response"),
+        label: const Text("Add Response"),
         icon: const Icon(Icons.add),
       ),
     );

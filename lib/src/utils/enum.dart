@@ -15,9 +15,14 @@ enum MachineWhatsappStatusEnum {
   disconnected,
 }
 
-enum MachineResponsePlatform {
+enum MachineResponsePlatformEnum {
   whatsapp,
   sms,
+}
+
+enum MachineSettingToolsOptionEnum {
+  allNumber,
+  specificNumber,
 }
 
 extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
@@ -132,22 +137,42 @@ extension MachineWhatsappStatusEXT on MachineWhatsappStatusEnum {
   }
 }
 
-extension MachineResponsePlatformEXT on MachineResponsePlatform {
+extension MachineResponsePlatformEXT on MachineResponsePlatformEnum {
   String get valueString {
     switch (this) {
-      case MachineResponsePlatform.whatsapp:
+      case MachineResponsePlatformEnum.whatsapp:
         return 'whatsapp';
-      case MachineResponsePlatform.sms:
+      case MachineResponsePlatformEnum.sms:
         return 'sms';
     }
   }
 
   String get valueStringReadable {
     switch (this) {
-      case MachineResponsePlatform.whatsapp:
+      case MachineResponsePlatformEnum.whatsapp:
         return 'Whatsapp';
-      case MachineResponsePlatform.sms:
+      case MachineResponsePlatformEnum.sms:
         return 'SMS';
+    }
+  }
+}
+
+extension MachineSettingToolsOptionEXT on MachineSettingToolsOptionEnum {
+  bool get valueBoolean {
+    switch (this) {
+      case MachineSettingToolsOptionEnum.allNumber:
+        return true;
+      case MachineSettingToolsOptionEnum.specificNumber:
+        return false;
+    }
+  }
+
+  String get valueStringReadable {
+    switch (this) {
+      case MachineSettingToolsOptionEnum.allNumber:
+        return 'All Numbers Can Join Survey';
+      case MachineSettingToolsOptionEnum.specificNumber:
+        return 'Only Invited Numbers Can Join Survey';
     }
   }
 }

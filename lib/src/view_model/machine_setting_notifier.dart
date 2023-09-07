@@ -41,7 +41,9 @@ class MachineSettingNotifier extends StateNotifier<MachineSettingState> {
   MachineSettingNotifier({
     required this.repository,
     required this.machineId,
-  }) : super(const MachineSettingState());
+  }) : super(const MachineSettingState()) {
+    getAll();
+  }
 
   Future<void> getAll() async {
     state = state.copyWith(onGetAll: const AsyncValue.loading());
@@ -53,9 +55,15 @@ class MachineSettingNotifier extends StateNotifier<MachineSettingState> {
     );
   }
 
-  Future<void> getById(String machineId) async {
+  Future<void> getById({
+    required String machineId,
+    required String settingId,
+  }) async {
     state = state.copyWith(onGetById: const AsyncValue.loading());
-    final result = await repository.getById(machineId);
+    final result = await repository.getById(
+      machineId: machineId,
+      settingId: settingId,
+    );
     result.fold(
       (failure) => state = state.copyWith(
           onGetById: AsyncValue.error(failure.message, StackTrace.current)),

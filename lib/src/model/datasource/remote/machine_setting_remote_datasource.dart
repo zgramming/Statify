@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -32,8 +33,13 @@ class MachineSettingRemoteDatasource {
     }
   }
 
-  Future<MachineSettingModel> getById(String machineId) async {
-    final uri = Uri.parse('$kBaseApiUrl/machines/$machineId/settings');
+  Future<MachineSettingModel> getById({
+    required String machineId,
+    required String settingId,
+  }) async {
+    final uri = Uri.parse(
+      '$kBaseApiUrl/machines/$machineId/settings/$settingId',
+    );
     final response = await client.get(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
@@ -57,15 +63,22 @@ class MachineSettingRemoteDatasource {
     final uri = Uri.parse(
       '$kBaseApiUrl/machines/${form.machineId}/settings/$settingId',
     );
-    final response = await client.put(
+
+    final response = await client.patch(
       uri,
-      body: {
-        'use_password': form.usePassword,
-        'timeout': form.timeout,
-        'tries': form.tries,
-        'backoff': form.backoff,
+      body: json.encode(
+        {
+          'use_password': form.usePassword,
+          'timeout': form.timeout,
+          'tries': form.tries,
+          'backoff': form.backoff,
+        },
+      ),
+      headers: {
+        'Content-Type': 'application/json',
       },
     );
+
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
 

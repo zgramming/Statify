@@ -4,6 +4,8 @@ import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
 import 'pages/welcome/machine/machine_response_form_page.dart';
 import 'pages/welcome/machine/machine_response_page.dart';
+import 'pages/welcome/machine/machine_setting_form_page.dart';
+import 'pages/welcome/machine/machine_setting_page.dart';
 import 'pages/welcome/machine/machine_survey_form_page.dart';
 import 'pages/welcome/machine/machine_survey_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
@@ -24,9 +26,11 @@ const routeLogin = "login";
 const routeMachine = "machine";
 const routeMachineForm = "machine/form/:id";
 
-const routeMachineResponseSetting = "machine/:idMachine/response_setting";
-const routeMachineResponseSettingForm =
-    "machine/:idMachine/response_setting/form/:id";
+const routeMachineResponse = "machine/:idMachine/response";
+const routeMachineResponseForm = "machine/:idMachine/response/form/:id";
+
+const routeMachineSetting = "machine/:idMachine/setting";
+const routeMachineSettingForm = "machine/:idMachine/setting/form/:id";
 
 const routeMachineWhatsApp = "machine/:idMachine/whatsapp";
 const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
@@ -101,20 +105,41 @@ final _routes = <RouteBase>[
   ),
 
   GoRoute(
-    path: "/machine/:idMachine/response_setting",
-    name: routeMachineResponseSetting,
+    path: "/machine/:idMachine/response",
+    name: routeMachineResponse,
     builder: (context, state) {
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
       return MachineResponsePage(idMachine: idMachine);
     },
   ),
   GoRoute(
-    path: "/machine/:idMachine/response_setting/form/:id",
-    name: routeMachineResponseSettingForm,
+    path: "/machine/:idMachine/response/form/:id",
+    name: routeMachineResponseForm,
     builder: (context, state) {
       final id = state.pathParameters['id'] ?? "-1";
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
       return MachineResponseFormPage(idMachine: idMachine, id: id);
+    },
+  ),
+
+  GoRoute(
+    path: "/machine/:idMachine/setting",
+    name: routeMachineSetting,
+    builder: (context, state) {
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return MachineSettingPage(idMachine: idMachine);
+    },
+  ),
+  GoRoute(
+    path: "/machine/:idMachine/setting/form/:id",
+    name: routeMachineSettingForm,
+    builder: (context, state) {
+      final id = state.pathParameters['id'] ?? "-1";
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return MachineSettingFormPage(
+        idMachine: idMachine,
+        id: id,
+      );
     },
   ),
 

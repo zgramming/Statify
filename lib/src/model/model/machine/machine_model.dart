@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../utils/enum.dart';
+import '../../../utils/functions.dart';
 import '../machine_setting/machine_setting_model.dart';
 import '../machine_whatsapp/machine_whatsapp_model.dart';
 
@@ -28,44 +29,31 @@ class MachineModel extends Equatable {
   final List<MachineSettingModel> settings;
 
   MachineSettingModel? get settingsPlatformSMS {
-    final result = settings
-        .where((element) => element.platform == MachineResponsePlatform.sms)
-        .toList();
+    final result = getMachineSettingPlatformList(
+      settings,
+      MachineResponsePlatformEnum.sms,
+    );
 
-    if (result.isEmpty) {
-      return null;
-    }
-
-    return result.first;
+    return result;
   }
 
   MachineSettingModel? get settingsPlatformWhatsapp {
-    final result = settings
-        .where(
-            (element) => element.platform == MachineResponsePlatform.whatsapp)
-        .toList();
+    final result = getMachineSettingPlatformList(
+      settings,
+      MachineResponsePlatformEnum.whatsapp,
+    );
 
-    if (result.isEmpty) {
-      return null;
-    }
-
-    return result.first;
+    return result;
   }
 
   String? settingByPlatformReadable(MachineSettingModel? setting) {
-    if (setting == null) {
-      return null;
-    }
-
-    if (setting.usePassword == 1) {
-      return """
-Only Invited Numbers Can Join Survey \n
-Invitation Password Timeout since received : ${setting.timeout} hours \n
-Disqualified / Banned Numbers for ${setting.backoff} hours, when ${setting.tries} times wrong password
-""";
-    }
-
-    return "All Numbers Can Join Survey";
+    final result = getMachineSettingPlatformReadable(
+      usePassword: setting?.usePassword,
+      timeout: setting?.timeout,
+      tries: setting?.tries,
+      backoff: setting?.backoff,
+    );
+    return result;
   }
 
   const MachineModel({

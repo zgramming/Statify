@@ -22,9 +22,15 @@ class MachineSettingRepository {
     }
   }
 
-  Future<Either<Failure, MachineSettingModel>> getById(String machineId) async {
+  Future<Either<Failure, MachineSettingModel>> getById({
+    required String machineId,
+    required String settingId,
+  }) async {
     try {
-      final result = await remoteDatasource.getById(machineId);
+      final result = await remoteDatasource.getById(
+        machineId: machineId,
+        settingId: settingId,
+      );
       return Right(result);
     } catch (e) {
       return Left(CommonFailure(e.toString()));

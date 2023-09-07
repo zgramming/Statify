@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../utils/enum.dart';
+import '../../../utils/functions.dart';
 
 part 'machine_setting_model.g.dart';
 
@@ -12,13 +13,23 @@ part 'machine_setting_model.g.dart';
 class MachineSettingModel extends Equatable {
   final String id;
   final String machineId;
-  final MachineResponsePlatform platform;
+  final MachineResponsePlatformEnum platform;
   final int usePassword;
   final int timeout;
   final int tries;
   final int backoff;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  String? get settingByPlatformReadable {
+    final result = getMachineSettingPlatformReadable(
+      usePassword: usePassword,
+      timeout: timeout,
+      tries: tries,
+      backoff: backoff,
+    );
+    return result;
+  }
 
   const MachineSettingModel({
     required this.id,
@@ -59,7 +70,7 @@ class MachineSettingModel extends Equatable {
   MachineSettingModel copyWith({
     String? id,
     String? machineId,
-    MachineResponsePlatform? platform,
+    MachineResponsePlatformEnum? platform,
     int? usePassword,
     int? timeout,
     int? tries,

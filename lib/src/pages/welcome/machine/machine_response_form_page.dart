@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +32,8 @@ class _MachineResponseFormPageState
   late final TextEditingController keyController;
   late final TextEditingController valueController;
   MachineResponseTypeEnum selectedType = MachineResponseTypeEnum.welcome;
-  MachineResponsePlatform selectedPlatform = MachineResponsePlatform.sms;
+  MachineResponsePlatformEnum selectedPlatform =
+      MachineResponsePlatformEnum.sms;
 
   Future<void> onSubmit() async {
     final validate = _formKey.currentState?.validate() ?? false;
@@ -50,7 +53,9 @@ class _MachineResponseFormPageState
       type: selectedType.valueString,
       platform: selectedPlatform.valueString,
     );
+
     if (isCreate) {
+      log("tes");
       await notifier.create(form: form);
     }
   }
@@ -78,7 +83,7 @@ class _MachineResponseFormPageState
         data: (data) {
           showSnackbar(
             context: context,
-            message: "Berhasil membuat setting baru",
+            message: "Success create machine response",
             backgroundColor: Colors.green,
           );
 
@@ -137,6 +142,10 @@ class _MachineResponseFormPageState
                 const SizedBox(height: 16.0),
                 TextFormField(
                   controller: valueController,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  minLines: 3,
+                  maxLines: 10,
                   decoration: inputDecorationRounded().copyWith(
                     hintText: "Masukkan value",
                   ),
@@ -172,12 +181,12 @@ class _MachineResponseFormPageState
                   },
                 ),
                 const SizedBox(height: 16.0),
-                DropdownButtonFormField<MachineResponsePlatform>(
+                DropdownButtonFormField<MachineResponsePlatformEnum>(
                   value: selectedPlatform,
                   decoration: inputDecorationRounded().copyWith(
                     hintText: "Pilih setting",
                   ),
-                  items: MachineResponsePlatform.values
+                  items: MachineResponsePlatformEnum.values
                       .map((e) => DropdownMenuItem(
                             value: e,
                             child: Text(e.valueStringReadable),

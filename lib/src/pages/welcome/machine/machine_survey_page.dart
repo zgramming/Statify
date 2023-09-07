@@ -45,7 +45,7 @@ class MachineSurveyPage extends StatelessWidget {
             "id": "-1",
           });
         },
-        label: const Text("Tambah"),
+        label: const Text("Add Survey"),
         icon: const Icon(Icons.add),
       ),
     );

@@ -8,27 +8,7 @@ import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
-
-class _FormBodyRow extends StatelessWidget {
-  const _FormBodyRow({
-    Key? key,
-    required this.title,
-    required this.child,
-  }) : super(key: key);
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(flex: 5, child: Text(title)),
-        Expanded(flex: 7, child: child),
-      ],
-    );
-  }
-}
+import '../../widgets/form_row_body.dart';
 
 class MachineFormPage extends ConsumerStatefulWidget {
   const MachineFormPage({
@@ -221,7 +201,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 20),
-                  _FormBodyRow(
+                  FormBodyRow(
                     title: "Machine Name",
                     child: TextFormField(
                       controller: _nameController,
@@ -234,7 +214,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _FormBodyRow(
+                  FormBodyRow(
                     title: "Number Machine",
                     child: TextFormField(
                       controller: _numberController,
@@ -248,7 +228,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _FormBodyRow(
+                  FormBodyRow(
                     title: "Activation License",
                     child: TextFormField(
                       controller: _licenseController,
@@ -261,7 +241,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _FormBodyRow(
+                  FormBodyRow(
                     title: "Serial Number",
                     child: TextFormField(
                       controller: _serialNumberController,

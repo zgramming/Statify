@@ -278,7 +278,7 @@ class _MachineWhatsAppPageState extends ConsumerState<MachineWhatsAppPage> {
             "id": "-1",
           });
         },
-        label: const Text("Tambah"),
+        label: const Text(" Add WhatsApp"),
         icon: const Icon(Icons.add),
       ),
     );

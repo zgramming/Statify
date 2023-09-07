@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../model/model/machine_setting/machine_setting_model.dart';
+import 'enum.dart';
+
 void showSnackbar({
   required BuildContext context,
   required String message,
@@ -34,4 +37,39 @@ Widget Function(BuildContext, Widget, ImageChunkEvent?)?
       ),
     );
   };
+}
+
+MachineSettingModel? getMachineSettingPlatformList(
+  List<MachineSettingModel> items,
+  MachineResponsePlatformEnum platform,
+) {
+  final result =
+      items.where((element) => element.platform == platform).toList();
+
+  if (result.isEmpty) {
+    return null;
+  }
+
+  return result.first;
+}
+
+String? getMachineSettingPlatformReadable({
+  int? usePassword,
+  int? timeout,
+  int? tries,
+  int? backoff,
+}) {
+  if (usePassword == null) {
+    return null;
+  }
+
+  if (usePassword == 1) {
+    return """
+Only Invited Numbers Can Join Survey \n
+Invitation Password Timeout since received : $timeout hours \n
+Disqualified / Banned Numbers for $backoff hours, when $tries times wrong password
+""";
+  }
+
+  return "All Numbers Can Join Survey";
 }

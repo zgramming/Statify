@@ -52,7 +52,8 @@ const _$MachineActionEnumEnumMap = {
 Response _$ResponseFromJson(Map<String, dynamic> json) => Response(
       id: json['id'] as String,
       machineId: json['machine_id'] as String,
-      platform: $enumDecode(_$MachineResponsePlatformEnumMap, json['platform']),
+      platform:
+          $enumDecode(_$MachineResponsePlatformEnumEnumMap, json['platform']),
       key: json['key'] as String,
       value: json['value'] as String,
       type: json['type'] as String,
@@ -63,7 +64,7 @@ Response _$ResponseFromJson(Map<String, dynamic> json) => Response(
 Map<String, dynamic> _$ResponseToJson(Response instance) => <String, dynamic>{
       'id': instance.id,
       'machine_id': instance.machineId,
-      'platform': _$MachineResponsePlatformEnumMap[instance.platform]!,
+      'platform': _$MachineResponsePlatformEnumEnumMap[instance.platform]!,
       'key': instance.key,
       'value': instance.value,
       'type': instance.type,
@@ -71,7 +72,7 @@ Map<String, dynamic> _$ResponseToJson(Response instance) => <String, dynamic>{
       'updated_at': instance.updatedAt.toIso8601String(),
     };
 
-const _$MachineResponsePlatformEnumMap = {
-  MachineResponsePlatform.whatsapp: 'whatsapp',
-  MachineResponsePlatform.sms: 'sms',
+const _$MachineResponsePlatformEnumEnumMap = {
+  MachineResponsePlatformEnum.whatsapp: 'whatsapp',
+  MachineResponsePlatformEnum.sms: 'sms',
 };

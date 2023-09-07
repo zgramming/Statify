@@ -10,7 +10,8 @@ MachineSettingModel _$MachineSettingModelFromJson(Map<String, dynamic> json) =>
     MachineSettingModel(
       id: json['id'] as String,
       machineId: json['machine_id'] as String,
-      platform: $enumDecode(_$MachineResponsePlatformEnumMap, json['platform']),
+      platform:
+          $enumDecode(_$MachineResponsePlatformEnumEnumMap, json['platform']),
       usePassword: json['use_password'] as int,
       timeout: json['timeout'] as int,
       tries: json['tries'] as int,
@@ -24,7 +25,7 @@ Map<String, dynamic> _$MachineSettingModelToJson(
     <String, dynamic>{
       'id': instance.id,
       'machine_id': instance.machineId,
-      'platform': _$MachineResponsePlatformEnumMap[instance.platform]!,
+      'platform': _$MachineResponsePlatformEnumEnumMap[instance.platform]!,
       'use_password': instance.usePassword,
       'timeout': instance.timeout,
       'tries': instance.tries,
@@ -33,7 +34,7 @@ Map<String, dynamic> _$MachineSettingModelToJson(
       'updated_at': instance.updatedAt.toIso8601String(),
     };
 
-const _$MachineResponsePlatformEnumMap = {
-  MachineResponsePlatform.whatsapp: 'whatsapp',
-  MachineResponsePlatform.sms: 'sms',
+const _$MachineResponsePlatformEnumEnumMap = {
+  MachineResponsePlatformEnum.whatsapp: 'whatsapp',
+  MachineResponsePlatformEnum.sms: 'sms',
 };

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../../utils/constant.dart';
 import '../../model/form/form_machine_response_create_update_model.dart';
 import '../../model/machine_response/machine_response_create_response_model.dart';
+import '../../model/machine_response/machine_response_delete_response_model.dart';
 import '../../model/machine_response/machine_response_model.dart';
 
 class MachineResponseRemoteDatasource {
@@ -71,14 +72,35 @@ class MachineResponseRemoteDatasource {
 
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       final data = decoded['data'];
       final machine = MachineResponseCreateResponseModel.fromJson(data);
       return machine;
     } else {
       final message = decoded.containsKey('message')
           ? decoded['message']
-          : 'Failed to load machine';
+          : 'Failed to create response machine';
+      throw Exception(message);
+    }
+  }
+
+  Future<MachineResponseDeleteResponseModel> delete({
+    required String machineId,
+    required String responseId,
+  }) async {
+    final uri =
+        Uri.parse('$kBaseApiUrl/machines/$machineId/responses/$responseId');
+    final response = await client.delete(uri);
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    if (response.statusCode == 200) {
+      final data = decoded['data'];
+      final machine = MachineResponseDeleteResponseModel.fromJson(data);
+      return machine;
+    } else {
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to delete response machine';
       throw Exception(message);
     }
   }

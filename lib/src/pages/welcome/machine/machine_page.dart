@@ -34,7 +34,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
         break;
       case "machine_response":
         context.pushNamed(
-          routeMachineResponseSetting,
+          routeMachineResponse,
           pathParameters: {
             "idMachine": item.id,
           },
@@ -51,6 +51,15 @@ class _MachinePageState extends ConsumerState<MachinePage> {
       case "machine_survey":
         context.pushNamed(
           routeMachineSurvey,
+          pathParameters: {
+            "idMachine": item.id,
+          },
+        );
+        break;
+
+      case "machine_setting":
+        context.pushNamed(
+          routeMachineSetting,
           pathParameters: {
             "idMachine": item.id,
           },
@@ -223,7 +232,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
           });
         },
         icon: const Icon(Icons.add),
-        label: const Text("Tambah Mesin"),
+        label: const Text("Add Machine"),
       ),
     );
   }

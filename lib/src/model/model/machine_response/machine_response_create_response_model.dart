@@ -104,7 +104,7 @@ class MachineResponseCreateResponseModel extends Equatable {
 class Response extends Equatable {
   final String id;
   final String machineId;
-  final MachineResponsePlatform platform;
+  final MachineResponsePlatformEnum platform;
   final String key;
   final String value;
   final String type;
@@ -147,7 +147,7 @@ class Response extends Equatable {
   Response copyWith({
     String? id,
     String? machineId,
-    MachineResponsePlatform? platform,
+    MachineResponsePlatformEnum? platform,
     String? key,
     String? value,
     String? type,
