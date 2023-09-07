@@ -1,37 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'survey_create_response_model.dart';
+part of 'machine_response_create_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SurveyCreateResponseModel _$SurveyCreateResponseModelFromJson(
+MachineResponseCreateResponseModel _$MachineResponseCreateResponseModelFromJson(
         Map<String, dynamic> json) =>
-    SurveyCreateResponseModel(
-      id: json['id'] as String,
-      locked: json['locked'] as bool,
-      number: json['number'] as String,
-      machineId: json['machine_id'] as String,
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      createdAt: DateTime.parse(json['created_at'] as String),
-      machine: SurveyMachine.fromJson(json['machine'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$SurveyCreateResponseModelToJson(
-        SurveyCreateResponseModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'locked': instance.locked,
-      'number': instance.number,
-      'machine_id': instance.machineId,
-      'updated_at': instance.updatedAt.toIso8601String(),
-      'created_at': instance.createdAt.toIso8601String(),
-      'machine': instance.machine,
-    };
-
-SurveyMachine _$SurveyMachineFromJson(Map<String, dynamic> json) =>
-    SurveyMachine(
+    MachineResponseCreateResponseModel(
       id: json['id'] as String,
       userId: json['user_id'] as String,
       name: json['name'] as String,
@@ -44,11 +21,12 @@ SurveyMachine _$SurveyMachineFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       responses: (json['responses'] as List<dynamic>)
-          .map((e) => SurveyMachineResponse.fromJson(e as Map<String, dynamic>))
+          .map((e) => Response.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$SurveyMachineToJson(SurveyMachine instance) =>
+Map<String, dynamic> _$MachineResponseCreateResponseModelToJson(
+        MachineResponseCreateResponseModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'user_id': instance.userId,
@@ -71,12 +49,10 @@ const _$MachineActionEnumEnumMap = {
   MachineActionEnum.whatappSMS: 'whatappSMS',
 };
 
-SurveyMachineResponse _$SurveyMachineResponseFromJson(
-        Map<String, dynamic> json) =>
-    SurveyMachineResponse(
+Response _$ResponseFromJson(Map<String, dynamic> json) => Response(
       id: json['id'] as String,
       machineId: json['machine_id'] as String,
-      platform: $enumDecode(_$MachineActionEnumEnumMap, json['platform']),
+      platform: $enumDecode(_$MachineResponsePlatformEnumMap, json['platform']),
       key: json['key'] as String,
       value: json['value'] as String,
       type: json['type'] as String,
@@ -84,15 +60,18 @@ SurveyMachineResponse _$SurveyMachineResponseFromJson(
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$SurveyMachineResponseToJson(
-        SurveyMachineResponse instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ResponseToJson(Response instance) => <String, dynamic>{
       'id': instance.id,
       'machine_id': instance.machineId,
-      'platform': _$MachineActionEnumEnumMap[instance.platform]!,
+      'platform': _$MachineResponsePlatformEnumMap[instance.platform]!,
       'key': instance.key,
       'value': instance.value,
       'type': instance.type,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
     };
+
+const _$MachineResponsePlatformEnumMap = {
+  MachineResponsePlatform.whatsapp: 'whatsapp',
+  MachineResponsePlatform.sms: 'sms',
+};

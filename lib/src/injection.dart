@@ -8,7 +8,8 @@ import 'model/datasource/local/authentication_local_datasource.dart';
 import 'model/datasource/phone_local_datasource.dart';
 import 'model/datasource/remote/authentication_remote_datasource.dart';
 import 'model/datasource/remote/machine_remote_datasource.dart';
-import 'model/datasource/remote/machine_response_setting_remote_datasource.dart';
+import 'model/datasource/remote/machine_response_remote_datasource.dart';
+import 'model/datasource/remote/machine_setting_remote_datasource.dart';
 import 'model/datasource/remote/machine_whatsapp_remote_datasource.dart';
 import 'model/datasource/remote/survey_remote_datasource.dart';
 import 'model/datasource/remote/survey_response_remote_datasource.dart';
@@ -20,7 +21,8 @@ import 'model/model/sms_model.dart';
 import 'model/repository/application_config_repository.dart';
 import 'model/repository/authentication_repository.dart';
 import 'model/repository/machine_repository.dart';
-import 'model/repository/machine_response_setting_repository.dart';
+import 'model/repository/machine_response_repository.dart';
+import 'model/repository/machine_setting_repository.dart';
 import 'model/repository/machine_whatsapp_repository.dart';
 import 'model/repository/sms_repository.dart';
 import 'model/repository/survey_repository.dart';
@@ -30,7 +32,8 @@ import 'utils/http_client.dart';
 import 'view_model/application_config_notifier.dart';
 import 'view_model/authentication_notifier.dart';
 import 'view_model/machine_notifier.dart';
-import 'view_model/machine_response_setting_notifier.dart';
+import 'view_model/machine_response_notifier.dart';
+import 'view_model/machine_setting_notifier.dart';
 import 'view_model/machine_whatsapp_notifier.dart';
 import 'view_model/sms_view_notifier.dart';
 import 'view_model/survey_notifier.dart';
@@ -67,11 +70,18 @@ final surveyResponseNotifier =
     repository: ref.watch(_surveyResponseRepository),
   ),
 );
-final machineResponseSettingNotifier = StateNotifierProvider.family<
-    MachineResponseSettingNotifier, MachineResponseSettingState, String>(
-  (ref, idMachine) => MachineResponseSettingNotifier(
-    repository: ref.watch(_machineResponseSettingRepository),
-    idMachine: idMachine,
+final machineSettingNotifier = StateNotifierProviderFamily<
+    MachineSettingNotifier, MachineSettingState, String>((ref, machineId) {
+  return MachineSettingNotifier(
+    repository: ref.watch(_machineSettingRepository),
+    machineId: machineId,
+  );
+});
+final machineResponseNotifier = StateNotifierProviderFamily<
+    MachineResponseNotifier, MachineResponseState, String>(
+  (ref, machineId) => MachineResponseNotifier(
+    repository: ref.watch(_machineResponseRepository),
+    machineId: machineId,
   ),
 );
 final machineWhatsappNotifier =
@@ -110,9 +120,10 @@ final _surveyRepository = Provider((ref) =>
     SurveyRepository(remoteDatasource: ref.watch(_surveyRemoteDatasource)));
 final _surveyResponseRepository = Provider((ref) => SurveyResponseRepository(
     remoteDatasource: ref.watch(_surveyResponseRemoteDatasource)));
-final _machineResponseSettingRepository = Provider((ref) =>
-    MachineResponseSettingRepository(
-        remoteDatasource: ref.watch(_machineResponseSettingRemoteDatasource)));
+final _machineSettingRepository = Provider((ref) => MachineSettingRepository(
+    remoteDatasource: ref.watch(_machineSettingRemoteDatasource)));
+final _machineResponseRepository = Provider((ref) => MachineResponseRepository(
+    remoteDatasource: ref.watch(_machineResponseRemoteDatasource)));
 final _machineWhatsappRepository = Provider((ref) => MachineWhatsappRepository(
     remoteDatasource: ref.watch(_machineWhatsappRemoteDatasource)));
 final _machineRepository = Provider((ref) =>
@@ -137,8 +148,10 @@ final _surveyResponseRemoteDatasource = Provider(
     (ref) => SurveyResponseRemoteDatasource(client: ref.watch(_httpClient)));
 final _surveyRemoteDatasource =
     Provider((ref) => SurveyRemoteDatasource(client: ref.watch(_httpClient)));
-final _machineResponseSettingRemoteDatasource = Provider((ref) =>
-    MachineResponseSettingRemoteDatasource(client: ref.watch(_httpClient)));
+final _machineSettingRemoteDatasource = Provider(
+    (ref) => MachineSettingRemoteDatasource(client: ref.watch(_httpClient)));
+final _machineResponseRemoteDatasource = Provider(
+    (ref) => MachineResponseRemoteDatasource(client: ref.watch(_httpClient)));
 final _machineWhatsappRemoteDatasource = Provider(
     (ref) => MachineWhatsappRemoteDatasource(client: ref.watch(_httpClient)));
 final _machineRemoteDatasource =

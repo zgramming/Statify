@@ -8,11 +8,16 @@ enum MachineSMSSettingEnum {
 
 enum MachineActionEnum { sms, whatsapp, whatsappPriority, whatappSMS }
 
-enum MachineResponseSettingTypeEnum { welcome, regular }
+enum MachineResponseTypeEnum { welcome, regular, banned, wrongPassword, finish }
 
 enum MachineWhatsappStatusEnum {
   connected,
   disconnected,
+}
+
+enum MachineResponsePlatform {
+  whatsapp,
+  sms,
 }
 
 extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
@@ -75,22 +80,34 @@ extension MachineActionEnumEXT on MachineActionEnum {
   }
 }
 
-extension MachineResponseSettingTypeEnumEXT on MachineResponseSettingTypeEnum {
+extension MachineResponseTypeEnumEXT on MachineResponseTypeEnum {
   String get valueString {
     switch (this) {
-      case MachineResponseSettingTypeEnum.welcome:
+      case MachineResponseTypeEnum.welcome:
         return 'welcome';
-      case MachineResponseSettingTypeEnum.regular:
+      case MachineResponseTypeEnum.regular:
         return 'regular';
+      case MachineResponseTypeEnum.banned:
+        return 'banned';
+      case MachineResponseTypeEnum.wrongPassword:
+        return 'wrong_password';
+      case MachineResponseTypeEnum.finish:
+        return 'finish';
     }
   }
 
   String get valueStringReadable {
     switch (this) {
-      case MachineResponseSettingTypeEnum.welcome:
+      case MachineResponseTypeEnum.welcome:
         return 'Welcome';
-      case MachineResponseSettingTypeEnum.regular:
+      case MachineResponseTypeEnum.regular:
         return 'Regular';
+      case MachineResponseTypeEnum.banned:
+        return 'Banned';
+      case MachineResponseTypeEnum.wrongPassword:
+        return 'Wrong Password';
+      case MachineResponseTypeEnum.finish:
+        return 'Finish';
     }
   }
 }
@@ -111,6 +128,26 @@ extension MachineWhatsappStatusEXT on MachineWhatsappStatusEnum {
         return 'Connected';
       case MachineWhatsappStatusEnum.disconnected:
         return 'Disconnected';
+    }
+  }
+}
+
+extension MachineResponsePlatformEXT on MachineResponsePlatform {
+  String get valueString {
+    switch (this) {
+      case MachineResponsePlatform.whatsapp:
+        return 'whatsapp';
+      case MachineResponsePlatform.sms:
+        return 'sms';
+    }
+  }
+
+  String get valueStringReadable {
+    switch (this) {
+      case MachineResponsePlatform.whatsapp:
+        return 'Whatsapp';
+      case MachineResponsePlatform.sms:
+        return 'SMS';
     }
   }
 }

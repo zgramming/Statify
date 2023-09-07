@@ -8,8 +8,8 @@ import '../../../router.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
-class MachineResponseSettingPage extends ConsumerStatefulWidget {
-  const MachineResponseSettingPage({
+class MachineResponsePage extends ConsumerStatefulWidget {
+  const MachineResponsePage({
     super.key,
     required this.idMachine,
   });
@@ -17,18 +17,16 @@ class MachineResponseSettingPage extends ConsumerStatefulWidget {
   final String idMachine;
 
   @override
-  ConsumerState<MachineResponseSettingPage> createState() =>
-      _MachineResponseSettingPageState();
+  ConsumerState<MachineResponsePage> createState() =>
+      _MachineResponsePageState();
 }
 
-class _MachineResponseSettingPageState
-    extends ConsumerState<MachineResponseSettingPage> {
+class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
   @override
   void initState() {
     super.initState();
     final idMachine = widget.idMachine;
-    final notifier =
-        ref.read(machineResponseSettingNotifier(idMachine).notifier);
+    final notifier = ref.read(machineResponseNotifier(idMachine).notifier);
     Future.microtask(() => notifier.getAll());
   }
 
@@ -44,9 +42,8 @@ class _MachineResponseSettingPageState
           ),
           Expanded(
             child: Builder(builder: (context) {
-              final settingsAsync = ref
-                  .watch(machineResponseSettingNotifier(widget.idMachine))
-                  .onGetAll;
+              final settingsAsync =
+                  ref.watch(machineResponseNotifier(widget.idMachine)).onGetAll;
 
               return settingsAsync.when(
                 data: (items) {

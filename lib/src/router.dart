@@ -2,8 +2,8 @@ import 'package:go_router/go_router.dart';
 
 import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
-import 'pages/welcome/machine/machine_response_setting_form_page.dart';
-import 'pages/welcome/machine/machine_response_setting_page.dart';
+import 'pages/welcome/machine/machine_response_form_page.dart';
+import 'pages/welcome/machine/machine_response_page.dart';
 import 'pages/welcome/machine/machine_survey_form_page.dart';
 import 'pages/welcome/machine/machine_survey_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
@@ -105,7 +105,7 @@ final _routes = <RouteBase>[
     name: routeMachineResponseSetting,
     builder: (context, state) {
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return MachineResponseSettingPage(idMachine: idMachine);
+      return MachineResponsePage(idMachine: idMachine);
     },
   ),
   GoRoute(
@@ -114,7 +114,7 @@ final _routes = <RouteBase>[
     builder: (context, state) {
       final id = state.pathParameters['id'] ?? "-1";
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return MachineResponseSettingFormPage(idMachine: idMachine, id: id);
+      return MachineResponseFormPage(idMachine: idMachine, id: id);
     },
   ),
 

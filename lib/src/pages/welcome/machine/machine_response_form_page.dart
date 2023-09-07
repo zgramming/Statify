@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
+import '../../../model/model/form/form_machine_response_create_update_model.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
 
-class MachineResponseSettingFormPage extends ConsumerStatefulWidget {
-  const MachineResponseSettingFormPage({
+class MachineResponseFormPage extends ConsumerStatefulWidget {
+  const MachineResponseFormPage({
     Key? key,
     required this.idMachine,
     required this.id,
@@ -18,18 +19,18 @@ class MachineResponseSettingFormPage extends ConsumerStatefulWidget {
   final String id;
 
   @override
-  ConsumerState<MachineResponseSettingFormPage> createState() =>
-      _MachineResponseSettingFormPageState();
+  ConsumerState<MachineResponseFormPage> createState() =>
+      _MachineResponseFormPageState();
 }
 
-class _MachineResponseSettingFormPageState
-    extends ConsumerState<MachineResponseSettingFormPage> {
+class _MachineResponseFormPageState
+    extends ConsumerState<MachineResponseFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController keyController;
   late final TextEditingController valueController;
-  MachineResponseSettingTypeEnum selectedType =
-      MachineResponseSettingTypeEnum.welcome;
+  MachineResponseTypeEnum selectedType = MachineResponseTypeEnum.welcome;
+  MachineResponsePlatform selectedPlatform = MachineResponsePlatform.sms;
 
   Future<void> onSubmit() async {
     final validate = _formKey.currentState?.validate() ?? false;
@@ -39,17 +40,18 @@ class _MachineResponseSettingFormPageState
     final id = widget.id;
     final isCreate = id == "-1";
 
-    final notifier =
-        ref.read(machineResponseSettingNotifier(idMachine).notifier);
+    final notifier = ref.read(machineResponseNotifier(idMachine).notifier);
     final key = keyController.text;
     final value = valueController.text;
 
+    final form = FormMachineResponseCreateUpdateModel(
+      key: key,
+      value: value,
+      type: selectedType.valueString,
+      platform: selectedPlatform.valueString,
+    );
     if (isCreate) {
-      await notifier.create(
-        key: key,
-        value: value,
-        type: selectedType.valueString,
-      );
+      await notifier.create(form: form);
     }
   }
 
@@ -70,7 +72,7 @@ class _MachineResponseSettingFormPageState
   @override
   Widget build(BuildContext context) {
     ref.listen(
-        machineResponseSettingNotifier(widget.idMachine)
+        machineResponseNotifier(widget.idMachine)
             .select((value) => value.onCreate), (previous, next) {
       next.when(
         data: (data) {
@@ -88,7 +90,7 @@ class _MachineResponseSettingFormPageState
           // Reload data
           final idMachine = widget.idMachine;
           final notifier =
-              ref.read(machineResponseSettingNotifier(idMachine).notifier);
+              ref.read(machineResponseNotifier(idMachine).notifier);
           Future.microtask(() => notifier.getAll());
         },
         error: (error, stackTrace) {
@@ -146,12 +148,12 @@ class _MachineResponseSettingFormPageState
                   },
                 ),
                 const SizedBox(height: 16.0),
-                DropdownButtonFormField<MachineResponseSettingTypeEnum>(
+                DropdownButtonFormField<MachineResponseTypeEnum>(
                   value: selectedType,
                   decoration: inputDecorationRounded().copyWith(
                     hintText: "Pilih setting",
                   ),
-                  items: MachineResponseSettingTypeEnum.values
+                  items: MachineResponseTypeEnum.values
                       .map((e) => DropdownMenuItem(
                             value: e,
                             child: Text(e.valueStringReadable),
@@ -160,6 +162,30 @@ class _MachineResponseSettingFormPageState
                   onChanged: (value) {
                     setState(() {
                       selectedType = value!;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return "Setting is required";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                DropdownButtonFormField<MachineResponsePlatform>(
+                  value: selectedPlatform,
+                  decoration: inputDecorationRounded().copyWith(
+                    hintText: "Pilih setting",
+                  ),
+                  items: MachineResponsePlatform.values
+                      .map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.valueStringReadable),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedPlatform = value!;
                     });
                   },
                   validator: (value) {

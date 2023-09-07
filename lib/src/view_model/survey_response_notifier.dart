@@ -1,31 +1,44 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/model/survey/survey_response_create_response_model.dart';
-import '../model/model/survey/survey_response_model.dart';
+import '../model/model/survey_response/survey_response_by_machine_and_type_model.dart';
+import '../model/model/survey_response/survey_response_create_response_model.dart';
+import '../model/model/survey_response/survey_response_fail_model.dart';
+import '../model/model/survey_response/survey_response_sent_model.dart';
 import '../model/repository/survey_response_repository.dart';
 
 class SurveyResponseState extends Equatable {
   final AsyncValue<SurveyResponseCreateResponseModel?> onCreate;
-  final AsyncValue<SurveyResponseModel?> onGetResponse;
+  final AsyncValue<SurveyResponseByMachineAndTypeModel?> onGetByMachineAndType;
+  final AsyncValue<SurveyResponseFailModel?> onFail;
+  final AsyncValue<SurveyResponseSentModel?> onSent;
+
   const SurveyResponseState({
     this.onCreate = const AsyncData(null),
-    this.onGetResponse = const AsyncData(null),
+    this.onGetByMachineAndType = const AsyncData(null),
+    this.onFail = const AsyncData(null),
+    this.onSent = const AsyncData(null),
   });
 
   @override
-  List<Object> get props => [onCreate, onGetResponse];
+  List<Object> get props => [onCreate, onGetByMachineAndType, onFail, onSent];
 
   @override
   bool get stringify => true;
 
   SurveyResponseState copyWith({
     AsyncValue<SurveyResponseCreateResponseModel?>? onCreate,
-    AsyncValue<SurveyResponseModel?>? onGetResponse,
+    AsyncValue<SurveyResponseByMachineAndTypeModel?>? onGetByMachineAndType,
+    AsyncValue<SurveyResponseFailModel?>? onFail,
+    AsyncValue<SurveyResponseSentModel?>? onSent,
   }) {
     return SurveyResponseState(
       onCreate: onCreate ?? this.onCreate,
-      onGetResponse: onGetResponse ?? this.onGetResponse,
+      onGetByMachineAndType:
+          onGetByMachineAndType ?? this.onGetByMachineAndType,
+      onFail: onFail ?? this.onFail,
+      onSent: onSent ?? this.onSent,
     );
   }
 }
@@ -35,6 +48,17 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
   SurveyResponseNotifier({
     required this.repository,
   }) : super(const SurveyResponseState());
+
+  Future<void> getByMachineAndType(String machineId) async {
+    state = state.copyWith(onGetByMachineAndType: const AsyncLoading());
+    final result = await repository.getByMachineAndType(machineId);
+    result.fold(
+      (failure) => state = state.copyWith(
+          onGetByMachineAndType:
+              AsyncError(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onGetByMachineAndType: AsyncData(data)),
+    );
+  }
 
   Future<void> create({
     required String surveyId,
@@ -54,17 +78,23 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
     );
   }
 
-  Future<void> getResponse({
-    required String machineId,
-  }) async {
-    state = state.copyWith(onGetResponse: const AsyncLoading());
-    final result = await repository.getResponse(
-      machineId: machineId,
-    );
+  Future<void> sent(String surveyResponseId) async {
+    state = state.copyWith(onSent: const AsyncLoading());
+    final result = await repository.sent(surveyResponseId);
     result.fold(
       (failure) => state = state.copyWith(
-          onGetResponse: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onGetResponse: AsyncData(data)),
+          onSent: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onSent: AsyncData(data)),
+    );
+  }
+
+  Future<void> fail(String surveyResponseId) async {
+    state = state.copyWith(onFail: const AsyncLoading());
+    final result = await repository.fail(surveyResponseId);
+    result.fold(
+      (failure) => state = state.copyWith(
+          onFail: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onFail: AsyncData(data)),
     );
   }
 }

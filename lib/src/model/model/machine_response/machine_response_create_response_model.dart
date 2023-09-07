@@ -4,77 +4,12 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../../../utils/enum.dart';
 
-part 'survey_create_response_model.g.dart';
+part 'machine_response_create_response_model.g.dart';
 
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class SurveyCreateResponseModel extends Equatable {
-  final String id;
-  final bool locked;
-  final String number;
-  final String machineId;
-  final DateTime updatedAt;
-  final DateTime createdAt;
-  final SurveyMachine machine;
-
-  const SurveyCreateResponseModel({
-    required this.id,
-    required this.locked,
-    required this.number,
-    required this.machineId,
-    required this.updatedAt,
-    required this.createdAt,
-    required this.machine,
-  });
-
-  factory SurveyCreateResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$SurveyCreateResponseModelFromJson(json);
-
-  /// Connect the generated [_$SurveyCreateResponseModelToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$SurveyCreateResponseModelToJson(this);
-
-  @override
-  List<Object> get props {
-    return [
-      id,
-      locked,
-      number,
-      machineId,
-      updatedAt,
-      createdAt,
-      machine,
-    ];
-  }
-
-  @override
-  bool get stringify => true;
-
-  SurveyCreateResponseModel copyWith({
-    String? id,
-    bool? locked,
-    String? number,
-    String? machineId,
-    DateTime? updatedAt,
-    DateTime? createdAt,
-    SurveyMachine? machine,
-  }) {
-    return SurveyCreateResponseModel(
-      id: id ?? this.id,
-      locked: locked ?? this.locked,
-      number: number ?? this.number,
-      machineId: machineId ?? this.machineId,
-      updatedAt: updatedAt ?? this.updatedAt,
-      createdAt: createdAt ?? this.createdAt,
-      machine: machine ?? this.machine,
-    );
-  }
-}
-
-@JsonSerializable(
-  fieldRename: FieldRename.snake,
-)
-class SurveyMachine extends Equatable {
+class MachineResponseCreateResponseModel extends Equatable {
   final String id;
   final String userId;
   final String name;
@@ -86,9 +21,9 @@ class SurveyMachine extends Equatable {
   final int replied;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<SurveyMachineResponse> responses;
+  final List<Response> responses;
 
-  const SurveyMachine({
+  const MachineResponseCreateResponseModel({
     required this.id,
     required this.userId,
     required this.name,
@@ -103,11 +38,13 @@ class SurveyMachine extends Equatable {
     required this.responses,
   });
 
-  factory SurveyMachine.fromJson(Map<String, dynamic> json) =>
-      _$SurveyMachineFromJson(json);
+  factory MachineResponseCreateResponseModel.fromJson(
+          Map<String, dynamic> json) =>
+      _$MachineResponseCreateResponseModelFromJson(json);
 
-  /// Connect the generated [_$SurveyMachineToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$SurveyMachineToJson(this);
+  /// Connect the generated [_$MachineResponseCreateResponseModelToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() =>
+      _$MachineResponseCreateResponseModelToJson(this);
 
   @override
   List<Object> get props {
@@ -130,7 +67,7 @@ class SurveyMachine extends Equatable {
   @override
   bool get stringify => true;
 
-  SurveyMachine copyWith({
+  MachineResponseCreateResponseModel copyWith({
     String? id,
     String? userId,
     String? name,
@@ -142,9 +79,9 @@ class SurveyMachine extends Equatable {
     int? replied,
     DateTime? createdAt,
     DateTime? updatedAt,
-    List<SurveyMachineResponse>? responses,
+    List<Response>? responses,
   }) {
-    return SurveyMachine(
+    return MachineResponseCreateResponseModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       name: name ?? this.name,
@@ -164,17 +101,16 @@ class SurveyMachine extends Equatable {
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class SurveyMachineResponse extends Equatable {
+class Response extends Equatable {
   final String id;
   final String machineId;
-  final MachineActionEnum platform;
+  final MachineResponsePlatform platform;
   final String key;
   final String value;
   final String type;
   final DateTime createdAt;
   final DateTime updatedAt;
-
-  const SurveyMachineResponse({
+  const Response({
     required this.id,
     required this.machineId,
     required this.platform,
@@ -185,11 +121,11 @@ class SurveyMachineResponse extends Equatable {
     required this.updatedAt,
   });
 
-  factory SurveyMachineResponse.fromJson(Map<String, dynamic> json) =>
-      _$SurveyMachineResponseFromJson(json);
+  factory Response.fromJson(Map<String, dynamic> json) =>
+      _$ResponseFromJson(json);
 
-  /// Connect the generated [_$SurveyMachineResponseToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$SurveyMachineResponseToJson(this);
+  /// Connect the generated [_$ResponseToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$ResponseToJson(this);
 
   @override
   List<Object> get props {
@@ -208,17 +144,17 @@ class SurveyMachineResponse extends Equatable {
   @override
   bool get stringify => true;
 
-  SurveyMachineResponse copyWith({
+  Response copyWith({
     String? id,
     String? machineId,
-    MachineActionEnum? platform,
+    MachineResponsePlatform? platform,
     String? key,
     String? value,
     String? type,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return SurveyMachineResponse(
+    return Response(
       id: id ?? this.id,
       machineId: machineId ?? this.machineId,
       platform: platform ?? this.platform,
