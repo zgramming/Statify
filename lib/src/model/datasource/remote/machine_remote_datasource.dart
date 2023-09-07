@@ -86,6 +86,7 @@ class MachineRemoteDatasource {
         'name': form.name,
         'number': form.number,
         'license': form.license,
+        'serial_number': form.serialNumber,
         'action': form.action,
         'sms_setting': form.smsSetting,
       },
@@ -115,6 +116,7 @@ class MachineRemoteDatasource {
       uri,
       body: {
         'name': form.name,
+        'serial_number': form.serialNumber,
         'number': form.number,
         'license': form.license,
         'action': form.action,

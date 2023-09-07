@@ -1,6 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../../../utils/enum.dart';
+
 part 'machine_setting_model.g.dart';
 
 @JsonSerializable(
@@ -9,7 +12,7 @@ part 'machine_setting_model.g.dart';
 class MachineSettingModel extends Equatable {
   final String id;
   final String machineId;
-  final String platform;
+  final MachineResponsePlatform platform;
   final int usePassword;
   final int timeout;
   final int tries;
@@ -56,7 +59,7 @@ class MachineSettingModel extends Equatable {
   MachineSettingModel copyWith({
     String? id,
     String? machineId,
-    String? platform,
+    MachineResponsePlatform? platform,
     int? usePassword,
     int? timeout,
     int? tries,

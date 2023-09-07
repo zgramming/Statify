@@ -2,6 +2,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../utils/enum.dart';
+import '../machine_setting/machine_setting_model.dart';
 import '../machine_whatsapp/machine_whatsapp_model.dart';
 
 part 'machine_model.g.dart';
@@ -23,6 +25,48 @@ class MachineModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<MachineWhatsappModel> whatsapps;
+  final List<MachineSettingModel> settings;
+
+  MachineSettingModel? get settingsPlatformSMS {
+    final result = settings
+        .where((element) => element.platform == MachineResponsePlatform.sms)
+        .toList();
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return result.first;
+  }
+
+  MachineSettingModel? get settingsPlatformWhatsapp {
+    final result = settings
+        .where(
+            (element) => element.platform == MachineResponsePlatform.whatsapp)
+        .toList();
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return result.first;
+  }
+
+  String? settingByPlatformReadable(MachineSettingModel? setting) {
+    if (setting == null) {
+      return null;
+    }
+
+    if (setting.usePassword == 1) {
+      return """
+Only Invited Numbers Can Join Survey \n
+Invitation Password Timeout since received : ${setting.timeout} hours \n
+Disqualified / Banned Numbers for ${setting.backoff} hours, when ${setting.tries} times wrong password
+""";
+    }
+
+    return "All Numbers Can Join Survey";
+  }
 
   const MachineModel({
     required this.id,
@@ -38,6 +82,7 @@ class MachineModel extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.whatsapps,
+    required this.settings,
   });
 
   factory MachineModel.fromJson(Map<String, dynamic> json) =>
@@ -62,6 +107,7 @@ class MachineModel extends Equatable {
       createdAt,
       updatedAt,
       whatsapps,
+      settings,
     ];
   }
 
@@ -82,6 +128,7 @@ class MachineModel extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     List<MachineWhatsappModel>? whatsapps,
+    List<MachineSettingModel>? settings,
   }) {
     return MachineModel(
       id: id ?? this.id,
@@ -97,6 +144,7 @@ class MachineModel extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       whatsapps: whatsapps ?? this.whatsapps,
+      settings: settings ?? this.settings,
     );
   }
 }

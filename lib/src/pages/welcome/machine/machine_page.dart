@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../model/model/machine/machine_model.dart';
 import '../../../router.dart';
+import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
@@ -31,7 +32,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
           },
         );
         break;
-      case "machine_response_setting":
+      case "machine_response":
         context.pushNamed(
           routeMachineResponseSetting,
           pathParameters: {
@@ -86,64 +87,119 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                       itemCount: data.length,
                       itemBuilder: (context, index) {
                         final item = data[index];
-                        return ListTile(
-                          title: Text(item.license),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              RowBody(title: "Number", content: item.number),
-                              RowBody(title: "Action", content: item.action),
-                              RowBody(
-                                title: "SMS Setting",
-                                content: item.smsSetting,
-                              ),
-                              RowBody(
-                                title: "Send",
-                                content: item.send.toString(),
-                              ),
-                              RowBody(
-                                title: "Replied",
-                                content: item.replied.toString(),
-                              ),
-                              RowBody(
-                                title: "Total Whatsapp",
-                                content: item.whatsapps.length.toString(),
-                              ),
-                            ],
-                          ),
-                          trailing: PopupMenuButton(
-                            itemBuilder: (context) {
-                              return [
-                                const PopupMenuItem(
-                                  value: "edit",
-                                  child: Text("Edit"),
+                        return Stack(
+                          children: [
+                            Card(
+                              margin: const EdgeInsets.all(8),
+                              child: ListTile(
+                                leading: const Column(
+                                  children: [
+                                    CircleAvatar(child: Icon(Icons.star)),
+                                    SizedBox(height: 10.0),
+                                  ],
                                 ),
-                                const PopupMenuItem(
-                                  value: "machine_whatsapp",
-                                  child: Text("Machine WhatsApp"),
-                                ),
-                                const PopupMenuItem(
-                                  value: "machine_response_setting",
-                                  child: Text("Machine Response Setting"),
-                                ),
-                                const PopupMenuItem(
-                                  value: "machine_survey",
-                                  child: Text("Machine Survey"),
-                                ),
-                                PopupMenuItem(
-                                  value: "delete",
-                                  child: Text(
-                                    "Delete Machine",
-                                    style: bodyFont.copyWith(
-                                      color: Colors.red,
-                                    ),
+                                title: Text(
+                                  item.name,
+                                  style: headerFont.copyWith(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ];
-                            },
-                            onSelected: (value) =>
-                                onSelected(value, item: item),
-                          ),
+                                subtitle: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    const SizedBox(height: 10.0),
+                                    RowBody(
+                                      title: "No Serial Machine",
+                                      content: item.serialNumber,
+                                      titleFlex: 6,
+                                      contentFlex: 6,
+                                    ),
+                                    const SizedBox(height: 4.0),
+                                    RowBody(
+                                      title: "Activation License",
+                                      content: item.license,
+                                      titleFlex: 6,
+                                      contentFlex: 6,
+                                    ),
+                                    const SizedBox(height: 4.0),
+                                    RowBody(
+                                      title: "Action",
+                                      content: MachineActionEnum.values
+                                          .byName(item.action)
+                                          .valueStringReadable,
+                                      titleFlex: 6,
+                                      contentFlex: 6,
+                                    ),
+                                    if (item.settingsPlatformSMS != null) ...[
+                                      const SizedBox(height: 10.0),
+                                      Text("SMS Setting",
+                                          style: bodyFont.copyWith(
+                                              fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 4.0),
+                                      Text(item.settingByPlatformReadable(
+                                              item.settingsPlatformSMS!) ??
+                                          ""),
+                                    ],
+                                    if (item.settingsPlatformWhatsapp !=
+                                        null) ...[
+                                      const SizedBox(height: 10.0),
+                                      Text("Whatsapp Setting",
+                                          style: bodyFont.copyWith(
+                                              fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 4.0),
+                                      Text(item.settingByPlatformReadable(
+                                              item.settingsPlatformWhatsapp!) ??
+                                          ""),
+                                    ],
+                                    const SizedBox(height: 10.0),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: PopupMenuButton(
+                                itemBuilder: (context) {
+                                  return [
+                                    const PopupMenuItem(
+                                      value: "edit",
+                                      child: Text("Edit"),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "machine_whatsapp",
+                                      child: Text("Machine WhatsApp"),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "machine_response",
+                                      child: Text("Machine Response"),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "machine_setting",
+                                      child: Text("Machine Setting"),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "machine_survey",
+                                      child: Text("Machine Survey"),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "delete",
+                                      child: Text(
+                                        "Delete Machine",
+                                        style: bodyFont.copyWith(
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ];
+                                },
+                                onSelected: (value) =>
+                                    onSelected(value, item: item),
+                              ),
+                            )
+                          ],
                         );
                       },
                     );

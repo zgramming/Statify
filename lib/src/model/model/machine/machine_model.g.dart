@@ -22,6 +22,9 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
       whatsapps: (json['whatsapps'] as List<dynamic>)
           .map((e) => MachineWhatsappModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      settings: (json['settings'] as List<dynamic>)
+          .map((e) => MachineSettingModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
@@ -39,4 +42,5 @@ Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'whatsapps': instance.whatsapps,
+      'settings': instance.settings,
     };

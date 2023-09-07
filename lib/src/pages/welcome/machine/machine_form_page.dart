@@ -116,20 +116,22 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
         (previous, next) {
       next.when(
         data: (data) {
-          showSnackbar(
-            context: context,
-            message: "Berhasil membuat mesin dengan nomor ${data?.number}",
-            backgroundColor: Colors.green,
-          );
+          if (data != null) {
+            showSnackbar(
+              context: context,
+              message: "Berhasil membuat mesin dengan nomor ${data.number}",
+              backgroundColor: Colors.green,
+            );
 
-          // Reset form
-          _numberController.clear();
-          _licenseController.clear();
-          selectedAction = MachineActionEnum.sms;
-          selectedSMSSetting = MachineSMSSettingEnum.sim1;
-          _formKey.currentState?.reset();
+            // Reset form
+            _numberController.clear();
+            _licenseController.clear();
+            selectedAction = MachineActionEnum.sms;
+            selectedSMSSetting = MachineSMSSettingEnum.sim1;
+            _formKey.currentState?.reset();
 
-          setState(() {});
+            setState(() {});
+          }
         },
         error: (error, stackTrace) {
           showSnackbar(
@@ -156,11 +158,13 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
       (previous, next) {
         next.when(
           data: (data) {
-            showSnackbar(
-              context: context,
-              message: "Berhasil mengubah mesin dengan nomor ${data?.number}",
-              backgroundColor: Colors.green,
-            );
+            if (data != null) {
+              showSnackbar(
+                context: context,
+                message: "Berhasil mengubah mesin dengan nomor ${data.number}",
+                backgroundColor: Colors.green,
+              );
+            }
           },
           error: (error, stackTrace) {
             showSnackbar(
@@ -189,6 +193,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
           _nameController.text = value?.name ?? "";
           _numberController.text = value?.number ?? "";
           _licenseController.text = value?.license ?? "";
+          _serialNumberController.text = value?.serialNumber ?? "";
           selectedAction = MachineActionEnum.values.byName(value?.action ?? "");
           selectedSMSSetting =
               MachineSMSSettingEnum.values.byName(value?.smsSetting ?? "");
@@ -230,7 +235,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                   ),
                   const SizedBox(height: 20),
                   _FormBodyRow(
-                    title: "No Serial Machine",
+                    title: "Number Machine",
                     child: TextFormField(
                       controller: _numberController,
                       style: bodyFont.copyWith(fontSize: 14.0),
@@ -269,54 +274,106 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  DropdownButtonFormField<MachineActionEnum>(
-                    value: selectedAction,
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setState(() {
-                        selectedAction = value;
-                      });
-                    },
-                    decoration: inputDecorationRounded(),
-                    items: MachineActionEnum.values
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(e.valueStringReadable),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            "Action",
+                            style: bodyFont.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0,
+                            ),
                           ),
-                        )
-                        .toList(),
-                    validator: (value) {
-                      if (value == null) {
-                        return "Action tidak boleh kosong";
-                      }
-                      return null;
-                    },
+                          const Divider(),
+                          Text(
+                            "Select Action :",
+                            style: bodyFont.copyWith(fontSize: 12.0),
+                          ),
+                          const SizedBox(height: 8.0),
+                          DropdownButtonFormField<MachineActionEnum>(
+                            value: selectedAction,
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setState(() {
+                                selectedAction = value;
+                              });
+                            },
+                            decoration: inputDecorationRounded().copyWith(
+                              contentPadding: EdgeInsets.zero,
+                              fillColor: Colors.transparent,
+                            ),
+                            items: MachineActionEnum.values
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e.valueStringReadable),
+                                  ),
+                                )
+                                .toList(),
+                            validator: (value) {
+                              if (value == null) {
+                                return "Action tidak boleh kosong";
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 20),
-                  DropdownButtonFormField<MachineSMSSettingEnum>(
-                    value: selectedSMSSetting,
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setState(() {
-                        selectedSMSSetting = value;
-                      });
-                    },
-                    decoration: inputDecorationRounded(),
-                    items: MachineSMSSettingEnum.values
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(e.valueStringReadable),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            "SMS Bot",
+                            style: bodyFont.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0,
+                            ),
                           ),
-                        )
-                        .toList(),
-                    validator: (value) {
-                      if (value == null) {
-                        return "SMS Setting tidak boleh kosong";
-                      }
-                      return null;
-                    },
+                          const Divider(),
+                          Text(
+                            "SMS SIM Choose :",
+                            style: bodyFont.copyWith(fontSize: 12.0),
+                          ),
+                          const SizedBox(height: 8.0),
+                          DropdownButtonFormField<MachineSMSSettingEnum>(
+                            value: selectedSMSSetting,
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setState(() {
+                                selectedSMSSetting = value;
+                              });
+                            },
+                            decoration: inputDecorationRounded().copyWith(
+                              contentPadding: EdgeInsets.zero,
+                              fillColor: Colors.transparent,
+                            ),
+                            items: MachineSMSSettingEnum.values
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e.valueStringReadable),
+                                  ),
+                                )
+                                .toList(),
+                            validator: (value) {
+                              if (value == null) {
+                                return "SMS Setting tidak boleh kosong";
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
