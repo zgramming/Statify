@@ -8,6 +8,7 @@ import '../../model/form/form_machine_response_create_update_model.dart';
 import '../../model/machine_response/machine_response_create_response_model.dart';
 import '../../model/machine_response/machine_response_delete_response_model.dart';
 import '../../model/machine_response/machine_response_model.dart';
+import '../../model/machine_response/machine_response_update_response_model.dart';
 
 class MachineResponseRemoteDatasource {
   final http.Client client;
@@ -66,7 +67,6 @@ class MachineResponseRemoteDatasource {
         'platform': form.platform,
         'key': form.key,
         'value': form.value,
-        'type': form.type,
       },
     );
 
@@ -80,6 +80,37 @@ class MachineResponseRemoteDatasource {
       final message = decoded.containsKey('message')
           ? decoded['message']
           : 'Failed to create response machine';
+      throw Exception(message);
+    }
+  }
+
+  Future<MachineResponseUpdateResponseModel> update({
+    required String responseId,
+    required String machineId,
+    required FormMachineResponseCreateUpdateModel form,
+  }) async {
+    final uri = Uri.parse(
+      '$kBaseApiUrl/machines/$machineId/responses/$responseId',
+    );
+    final response = await client.patch(
+      uri,
+      body: {
+        'platform': form.platform,
+        'key': form.key,
+        'value': form.value,
+      },
+    );
+
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    if (response.statusCode == 200) {
+      final data = decoded['data'];
+      final machine = MachineResponseUpdateResponseModel.fromJson(data);
+      return machine;
+    } else {
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to update response machine';
       throw Exception(message);
     }
   }

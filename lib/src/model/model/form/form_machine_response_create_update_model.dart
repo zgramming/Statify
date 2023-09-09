@@ -5,16 +5,14 @@ class FormMachineResponseCreateUpdateModel extends Equatable {
   final String platform;
   final String key;
   final String value;
-  final String type;
   const FormMachineResponseCreateUpdateModel({
     required this.platform,
     required this.key,
     required this.value,
-    required this.type,
   });
 
   @override
-  List<Object> get props => [platform, key, value, type];
+  List<Object> get props => [platform, key, value];
 
   @override
   bool get stringify => true;
@@ -23,13 +21,11 @@ class FormMachineResponseCreateUpdateModel extends Equatable {
     String? platform,
     String? key,
     String? value,
-    String? type,
   }) {
     return FormMachineResponseCreateUpdateModel(
       platform: platform ?? this.platform,
       key: key ?? this.key,
       value: value ?? this.value,
-      type: type ?? this.type,
     );
   }
 }

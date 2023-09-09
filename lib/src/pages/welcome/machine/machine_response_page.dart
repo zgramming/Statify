@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../model/model/machine_response/machine_response_model.dart';
 import '../../../router.dart';
+import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
+import '../../../utils/functions.dart';
 import '../../widgets/custom_appbar.dart';
 
 class MachineResponsePage extends ConsumerStatefulWidget {
@@ -38,11 +40,20 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
     final notifier =
         ref.read(machineResponseNotifier(widget.idMachine).notifier);
     switch (value) {
+      // Edit
+      case "edit":
+        context.pushNamed(
+          routeMachineResponseForm,
+          pathParameters: {
+            "idMachine": widget.idMachine,
+            "id": item.id,
+          },
+        );
+        break;
+
+      // Delete
       case "delete":
         await notifier.delete(responseId: item.id);
-
-        // Reload data
-        ref.invalidate(machineResponseNotifier(widget.idMachine));
 
         break;
       default:
@@ -51,6 +62,40 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(
+      machineResponseNotifier(widget.idMachine)
+          .select((value) => value.onDelete),
+      (previous, next) {
+        next.when(
+          data: (data) {
+            if (data == null) return;
+            showSnackbar(
+              context: context,
+              message: "Success delete response",
+            );
+
+            // Reload data
+            ref.invalidate(machineResponseNotifier(widget.idMachine));
+          },
+          error: (error, stackTrace) {
+            showSnackbar(
+              context: context,
+              message: error.toString(),
+              backgroundColor: Colors.red,
+            );
+          },
+          loading: () {
+            showSnackbar(
+              context: context,
+              message: "Deleting response...",
+              backgroundColor: Colors.blue,
+              duration: const Duration(days: 1),
+            );
+          },
+        );
+      },
+    );
+
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,6 +131,17 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
                                   ...[
                                     const SizedBox(height: 10.0),
                                     Text(
+                                      "Platform :",
+                                      style: bodyFontBold,
+                                    ),
+                                    const SizedBox(
+                                      height: 8.0,
+                                    ),
+                                    Text(item.platform.valueStringReadable),
+                                  ],
+                                  ...[
+                                    const SizedBox(height: 10.0),
+                                    Text(
                                       "Type :",
                                       style: bodyFontBold,
                                     ),
@@ -115,6 +171,15 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
                             child: PopupMenuButton(
                               itemBuilder: (context) {
                                 return [
+                                  // Edit
+                                  PopupMenuItem(
+                                    value: "edit",
+                                    child: Text(
+                                      "Edit Response",
+                                      style: bodyFont,
+                                    ),
+                                  ),
+
                                   PopupMenuItem(
                                     value: "delete",
                                     child: Text(
@@ -126,8 +191,10 @@ class _MachineResponsePageState extends ConsumerState<MachineResponsePage> {
                                   ),
                                 ];
                               },
-                              onSelected: (value) =>
-                                  onSelected(value, item: item),
+                              onSelected: (value) => onSelected(
+                                value,
+                                item: item,
+                              ),
                             ),
                           )
                         ],

@@ -6,22 +6,33 @@ import '../model/model/form/form_machine_response_create_update_model.dart';
 import '../model/model/machine_response/machine_response_create_response_model.dart';
 import '../model/model/machine_response/machine_response_delete_response_model.dart';
 import '../model/model/machine_response/machine_response_model.dart';
+import '../model/model/machine_response/machine_response_update_response_model.dart';
 import '../model/repository/machine_response_repository.dart';
 
 class MachineResponseState extends Equatable {
   final AsyncValue<List<MachineResponseModel>> onGetAll;
   final AsyncValue<MachineResponseModel?> onGetById;
   final AsyncValue<MachineResponseCreateResponseModel?> onCreate;
+  final AsyncValue<MachineResponseUpdateResponseModel?> onUpdate;
   final AsyncValue<MachineResponseDeleteResponseModel?> onDelete;
   const MachineResponseState({
     this.onGetAll = const AsyncValue.data([]),
     this.onGetById = const AsyncValue.data(null),
     this.onCreate = const AsyncValue.data(null),
     this.onDelete = const AsyncValue.data(null),
+    this.onUpdate = const AsyncValue.data(null),
   });
 
   @override
-  List<Object> get props => [onGetAll, onGetById, onCreate, onDelete];
+  List<Object> get props {
+    return [
+      onGetAll,
+      onGetById,
+      onCreate,
+      onUpdate,
+      onDelete,
+    ];
+  }
 
   @override
   bool get stringify => true;
@@ -30,12 +41,14 @@ class MachineResponseState extends Equatable {
     AsyncValue<List<MachineResponseModel>>? onGetAll,
     AsyncValue<MachineResponseModel?>? onGetById,
     AsyncValue<MachineResponseCreateResponseModel?>? onCreate,
+    AsyncValue<MachineResponseUpdateResponseModel?>? onUpdate,
     AsyncValue<MachineResponseDeleteResponseModel?>? onDelete,
   }) {
     return MachineResponseState(
       onGetAll: onGetAll ?? this.onGetAll,
       onGetById: onGetById ?? this.onGetById,
       onCreate: onCreate ?? this.onCreate,
+      onUpdate: onUpdate ?? this.onUpdate,
       onDelete: onDelete ?? this.onDelete,
     );
   }
@@ -89,6 +102,23 @@ class MachineResponseNotifier extends StateNotifier<MachineResponseState> {
       (failure) => state = state.copyWith(
           onCreate: AsyncValue.error(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onCreate: AsyncValue.data(data)),
+    );
+  }
+
+  Future<void> update({
+    required FormMachineResponseCreateUpdateModel form,
+    required String responseId,
+  }) async {
+    state = state.copyWith(onUpdate: const AsyncValue.loading());
+    final result = await repository.update(
+      form: form,
+      machineId: machineId,
+      responseId: responseId,
+    );
+    result.fold(
+      (failure) => state = state.copyWith(
+          onUpdate: AsyncValue.error(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onUpdate: AsyncValue.data(data)),
     );
   }
 

@@ -83,7 +83,7 @@ class _MachineSettingPageState extends ConsumerState<MachineSettingPage> {
                               child: PopupMenuButton(
                                 itemBuilder: (context) {
                                   return [
-                                    PopupMenuItem(
+                                    const PopupMenuItem(
                                       value: "edit",
                                       child: Text("Edit"),
                                     ),
