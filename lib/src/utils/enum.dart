@@ -1,14 +1,32 @@
+import 'package:json_annotation/json_annotation.dart';
+
 enum MachineSMSSettingEnum {
   sim1,
   sim2,
+  @JsonValue('sim_1_priority')
   sim1Priority,
+  @JsonValue('sim_2_priority')
   sim2Priority,
   both,
 }
 
-enum MachineActionEnum { sms, whatsapp, whatsappPriority, whatappSMS }
+enum MachineActionEnum {
+  sms,
+  whatsapp,
+  @JsonValue('whatsapp_priority')
+  whatsappPriority,
+  @JsonValue('whatsapp_sms')
+  whatsappSMS
+}
 
-enum MachineResponseTypeEnum { welcome, regular, banned, wrongPassword, finish }
+enum MachineResponseTypeEnum {
+  welcome,
+  regular,
+  banned,
+  @JsonValue('wrong_password')
+  wrongPassword,
+  finish
+}
 
 enum MachineWhatsappStatusEnum {
   connected,
@@ -22,6 +40,7 @@ enum MachineResponsePlatformEnum {
 
 enum MachineSettingToolsOptionEnum {
   allNumber,
+  @JsonValue('specific_number')
   specificNumber,
 }
 
@@ -66,7 +85,7 @@ extension MachineActionEnumEXT on MachineActionEnum {
         return 'whatsapp';
       case MachineActionEnum.whatsappPriority:
         return 'whatsapp_priority';
-      case MachineActionEnum.whatappSMS:
+      case MachineActionEnum.whatsappSMS:
         return 'whatsapp_sms';
     }
   }
@@ -79,8 +98,8 @@ extension MachineActionEnumEXT on MachineActionEnum {
         return 'Whatsapp';
       case MachineActionEnum.whatsappPriority:
         return 'Whatsapp Priority';
-      case MachineActionEnum.whatappSMS:
-        return 'Whatsapp SMS';
+      case MachineActionEnum.whatsappSMS:
+        return 'Whatsapp + SMS';
     }
   }
 }

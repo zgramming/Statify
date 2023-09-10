@@ -1,7 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
@@ -20,10 +20,10 @@ class MachineWhatsappState extends Equatable {
 
   const MachineWhatsappState({
     this.onCreate = const AsyncData(null),
-    this.onDelete = const AsyncData(null),
+    this.onDelete = const AsyncLoading(),
     this.onSendQRCode = const AsyncData(null),
-    this.onDisconnect = const AsyncData(null),
-    this.onConnect = const AsyncData(null),
+    this.onDisconnect = const AsyncLoading(),
+    this.onConnect = const AsyncLoading(),
   });
 
   @override
@@ -81,15 +81,25 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
     );
   }
 
-  Future<void> delete(String machineWhatsappId) async {
-    state = const MachineWhatsappState(onDelete: AsyncLoading());
-
+  Future<void> delete(
+    String machineWhatsappId, {
+    required VoidCallback onLoading,
+    required void Function(String message) onError,
+    required void Function(MachineWhatsappDeleteResponseModel data) onSuccess,
+  }) async {
+    onLoading();
     final result = await repository.delete(machineWhatsappId);
 
     result.fold(
-      (failure) => state = MachineWhatsappState(
-          onDelete: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = MachineWhatsappState(onDelete: AsyncData(data)),
+      (failure) {
+        onError(failure.message);
+        return state = MachineWhatsappState(
+            onDelete: AsyncError(failure.message, StackTrace.current));
+      },
+      (data) {
+        onSuccess(data);
+        return state = MachineWhatsappState(onDelete: AsyncData(data));
+      },
     );
   }
 
@@ -113,33 +123,51 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
 
   Future<void> disconnect({
     required String machineWhatsappId,
+    required VoidCallback onLoading,
+    required void Function(String message) onError,
+    required void Function(MachineWhatsappDisconnectedResponseModel data)
+        onSuccess,
   }) async {
-    state = const MachineWhatsappState(onDisconnect: AsyncLoading());
-
+    onLoading();
     final result = await repository.disconnect(
       machineWhatsappId: machineWhatsappId,
     );
 
     result.fold(
-      (failure) => state = MachineWhatsappState(
-          onDisconnect: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = MachineWhatsappState(onDisconnect: AsyncData(data)),
+      (failure) {
+        onError(failure.message);
+        return state = MachineWhatsappState(
+            onDisconnect: AsyncError(failure.message, StackTrace.current));
+      },
+      (data) {
+        onSuccess(data);
+        return state = MachineWhatsappState(onDisconnect: AsyncData(data));
+      },
     );
   }
 
   Future<void> connect({
     required String machineWhatsappId,
+    required VoidCallback onLoading,
+    required void Function(String message) onError,
+    required void Function(MachineWhatsappConnectedResponseModel data)
+        onSuccess,
   }) async {
-    state = const MachineWhatsappState(onConnect: AsyncLoading());
-
+    onLoading();
     final result = await repository.connect(
       machineWhatsappId: machineWhatsappId,
     );
 
     result.fold(
-      (failure) => state = MachineWhatsappState(
-          onConnect: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = MachineWhatsappState(onConnect: AsyncData(data)),
+      (failure) {
+        onError(failure.message);
+        return state = MachineWhatsappState(
+            onConnect: AsyncError(failure.message, StackTrace.current));
+      },
+      (data) {
+        onSuccess(data);
+        return state = MachineWhatsappState(onConnect: AsyncData(data));
+      },
     );
   }
 }

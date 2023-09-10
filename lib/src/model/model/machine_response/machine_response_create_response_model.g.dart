@@ -45,8 +45,8 @@ Map<String, dynamic> _$MachineResponseCreateResponseModelToJson(
 const _$MachineActionEnumEnumMap = {
   MachineActionEnum.sms: 'sms',
   MachineActionEnum.whatsapp: 'whatsapp',
-  MachineActionEnum.whatsappPriority: 'whatsappPriority',
-  MachineActionEnum.whatappSMS: 'whatappSMS',
+  MachineActionEnum.whatsappPriority: 'whatsapp_priority',
+  MachineActionEnum.whatsappSMS: 'whatsapp_sms',
 };
 
 Response _$ResponseFromJson(Map<String, dynamic> json) => Response(

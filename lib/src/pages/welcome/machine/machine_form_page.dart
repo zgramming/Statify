@@ -175,13 +175,15 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
       machineNotifier.select((value) => value.onGetById),
       (previous, next) {
         next.whenData((value) {
-          _nameController.text = value?.name ?? "";
-          _numberController.text = value?.number ?? "";
-          _licenseController.text = value?.license ?? "";
-          _serialNumberController.text = value?.serialNumber ?? "";
-          selectedAction = MachineActionEnum.values.byName(value?.action ?? "");
+          if (value == null) return;
+          _nameController.text = value.name;
+          _numberController.text = value.number;
+          _licenseController.text = value.license;
+          _serialNumberController.text = value.serialNumber;
+          selectedAction =
+              MachineActionEnum.values.byName(value.action.valueString);
           selectedSMSSetting =
-              MachineSMSSettingEnum.values.byName(value?.smsSetting ?? "");
+              MachineSMSSettingEnum.values.byName(value.smsSetting);
 
           setState(() {});
         });

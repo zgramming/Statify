@@ -41,14 +41,18 @@ class _MachinePageState extends ConsumerState<MachinePage> {
           },
         );
         break;
-      case "machine_whatsapp":
-        context.pushNamed(
-          routeMachineWhatsApp,
-          pathParameters: {
-            "idMachine": item.id,
-          },
-        );
+      case "delete":
+        await notifier.delete(machineId: item.id);
+        ref.invalidate(machineNotifier);
         break;
+      // case "machine_whatsapp":
+      //   context.pushNamed(
+      //     routeMachineWhatsApp,
+      //     pathParameters: {
+      //       "idMachine": item.id,
+      //     },
+      //   );
+      //   break;
       // case "machine_response":
       //   context.pushNamed(
       //     routeMachineResponse,
@@ -73,11 +77,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
       //     },
       //   );
       //   break;
-      case "delete":
-        await notifier.delete(machineId: item.id);
-        ref.invalidate(machineNotifier);
 
-        break;
       default:
     }
   }
@@ -145,9 +145,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                                     const SizedBox(height: 4.0),
                                     RowBody(
                                       title: "Action",
-                                      content: MachineActionEnum.values
-                                          .byName(item.action)
-                                          .valueStringReadable,
+                                      content: item.action.valueStringReadable,
                                       titleFlex: 6,
                                       contentFlex: 6,
                                     ),
@@ -187,22 +185,6 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                                       value: "edit",
                                       child: Text("Edit"),
                                     ),
-                                    const PopupMenuItem(
-                                      value: "machine_whatsapp",
-                                      child: Text("Machine WhatsApp"),
-                                    ),
-                                    // const PopupMenuItem(
-                                    //   value: "machine_response",
-                                    //   child: Text("Machine Response"),
-                                    // ),
-                                    // const PopupMenuItem(
-                                    //   value: "machine_setting",
-                                    //   child: Text("Machine Setting"),
-                                    // ),
-                                    // const PopupMenuItem(
-                                    //   value: "machine_survey",
-                                    //   child: Text("Machine Survey"),
-                                    // ),
                                     PopupMenuItem(
                                       value: "delete",
                                       child: Text(

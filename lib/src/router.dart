@@ -95,12 +95,11 @@ final _routes = <RouteBase>[
     },
   ),
   GoRoute(
-    path: "/machine/:idMachine/whatsapp/form/:id",
+    path: "/machine/whatsapp/form/:id",
     name: routeMachineWhatsAppForm,
     builder: (context, state) {
       final id = state.pathParameters['id'] ?? "-1";
-      final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return MachineWhatsAppFormPage(idMachine: idMachine, id: id);
+      return MachineWhatsAppFormPage(id: id);
     },
   ),
 

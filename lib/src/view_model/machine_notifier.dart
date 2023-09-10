@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,7 +17,7 @@ class MachineState extends Equatable {
   final AsyncValue<MachineDeleteResponseModel?> onDelete;
 
   const MachineState({
-    this.onGetAll = const AsyncData([]),
+    this.onGetAll = const AsyncLoading(),
     this.onGetById = const AsyncData(null),
     this.onGetByNumber = const AsyncData(null),
     this.onCreate = const AsyncData(null),
@@ -71,13 +70,15 @@ class MachineNotifier extends StateNotifier<MachineState> {
   }
 
   Future<void> getAll() async {
-    state = state.copyWith(onGetAll: const AsyncLoading());
     final result = await repository.getAll(userId);
-    result.fold(
-      (failure) => state = state.copyWith(
-          onGetAll: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onGetAll: AsyncData(data)),
-    );
+
+    if (mounted) {
+      result.fold(
+        (failure) => state = state.copyWith(
+            onGetAll: AsyncError(failure.message, StackTrace.current)),
+        (data) => state = state.copyWith(onGetAll: AsyncData(data)),
+      );
+    }
   }
 
   Future<void> getById({

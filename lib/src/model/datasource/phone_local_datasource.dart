@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -138,13 +137,13 @@ final checkPermissionNotifier = AutoDisposeFutureProvider((ref) async {
   final phonePermission = await Permission.phone.request();
 
   if (phonePermission != PermissionStatus.granted) {
-    throw const CommonFailure("Permission phone not granted");
+    throw "Permission phone not granted";
   }
 
   final smsPermission = await Permission.sms.request();
 
   if (smsPermission != PermissionStatus.granted) {
-    throw const CommonFailure("Permission sms not granted");
+    throw "Permission sms not granted";
   }
 
   return true;

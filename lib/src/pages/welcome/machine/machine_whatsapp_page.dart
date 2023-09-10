@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 import 'dart:io';
 
@@ -274,7 +273,6 @@ class _MachineWhatsAppPageState extends ConsumerState<MachineWhatsAppPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           context.pushNamed(routeMachineWhatsAppForm, pathParameters: {
-            "idMachine": widget.idMachine,
             "id": "-1",
           });
         },

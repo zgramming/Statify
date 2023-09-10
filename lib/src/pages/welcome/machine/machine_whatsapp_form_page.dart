@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
+import '../../../model/model/form/dropdown/machine_dropdown_model.dart';
+import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
+import '../../widgets/form_row_body.dart';
 
 class MachineWhatsAppFormPage extends ConsumerStatefulWidget {
   const MachineWhatsAppFormPage({
     Key? key,
-    required this.idMachine,
     required this.id,
   }) : super(key: key);
 
-  final String idMachine;
   final String id;
 
   @override
@@ -23,8 +24,10 @@ class MachineWhatsAppFormPage extends ConsumerStatefulWidget {
 class _MachineWhatsAppFormPageState
     extends ConsumerState<MachineWhatsAppFormPage> {
   final _formKey = GlobalKey<FormState>();
+
   late final TextEditingController _numberController;
 
+  MachineDropdownModel? _selectedMachine;
   Future<void> onSubmit() async {
     final validate = _formKey.currentState?.validate() ?? false;
 
@@ -34,7 +37,7 @@ class _MachineWhatsAppFormPageState
 
     final notifier = ref.read(machineWhatsappNotifier.notifier);
 
-    final machineId = widget.idMachine;
+    final machineId = _selectedMachine?.id ?? "";
     await notifier.create(
       number: _numberController.text,
       machineId: machineId,
@@ -59,11 +62,12 @@ class _MachineWhatsAppFormPageState
         (previous, next) {
       next.when(
         data: (data) {
+          if (data == null) return;
           showSnackbar(
             context: context,
             backgroundColor: Colors.green,
             message:
-                "Berhasil membuat mesin whatsapp dengan nomor ${data?.number}",
+                "Success create machine whatsapp with machine id: ${data.id} and number: ${_numberController.text}",
           );
 
           // Reset form
@@ -91,6 +95,8 @@ class _MachineWhatsAppFormPageState
       );
     });
 
+    final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Machine WhatsApp Form"),
@@ -102,17 +108,51 @@ class _MachineWhatsAppFormPageState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                controller: _numberController,
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "Masukkan nomor WhatsApp",
+              FormBodyRow(
+                title: "Number",
+                child: TextFormField(
+                  controller: _numberController,
+                  style: bodyFont.copyWith(fontSize: 14.0),
+                  keyboardType: TextInputType.number,
+                  decoration: inputDecorationRounded().copyWith(
+                    border: const UnderlineInputBorder(),
+                    fillColor: Colors.transparent,
+                    contentPadding: EdgeInsets.zero,
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Nomor WhatsApp tidak boleh kosong";
-                  }
-                  return null;
-                },
+              ),
+              const SizedBox(height: 16.0),
+              FormBodyRow(
+                title: "Choose Machine",
+                child: DropdownButtonFormField<MachineDropdownModel>(
+                  value: _selectedMachine,
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      _selectedMachine = value;
+                    });
+                  },
+                  decoration: inputDecorationRounded().copyWith(
+                    contentPadding: EdgeInsets.zero,
+                    fillColor: Colors.transparent,
+                    border: const UnderlineInputBorder(),
+                  ),
+                  items: machines
+                      .map((e) => MachineDropdownModel(id: e.id, name: e.name))
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.name),
+                        ),
+                      )
+                      .toList(),
+                  validator: (value) {
+                    if (value == null) {
+                      return "Please select machine";
+                    }
+                    return null;
+                  },
+                ),
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(

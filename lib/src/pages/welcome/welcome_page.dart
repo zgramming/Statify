@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:developer';
 
@@ -145,7 +144,6 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
     const StatisticPage(),
     const LongDistanceAccessPage(),
     const SettingPage(),
-    // const MachinePage(),
   ];
 
   @override
