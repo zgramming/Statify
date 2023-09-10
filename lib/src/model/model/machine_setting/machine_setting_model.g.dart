@@ -12,7 +12,7 @@ MachineSettingModel _$MachineSettingModelFromJson(Map<String, dynamic> json) =>
       machineId: json['machine_id'] as String,
       platform:
           $enumDecode(_$MachineResponsePlatformEnumEnumMap, json['platform']),
-      usePassword: json['use_password'] as int,
+      usePassword: json['use_password'] as bool,
       timeout: json['timeout'] as int,
       tries: json['tries'] as int,
       backoff: json['backoff'] as int,

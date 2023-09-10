@@ -58,32 +58,52 @@ class MachineSettingNotifier extends StateNotifier<MachineSettingState> {
   Future<void> getById({
     required String machineId,
     required String settingId,
+    void Function()? onLoading,
+    void Function(String message)? onError,
+    void Function(MachineSettingModel data)? onSuccess,
   }) async {
     state = state.copyWith(onGetById: const AsyncValue.loading());
+    if (onLoading != null) onLoading();
     final result = await repository.getById(
       machineId: machineId,
       settingId: settingId,
     );
     result.fold(
-      (failure) => state = state.copyWith(
-          onGetById: AsyncValue.error(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onGetById: AsyncValue.data(data)),
+      (failure) {
+        if (onError != null) onError(failure.message);
+        return state = state.copyWith(
+            onGetById: AsyncValue.error(failure.message, StackTrace.current));
+      },
+      (data) {
+        if (onSuccess != null) onSuccess(data);
+        return state = state.copyWith(onGetById: AsyncValue.data(data));
+      },
     );
   }
 
   Future<void> update({
     required FormMachineSettingCreateUpdateModel form,
     required String settingId,
+    void Function()? onLoading,
+    void Function(String message)? onError,
+    void Function(MachineSettingUpdateResponseModel data)? onSuccess,
   }) async {
     state = state.copyWith(onUpdate: const AsyncValue.loading());
+    if (onLoading != null) onLoading();
     final result = await repository.update(
       form: form,
       settingId: settingId,
     );
     result.fold(
-      (failure) => state = state.copyWith(
-          onUpdate: AsyncValue.error(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onUpdate: AsyncValue.data(data)),
+      (failure) {
+        if (onError != null) onError(failure.message);
+        return state = state.copyWith(
+            onUpdate: AsyncValue.error(failure.message, StackTrace.current));
+      },
+      (data) {
+        if (onSuccess != null) onSuccess(data);
+        return state = state.copyWith(onUpdate: AsyncValue.data(data));
+      },
     );
   }
 }

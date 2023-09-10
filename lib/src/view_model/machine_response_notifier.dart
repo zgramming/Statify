@@ -124,16 +124,27 @@ class MachineResponseNotifier extends StateNotifier<MachineResponseState> {
 
   Future<void> delete({
     required String responseId,
+    void Function(MachineResponseDeleteResponseModel data)? onSuccess,
+    void Function(String error)? onError,
+    void Function()? onLoading,
   }) async {
     state = state.copyWith(onDelete: const AsyncValue.loading());
+    onLoading?.call();
+
     final result = await repository.delete(
       machineId: machineId,
       responseId: responseId,
     );
     result.fold(
-      (failure) => state = state.copyWith(
-          onDelete: AsyncValue.error(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onDelete: AsyncValue.data(data)),
+      (failure) {
+        onError?.call(failure.message);
+        return state = state.copyWith(
+            onDelete: AsyncValue.error(failure.message, StackTrace.current));
+      },
+      (data) {
+        onSuccess?.call(data);
+        return state = state.copyWith(onDelete: AsyncValue.data(data));
+      },
     );
   }
 }

@@ -67,6 +67,7 @@ class MachineResponseRemoteDatasource {
         'platform': form.platform,
         'key': form.key,
         'value': form.value,
+        'type': 'regular',
       },
     );
 

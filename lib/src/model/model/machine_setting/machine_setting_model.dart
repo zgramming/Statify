@@ -14,7 +14,7 @@ class MachineSettingModel extends Equatable {
   final String id;
   final String machineId;
   final MachineResponsePlatformEnum platform;
-  final int usePassword;
+  final bool usePassword;
   final int timeout;
   final int tries;
   final int backoff;
@@ -71,7 +71,7 @@ class MachineSettingModel extends Equatable {
     String? id,
     String? machineId,
     MachineResponsePlatformEnum? platform,
-    int? usePassword,
+    bool? usePassword,
     int? timeout,
     int? tries,
     int? backoff,

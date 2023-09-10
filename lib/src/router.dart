@@ -118,7 +118,14 @@ final _routes = <RouteBase>[
     builder: (context, state) {
       final id = state.pathParameters['id'] ?? "-1";
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return MachineResponseFormPage(idMachine: idMachine, id: id);
+      final isSMSBot = state.extra == null
+          ? false
+          : (state.extra as Map<String, dynamic>)['isSMSBot'] ?? false;
+      return MachineResponseFormPage(
+        idMachine: idMachine,
+        id: id,
+        isSMSBot: isSMSBot,
+      );
     },
   ),
 

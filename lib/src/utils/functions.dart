@@ -54,7 +54,7 @@ MachineSettingModel? getMachineSettingPlatformList(
 }
 
 String? getMachineSettingPlatformReadable({
-  int? usePassword,
+  bool? usePassword,
   int? timeout,
   int? tries,
   int? backoff,
@@ -63,7 +63,7 @@ String? getMachineSettingPlatformReadable({
     return null;
   }
 
-  if (usePassword == 1) {
+  if (usePassword) {
     return """
 Only Invited Numbers Can Join Survey \n
 Invitation Password Timeout since received : $timeout hours \n

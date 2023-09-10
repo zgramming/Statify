@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +8,7 @@ import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
 import '../../widgets/form_row_body.dart';
+import 'widget/machine_tabbar_configuration.dart';
 
 class MachineFormPage extends ConsumerStatefulWidget {
   const MachineFormPage({
@@ -30,6 +30,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   late final TextEditingController _licenseController;
   late final TextEditingController _serialNumberController;
 
+  bool _isCreate = true;
   MachineActionEnum selectedAction = MachineActionEnum.sms;
   MachineSMSSettingEnum selectedSMSSetting = MachineSMSSettingEnum.sim1;
 
@@ -43,11 +44,16 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
 
     // Load Machine detail if id is not -1
     final id = widget.id;
-    if (id != "-1") {
+    final isCreate = id == "-1";
+    if (!isCreate) {
       Future.microtask(() {
         ref.read(machineNotifier.notifier).getById(machineId: id);
       });
+      _isCreate = false;
+    } else {
+      _isCreate = true;
     }
+    setState(() {});
   }
 
   @override
@@ -132,7 +138,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     });
 
     // Listen to onUpdate
-
     ref.listen(
       machineNotifier.select((value) => value.onUpdate),
       (previous, next) {
@@ -205,6 +210,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     title: "Machine Name",
                     child: TextFormField(
                       controller: _nameController,
+                      enabled: _isCreate,
                       style: bodyFont.copyWith(fontSize: 14.0),
                       decoration: inputDecorationRounded().copyWith(
                         border: const UnderlineInputBorder(),
@@ -218,6 +224,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     title: "Number Machine",
                     child: TextFormField(
                       controller: _numberController,
+                      enabled: _isCreate,
                       style: bodyFont.copyWith(fontSize: 14.0),
                       keyboardType: TextInputType.phone,
                       decoration: inputDecorationRounded().copyWith(
@@ -232,6 +239,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     title: "Activation License",
                     child: TextFormField(
                       controller: _licenseController,
+                      enabled: _isCreate,
                       style: bodyFont.copyWith(fontSize: 14.0),
                       decoration: inputDecorationRounded().copyWith(
                         border: const UnderlineInputBorder(),
@@ -245,6 +253,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     title: "Serial Number",
                     child: TextFormField(
                       controller: _serialNumberController,
+                      enabled: _isCreate,
                       style: bodyFont.copyWith(fontSize: 14.0),
                       decoration: inputDecorationRounded().copyWith(
                         border: const UnderlineInputBorder(),
@@ -254,114 +263,51 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            "Action",
-                            style: bodyFont.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                          const Divider(),
-                          Text(
-                            "Select Action :",
-                            style: bodyFont.copyWith(fontSize: 12.0),
-                          ),
-                          const SizedBox(height: 8.0),
-                          DropdownButtonFormField<MachineActionEnum>(
-                            value: selectedAction,
-                            onChanged: (value) {
+                  FormBodyRow(
+                    title: "Action",
+                    child: DropdownButtonFormField<MachineActionEnum>(
+                      value: selectedAction,
+                      onChanged: _isCreate
+                          ? (value) {
                               if (value == null) return;
                               setState(() {
                                 selectedAction = value;
                               });
-                            },
-                            decoration: inputDecorationRounded().copyWith(
-                              contentPadding: EdgeInsets.zero,
-                              fillColor: Colors.transparent,
-                            ),
-                            items: MachineActionEnum.values
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e.valueStringReadable),
-                                  ),
-                                )
-                                .toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return "Action tidak boleh kosong";
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
+                            }
+                          : null,
+                      decoration: inputDecorationRounded().copyWith(
+                        contentPadding: EdgeInsets.zero,
+                        fillColor: Colors.transparent,
+                        border: const UnderlineInputBorder(),
                       ),
+                      items: MachineActionEnum.values
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(e.valueStringReadable),
+                            ),
+                          )
+                          .toList(),
+                      validator: (value) {
+                        if (value == null) {
+                          return "Action tidak boleh kosong";
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            "SMS Bot",
-                            style: bodyFont.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                          const Divider(),
-                          Text(
-                            "SMS SIM Choose :",
-                            style: bodyFont.copyWith(fontSize: 12.0),
-                          ),
-                          const SizedBox(height: 8.0),
-                          DropdownButtonFormField<MachineSMSSettingEnum>(
-                            value: selectedSMSSetting,
-                            onChanged: (value) {
-                              if (value == null) return;
-                              setState(() {
-                                selectedSMSSetting = value;
-                              });
-                            },
-                            decoration: inputDecorationRounded().copyWith(
-                              contentPadding: EdgeInsets.zero,
-                              fillColor: Colors.transparent,
-                            ),
-                            items: MachineSMSSettingEnum.values
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e.valueStringReadable),
-                                  ),
-                                )
-                                .toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return "SMS Setting tidak boleh kosong";
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
+                  if (_isCreate) ...[
+                    ElevatedButton(
+                      onPressed: onSubmit,
+                      style: elevatedButtonStyle(),
+                      child: const Text("Submit"),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: onSubmit,
-                    style: elevatedButtonStyle(),
-                    child: const Text("Submit"),
-                  ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
+                  ],
+                  if (!_isCreate) ...[
+                    MachineTabBarConfiguration(idMachine: widget.id)
+                  ],
                 ],
               ),
             ),

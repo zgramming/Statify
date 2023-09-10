@@ -13,11 +13,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: routerConfig,
       debugShowCheckedModeBanner: false,
-      title: 'WA Bot Utils',
+      title: 'Statify',
       theme: theme.copyWith(
         textTheme: bodyFontTheme(theme.textTheme),
         scaffoldBackgroundColor: Colors.white,
         primaryColor: darkPrimaryColor,
+        tabBarTheme: const TabBarTheme(indicator: BoxDecoration()),
         navigationBarTheme: const NavigationBarThemeData(
           backgroundColor: Colors.white,
           elevation: 10,

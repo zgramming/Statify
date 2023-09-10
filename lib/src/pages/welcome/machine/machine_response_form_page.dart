@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,10 +13,12 @@ import '../../widgets/form_row_body.dart';
 class MachineResponseFormPage extends ConsumerStatefulWidget {
   const MachineResponseFormPage({
     Key? key,
+    required this.isSMSBot,
     required this.idMachine,
     required this.id,
   }) : super(key: key);
 
+  final bool isSMSBot;
   final String idMachine;
   final String id;
 
@@ -34,6 +37,36 @@ class _MachineResponseFormPageState
   bool shouldReload = false;
   MachineResponsePlatformEnum selectedPlatform =
       MachineResponsePlatformEnum.sms;
+
+  @override
+  void initState() {
+    super.initState();
+    keyController = TextEditingController();
+    valueController = TextEditingController();
+
+    final idMachine = widget.idMachine;
+    final id = widget.id;
+    final isCreate = id == "-1";
+    final notifier = ref.read(machineResponseNotifier(idMachine).notifier);
+    if (!isCreate) {
+      Future.microtask(() {
+        notifier.getById(responseId: id);
+      });
+    } else {
+      selectedPlatform = widget.isSMSBot
+          ? MachineResponsePlatformEnum.sms
+          : MachineResponsePlatformEnum.whatsapp;
+    }
+
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    keyController.dispose();
+    valueController.dispose();
+    super.dispose();
+  }
 
   Future<void> onSubmit() async {
     final validate = _formKey.currentState?.validate() ?? false;
@@ -61,28 +94,6 @@ class _MachineResponseFormPageState
         responseId: id,
       );
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    keyController = TextEditingController();
-    valueController = TextEditingController();
-
-    final idMachine = widget.idMachine;
-    final id = widget.id;
-    final isCreate = id == "-1";
-    final notifier = ref.read(machineResponseNotifier(idMachine).notifier);
-    Future.microtask(() {
-      if (!isCreate) notifier.getById(responseId: id);
-    });
-  }
-
-  @override
-  void dispose() {
-    keyController.dispose();
-    valueController.dispose();
-    super.dispose();
   }
 
   @override
@@ -219,6 +230,9 @@ class _MachineResponseFormPageState
                     child: TextFormField(
                       controller: valueController,
                       style: bodyFont.copyWith(fontSize: 14.0),
+                      keyboardType: TextInputType.multiline,
+                      minLines: 3,
+                      maxLines: 10,
                       decoration: inputDecorationRounded().copyWith(
                         border: const UnderlineInputBorder(),
                         fillColor: Colors.transparent,
@@ -230,49 +244,6 @@ class _MachineResponseFormPageState
                         }
                         return null;
                       },
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            "Select Platform :",
-                            style: bodyFont.copyWith(fontSize: 12.0),
-                          ),
-                          const SizedBox(height: 8.0),
-                          DropdownButtonFormField<MachineResponsePlatformEnum>(
-                            value: selectedPlatform,
-                            onChanged: (value) {
-                              if (value == null) return;
-                              setState(() {
-                                selectedPlatform = value;
-                              });
-                            },
-                            decoration: inputDecorationRounded().copyWith(
-                              contentPadding: EdgeInsets.zero,
-                              fillColor: Colors.transparent,
-                            ),
-                            items: MachineResponsePlatformEnum.values
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e.valueStringReadable),
-                                  ),
-                                )
-                                .toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return "Platform is required";
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                   const SizedBox(height: 16.0),

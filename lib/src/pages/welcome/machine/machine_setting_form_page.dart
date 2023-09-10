@@ -140,11 +140,10 @@ class _MachineSettingFormPageState
       (previous, next) {
         next.whenData((value) {
           if (value != null) {
-            final isUsePassword = value.usePassword == 1;
             _timeoutController.text = value.timeout.toString();
             _backoffController.text = value.backoff.toString();
             _triesController.text = value.tries.toString();
-            selectedToolsOption = isUsePassword
+            selectedToolsOption = value.usePassword
                 ? MachineSettingToolsOptionEnum.specificNumber
                 : MachineSettingToolsOptionEnum.allNumber;
 

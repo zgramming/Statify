@@ -34,23 +34,4 @@ class CallReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
     override fun onCancel(arguments: Any?) {
         eventSink = null
     }
-
-//    override fun onReceive(context: Context, intent: Intent) {
-//        val telephonyManager =
-//            context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-//        val phoneStateListener = object : PhoneStateListener() {
-//            override fun onCallStateChanged(state: Int, phoneNumber: String?) {
-//                if (state == TelephonyManager.CALL_STATE_RINGING && phoneNumber != null) {
-//                    // Incoming call
-//                    // Handle the phone number here
-//                    Log.d("CallReceiverAlternative", "Incoming call from: $phoneNumber")
-//
-//                    // Example: Send the incoming phone number to Flutter
-//                    val eventData = mapOf("state" to "RINGING", "number" to phoneNumber)
-//                    eventSink?.success(eventData)
-//                }
-//            }
-//        }
-//        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
-//    }
 }
