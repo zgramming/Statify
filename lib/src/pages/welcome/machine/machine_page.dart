@@ -18,6 +18,15 @@ class MachinePage extends ConsumerStatefulWidget {
 }
 
 class _MachinePageState extends ConsumerState<MachinePage> {
+  Future<void> onClick(MachineModel item) async {
+    context.pushNamed(
+      routeMachineForm,
+      pathParameters: {
+        "id": item.id,
+      },
+    );
+  }
+
   Future<void> onSelected(
     String value, {
     required MachineModel item,
@@ -32,14 +41,6 @@ class _MachinePageState extends ConsumerState<MachinePage> {
           },
         );
         break;
-      case "machine_response":
-        context.pushNamed(
-          routeMachineResponse,
-          pathParameters: {
-            "idMachine": item.id,
-          },
-        );
-        break;
       case "machine_whatsapp":
         context.pushNamed(
           routeMachineWhatsApp,
@@ -48,24 +49,30 @@ class _MachinePageState extends ConsumerState<MachinePage> {
           },
         );
         break;
-      case "machine_survey":
-        context.pushNamed(
-          routeMachineSurvey,
-          pathParameters: {
-            "idMachine": item.id,
-          },
-        );
-        break;
-
-      case "machine_setting":
-        context.pushNamed(
-          routeMachineSetting,
-          pathParameters: {
-            "idMachine": item.id,
-          },
-        );
-        break;
-
+      // case "machine_response":
+      //   context.pushNamed(
+      //     routeMachineResponse,
+      //     pathParameters: {
+      //       "idMachine": item.id,
+      //     },
+      //   );
+      //   break;
+      // case "machine_survey":
+      //   context.pushNamed(
+      //     routeMachineSurvey,
+      //     pathParameters: {
+      //       "idMachine": item.id,
+      //     },
+      //   );
+      //   break;
+      // case "machine_setting":
+      //   context.pushNamed(
+      //     routeMachineSetting,
+      //     pathParameters: {
+      //       "idMachine": item.id,
+      //     },
+      //   );
+      //   break;
       case "delete":
         await notifier.delete(machineId: item.id);
         ref.invalidate(machineNotifier);
@@ -101,6 +108,9 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                             Card(
                               margin: const EdgeInsets.all(8),
                               child: ListTile(
+                                onTap: () {
+                                  onClick(item);
+                                },
                                 leading: const Column(
                                   children: [
                                     CircleAvatar(child: Icon(Icons.star)),
@@ -181,18 +191,18 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                                       value: "machine_whatsapp",
                                       child: Text("Machine WhatsApp"),
                                     ),
-                                    const PopupMenuItem(
-                                      value: "machine_response",
-                                      child: Text("Machine Response"),
-                                    ),
-                                    const PopupMenuItem(
-                                      value: "machine_setting",
-                                      child: Text("Machine Setting"),
-                                    ),
-                                    const PopupMenuItem(
-                                      value: "machine_survey",
-                                      child: Text("Machine Survey"),
-                                    ),
+                                    // const PopupMenuItem(
+                                    //   value: "machine_response",
+                                    //   child: Text("Machine Response"),
+                                    // ),
+                                    // const PopupMenuItem(
+                                    //   value: "machine_setting",
+                                    //   child: Text("Machine Setting"),
+                                    // ),
+                                    // const PopupMenuItem(
+                                    //   value: "machine_survey",
+                                    //   child: Text("Machine Survey"),
+                                    // ),
                                     PopupMenuItem(
                                       value: "delete",
                                       child: Text(
