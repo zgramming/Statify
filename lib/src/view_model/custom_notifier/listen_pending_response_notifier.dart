@@ -20,5 +20,5 @@ final listenPendingResponseNotifier =
     }
   });
 
-  return stream ?? Stream.value(null);
+  return stream;
 });
