@@ -6,18 +6,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:telephony/telephony.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../main.dart';
 import '../../injection.dart';
 import '../../model/datasource/phone_local_datasource.dart';
 import '../../model/model/phone_model.dart';
 import '../../model/model/sms_model.dart';
 import '../../utils/event_channel.dart';
+import '../../utils/functions.dart';
 import 'home/home_page.dart';
 import 'long_distance_access/long_distance_access_page.dart';
 import 'setting/setting_page.dart';
 import 'statistic/statistic_page.dart';
 import 'whatsapp/whatsapp_page.dart';
-
-final _telephony = Telephony.instance;
 
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
@@ -47,23 +47,31 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   }
 
   void listenIncomingSMS() {
-    _telephony.listenIncomingSms(
-      listenInBackground: false,
+    final telephony = Telephony.instance;
+
+    telephony.listenIncomingSms(
+      listenInBackground: true,
+      onBackgroundMessage: onBackgroundMessage,
       onNewMessage: (message) {
+        showSnackbar(
+          context: context,
+          message: "New Message Received",
+          backgroundColor: Colors.green,
+        );
         log("""
-        id : ${message.id}\n  
-        address : ${message.address}\n  
-        body : ${message.body}\n  
-        date : ${message.date}\n  
-        dateSent : ${message.dateSent}\n  
-        read : ${message.read}\n  
-        seen : ${message.seen}\n  
-        serviceCenterAddress : ${message.serviceCenterAddress}\n  
-        status : ${message.status}\n  
-        subject : ${message.subject}\n  
-        subscriptionId : ${message.subscriptionId}\n  
-        threadId : ${message.threadId}\n  
-        type : ${message.type}\n  
+        id : ${message.id}\n
+        address : ${message.address}\n
+        body : ${message.body}\n
+        date : ${message.date}\n
+        dateSent : ${message.dateSent}\n
+        read : ${message.read}\n
+        seen : ${message.seen}\n
+        serviceCenterAddress : ${message.serviceCenterAddress}\n
+        status : ${message.status}\n
+        subject : ${message.subject}\n
+        subscriptionId : ${message.subscriptionId}\n
+        threadId : ${message.threadId}\n
+        type : ${message.type}\n
         """);
         const uuid = Uuid();
         final model = SMSModel(
@@ -80,11 +88,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   @override
   void initState() {
     super.initState();
-
-    Future.microtask(() {
-      listenIncomingCall();
-      listenIncomingSMS();
-    });
+    // listenIncomingCall();
+    listenIncomingSMS();
   }
 
   @override

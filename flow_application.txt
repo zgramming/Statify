@@ -1,0 +1,24 @@
+1. buat survey
+2. hit endpoint ->  survey response -> pending 
+3. kirim value-nya
+4. hitn endpoint -> sent survey kalo berhasil, kalo gagal -> fail survey
+
+
+
+-------------------
+flow pas user terima sms
+1. ketika sms masuk, hit endpoint machines/:machineId/surveys/:number, terus check apakah kosong/ngga.
+1.1. kalo kosong dan kontentnya "ok", hit enpoint machines/:machineId/surveys (create)
+1.2 ketika success, check lock apakah true/false
+1.2.1. ketika true, hit endpoint surveys/:surveyId/unlock (unlock survey)
+1.2.2. ketika false, hit endpoint {{url}}/surveys/:surveyId/responses (create survey response)
+
+flow kirim sms
+1. hit endpoint {{url}}/machines/:machineId/pending-response (pending response)
+2. Check apakah pending response ada isinya atau ngga
+2.1. Kalau Ada isinya, kirim sms (native) ke nomor yang ada di obj survey, dengan value yang ada,
+lalu check apakah ketika kirim sms berhasil / gagal
+2.1.1. kalau berhasil, hint endpoint {{url}}/survey-responses/:surveyResponseId/sent (sent survey response)
+2.1.2 kalau gagal, hit endpoint  {{url}}/survey-responses/:surveyResponseId/fail (fail sent survey)
+
+2.2. Kalau ngga ada isinya, hit endpoint {{url}}/machines/:machineId/surveys/:surveyId (create survey)

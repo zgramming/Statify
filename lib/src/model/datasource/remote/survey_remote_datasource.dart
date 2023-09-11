@@ -42,7 +42,9 @@ class SurveyRemoteDatasource {
     required String surveyId,
     required String key,
   }) async {
-    final uri = Uri.parse("$kBaseApiUrl/surveys/$surveyId/unlock");
+    final uri = Uri.parse(
+      "$kBaseApiUrl/surveys/$surveyId/unlock",
+    );
     final response = await client.patch(
       uri,
       body: {

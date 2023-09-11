@@ -1,20 +1,50 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
 import '../../../utils/fonts.dart';
+import '../../../utils/functions.dart';
+import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final machinesAsync = ref.watch(machineNotifier).onGetAll;
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
 
-    return machinesAsync.when(
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(machineNotifier.select((value) => value.onGetAll),
+        (previous, next) {
+      next.whenData((value) {
+        // Trigger Listen to get pending response
+        if (value.isEmpty) return;
+        final firstMachine = value.first;
+        ref.watch(listenPendingResponseNotifier(firstMachine.id));
+      });
+    });
+    final machineAsync = ref.watch(machineNotifier).onGetAll;
+    return machineAsync.when(
       data: (items) {
+        if (items.isEmpty) {
+          return Center(
+            child: Text(
+              "No Machine",
+              style: headerFont.copyWith(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+        }
+
         return Column(
           children: [
             const CustomAppbar(title: "Home"),
@@ -96,7 +126,11 @@ class HomePage extends ConsumerWidget {
         return Center(
           child: Text(
             error.toString(),
-            style: const TextStyle(color: Colors.red),
+            style: headerFont.copyWith(
+              color: Colors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         );
       },

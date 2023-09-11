@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../injection.dart';
-import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
 
 class SendSMSPage extends ConsumerStatefulWidget {
@@ -24,14 +22,6 @@ class _SendSMSPageState extends ConsumerState<SendSMSPage> {
       return;
     }
 
-    final number = _controllerNumber.text;
-    final message = _controllerMessage.text;
-
-    await ref.read(smsNotifier.notifier).sendSMS(
-          to: number,
-          message: message,
-        );
-
     _formKey.currentState?.reset();
   }
 
@@ -52,28 +42,6 @@ class _SendSMSPageState extends ConsumerState<SendSMSPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(smsNotifier.select((value) => value.onSendSMS),
-        (previous, next) {
-      next.when(
-        data: (value) {
-          showSnackbar(
-            context: context,
-            message: "$value",
-            backgroundColor: Colors.green,
-          );
-        },
-        error: (error, stackTrace) {
-          showSnackbar(
-              context: context,
-              message: error.toString(),
-              backgroundColor: Colors.red);
-        },
-        loading: () {
-          showSnackbar(context: context, message: "Loading...");
-        },
-      );
-    });
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Send SMS"),

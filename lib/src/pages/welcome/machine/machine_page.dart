@@ -45,38 +45,6 @@ class _MachinePageState extends ConsumerState<MachinePage> {
         await notifier.delete(machineId: item.id);
         ref.invalidate(machineNotifier);
         break;
-      // case "machine_whatsapp":
-      //   context.pushNamed(
-      //     routeMachineWhatsApp,
-      //     pathParameters: {
-      //       "idMachine": item.id,
-      //     },
-      //   );
-      //   break;
-      // case "machine_response":
-      //   context.pushNamed(
-      //     routeMachineResponse,
-      //     pathParameters: {
-      //       "idMachine": item.id,
-      //     },
-      //   );
-      //   break;
-      // case "machine_survey":
-      //   context.pushNamed(
-      //     routeMachineSurvey,
-      //     pathParameters: {
-      //       "idMachine": item.id,
-      //     },
-      //   );
-      //   break;
-      // case "machine_setting":
-      //   context.pushNamed(
-      //     routeMachineSetting,
-      //     pathParameters: {
-      //       "idMachine": item.id,
-      //     },
-      //   );
-      //   break;
 
       default:
     }
@@ -90,19 +58,25 @@ class _MachinePageState extends ConsumerState<MachinePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const CustomAppbar(
-            title: "Mesin",
+            title: "Machine",
             withBackButton: true,
           ),
           Expanded(
             child: Builder(
               builder: (context) {
                 return machine.when(
-                  data: (data) {
+                  data: (items) {
+                    if (items.isEmpty) {
+                      return const Center(
+                        child: Text("Empty Machine"),
+                      );
+                    }
+
                     return ListView.separated(
                       separatorBuilder: (context, index) => const Divider(),
-                      itemCount: data.length,
+                      itemCount: items.length,
                       itemBuilder: (context, index) {
-                        final item = data[index];
+                        final item = items[index];
                         return Stack(
                           children: [
                             Card(

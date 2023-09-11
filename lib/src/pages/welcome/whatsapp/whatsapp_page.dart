@@ -44,19 +44,34 @@ class _WhatsAppPageState extends ConsumerState<WhatsAppPage> {
                   // Reload data
                   ref.invalidate(machineNotifier);
                 },
-                child: ListView.separated(
-                  itemCount: machineWhatsApps.length,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(16.0),
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final item = machineWhatsApps[index];
-                    return _WhatsappItem(
-                      item: item,
-                      index: index,
+                child: Builder(builder: (context) {
+                  if (machineWhatsApps.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "No WhatsApp",
+                        style: headerFont.copyWith(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     );
-                  },
-                ),
+                  }
+
+                  return ListView.separated(
+                    itemCount: machineWhatsApps.length,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(16.0),
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: (context, index) {
+                      final item = machineWhatsApps[index];
+                      return _WhatsappItem(
+                        item: item,
+                        index: index,
+                      );
+                    },
+                  );
+                }),
               ),
             ),
           ],

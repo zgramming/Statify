@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -16,8 +18,10 @@ import 'src/model/model/sms_model.dart';
 // Map<String, dynamic> toJson() => _$AuthenticationResponseModelToJson(this);
 
 // dart run build_runner watch --delete-conflicting-outputs
-Future<void> backgrounMessageHandler(SmsMessage message) async {
-  //Handle background message
+
+@pragma('vm:entry-point')
+void onBackgroundMessage(SmsMessage msg) {
+  log("new message from background : ${msg.body}");
 }
 
 Future<void> initializeHive() async {

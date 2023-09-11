@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -79,6 +80,7 @@ class SurveyMachine extends Equatable {
   final String name;
   final String number;
   final String license;
+  final String serialNumber;
   final MachineActionEnum action;
   final String smsSetting;
   final int send;
@@ -93,6 +95,7 @@ class SurveyMachine extends Equatable {
     required this.name,
     required this.number,
     required this.license,
+    required this.serialNumber,
     required this.action,
     required this.smsSetting,
     required this.send,
@@ -116,6 +119,7 @@ class SurveyMachine extends Equatable {
       name,
       number,
       license,
+      serialNumber,
       action,
       smsSetting,
       send,
@@ -135,6 +139,7 @@ class SurveyMachine extends Equatable {
     String? name,
     String? number,
     String? license,
+    String? serialNumber,
     MachineActionEnum? action,
     String? smsSetting,
     int? send,
@@ -149,6 +154,7 @@ class SurveyMachine extends Equatable {
       name: name ?? this.name,
       number: number ?? this.number,
       license: license ?? this.license,
+      serialNumber: serialNumber ?? this.serialNumber,
       action: action ?? this.action,
       smsSetting: smsSetting ?? this.smsSetting,
       send: send ?? this.send,

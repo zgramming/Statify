@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:telephony/telephony.dart';
 
 import 'model/datasource/application_config_local_datasource.dart';
 import 'model/datasource/local/authentication_local_datasource.dart';
@@ -145,7 +144,11 @@ final _phoneRepository = Provider((ref) =>
 // remote datasource
 
 final _surveyResponseRemoteDatasource = Provider(
-    (ref) => SurveyResponseRemoteDatasource(client: ref.watch(_httpClient)));
+  (ref) => SurveyResponseRemoteDatasource(
+    client: ref.watch(_httpClient),
+    surveyRemoteDatasource: ref.watch(_surveyRemoteDatasource),
+  ),
+);
 final _surveyRemoteDatasource =
     Provider((ref) => SurveyRemoteDatasource(client: ref.watch(_httpClient)));
 final _machineSettingRemoteDatasource = Provider(
@@ -169,7 +172,6 @@ final _smsLocalDatasource =
 final _phoneLocalDatasource =
     Provider((ref) => PhoneLocalDatasource(box: ref.watch(_phoneBox)));
 
-final telephony = Provider((ref) => Telephony.instance);
 final _applicationConfigBox = Provider(
     (ref) => Hive.box<ApplicationConfigModel>(hiveApplicationConfigBox));
 final _phoneBox = Provider((ref) => Hive.box<PhoneModel>(hivePhoneBox));
