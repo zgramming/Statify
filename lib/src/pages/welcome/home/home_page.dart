@@ -68,11 +68,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      FlutterLocalNotificationUtils()
-          .isAndroidPermissionGranted()
-          .then((value) {
-        log("isAndroidPermissionGranted : $value");
-      });
       listenIncomingSMS();
     });
   }
