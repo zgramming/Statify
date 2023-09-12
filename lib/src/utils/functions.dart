@@ -13,6 +13,30 @@ int generateUniqueNotificationId() {
   return uniqueId;
 }
 
+String chooseSMSSettingfromSIMSlot(int simSlot) {
+  switch (simSlot) {
+    case 0:
+      return "sim_1";
+    case 1:
+      return "sim_2";
+
+    default:
+      throw Exception("Unknown sim slot, cant get sms setting");
+  }
+}
+
+int chooseSimSlotSMS(String smsSetting) {
+  switch (smsSetting) {
+    case "sim_1":
+      return 0;
+    case "sim_2":
+      return 1;
+
+    default:
+      throw Exception("Unknown sms setting, cant get sim slot");
+  }
+}
+
 void showSnackbar({
   required BuildContext context,
   required String message,

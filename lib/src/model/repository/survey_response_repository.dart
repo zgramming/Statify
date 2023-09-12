@@ -11,6 +11,7 @@ import '../model/survey_response/survey_response_sent_model.dart';
 
 class SurveyResponseRepository {
   final SurveyResponseRemoteDatasource remoteDatasource;
+
   const SurveyResponseRepository({
     required this.remoteDatasource,
   });
@@ -61,10 +62,13 @@ class SurveyResponseRepository {
 
   Either<Failure, Stream<String?>> listenPendingResponse({
     required String machineId,
+    required int simSlot,
   }) {
     try {
-      final response =
-          remoteDatasource.listenPendingResponse(machineId: machineId);
+      final response = remoteDatasource.listenPendingResponse(
+        machineId: machineId,
+        simSlot: simSlot,
+      );
       return Right(response);
     } catch (e) {
       return Left(CommonFailure(e.toString()));

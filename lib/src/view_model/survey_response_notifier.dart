@@ -107,8 +107,12 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
 
   Stream<String?> listenPendingResponse({
     required String machineId,
+    required int simSlot,
   }) {
-    final result = repository.listenPendingResponse(machineId: machineId);
+    final result = repository.listenPendingResponse(
+      machineId: machineId,
+      simSlot: simSlot,
+    );
     final fold = result.getOrElse(() => Stream.value(null));
 
     return fold;

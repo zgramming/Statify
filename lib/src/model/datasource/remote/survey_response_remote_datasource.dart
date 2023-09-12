@@ -125,6 +125,7 @@ class SurveyResponseRemoteDatasource {
 
   Stream<String?> listenPendingResponse({
     required String machineId,
+    required int simSlot,
   }) async* {
     final methodChannelUtils = MethodChannelUtils();
     // final simcardProvider = SimCardsProvider();
@@ -137,21 +138,17 @@ class SurveyResponseRemoteDatasource {
     while (true) {
       try {
         final pendingResponse = await getPendingResponse(
-          // machineId,
           machineId,
           MachineResponsePlatformEnum.sms,
         );
 
         if (pendingResponse != null) {
-          // // Send SMS to user
-          // final msg = SmsMessage(
-          //   pendingResponse.survey.number,
-          //   pendingResponse.value,
-          // );
+          // Send SMS to user
+
           final msg = await methodChannelUtils.sendSMS(
             phoneNumber: pendingResponse.survey.number,
             message: pendingResponse.value,
-            simSlot: 0,
+            simSlot: simSlot,
           );
 
           if (msg) {
@@ -163,6 +160,7 @@ class SurveyResponseRemoteDatasource {
             yield "Failed to send SMS to User, then update survey response status to fail";
           }
         } else {
+          log("Pending Response is null or empty, wait for 10 seconds to check again");
           yield null;
         }
       } catch (e) {
