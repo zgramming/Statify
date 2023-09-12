@@ -6,6 +6,7 @@ import 'model/datasource/application_config_local_datasource.dart';
 import 'model/datasource/local/authentication_local_datasource.dart';
 import 'model/datasource/phone_local_datasource.dart';
 import 'model/datasource/remote/authentication_remote_datasource.dart';
+import 'model/datasource/remote/incoming_message_remote_datasource.dart';
 import 'model/datasource/remote/machine_remote_datasource.dart';
 import 'model/datasource/remote/machine_response_remote_datasource.dart';
 import 'model/datasource/remote/machine_setting_remote_datasource.dart';
@@ -60,6 +61,12 @@ final getMachineWhatsApp =
 });
 // End Custom Provider
 
+final incomingMessageNotifier =
+    StateNotifierProvider<IncomingMessageNotifier, IncomingMessageState>((ref) {
+  return IncomingMessageNotifier(
+    repository: ref.watch(_incomingMessageRepository),
+  );
+});
 final surveyNotifier = StateNotifierProvider<SurveyNotifier, SurveyState>(
   (ref) => SurveyNotifier(repository: ref.watch(_surveyRepository)),
 );
@@ -115,6 +122,8 @@ final phoneNotifier = StateNotifierProvider<PhoneNotifier, PhoneState>(
 
 // repository
 
+final _incomingMessageRepository = Provider((ref) => IncomingMessageRepository(
+    remoteDatasource: ref.watch(_incomingMessageRemoteDatasource)));
 final _surveyRepository = Provider((ref) =>
     SurveyRepository(remoteDatasource: ref.watch(_surveyRemoteDatasource)));
 final _surveyResponseRepository = Provider((ref) => SurveyResponseRepository(
@@ -143,6 +152,12 @@ final _phoneRepository = Provider((ref) =>
 
 // remote datasource
 
+final _incomingMessageRemoteDatasource = Provider(
+  (ref) => IncomingMessageRemoteDatasource(
+    client: ref.watch(_httpClient),
+    surveyRemoteDatasource: ref.watch(_surveyRemoteDatasource),
+  ),
+);
 final _surveyResponseRemoteDatasource = Provider(
   (ref) => SurveyResponseRemoteDatasource(
     client: ref.watch(_httpClient),

@@ -1,8 +1,15 @@
+import 'dart:developer';
+
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:telephony/telephony.dart';
 
+import '../../../../main.dart';
 import '../../../injection.dart';
+import '../../../utils/flutter_local_notification.dart';
 import '../../../utils/fonts.dart';
+import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
@@ -15,6 +22,63 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  void listenIncomingSMS() async {
+    final telephony = Telephony.instance;
+
+    telephony.listenIncomingSms(
+      listenInBackground: true,
+      onBackgroundMessage: onBackgroundMessage,
+      onNewMessage: (message) async {
+        FlutterLocalNotificationUtils().showNotification(
+          title: "New Message from ${message.address ?? ""}",
+          body: message.body ?? "",
+          payload: message.body ?? "",
+        );
+
+        log("""
+        id : ${message.id}\n
+        address : ${message.address}\n
+        body : ${message.body}\n
+        date : ${message.date}\n
+        dateSent : ${message.dateSent}\n
+        read : ${message.read}\n
+        seen : ${message.seen}\n
+        serviceCenterAddress : ${message.serviceCenterAddress}\n
+        status : ${message.status}\n
+        subject : ${message.subject}\n
+        subscriptionId : ${message.subscriptionId}\n
+        threadId : ${message.threadId}\n
+        type : ${message.type}\n
+        """);
+
+        final machines = ref.read(machineNotifier).onGetAll.valueOrNull ?? [];
+        if (machines.isEmpty) return;
+
+        final notifier = ref.read(incomingMessageNotifier.notifier);
+        final result = await notifier.handlingIncomingMessage(
+          machineId: machines.first.id,
+          number: message.address ?? "",
+          message: message.body ?? "",
+        );
+
+        log("Result : $result");
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      FlutterLocalNotificationUtils()
+          .isAndroidPermissionGranted()
+          .then((value) {
+        log("isAndroidPermissionGranted : $value");
+      });
+      listenIncomingSMS();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(machineNotifier.select((value) => value.onGetAll),

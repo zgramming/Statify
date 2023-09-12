@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 import '../model/model/machine_setting/machine_setting_model.dart';
 import 'enum.dart';
 
+int generateUniqueNotificationId() {
+  // Get the current timestamp in milliseconds
+  int timestamp = DateTime.now().millisecondsSinceEpoch;
+
+  // Calculate a unique ID within the range 1 - 9999
+  int uniqueId = (timestamp % 10000) + 1;
+
+  return uniqueId;
+}
+
 void showSnackbar({
   required BuildContext context,
   required String message,

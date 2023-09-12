@@ -11,14 +11,12 @@ SurveyResponseFailModel _$SurveyResponseFailModelFromJson(
     SurveyResponseFailModel(
       id: json['id'] as String,
       surveyId: json['survey_id'] as String,
+      platform: json['platform'] as String,
       key: json['key'] as String,
       value: json['value'] as String,
       status: json['status'] as String,
-      type: json['type'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      survey: SurveyResponseFailSurvey.fromJson(
-          json['survey'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SurveyResponseFailModelToJson(
@@ -26,13 +24,12 @@ Map<String, dynamic> _$SurveyResponseFailModelToJson(
     <String, dynamic>{
       'id': instance.id,
       'survey_id': instance.surveyId,
+      'platform': instance.platform,
       'key': instance.key,
       'value': instance.value,
       'status': instance.status,
-      'type': instance.type,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
-      'survey': instance.survey,
     };
 
 SurveyResponseFailSurvey _$SurveyResponseFailSurveyFromJson(

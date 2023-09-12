@@ -13,11 +13,7 @@ final listenPendingResponseNotifier =
       .listenPendingResponse(machineId: machineId);
 
   stream.listen((event) {
-    if (event != null) {
-      log("listenPendingResponseNotifier: $event");
-    } else {
-      log("listenPendingResponseNotifier: null");
-    }
+    log("listenPendingResponseNotifier: $event");
   });
 
   return stream;

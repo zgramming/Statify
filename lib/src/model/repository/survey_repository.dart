@@ -12,7 +12,7 @@ class SurveyRepository {
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, SurveyByMachineAndNumberModel>> getByMachineAndNumber({
+  Future<Either<Failure, SurveyByMachineAndNumberModel?>> getByMachineAndNumber({
     required String machineId,
     required String number,
   }) async {
@@ -45,11 +45,13 @@ class SurveyRepository {
   Future<Either<Failure, SurveyUnlockResponseModel>> unlock({
     required String surveyId,
     required String key,
+    required String platform,
   }) async {
     try {
       final result = await remoteDatasource.unlock(
         surveyId: surveyId,
         key: key,
+        platform: platform,
       );
       return Right(result);
     } catch (e) {

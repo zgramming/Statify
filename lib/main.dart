@@ -10,6 +10,7 @@ import 'src/utils/constant.dart';
 
 import 'src/app.dart';
 import 'src/model/model/sms_model.dart';
+import 'src/utils/flutter_local_notification.dart';
 
 // factory AuthenticationResponseModel.fromJson(Map<String, dynamic> json) =>
 //     _$AuthenticationResponseModelFromJson(json);
@@ -38,6 +39,7 @@ Future<void> initializeHive() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterLocalNotificationUtils().initialize();
   await initializeHive();
 
   runApp(const ProviderScope(child: MyApp()));

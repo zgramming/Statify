@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -9,10 +10,10 @@ part 'survey_response_by_machine_and_type_model.g.dart';
 class SurveyResponseByMachineAndTypeModel extends Equatable {
   final String id;
   final String surveyId;
+  final String platform;
   final String key;
   final String value;
   final String status;
-  final String type;
   final DateTime createdAt;
   final DateTime updatedAt;
   final SurveyResponseSurvey survey;
@@ -20,10 +21,10 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
   const SurveyResponseByMachineAndTypeModel({
     required this.id,
     required this.surveyId,
+    required this.platform,
     required this.key,
     required this.value,
     required this.status,
-    required this.type,
     required this.createdAt,
     required this.updatedAt,
     required this.survey,
@@ -42,10 +43,10 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
     return [
       id,
       surveyId,
+      platform,
       key,
       value,
       status,
-      type,
       createdAt,
       updatedAt,
       survey,
@@ -58,10 +59,10 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
   SurveyResponseByMachineAndTypeModel copyWith({
     String? id,
     String? surveyId,
+    String? platform,
     String? key,
     String? value,
     String? status,
-    String? type,
     DateTime? createdAt,
     DateTime? updatedAt,
     SurveyResponseSurvey? survey,
@@ -69,10 +70,10 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
     return SurveyResponseByMachineAndTypeModel(
       id: id ?? this.id,
       surveyId: surveyId ?? this.surveyId,
+      platform: platform ?? this.platform,
       key: key ?? this.key,
       value: value ?? this.value,
       status: status ?? this.status,
-      type: type ?? this.type,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       survey: survey ?? this.survey,
@@ -86,17 +87,23 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
 class SurveyResponseSurvey extends Equatable {
   final String id;
   final String machineId;
+  final String? machineWhatsappId;
   final String number;
+  final bool locked;
+  final int attempt;
+  final DateTime? bannedUntil;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final int locked;
   const SurveyResponseSurvey({
     required this.id,
     required this.machineId,
+    this.machineWhatsappId,
     required this.number,
+    required this.locked,
+    required this.attempt,
+    this.bannedUntil,
     required this.createdAt,
     required this.updatedAt,
-    required this.locked,
   });
 
   factory SurveyResponseSurvey.fromJson(Map<String, dynamic> json) =>
@@ -106,14 +113,17 @@ class SurveyResponseSurvey extends Equatable {
   Map<String, dynamic> toJson() => _$SurveyResponseSurveyToJson(this);
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       id,
       machineId,
+      machineWhatsappId,
       number,
+      locked,
+      attempt,
+      bannedUntil,
       createdAt,
       updatedAt,
-      locked,
     ];
   }
 
@@ -123,18 +133,24 @@ class SurveyResponseSurvey extends Equatable {
   SurveyResponseSurvey copyWith({
     String? id,
     String? machineId,
+    String? machineWhatsappId,
     String? number,
+    bool? locked,
+    int? attempt,
+    DateTime? bannedUntil,
     DateTime? createdAt,
     DateTime? updatedAt,
-    int? locked,
   }) {
     return SurveyResponseSurvey(
       id: id ?? this.id,
       machineId: machineId ?? this.machineId,
+      machineWhatsappId: machineWhatsappId ?? this.machineWhatsappId,
       number: number ?? this.number,
+      locked: locked ?? this.locked,
+      attempt: attempt ?? this.attempt,
+      bannedUntil: bannedUntil ?? this.bannedUntil,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      locked: locked ?? this.locked,
     );
   }
 }

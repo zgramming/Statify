@@ -157,7 +157,6 @@ class SurveyResponseRemoteDatasource {
           if (msg) {
             // Update survey response status to sent
             await sent(pendingResponse.id);
-
             yield "Sent SMS to User successfully, then update survey response status to sent";
           } else {
             await fail(pendingResponse.id);

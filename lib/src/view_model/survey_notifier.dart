@@ -82,11 +82,13 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
   Future<void> unlock({
     required String surveyId,
     required String key,
+    required String platform,
   }) async {
     state = state.copyWith(onUnlock: const AsyncLoading());
     final result = await repository.unlock(
       surveyId: surveyId,
       key: key,
+      platform: platform,
     );
 
     result.fold(

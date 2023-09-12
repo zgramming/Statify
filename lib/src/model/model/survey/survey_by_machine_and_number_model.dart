@@ -12,7 +12,7 @@ class SurveyByMachineAndNumberModel extends Equatable {
   final String number;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final int locked;
+  final bool locked;
 
   const SurveyByMachineAndNumberModel({
     required this.id,
@@ -50,7 +50,7 @@ class SurveyByMachineAndNumberModel extends Equatable {
     String? number,
     DateTime? createdAt,
     DateTime? updatedAt,
-    int? locked,
+    bool? locked,
   }) {
     return SurveyByMachineAndNumberModel(
       id: id ?? this.id,

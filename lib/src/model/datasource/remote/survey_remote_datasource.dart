@@ -9,11 +9,12 @@ import '../../model/survey/survey_unlock_response_model.dart';
 
 class SurveyRemoteDatasource {
   final http.Client client;
+
   const SurveyRemoteDatasource({
     required this.client,
   });
 
-  Future<SurveyByMachineAndNumberModel> getByMachineAndNumber({
+  Future<SurveyByMachineAndNumberModel?> getByMachineAndNumber({
     required String machineId,
     required String number,
   }) async {
@@ -24,10 +25,11 @@ class SurveyRemoteDatasource {
 
     final body = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decodedData['data'];
+
+    if (data == null) return null;
 
     if (response.statusCode == 200) {
-      final data = decodedData['data'];
-
       final result = SurveyByMachineAndNumberModel.fromJson(data);
       return result;
     } else {
@@ -41,6 +43,7 @@ class SurveyRemoteDatasource {
   Future<SurveyUnlockResponseModel> unlock({
     required String surveyId,
     required String key,
+    required String platform,
   }) async {
     final uri = Uri.parse(
       "$kBaseApiUrl/surveys/$surveyId/unlock",
@@ -49,6 +52,7 @@ class SurveyRemoteDatasource {
       uri,
       body: {
         'key': key,
+        'platform': platform,
       },
     );
 
@@ -82,10 +86,9 @@ class SurveyRemoteDatasource {
 
     final body = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decodedData['data'];
 
     if (response.statusCode == 200) {
-      final data = decodedData['data'];
-
       final result = SurveyCreateResponseModel.fromJson(data);
       return result;
     } else {

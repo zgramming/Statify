@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -9,23 +10,22 @@ part 'survey_response_fail_model.g.dart';
 class SurveyResponseFailModel extends Equatable {
   final String id;
   final String surveyId;
+  final String platform;
   final String key;
   final String value;
   final String status;
-  final String type;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final SurveyResponseFailSurvey survey;
+
   const SurveyResponseFailModel({
     required this.id,
     required this.surveyId,
+    required this.platform,
     required this.key,
     required this.value,
     required this.status,
-    required this.type,
     required this.createdAt,
     required this.updatedAt,
-    required this.survey,
   });
 
   factory SurveyResponseFailModel.fromJson(Map<String, dynamic> json) =>
@@ -39,13 +39,12 @@ class SurveyResponseFailModel extends Equatable {
     return [
       id,
       surveyId,
+      platform,
       key,
       value,
       status,
-      type,
       createdAt,
       updatedAt,
-      survey,
     ];
   }
 
@@ -55,24 +54,22 @@ class SurveyResponseFailModel extends Equatable {
   SurveyResponseFailModel copyWith({
     String? id,
     String? surveyId,
+    String? platform,
     String? key,
     String? value,
     String? status,
-    String? type,
     DateTime? createdAt,
     DateTime? updatedAt,
-    SurveyResponseFailSurvey? survey,
   }) {
     return SurveyResponseFailModel(
       id: id ?? this.id,
       surveyId: surveyId ?? this.surveyId,
+      platform: platform ?? this.platform,
       key: key ?? this.key,
       value: value ?? this.value,
       status: status ?? this.status,
-      type: type ?? this.type,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      survey: survey ?? this.survey,
     );
   }
 }
