@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:telephony/telephony.dart';
@@ -9,7 +8,6 @@ import '../../../../main.dart';
 import '../../../injection.dart';
 import '../../../utils/flutter_local_notification.dart';
 import '../../../utils/fonts.dart';
-import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';

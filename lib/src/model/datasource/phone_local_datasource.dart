@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../utils/failure.dart';
 import '../model/phone_model.dart';
