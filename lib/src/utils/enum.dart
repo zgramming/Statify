@@ -1,7 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
 enum MachineSMSSettingEnum {
+  @JsonValue('sim_1')
   sim1,
+  @JsonValue('sim_2')
   sim2,
   @JsonValue('sim_1_priority')
   sim1Priority,

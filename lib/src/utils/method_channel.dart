@@ -19,7 +19,6 @@ class MethodChannelUtils {
           'simSlot': simSlot,
         },
       );
-      log("RESULT  SMS Flutter: $result");
       return result;
     } on PlatformException catch (e) {
       log("Error PlatformException Flutter: $e");

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../injection.dart';
 import '../../view_model/custom_notifier/request_permission_notifier.dart';
+import '../widgets/async_error_builder.dart';
 import 'home/home_page.dart';
 import 'long_distance_access/long_distance_access_page.dart';
 import 'setting/setting_page.dart';
@@ -16,31 +18,6 @@ class WelcomePage extends ConsumerStatefulWidget {
 }
 
 class _WelcomePageState extends ConsumerState<WelcomePage> {
-  // StreamSubscription? _subscriptionCallReceiver;
-
-  // void listenIncomingCall() {
-  //   _subscriptionCallReceiver =
-  //       EventChannelUtils.listenIncomingCall().listen((event) {
-  //     final phoneNumber = event.number;
-  //     if (phoneNumber != null && event.state == "RINGING") {
-  //       final id = const Uuid().v4();
-  //       final model = PhoneModel(
-  //         id: id,
-  //         date: DateTime.now(),
-  //         number: phoneNumber,
-  //       );
-  //       ref.read(phoneNotifier.notifier).insert(model);
-  //       log("message : $event");
-  //     }
-  //   });
-  // }
-
-  // @override
-  // void dispose() {
-  //   _subscriptionCallReceiver?.cancel();
-  //   super.dispose();
-  // }
-
   int _selectedIndex = 0;
 
   final _destinations = <NavigationDestination>[
@@ -75,15 +52,6 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
       selectedIcon: const Icon(Icons.settings, color: Colors.white),
       label: "Setting",
     ),
-
-    // NavigationDestination(
-    //   icon: Icon(
-    //     Icons.device_hub_outlined,
-    //     color: Colors.grey.withOpacity(.5),
-    //   ),
-    //   selectedIcon: const Icon(Icons.device_hub, color: Colors.white),
-    //   label: "Machine",
-    // ),
   ];
 
   final _pages = [
@@ -98,27 +66,25 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(builder: (_) {
+        final machineAsync = ref.watch(machineNotifier).onGetAll;
         final permissionFuture = ref.watch(checkPermissionNotifier);
-
         return permissionFuture.when(
-          data: (_) => IndexedStack(
-            index: _selectedIndex,
-            children: _pages,
-          ),
-          error: (error, stackTrace) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(error.toString()),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    ref.invalidate(checkPermissionNotifier);
-                  },
-                  child: const Text("Coba Lagi"),
-                ),
-              ],
-            ),
+          data: (_) {
+            return machineAsync.when(
+              data: (_) => IndexedStack(
+                index: _selectedIndex,
+                children: _pages,
+              ),
+              error: (error, stackTrace) => AsyncErrorBuilder(
+                error: error.toString(),
+                onRetry: () => ref.invalidate(machineNotifier),
+              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+            );
+          },
+          error: (error, stackTrace) => AsyncErrorBuilder(
+            error: error.toString(),
+            onRetry: () => ref.invalidate(checkPermissionNotifier),
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
         );

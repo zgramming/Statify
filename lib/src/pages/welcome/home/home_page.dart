@@ -1,14 +1,19 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:telephony/telephony.dart';
 
-import '../../../../main.dart';
 import '../../../injection.dart';
+import '../../../model/model/incoming_sms/incoming_sms.model.dart';
+import '../../../model/model/machine/machine_model.dart';
+import '../../../utils/event_channel.dart';
 import '../../../utils/flutter_local_notification.dart';
 import '../../../utils/fonts.dart';
+import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
+import '../../widgets/async_error_builder.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
@@ -20,177 +25,178 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  void listenIncomingSMS() async {
-    final telephony = Telephony.instance;
+  StreamSubscription<IncomingSMSModel>? _subscriptionIncomingSMS;
 
-    telephony.listenIncomingSms(
-      listenInBackground: true,
-      onBackgroundMessage: onBackgroundMessage,
-      onNewMessage: (message) async {
-        FlutterLocalNotificationUtils().showNotification(
-          title: "New Message from ${message.address ?? ""}",
-          body: message.body ?? "",
-          payload: message.body ?? "",
-        );
+  void listenIncomingSMSV2() async {
+    final phoneSetting =
+        ref.read(phoneNumberSettingNotifier).onGetFirst.valueOrNull;
+    if (phoneSetting == null) {
+      FlutterLocalNotificationUtils().showNotification(
+        title: "Tracking Incoming SMS Pending",
+        body: "Please set phone number first",
+        payload: "Error",
+      );
+      return;
+    }
 
-        log("""
-        id : ${message.id}\n
-        address : ${message.address}\n
-        body : ${message.body}\n
-        date : ${message.date}\n
-        dateSent : ${message.dateSent}\n
-        read : ${message.read}\n
-        seen : ${message.seen}\n
-        serviceCenterAddress : ${message.serviceCenterAddress}\n
-        status : ${message.status}\n
-        subject : ${message.subject}\n
-        subscriptionId : ${message.subscriptionId}\n
-        threadId : ${message.threadId}\n
-        type : ${message.type}\n
-        """);
-
-        final machines = ref.read(machineNotifier).onGetAll.valueOrNull ?? [];
-        if (machines.isEmpty) return;
-
-        final notifier = ref.read(incomingMessageNotifier.notifier);
-        final result = await notifier.handlingIncomingMessage(
-          machineId: machines.first.id,
-          number: message.address ?? "",
-          message: message.body ?? "",
-        );
-
-        log("Result : $result");
-      },
+    FlutterLocalNotificationUtils().showNotification(
+      title: "Tracking Incoming SMS Active",
+      body: "Every incoming SMS will be tracked",
+      payload: "Success",
     );
+
+    final notifier = ref.read(incomingMessageNotifier.notifier);
+    _subscriptionIncomingSMS =
+        EventChannelUtils().listenIncomingSMS().listen((event) async {
+      log("Incoming SMS: $event");
+      final smsSetting = chooseSMSSettingfromSIMSlot(event.simSlot);
+      final machines = ref.read(machineNotifier).onGetAll.valueOrNull ?? [];
+      final machine = machines
+          .firstWhereOrNull((element) => element.smsSetting == smsSetting);
+
+      if (machine == null) {
+        log("Machine not found then incoming message will be ignored");
+        return;
+      }
+
+      final result = await notifier.handlingIncomingMessage(
+        machineId: machine.id,
+        number: event.address,
+        message: event.body,
+      );
+
+      log("Handling Incoming Message Result: $result");
+    });
   }
 
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      listenIncomingSMS();
+      listenIncomingSMSV2();
     });
   }
 
   @override
+  void dispose() {
+    _subscriptionIncomingSMS?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    ref.listen(machineNotifier.select((value) => value.onGetAll),
-        (previous, next) {
-      next.whenData((value) {
-        // Trigger Listen to get pending response
-        if (value.isEmpty) return;
-        final firstMachine = value.first;
-        ref.watch(listenPendingResponseNotifier(firstMachine.id));
-      });
-    });
-    final machineAsync = ref.watch(machineNotifier).onGetAll;
-    return machineAsync.when(
-      data: (items) {
-        if (items.isEmpty) {
-          return Center(
-            child: Text(
-              "No Machine",
-              style: headerFont.copyWith(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          );
-        }
+    final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
 
-        return Column(
-          children: [
-            const CustomAppbar(title: "Home"),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  ref.invalidate(machineNotifier);
-                },
-                child: ListView.separated(
-                  itemCount: items.length,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(16.0),
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-
-                    return Card(
-                      margin: const EdgeInsets.only(),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16.0,
-                          horizontal: 8.0,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "${index + 1}. ${item.number}",
-                                style: headerFont.copyWith(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16.0),
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  RowBody(
-                                    title: "SMS Sent",
-                                    content: "${item.send}",
-                                    titleFlex: 2,
-                                    contentFlex: 1,
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  RowBody(
-                                    title: "Total Reply",
-                                    content: "${item.replied}",
-                                    titleFlex: 2,
-                                    contentFlex: 1,
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  const RowBody(
-                                    title: "Total Finished",
-                                    content: "0",
-                                    titleFlex: 2,
-                                    contentFlex: 1,
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-      error: (error, stackTrace) {
-        return Center(
-          child: Text(
-            error.toString(),
-            style: headerFont.copyWith(
-              color: Colors.black,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+    if (machines.isEmpty) {
+      return Center(
+        child: Text(
+          "No Machine",
+          style: headerFont.copyWith(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        const CustomAppbar(title: "Home"),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(machineNotifier);
+            },
+            child: ListView.separated(
+              itemCount: machines.length,
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(16.0),
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final item = machines[index];
+                return _MachineItem(item: item, index: index);
+              },
             ),
           ),
-        );
-      },
-      loading: () {
-        return const Center(child: CircularProgressIndicator());
-      },
+        ),
+      ],
+    );
+  }
+}
+
+class _MachineItem extends ConsumerWidget {
+  const _MachineItem({
+    Key? key,
+    required this.item,
+    required this.index,
+  }) : super(key: key);
+
+  final MachineModel item;
+  final int index;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final streamAsync = ref.watch(listenPendingResponseNotifier(item.id));
+    return streamAsync.when(
+      data: (data) => Card(
+        margin: const EdgeInsets.only(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 16.0,
+            horizontal: 8.0,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  "${index + 1}. ${item.number}",
+                  style: headerFont.copyWith(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16.0),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    RowBody(
+                      title: "SMS Sent",
+                      content: "${item.send}",
+                      titleFlex: 2,
+                      contentFlex: 1,
+                    ),
+                    const SizedBox(height: 8.0),
+                    RowBody(
+                      title: "Total Reply",
+                      content: "${item.replied}",
+                      titleFlex: 2,
+                      contentFlex: 1,
+                    ),
+                    const SizedBox(height: 8.0),
+                    const RowBody(
+                      title: "Total Finished",
+                      content: "0",
+                      titleFlex: 2,
+                      contentFlex: 1,
+                    ),
+                    const SizedBox(height: 8.0),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      error: (error, stackTrace) => AsyncErrorBuilder(
+        error: error.toString(),
+        onRetry: () => ref.invalidate(listenPendingResponseNotifier(item.id)),
+      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }

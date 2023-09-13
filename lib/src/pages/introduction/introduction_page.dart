@@ -5,6 +5,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 
 import '../../injection.dart';
 import '../../router.dart';
+import '../../utils/constant.dart';
 
 class IntroductionPage extends ConsumerWidget {
   const IntroductionPage({super.key});
@@ -67,7 +68,10 @@ class IntroductionPage extends ConsumerWidget {
       curve: Curves.fastLinearToSlowEaseIn,
       onDone: () async {
         final notifier = ref.read(applicationConfigNotifier.notifier);
-        await notifier.saveIntroduction(true);
+        await notifier.insert(
+          key: kIntroductionKey,
+          value: 'true',
+        );
         if (context.mounted) {
           context.goNamed(routeLogin);
         }

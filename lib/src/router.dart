@@ -10,7 +10,7 @@ import 'pages/welcome/machine/machine_survey_form_page.dart';
 import 'pages/welcome/machine/machine_survey_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_page.dart';
-import 'pages/welcome/sms/send_sms/send_sms_page.dart';
+import 'pages/welcome/setting/phone_number_setting/phone_number_setting_form_page.dart';
 import 'pages/welcome/welcome_page.dart';
 import 'pages/introduction/introduction_page.dart';
 import 'pages/login/login_page.dart';
@@ -18,7 +18,6 @@ import 'pages/splash/splash_page.dart';
 
 const routeWelcome = "welcome";
 const routeSplash = "splash";
-const routeSendSMS = "sms/send";
 const routeIntroduction = "introduction";
 const routeLogin = "login";
 
@@ -37,6 +36,8 @@ const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
 
 const routeMachineSurvey = "machine/:idMachine/survey";
 const routeMachineSurveyForm = "machine/:idMachine/survey/form/:id";
+
+const routePhoneNumberSettingFormPage = "phone-number-setting/form";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -63,11 +64,6 @@ final _routes = <RouteBase>[
     path: "/welcome",
     name: routeWelcome,
     builder: (context, state) => const WelcomePage(),
-  ),
-  GoRoute(
-    path: "/sms/send",
-    name: routeSendSMS,
-    builder: (context, state) => const SendSMSPage(),
   ),
 
   //  Experimental routes
@@ -164,6 +160,14 @@ final _routes = <RouteBase>[
       final id = state.pathParameters['id'] ?? "-1";
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
       return MachineSurveyFormPage(idMachine: idMachine, id: id);
+    },
+  ),
+
+  GoRoute(
+    path: "/phone-number-setting/form",
+    name: routePhoneNumberSettingFormPage,
+    builder: (context, state) {
+      return const PhoneNumberSettingFormPage();
     },
   ),
 ];
