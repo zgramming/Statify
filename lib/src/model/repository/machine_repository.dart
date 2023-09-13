@@ -23,7 +23,7 @@ class MachineRepository {
     }
   }
 
-  Future<Either<Failure, MachineModel>> getById({
+  Future<Either<Failure, MachineModel?>> getById({
     required String userId,
     required String machineId,
   }) async {

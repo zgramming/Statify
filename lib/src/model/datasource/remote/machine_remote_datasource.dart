@@ -32,7 +32,7 @@ class MachineRemoteDatasource {
     }
   }
 
-  Future<MachineModel> getById({
+  Future<MachineModel?> getById({
     required String userId,
     required String machineId,
   }) async {
@@ -40,9 +40,13 @@ class MachineRemoteDatasource {
     final response = await client.get(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decoded['data'];
+
+    if (data == null) {
+      return null;
+    }
 
     if (response.statusCode == 200) {
-      final data = decoded['data'];
       final machine = MachineModel.fromJson(data);
       return machine;
     } else {
@@ -111,6 +115,7 @@ class MachineRemoteDatasource {
     required String userId,
   }) async {
     final uri = Uri.parse('$kBaseApiUrl/users/$userId/machines/$machineId');
+
     final response = await client.patch(
       uri,
       body: {
@@ -124,8 +129,9 @@ class MachineRemoteDatasource {
     );
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
+
+    final data = decoded['data'];
     if (response.statusCode == 200) {
-      final data = decoded['data'];
       final result = MachineUpdateResponseModel.fromJson(data);
       return result;
     } else {

@@ -37,8 +37,6 @@ class MachineTabBarViewSMSBotOrWhatsappState
   late final TextEditingController _backoffController;
   late final TextEditingController _triesController;
 
-  MachineSMSSettingEnum selectedSMSSetting = MachineSMSSettingEnum.sim1;
-
   MachineSettingToolsOptionEnum selectedToolsOption =
       MachineSettingToolsOptionEnum.allNumber;
 
@@ -51,27 +49,24 @@ class MachineTabBarViewSMSBotOrWhatsappState
 
     final machineId = widget.idMachine;
     final settingId = widget.idSetting;
-    final isCreate = settingId == "-1";
 
-    if (!isCreate) {
-      Future.microtask(() {
-        ref.read(machineSettingNotifier(widget.idMachine).notifier).getById(
-              settingId: settingId,
-              machineId: machineId,
-              onSuccess: (data) {
-                final setting = data;
-                _timeoutController.text = setting.timeout.toString();
-                _backoffController.text = setting.backoff.toString();
-                _triesController.text = setting.tries.toString();
-                selectedToolsOption = setting.usePassword
-                    ? MachineSettingToolsOptionEnum.specificNumber
-                    : MachineSettingToolsOptionEnum.allNumber;
+    Future.microtask(() {
+      ref.read(machineSettingNotifier(widget.idMachine).notifier).getById(
+            settingId: settingId,
+            machineId: machineId,
+            onSuccess: (data) {
+              final setting = data;
+              _timeoutController.text = setting.timeout.toString();
+              _backoffController.text = setting.backoff.toString();
+              _triesController.text = setting.tries.toString();
+              selectedToolsOption = setting.usePassword
+                  ? MachineSettingToolsOptionEnum.specificNumber
+                  : MachineSettingToolsOptionEnum.allNumber;
 
-                setState(() {});
-              },
-            );
-      });
-    }
+              setState(() {});
+            },
+          );
+    });
   }
 
   @override
@@ -118,30 +113,38 @@ class MachineTabBarViewSMSBotOrWhatsappState
       usePassword: usePassword,
     );
 
-    await notifier.update(
-      form: form,
-      settingId: settingId,
-      onLoading: () => showSnackbar(
-        context: context,
-        message: "Updating...",
-        backgroundColor: Colors.blue,
-      ),
-      onError: (error) => showSnackbar(
-        context: context,
-        message: error,
-        backgroundColor: Colors.red,
-      ),
-      onSuccess: (data) {
-        showSnackbar(
+    try {
+      await notifier.update(
+        form: form,
+        settingId: settingId,
+        onLoading: () => showSnackbar(
           context: context,
-          message: "Success update setting",
-          backgroundColor: Colors.green,
-        );
+          message: "Updating...",
+          backgroundColor: Colors.blue,
+        ),
+        onError: (error) => showSnackbar(
+          context: context,
+          message: error,
+          backgroundColor: Colors.red,
+        ),
+        onSuccess: (data) {
+          showSnackbar(
+            context: context,
+            message: "Success update setting",
+            backgroundColor: Colors.green,
+          );
 
-        // Reload machine setting
-        ref.read(machineSettingNotifier(machineId).notifier).getAll();
-      },
-    );
+          // Reload machine setting
+          ref.read(machineSettingNotifier(machineId).notifier).getAll();
+        },
+      );
+    } catch (e) {
+      showSnackbar(
+        context: context,
+        message: e.toString(),
+        backgroundColor: Colors.red,
+      );
+    }
   }
 
   @override
@@ -155,42 +158,6 @@ class MachineTabBarViewSMSBotOrWhatsappState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (widget.isSMSBot) ...[
-              const SizedBox(height: 20.0),
-              FormBodyRow(
-                title: "SIM Choose",
-                child: DropdownButtonFormField<MachineSMSSettingEnum>(
-                  value: selectedSMSSetting,
-                  isExpanded: true,
-                  style: bodyFont.copyWith(fontSize: 12.0, color: Colors.grey),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() {
-                      selectedSMSSetting = value;
-                    });
-                  },
-                  decoration: inputDecorationRounded().copyWith(
-                    contentPadding: EdgeInsets.zero,
-                    fillColor: Colors.transparent,
-                    border: const UnderlineInputBorder(),
-                  ),
-                  items: MachineSMSSettingEnum.values
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.valueStringReadable),
-                        ),
-                      )
-                      .toList(),
-                  validator: (value) {
-                    if (value == null) {
-                      return "SMS Setting tidak boleh kosong";
-                    }
-                    return null;
-                  },
-                ),
-              ),
-            ],
             const SizedBox(height: 20),
             FormBodyRow(
               title: "Survey Tool Option",

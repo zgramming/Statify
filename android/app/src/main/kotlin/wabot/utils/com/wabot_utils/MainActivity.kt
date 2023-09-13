@@ -11,25 +11,34 @@ import io.flutter.plugin.common.MethodChannel
 
 
 class MainActivity : FlutterActivity() {
-    val EC = "STATIFY_EVENT_CHANNEL"
-    val MC = "STATIFY_METHOD_CHANNEL"
     private val methodChannelUtils = MethodChannelUtils(this)
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        MethodChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            MC
-        ).setMethodCallHandler { call, result ->
-
-
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,
+            MC).setMethodCallHandler { call, result ->
             if (call.method == "sendSMS") {
                 val phoneNumber = call.argument<String>("phoneNumber")
                 val message = call.argument<String>("message")
                 val sim = call.argument<Int>("simSlot")
-                if (phoneNumber != null && message != null && sim != null) {
-                    result.success(methodChannelUtils.sendSMS(phoneNumber, message, sim))
+                val surveyResponseId = call.argument<String>("surveyResponseId")
+
+                if (phoneNumber != null && message != null && sim != null && surveyResponseId != null) {
+                    try {
+                        val exec =
+                            methodChannelUtils.sendSMS(phoneNumber, message, sim, surveyResponseId)
+
+                        if (!exec) {
+                            result.error("ERROR", "Permission not granted", null)
+                        }
+
+                        result.success(exec)
+                    } catch (e: Exception) {
+                        result.error("ERROR", e.message, null)
+                    }
+
+
                 } else {
                     result.error("ERROR", "Arguments are null", null)
                 }
@@ -43,12 +52,39 @@ class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerIncomingMessage()
+        registerSentSMSReceiver()
+//        registerDeliveredSMSReceiver()
+
+    }
+
+    private fun registerSentSMSReceiver() {
+        val sentSMSReceiver = SentSMSReceiver()
+        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
+            EventChannel(executor.binaryMessenger, ECSentSMS)
+        }
+        registerReceiver(
+            sentSMSReceiver,
+            IntentFilter(INTENT_SENT_SMS_ACTION),
+        )
+        eventChannel?.setStreamHandler(sentSMSReceiver)
+    }
+
+    private fun registerDeliveredSMSReceiver() {
+        val deliveredSMSReceiver = DeliveredSMSReceiver()
+        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
+            EventChannel(executor.binaryMessenger, ECDeliveredSMS)
+        }
+        registerReceiver(
+            deliveredSMSReceiver,
+            IntentFilter(INTENT_DELIVERED_SMS_ACTION),
+        )
+        eventChannel?.setStreamHandler(deliveredSMSReceiver)
     }
 
     private fun registerIncomingMessage() {
-        val incomingMessageReceiver = ListenIncomingMessage()
+        val incomingMessageReceiver = IncomingMessageReceiver()
         val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
-            EventChannel(executor.binaryMessenger, EC)
+            EventChannel(executor.binaryMessenger, ECIncomingSMS)
         }
         registerReceiver(
             incomingMessageReceiver,
@@ -56,11 +92,6 @@ class MainActivity : FlutterActivity() {
         )
         eventChannel?.setStreamHandler(incomingMessageReceiver)
     }
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        registerCallReceiver();
-//    }
 
 //    private fun registerCallReceiver() {
 //        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->

@@ -9,7 +9,7 @@ import android.util.Log
 import io.flutter.plugin.common.EventChannel
 import java.util.*
 
-class ListenIncomingMessage : BroadcastReceiver(), EventChannel.StreamHandler {
+class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
     private var eventSink: EventChannel.EventSink? = null
 
     private fun detectSim(bundle: Bundle): Int {
@@ -47,7 +47,6 @@ class ListenIncomingMessage : BroadcastReceiver(), EventChannel.StreamHandler {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION == intent!!.action) {
-//            // Get the SMS message, Sender, Date, Time, Sim Slot
             val bundle = intent.extras
             val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
             val message = messages[0]
@@ -62,6 +61,7 @@ class ListenIncomingMessage : BroadcastReceiver(), EventChannel.StreamHandler {
                 "date" to date,
                 "simSlot" to simSlot,
             )
+        Log.wtf("IncomingMessageReceiver", "onReceive: $map");
             eventSink?.success(map);
         } else {
             // Send the message, sender, date, simSlot to Flutter
@@ -74,8 +74,6 @@ class ListenIncomingMessage : BroadcastReceiver(), EventChannel.StreamHandler {
     }
 
     override fun onCancel(arguments: Any?) {
-        // Clean up any resources when the stream is cancelled.
         eventSink = null
-
     }
 }

@@ -48,7 +48,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".ListenIncomingMessage"
+            android:name=".IncomingMessageReceiver"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
@@ -56,7 +56,26 @@
             </intent-filter>
         </receiver>
 
+        <!--        Receiver Pending Intent Sent SMS -->
+        <receiver
+            android:name=".SentSMSReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="SENT_SMS_ACTION" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".DeliveredSMSReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="DELIVERED_SMS_ACTION" />
+            </intent-filter>
+        </receiver>
+
     </application>
+
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />

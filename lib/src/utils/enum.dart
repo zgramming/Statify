@@ -2,13 +2,15 @@ import 'package:json_annotation/json_annotation.dart';
 
 enum MachineSMSSettingEnum {
   @JsonValue('sim_1')
-  sim1,
+  sim_1,
   @JsonValue('sim_2')
-  sim2,
+  sim_2,
   @JsonValue('sim_1_priority')
-  sim1Priority,
+  // ignore: constant_identifier_names
+  sim_1_priority,
   @JsonValue('sim_2_priority')
-  sim2Priority,
+  // ignore: constant_identifier_names
+  sim_2_priority,
   both,
 }
 
@@ -49,13 +51,13 @@ enum MachineSettingToolsOptionEnum {
 extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
   String get valueString {
     switch (this) {
-      case MachineSMSSettingEnum.sim1:
+      case MachineSMSSettingEnum.sim_1:
         return 'sim_1';
-      case MachineSMSSettingEnum.sim2:
+      case MachineSMSSettingEnum.sim_2:
         return 'sim_2';
-      case MachineSMSSettingEnum.sim1Priority:
+      case MachineSMSSettingEnum.sim_1_priority:
         return 'sim_1_priority';
-      case MachineSMSSettingEnum.sim2Priority:
+      case MachineSMSSettingEnum.sim_2_priority:
         return 'sim_2_priority';
       case MachineSMSSettingEnum.both:
         return 'both';
@@ -64,13 +66,13 @@ extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
 
   String get valueStringReadable {
     switch (this) {
-      case MachineSMSSettingEnum.sim1:
+      case MachineSMSSettingEnum.sim_1:
         return 'Sim 1';
-      case MachineSMSSettingEnum.sim2:
+      case MachineSMSSettingEnum.sim_2:
         return 'Sim 2';
-      case MachineSMSSettingEnum.sim1Priority:
+      case MachineSMSSettingEnum.sim_1_priority:
         return 'Sim 1 Priority';
-      case MachineSMSSettingEnum.sim2Priority:
+      case MachineSMSSettingEnum.sim_2_priority:
         return 'Sim 2 Priority';
       case MachineSMSSettingEnum.both:
         return 'Both';

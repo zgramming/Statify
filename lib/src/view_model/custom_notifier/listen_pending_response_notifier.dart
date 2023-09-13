@@ -16,6 +16,7 @@ final listenPendingResponseNotifier =
     (element) => element.id == machineId,
     orElse: () => machines.first,
   );
+
   final simSlot = chooseSimSlotSMS(machine.smsSetting);
 
   final stream =

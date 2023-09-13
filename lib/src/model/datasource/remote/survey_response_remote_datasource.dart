@@ -8,6 +8,7 @@ import '../../../utils/enum.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../../utils/method_channel.dart';
 import '../../model/form/form_survey_response_create_model.dart';
+import '../../model/send_sms_model.dart';
 import '../../model/survey_response/survey_response_by_machine_and_type_model.dart';
 import '../../model/survey_response/survey_response_create_response_model.dart';
 import '../../model/survey_response/survey_response_fail_model.dart';
@@ -128,13 +129,6 @@ class SurveyResponseRemoteDatasource {
     required int simSlot,
   }) async* {
     final methodChannelUtils = MethodChannelUtils();
-    // final simcardProvider = SimCardsProvider();
-    // final card = await simcardProvider.getSimCards();
-    // log("card: $card");
-
-    // final periodic = Stream.periodic(const Duration(seconds: 1), (i) => i);
-    // yield* periodic;
-
     while (true) {
       try {
         final pendingResponse = await getPendingResponse(
@@ -144,20 +138,18 @@ class SurveyResponseRemoteDatasource {
 
         if (pendingResponse != null) {
           // Send SMS to user
-
-          final msg = await methodChannelUtils.sendSMS(
+          final model = SendSMSModel(
             phoneNumber: pendingResponse.survey.number,
             message: pendingResponse.value,
             simSlot: simSlot,
+            surveyResponseId: pendingResponse.id,
           );
+          final msg = await methodChannelUtils.sendSMS(model);
 
           if (msg) {
-            // Update survey response status to sent
-            await sent(pendingResponse.id);
-            yield "Sent SMS to User successfully, then update survey response status to sent";
+            yield "Process Send SMS to User, Please waiting...";
           } else {
-            await fail(pendingResponse.id);
-            yield "Failed to send SMS to User, then update survey response status to fail";
+            yield "Failed Process Send SMS to User, Please try again...";
           }
         } else {
           log("Pending Response is null or empty, wait for 10 seconds to check again");

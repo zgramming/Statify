@@ -58,78 +58,65 @@ class MachineTabBarConfigurationState
       data: (_) {
         return settingAsync.when(
           data: (settings) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: TabBar(
-                      controller: _tabController,
-                      labelStyle: bodyFont.copyWith(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+            return Card(
+              margin: const EdgeInsets.only(),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                      unselectedLabelColor: Colors.blue,
-                      indicator: BoxDecoration(
-                        borderRadius: BorderRadius.circular(60.0),
-                        color: Colors.blue,
-                      ),
-                      tabs: settings
-                          .map((e) => Tab(
-                                text: e.platform.valueStringReadable,
-                              ))
-                          .toList()),
+                      child: TabBar(
+                          controller: _tabController,
+                          labelStyle: bodyFont.copyWith(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          unselectedLabelColor: Colors.blue,
+                          indicator: BoxDecoration(
+                            borderRadius: BorderRadius.circular(60.0),
+                            color: Colors.blue,
+                          ),
+                          tabs: settings
+                              .map((e) => Tab(
+                                    text: e.platform.valueStringReadable,
+                                  ))
+                              .toList()),
+                    ),
+                    IndexedStack(
+                      index: _selectedIndex,
+                      children: settings
+                          .map(
+                            (e) => Builder(
+                              builder: (context) {
+                                if (e.platform ==
+                                    MachineResponsePlatformEnum.sms) {
+                                  return MachineTabBarViewSMSBotOrWhatsapp(
+                                    idMachine: widget.idMachine,
+                                    idSetting: e.id,
+                                    isSMSBot: true,
+                                  );
+                                } else {
+                                  return MachineTabBarViewSMSBotOrWhatsapp(
+                                    idMachine: widget.idMachine,
+                                    idSetting: e.id,
+                                    isSMSBot: false,
+                                  );
+                                }
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const SizedBox(height: 100),
+                  ],
                 ),
-
-                IndexedStack(
-                  index: _selectedIndex,
-                  children: settings
-                      .map(
-                        (e) => Builder(
-                          builder: (context) {
-                            if (e.platform == MachineResponsePlatformEnum.sms) {
-                              return MachineTabBarViewSMSBotOrWhatsapp(
-                                idMachine: widget.idMachine,
-                                idSetting: e.id,
-                                isSMSBot: true,
-                              );
-                            } else {
-                              return MachineTabBarViewSMSBotOrWhatsapp(
-                                idMachine: widget.idMachine,
-                                idSetting: e.id,
-                                isSMSBot: false,
-                              );
-                            }
-                          },
-                        ),
-                      )
-                      .toList(),
-                ),
-                // Builder(
-                //   builder: (context) {
-                //     final selectedSetting = settings[_selectedIndex];
-                //     if (selectedSetting.platform ==
-                //         MachineResponsePlatformEnum.sms) {
-                //       return MachineTabBarViewSMSBotOrWhatsapp(
-                //         idMachine: widget.idMachine,
-                //         idSetting: selectedSetting.id,
-                //         isSMSBot: true,
-                //       );
-                //     } else {
-                //       return MachineTabBarViewSMSBotOrWhatsapp(
-                //         idMachine: widget.idMachine,
-                //         idSetting: selectedSetting.id,
-                //         isSMSBot: false,
-                //       );
-                //     }
-                //   },
-                // ),
-                const SizedBox(height: 100),
-              ],
+              ),
             );
           },
           error: (error, stackTrace) {

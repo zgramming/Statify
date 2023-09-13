@@ -7,11 +7,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
 import '../../../model/model/incoming_sms/incoming_sms.model.dart';
+import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
+import '../../../model/model/send_sms_model.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/flutter_local_notification.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
+import '../../../utils/method_channel.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/custom_appbar.dart';
@@ -26,10 +29,39 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   StreamSubscription<IncomingSMSModel>? _subscriptionIncomingSMS;
+  StreamSubscription<ListenOnsentSMSModel>? _subscriptionSentSMS;
+  final eventChannelUtils = EventChannelUtils();
+
+  void listenOnSentSMSV2() async {
+    final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
+    final srvNotifier = ref.read(surveyResponseNotifier.notifier);
+    _subscriptionSentSMS = eventChannelUtils.listenOnSentSMS().listen(
+      (event) async {
+        // If status is success then update survey response to sent and add log
+        logNotifier.addLog(event.message);
+        if (event.status) {
+          final result = await srvNotifier.sent(event.surveyResponseId);
+          result.onSent.whenOrNull(
+            data: (data) =>
+                logNotifier.addLog("Survey Response Sent With Id: ${data?.id}"),
+            error: (error, stackTrace) => logNotifier.addLog(error.toString()),
+          );
+        } else {
+          final result = await srvNotifier.fail(event.surveyResponseId);
+          result.onFail.whenOrNull(
+            data: (data) =>
+                logNotifier.addLog("Survey Response Fail With Id: ${data?.id}"),
+            error: (error, stackTrace) => logNotifier.addLog(error.toString()),
+          );
+        }
+      },
+    );
+  }
 
   void listenIncomingSMSV2() async {
     final phoneSetting =
         ref.read(phoneNumberSettingNotifier).onGetFirst.valueOrNull;
+
     if (phoneSetting == null) {
       FlutterLocalNotificationUtils().showNotification(
         title: "Tracking Incoming SMS Pending",
@@ -46,8 +78,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
 
     final notifier = ref.read(incomingMessageNotifier.notifier);
+    final logNotifier = ref.read(logIncomingMessageNotifier.notifier);
     _subscriptionIncomingSMS =
-        EventChannelUtils().listenIncomingSMS().listen((event) async {
+        eventChannelUtils.listenIncomingSMS().listen((event) async {
       log("Incoming SMS: $event");
       final smsSetting = chooseSMSSettingfromSIMSlot(event.simSlot);
       final machines = ref.read(machineNotifier).onGetAll.valueOrNull ?? [];
@@ -55,7 +88,11 @@ class _HomePageState extends ConsumerState<HomePage> {
           .firstWhereOrNull((element) => element.smsSetting == smsSetting);
 
       if (machine == null) {
-        log("Machine not found then incoming message will be ignored");
+        logNotifier.addLog(
+          type: "MACHINE_NOT_FOUND",
+          message:
+              "Machine Not Found when handling incoming message from ${event.address}",
+        );
         return;
       }
 
@@ -81,12 +118,14 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
     Future.microtask(() {
       listenIncomingSMSV2();
+      listenOnSentSMSV2();
     });
   }
 
   @override
   void dispose() {
     _subscriptionIncomingSMS?.cancel();
+    _subscriptionSentSMS?.cancel();
     super.dispose();
   }
 
@@ -109,6 +148,19 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Column(
       children: [
         const CustomAppbar(title: "Home"),
+        ElevatedButton(
+          onPressed: () async {
+            final methodChannel = MethodChannelUtils();
+            const model = SendSMSModel(
+              phoneNumber: "08123456789",
+              message: "Test Message from Flutter",
+              simSlot: 0,
+              surveyResponseId: "123",
+            );
+            await methodChannel.sendSMS(model);
+          },
+          child: const Text("Send SMS"),
+        ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {

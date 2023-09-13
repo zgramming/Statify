@@ -9,7 +9,6 @@ import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../widgets/custom_appbar.dart';
-import '../../widgets/dialog_connect_disconnect_whatsapp.dart';
 import '../../widgets/dialog_view_qrcode.dart';
 import '../../widgets/row_body.dart';
 
@@ -110,13 +109,6 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
     );
   }
 
-  Future<void> connectOrDisconnectWhatsapp(MachineWhatsappModel item) async {
-    return showDialog(
-      context: context,
-      builder: (context) => DialogConnectDisconnectWhatsapp(item: item),
-    );
-  }
-
   Future<void> onSelected(String value, MachineWhatsappModel item) async {
     final notifier = ref.read(machineWhatsappNotifier.notifier);
     switch (value) {
@@ -126,9 +118,7 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
           onClickQRCode(qrCode);
         }
         break;
-      case "connect_disconnect":
-        connectOrDisconnectWhatsapp(item);
-        break;
+
       case "delete":
         await notifier.delete(
           item.id,
@@ -239,10 +229,6 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                 const PopupMenuItem(
                   value: "qr_code",
                   child: Text("QR Code"),
-                ),
-                const PopupMenuItem(
-                  value: "connect_disconnect",
-                  child: Text("Connect / Disconnect"),
                 ),
                 PopupMenuItem(
                   value: "delete",

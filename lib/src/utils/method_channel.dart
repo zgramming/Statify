@@ -2,21 +2,20 @@ import 'dart:developer';
 
 import 'package:flutter/services.dart';
 
+import '../model/model/send_sms_model.dart';
+
 class MethodChannelUtils {
   final platform = const MethodChannel('STATIFY_METHOD_CHANNEL');
 
-  Future<bool> sendSMS({
-    required String phoneNumber,
-    required String message,
-    required int simSlot,
-  }) async {
+  Future<bool> sendSMS(SendSMSModel model) async {
     try {
       final result = await platform.invokeMethod(
         'sendSMS',
         {
-          'phoneNumber': phoneNumber,
-          'message': message,
-          'simSlot': simSlot,
+          'phoneNumber': model.phoneNumber,
+          'message': model.message,
+          'simSlot': model.simSlot,
+          'surveyResponseId': model.surveyResponseId,
         },
       );
       return result;

@@ -85,24 +85,27 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
     );
   }
 
-  Future<void> sent(String surveyResponseId) async {
+  Future<SurveyResponseState> sent(String surveyResponseId) async {
     state = state.copyWith(onSent: const AsyncLoading());
     final result = await repository.sent(surveyResponseId);
-    result.fold(
+    final fold = result.fold(
       (failure) => state = state.copyWith(
           onSent: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onSent: AsyncData(data)),
     );
+
+    return fold;
   }
 
-  Future<void> fail(String surveyResponseId) async {
+  Future<SurveyResponseState> fail(String surveyResponseId) async {
     state = state.copyWith(onFail: const AsyncLoading());
     final result = await repository.fail(surveyResponseId);
-    result.fold(
+    final fold = result.fold(
       (failure) => state = state.copyWith(
           onFail: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onFail: AsyncData(data)),
     );
+    return fold;
   }
 
   Stream<String?> listenPendingResponse({
