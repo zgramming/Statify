@@ -65,6 +65,18 @@ class _SettingPageState extends ConsumerState<SettingPage> {
                   leadingIcon: Icons.assignment,
                   leadingBackgroundColor: Colors.orange,
                 ),
+                const SizedBox(height: 16),
+                ListTileSettingMenu(
+                  onTap: () {
+                    context.pushNamed(
+                      routeLogPage,
+                    );
+                  },
+                  title: "Log",
+                  subtitle: "Manage log",
+                  leadingIcon: Icons.assignment,
+                  leadingBackgroundColor: Colors.orange,
+                ),
               ],
             ),
           ),

@@ -65,6 +65,13 @@ class _HomePageState extends ConsumerState<HomePage> {
         message: event.body,
       );
 
+      // add log to log incoming message
+      final (type, msg) = result;
+      ref.read(logIncomingMessageNotifier.notifier).addLog(
+            message: msg,
+            type: type,
+          );
+
       log("Handling Incoming Message Result: $result");
     });
   }
@@ -136,6 +143,15 @@ class _MachineItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(listenPendingResponseNotifier(item.id), (previous, next) {
+      next.whenData((value) {
+        if (value == null) return;
+
+        // Add Log to Log Listen Pending Response
+        ref.read(logListenPendingResponseNotifier.notifier).addLog(value);
+      });
+    });
+
     final streamAsync = ref.watch(listenPendingResponseNotifier(item.id));
     return streamAsync.when(
       data: (data) => Card(

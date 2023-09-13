@@ -13,7 +13,7 @@ flow pas user terima sms (listen incoming message)
 1.1.1.2 kalo false -> hit endpoint surveys/:surveyId/responses (create response)
 1.2. Kalau kosong, lalu check isi contentnya :
 1.2.1. Kalau kosong && kontentnya != "ok", ga di apa apain
-1.2.2. Kalau kosong && kontentnya "ok", hit endpoint machines/:machineId/surveys (create)
+1.2.2. Kalau kosong && kontentnya "ok", hit endpoint machines/:machineId/surveys(create)
 
 flow pas listen pending response & kirim sms native
 1. hit endpoint {{url}}/machines/:machineId/pending-response (pending response)
@@ -22,7 +22,7 @@ flow pas listen pending response & kirim sms native
 2.2. Kalau Ada isinya, kirim sms (native) ke nomor yang ada di obj survey, dengan value yang ada,
 lalu check apakah ketika kirim sms berhasil / gagal
 2.2.1. kalau sms berhasil, hint endpoint {{url}}/survey-responses/:surveyResponseId/sent (sent survey response)
-2.2.2. kalau sms gagal, hit endpoint  {{url}}/survey-responses/:surveyResponseId/fail (fail sent survey)
+2.2.2. kalau sms gagal, hit endpoint  {{url}}/survey-responses/:surveyResponseId/fail (fail sent survey)
 
 --------
 

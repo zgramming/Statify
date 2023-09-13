@@ -30,7 +30,7 @@ class IncomingMessageRemoteDatasource {
       if (isSurveyEmpty) {
         final isMessageOK = message.toLowerCase() == "ok";
         if (!isMessageOK) {
-          return ("SE_NOK", "Survey Empty and Message is not OK");
+          return ("SE_NOK", "Survey Empty and Message is not OK, do nothing");
         } else {
           // We should create new survey
           await surveyRemoteDatasource.create(

@@ -26,6 +26,8 @@ import 'model/repository/survey_response_repository.dart';
 import 'utils/http_client.dart';
 import 'view_model/application_config.notifier.dart';
 import 'view_model/authentication_notifier.dart';
+import 'view_model/custom_notifier/log_incoming_message.notifier.dart';
+import 'view_model/custom_notifier/log_listen_pending_response.notifier.dart';
 import 'view_model/machine_notifier.dart';
 import 'view_model/machine_response_notifier.dart';
 import 'view_model/machine_setting_notifier.dart';
@@ -56,6 +58,14 @@ final getMachineWhatsApp =
 });
 // End Custom Provider
 
+final logListenPendingResponseNotifier = StateNotifierProvider<
+    LogListenPendingResponseNotifier, LogListenPendingResponseState>(
+  (ref) => LogListenPendingResponseNotifier(),
+);
+final logIncomingMessageNotifier =
+    StateNotifierProvider<LogIncomingMessageNotifier, LogIncomingMessageState>(
+  (ref) => LogIncomingMessageNotifier(),
+);
 final incomingMessageNotifier =
     StateNotifierProvider<IncomingMessageNotifier, IncomingMessageState>((ref) {
   return IncomingMessageNotifier(

@@ -10,6 +10,7 @@ import 'pages/welcome/machine/machine_survey_form_page.dart';
 import 'pages/welcome/machine/machine_survey_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_page.dart';
+import 'pages/welcome/setting/log/log_page.dart';
 import 'pages/welcome/setting/phone_number_setting/phone_number_setting_form_page.dart';
 import 'pages/welcome/welcome_page.dart';
 import 'pages/introduction/introduction_page.dart';
@@ -38,6 +39,7 @@ const routeMachineSurvey = "machine/:idMachine/survey";
 const routeMachineSurveyForm = "machine/:idMachine/survey/form/:id";
 
 const routePhoneNumberSettingFormPage = "phone-number-setting/form";
+const routeLogPage = "log";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -168,6 +170,14 @@ final _routes = <RouteBase>[
     name: routePhoneNumberSettingFormPage,
     builder: (context, state) {
       return const PhoneNumberSettingFormPage();
+    },
+  ),
+
+  GoRoute(
+    path: "/log",
+    name: routeLogPage,
+    builder: (context, state) {
+      return const LogPage();
     },
   ),
 ];
