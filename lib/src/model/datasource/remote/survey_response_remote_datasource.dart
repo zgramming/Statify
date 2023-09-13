@@ -164,7 +164,7 @@ class SurveyResponseRemoteDatasource {
           yield null;
         }
       } catch (e) {
-        log("Error When Listen Pending Response: $e");
+        log("Error When Listen Pending Response: ${e.toString()}");
         yield null;
       }
 
