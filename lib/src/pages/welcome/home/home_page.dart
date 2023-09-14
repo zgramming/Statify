@@ -129,9 +129,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      listenIncomingCallV2();
-      listenIncomingSMSV2();
-      listenOnSentSMSV2();
+      // listenIncomingCallV2();
+      // listenIncomingSMSV2();
+      // listenOnSentSMSV2();
     });
   }
 
@@ -166,10 +166,10 @@ class _HomePageState extends ConsumerState<HomePage> {
           onPressed: () async {
             final methodChannel = MethodChannelUtils();
             const number = "085159412440";
-            // const message = "Test Message from Flutter";
-            const message = """
-Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga, dan diri sendiri untuk mencapai kebahagiaan dan produktivitas yang berkelanjutan. Keharmonisan dalam hubungan serta perawatan terhadap kesehatan mental dan fisik sangat penting. Selain itu, komitmen terhadap tujuan dan impian kita juga merupakan kunci kesuksesan. Dengan menggabungkan semua elemen ini, kita dapat mencapai kehidupan yang bermakna dan penuh prestasi.
-""";
+            // const message =
+            //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
+            const message =
+                "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
             const model = SendSMSModel(
               phoneNumber: number,
               message: message,

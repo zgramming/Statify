@@ -28,97 +28,89 @@ class MethodChannelUtils(private val context: Context) {
             throw Exception("Permission not granted")
         }
         val subscriptionInfo = subscriptionManager.getActiveSubscriptionInfoForSimSlotIndex(sim)
-        if (subscriptionInfo != null) {
-            val subscriptionId = subscriptionInfo.subscriptionId
-            val smsManager = getSmsManagerForSubscriptionId(subscriptionId)
-            // Create a PendingIntent for sent status
+            ?: throw Exception("Sim not found")
 
+        val subscriptionId = subscriptionInfo.subscriptionId
+        val smsManager = getSmsManagerForSubscriptionId(subscriptionId)
 
-            // Check if message length is not more than 160
-            Log.wtf("METHOD_CHANNEL_UTILS", "Message content: $message")
-            Log.wtf("METHOD_CHANNEL_UTILS", "Message length: ${message.length}")
-            val iDeliveryIntent = Intent(INTENT_DELIVERED_SMS_ACTION)
-            val iSentIntent = Intent(INTENT_SENT_SMS_ACTION)
-            iSentIntent.putExtra("surveyResponseId", surveyResponseId)
-            iDeliveryIntent.putExtra("surveyResponseId", surveyResponseId)
+        Log.wtf("METHOD_CHANNEL_UTILS", "Message content: $message")
+        Log.wtf("METHOD_CHANNEL_UTILS", "Message length: ${message.length}")
 
-            val sentPendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                iSentIntent,
-                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE,
-            )
+        val iSentIntent = Intent(INTENT_SENT_SMS_ACTION)
+        val iDeliveryIntent = Intent(INTENT_DELIVERED_SMS_ACTION)
+        iSentIntent.putExtra("surveyResponseId", surveyResponseId)
+        iDeliveryIntent.putExtra("surveyResponseId", surveyResponseId)
 
-            // Create a PendingIntent for delivery status
-            val deliveryPendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                iDeliveryIntent,
-                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE,
-            )
+        val sentPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            iSentIntent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE,
+        )
 
-            val length = message.length
-            if (length > 160) {
-                val messageParts = smsManager.divideMessage(message)
-                Log.wtf("METHOD_CHANNEL_UTILS", "Message parts: ${messageParts.size}");
-                val sentIntentsArrayList = ArrayList<PendingIntent>()
-                val deliveryIntentsArrayList = ArrayList<PendingIntent>()
+        // Create a PendingIntent for delivery status
+        val deliveryPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            iDeliveryIntent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE,
+        )
 
+        val length = message.length
+        if (length > 160) {
+            val messageParts = smsManager.divideMessage(message)
+            val sentIntentsArrayList = ArrayList<PendingIntent>()
+            val deliveryIntentsArrayList = ArrayList<PendingIntent>()
 
-                // sentIntentsArrayList is an ArrayList of PendingIntents for each message part
-                for (i in messageParts.indices) {
-                    sentIntentsArrayList.add(sentPendingIntent)
-                    deliveryIntentsArrayList.add(deliveryPendingIntent)
-                }
-
-                smsManager.sendMultipartTextMessage(
-                    phoneNumber,
-                    null,
-                    messageParts,
-                    sentIntentsArrayList,
-                    deliveryIntentsArrayList,
-                )
-            } else {
-                iSentIntent.putExtra("surveyResponseId", surveyResponseId)
-
-
-                smsManager.sendTextMessage(
-                    phoneNumber,
-                    null,
-                    message,
-                    sentPendingIntent,
-                    deliveryPendingIntent,
-                )
+            for (i in messageParts.indices) {
+                sentIntentsArrayList.add(sentPendingIntent)
+                deliveryIntentsArrayList.add(deliveryPendingIntent)
             }
 
-            // Register for SMS send action
-            context.registerReceiver(object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent?) {
-                    if (intent?.action == INTENT_SENT_SMS_ACTION) {
-                        val bundle = intent.extras
-                        val surveyResponseIdX = bundle?.getString("surveyResponseId") ?: ""
+            smsManager.sendMultipartTextMessage(
+                phoneNumber,
+                null,
+                messageParts,
+                sentIntentsArrayList,
+                deliveryIntentsArrayList,
+            )
 
-                        intent.putExtra("surveyResponseId", surveyResponseIdX)
-
-                    }
-                }
-            }, IntentFilter(INTENT_SENT_SMS_ACTION))
-
-            // Register for delivery action
-            context.registerReceiver(object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent?) {
-                    if (intent?.action == INTENT_DELIVERED_SMS_ACTION) {
-                        val bundle = intent.extras
-                        val surveyResponseIdX = bundle?.getString("surveyResponseId") ?: ""
-
-                        intent.putExtra("surveyResponseId", surveyResponseIdX)
-                    }
-                }
-            }, IntentFilter("DELIVERED_SMS_ACTION"))
-
-            return true
         } else {
-            throw Exception("Sim not found")
+            smsManager.sendTextMessage(
+                phoneNumber,
+                null,
+                message,
+                sentPendingIntent,
+                deliveryPendingIntent,
+            )
         }
+
+        // Register for SMS send action
+        context.registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == INTENT_SENT_SMS_ACTION) {
+                    val bundle = intent.extras
+                    val surveyResponseIdX = bundle?.getString("surveyResponseId") ?: ""
+
+                    intent.putExtra("surveyResponseId", surveyResponseIdX)
+
+                }
+            }
+        }, IntentFilter(INTENT_SENT_SMS_ACTION))
+
+        // Register for delivery action
+        context.registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == INTENT_DELIVERED_SMS_ACTION) {
+                    val bundle = intent.extras
+                    val surveyResponseIdX = bundle?.getString("surveyResponseId") ?: ""
+
+                    intent.putExtra("surveyResponseId", surveyResponseIdX)
+                }
+            }
+        }, IntentFilter(INTENT_DELIVERED_SMS_ACTION))
+
+        return true
+
     }
 }

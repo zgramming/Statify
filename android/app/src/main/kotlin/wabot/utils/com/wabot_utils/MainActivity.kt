@@ -55,7 +55,7 @@ class MainActivity : FlutterActivity() {
         registerIncomingCall()
         registerIncomingMessage()
         registerSentSMSReceiver()
-//        registerDeliveredSMSReceiver()
+        registerDeliveredSMSReceiver()
 
     }
 

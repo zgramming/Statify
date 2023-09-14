@@ -58,7 +58,7 @@ class SentSMSReceiver : BroadcastReceiver(), StreamHandler {
                 "status" to status,
                 "surveyResponseId" to surveyResponseId
             )
-            Log.wtf("SENT_SMS_RECEIVER", "Map : $map")
+            Log.wtf("SENT_SMS_RECEIVER", "Called with $map");
             eventSink?.success(map)
         }
 
