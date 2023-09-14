@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
 import '../datasource/remote/machine_remote_datasource.dart';
-import '../model/form/form_machine_create_update_model.dart';
+import '../model/helper/form/form_machine_create_update_model.dart';
 import '../model/machine/machine_create_response_model.dart';
 import '../model/machine/machine_delete_response_model.dart';
 import '../model/machine/machine_model.dart';

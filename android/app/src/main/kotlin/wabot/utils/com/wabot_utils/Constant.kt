@@ -3,6 +3,7 @@ package wabot.utils.com.wabot_utils
 const val ECIncomingSMS = "STATIFY_EVENT_CHANNEL_INCOMING_SMS"
 const val ECSentSMS = "STATIFY_EVENT_CHANNEL_SENT_SMS"
 const val ECDeliveredSMS = "STATIFY_EVENT_CHANNEL_DELIVERED_SMS"
+const val ECIncomingCall = "STATIFY_EVENT_CHANNEL_INCOMING_CALL"
 const val MC = "STATIFY_METHOD_CHANNEL"
 
 const val INTENT_SENT_SMS_ACTION = "SENT_SMS_ACTION"

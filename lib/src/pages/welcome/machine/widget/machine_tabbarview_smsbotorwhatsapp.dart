@@ -3,13 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
-import '../../../../model/model/form/form_machine_setting_create_update_model.dart';
+import '../../../../model/model/helper/form/form_machine_setting_create_update_model.dart';
+import '../../../../model/model/helper/props/props.get_machine_setting_detail.dart';
 import '../../../../model/model/machine_response/machine_response_model.dart';
 import '../../../../router.dart';
 import '../../../../utils/enum.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_notifier/get_machine_setting_detail.notifier.dart';
+import '../../../widgets/async_error_builder.dart';
 import '../../../widgets/form_row_body.dart';
 
 class MachineTabBarViewSMSBotOrWhatsapp extends ConsumerStatefulWidget {
@@ -46,27 +49,6 @@ class MachineTabBarViewSMSBotOrWhatsappState
     _timeoutController = TextEditingController();
     _backoffController = TextEditingController();
     _triesController = TextEditingController();
-
-    final machineId = widget.idMachine;
-    final settingId = widget.idSetting;
-
-    Future.microtask(() {
-      ref.read(machineSettingNotifier(widget.idMachine).notifier).getById(
-            settingId: settingId,
-            machineId: machineId,
-            onSuccess: (data) {
-              final setting = data;
-              _timeoutController.text = setting.timeout.toString();
-              _backoffController.text = setting.backoff.toString();
-              _triesController.text = setting.tries.toString();
-              selectedToolsOption = setting.usePassword
-                  ? MachineSettingToolsOptionEnum.specificNumber
-                  : MachineSettingToolsOptionEnum.allNumber;
-
-              setState(() {});
-            },
-          );
-    });
   }
 
   @override
@@ -149,125 +131,189 @@ class MachineTabBarViewSMSBotOrWhatsappState
 
   @override
   Widget build(BuildContext context) {
-    final responsesMachine =
-        ref.watch(machineResponseNotifier(widget.idMachine)).onGetAll.value ??
-            [];
-    return SingleChildScrollView(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 20),
-            FormBodyRow(
-              title: "Survey Tool Option",
-              child: DropdownButtonFormField<MachineSettingToolsOptionEnum>(
-                value: selectedToolsOption,
-                isExpanded: true,
-                style: bodyFont.copyWith(fontSize: 12.0, color: Colors.grey),
-                onChanged: (value) {
-                  if (value == null) return;
-                  setState(() {
-                    selectedToolsOption = value;
-                  });
-                },
-                decoration: inputDecorationRounded().copyWith(
-                  contentPadding: EdgeInsets.zero,
-                  fillColor: Colors.transparent,
-                  border: const UnderlineInputBorder(),
+    final props = PropsGetMachineSettingDetail(
+      machineId: widget.idMachine,
+      settingId: widget.idSetting,
+    );
+    ref.listen(
+      getMachineSettingDetailNotifier(props),
+      (previous, next) {
+        next.whenData((value) {
+          if (value == null) return;
+          _timeoutController.text = value.timeout.toString();
+          _backoffController.text = value.backoff.toString();
+          _triesController.text = value.tries.toString();
+          selectedToolsOption = value.usePassword
+              ? MachineSettingToolsOptionEnum.specificNumber
+              : MachineSettingToolsOptionEnum.allNumber;
+        });
+      },
+    );
+
+    final settingDetailAsync =
+        ref.watch(getMachineSettingDetailNotifier(props));
+    final responseAsync =
+        ref.watch(machineResponseNotifier(widget.idMachine)).onGetAll;
+    return settingDetailAsync.when(
+      data: (_) {
+        return SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 20),
+                FormBodyRow(
+                  title: "Survey Tool Option",
+                  child: DropdownButtonFormField<MachineSettingToolsOptionEnum>(
+                    value: selectedToolsOption,
+                    isExpanded: true,
+                    style:
+                        bodyFont.copyWith(fontSize: 12.0, color: Colors.grey),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() {
+                        selectedToolsOption = value;
+                      });
+                    },
+                    decoration: inputDecorationRounded().copyWith(
+                      contentPadding: EdgeInsets.zero,
+                      fillColor: Colors.transparent,
+                      border: const UnderlineInputBorder(),
+                    ),
+                    items: MachineSettingToolsOptionEnum.values
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.valueStringReadable),
+                          ),
+                        )
+                        .toList(),
+                    validator: (value) {
+                      if (value == null) {
+                        return "Select action is required";
+                      }
+                      return null;
+                    },
+                  ),
                 ),
-                items: MachineSettingToolsOptionEnum.values
-                    .map(
-                      (e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e.valueStringReadable),
+                const SizedBox(height: 20),
+                if (selectedToolsOption ==
+                    MachineSettingToolsOptionEnum.specificNumber) ...[
+                  const SizedBox(height: 20),
+                  FormBodyRow(
+                    title: "Timeout (hours)",
+                    child: TextFormField(
+                      controller: _timeoutController,
+                      keyboardType: TextInputType.number,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        border: const UnderlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: EdgeInsets.zero,
                       ),
-                    )
-                    .toList(),
-                validator: (value) {
-                  if (value == null) {
-                    return "Select action is required";
-                  }
-                  return null;
-                },
-              ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  FormBodyRow(
+                    title: "Backoff (hours)",
+                    child: TextFormField(
+                      controller: _backoffController,
+                      keyboardType: TextInputType.number,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        border: const UnderlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  FormBodyRow(
+                    title: "Tries",
+                    child: TextFormField(
+                      controller: _triesController,
+                      keyboardType: TextInputType.number,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        border: const UnderlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+                ElevatedButton(
+                  onPressed: onSaveSetting,
+                  style: elevatedButtonStyle(),
+                  child: const Text("Save Setting"),
+                ),
+                const SizedBox(height: 20),
+                Builder(
+                  builder: (context) {
+                    return responseAsync.when(
+                      data: (responses) {
+                        final responseSMS = responses.where((element) {
+                          return element.platform ==
+                              MachineResponsePlatformEnum.sms;
+                        }).toList();
+                        final responseWhatsapp = responses.where((element) {
+                          return element.platform ==
+                              MachineResponsePlatformEnum.whatsapp;
+                        }).toList();
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children:
+                              ListTile.divideTiles(context: context, tiles: [
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: ElevatedButton.icon(
+                                onPressed: onAddMachineResponse,
+                                icon: const Icon(Icons.add),
+                                label: const Text("Add Response"),
+                              ),
+                            ),
+                            if (widget.isSMSBot) ...[
+                              ...responseSMS.map((e) {
+                                return _MachineResponseItem(item: e);
+                              }).toList()
+                            ],
+                            if (!widget.isSMSBot) ...[
+                              ...responseWhatsapp.map((e) {
+                                return _MachineResponseItem(item: e);
+                              }).toList()
+                            ],
+                          ]).toList(),
+                        );
+                      },
+                      error: (error, stackTrace) => AsyncErrorBuilder(
+                        error: error.toString(),
+                        onRetry: () => ref.invalidate(machineResponseNotifier),
+                      ),
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(color: Colors.blue),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
-            const SizedBox(height: 20),
-            if (selectedToolsOption ==
-                MachineSettingToolsOptionEnum.specificNumber) ...[
-              const SizedBox(height: 20),
-              FormBodyRow(
-                title: "Timeout (hours)",
-                child: TextFormField(
-                  controller: _timeoutController,
-                  keyboardType: TextInputType.number,
-                  style: bodyFont.copyWith(fontSize: 14.0),
-                  decoration: inputDecorationRounded().copyWith(
-                    border: const UnderlineInputBorder(),
-                    fillColor: Colors.transparent,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              FormBodyRow(
-                title: "Backoff (hours)",
-                child: TextFormField(
-                  controller: _backoffController,
-                  keyboardType: TextInputType.number,
-                  style: bodyFont.copyWith(fontSize: 14.0),
-                  decoration: inputDecorationRounded().copyWith(
-                    border: const UnderlineInputBorder(),
-                    fillColor: Colors.transparent,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              FormBodyRow(
-                title: "Tries",
-                child: TextFormField(
-                  controller: _triesController,
-                  keyboardType: TextInputType.number,
-                  style: bodyFont.copyWith(fontSize: 14.0),
-                  decoration: inputDecorationRounded().copyWith(
-                    border: const UnderlineInputBorder(),
-                    fillColor: Colors.transparent,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-            ElevatedButton(
-              onPressed: onSaveSetting,
-              style: elevatedButtonStyle(),
-              child: const Text("Save Setting"),
-            ),
-            const SizedBox(height: 20),
-            ...ListTile.divideTiles(context: context, tiles: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton.icon(
-                  onPressed: onAddMachineResponse,
-                  icon: const Icon(Icons.add),
-                  label: const Text("Add Response"),
-                ),
-              ),
-              ...responsesMachine.where((element) {
-                if (widget.isSMSBot) {
-                  return element.platform == MachineResponsePlatformEnum.sms;
-                } else {
-                  return element.platform ==
-                      MachineResponsePlatformEnum.whatsapp;
-                }
-              }).map((e) {
-                return _MachineResponseItem(item: e);
-              }).toList()
-            ]).toList(),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        return Center(
+          child: Text(
+            error.toString(),
+            style: bodyFont.copyWith(color: Colors.red),
+          ),
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(color: Colors.blue),
       ),
     );
   }

@@ -4,13 +4,13 @@ import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
 import 'pages/welcome/machine/machine_response_form_page.dart';
 import 'pages/welcome/machine/machine_response_page.dart';
-import 'pages/welcome/machine/machine_setting_form_page.dart';
-import 'pages/welcome/machine/machine_setting_page.dart';
 import 'pages/welcome/machine/machine_survey_form_page.dart';
 import 'pages/welcome/machine/machine_survey_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_page.dart';
 import 'pages/welcome/setting/log/log_page.dart';
+import 'pages/welcome/setting/my_account/my_account.page.dart';
+import 'pages/welcome/setting/my_account/my_account_form.page.dart';
 import 'pages/welcome/setting/phone_number_setting/phone_number_setting_form_page.dart';
 import 'pages/welcome/welcome_page.dart';
 import 'pages/introduction/introduction_page.dart';
@@ -29,8 +29,8 @@ const routeMachineForm = "machine/form/:id";
 const routeMachineResponse = "machine/:idMachine/response";
 const routeMachineResponseForm = "machine/:idMachine/response/form/:id";
 
-const routeMachineSetting = "machine/:idMachine/setting";
-const routeMachineSettingForm = "machine/:idMachine/setting/form/:id";
+// const routeMachineSetting = "machine/:idMachine/setting";
+// const routeMachineSettingForm = "machine/:idMachine/setting/form/:id";
 
 const routeMachineWhatsApp = "machine/:idMachine/whatsapp";
 const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
@@ -40,6 +40,8 @@ const routeMachineSurveyForm = "machine/:idMachine/survey/form/:id";
 
 const routePhoneNumberSettingFormPage = "phone-number-setting/form";
 const routeLogPage = "log";
+const routeMyAccountPage = "my-account";
+const routeMyAccountFormPage = "my-account/form/:id";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -127,27 +129,6 @@ final _routes = <RouteBase>[
   ),
 
   GoRoute(
-    path: "/machine/:idMachine/setting",
-    name: routeMachineSetting,
-    builder: (context, state) {
-      final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return MachineSettingPage(idMachine: idMachine);
-    },
-  ),
-  GoRoute(
-    path: "/machine/:idMachine/setting/form/:id",
-    name: routeMachineSettingForm,
-    builder: (context, state) {
-      final id = state.pathParameters['id'] ?? "-1";
-      final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return MachineSettingFormPage(
-        idMachine: idMachine,
-        id: id,
-      );
-    },
-  ),
-
-  GoRoute(
     path: "/machine/:idMachine/survey",
     name: routeMachineSurvey,
     builder: (context, state) {
@@ -178,6 +159,23 @@ final _routes = <RouteBase>[
     name: routeLogPage,
     builder: (context, state) {
       return const LogPage();
+    },
+  ),
+
+  GoRoute(
+    path: "/my-account",
+    name: routeMyAccountPage,
+    builder: (context, state) {
+      return const MyAccountPage();
+    },
+  ),
+
+  GoRoute(
+    path: "/my-account/form/:id",
+    name: routeMyAccountFormPage,
+    builder: (context, state) {
+      final id = state.pathParameters['id'] ?? "-1";
+      return MyAccountFormPage(id: id);
     },
   ),
 ];

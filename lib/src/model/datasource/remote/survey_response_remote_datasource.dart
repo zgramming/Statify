@@ -7,7 +7,7 @@ import '../../../utils/constant.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../../utils/method_channel.dart';
-import '../../model/form/form_survey_response_create_model.dart';
+import '../../model/helper/form/form_survey_response_create_model.dart';
 import '../../model/send_sms_model.dart';
 import '../../model/survey_response/survey_response_by_machine_and_type_model.dart';
 import '../../model/survey_response/survey_response_create_response_model.dart';
@@ -28,14 +28,14 @@ class SurveyResponseRemoteDatasource {
     String machineId,
     MachineResponsePlatformEnum platform,
   ) async {
-    final token = (await FlutterSecureStorageUtils.getUserAuth())!.token;
+    final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
     final uri = Uri.parse("$kBaseApiUrl/machines/$machineId/pending-response");
     final request = http.Request('GET', uri);
     request.body = json.encode({"platform": platform.valueString});
     request.headers.addAll({
       "Accept": "application/json",
       "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
+      "Authorization": "Bearer $currentToken",
     });
 
     final response = await request.send();
@@ -144,6 +144,7 @@ class SurveyResponseRemoteDatasource {
             simSlot: simSlot,
             surveyResponseId: pendingResponse.id,
           );
+          log("Model to sent SMS: $model");
           final msg = await methodChannelUtils.sendSMS(model);
 
           if (msg) {

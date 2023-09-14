@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
-import '../../model/form/form_machine_create_update_model.dart';
+import '../../model/helper/form/form_machine_create_update_model.dart';
 import '../../model/machine/machine_create_response_model.dart';
 import '../../model/machine/machine_delete_response_model.dart';
 import '../../model/machine/machine_model.dart';
@@ -91,7 +91,6 @@ class MachineRemoteDatasource {
         'license': form.license,
         'serial_number': form.serialNumber,
         'action': form.action,
-        'sms_setting': form.smsSetting,
       },
     );
 
@@ -124,7 +123,6 @@ class MachineRemoteDatasource {
         'number': form.number,
         'license': form.license,
         'action': form.action,
-        'sms_setting': form.smsSetting,
       },
     );
     final body = response.body;

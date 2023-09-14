@@ -1,7 +1,9 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/model/form/form_machine_setting_create_update_model.dart';
+import '../model/model/helper/form/form_machine_setting_create_update_model.dart';
 import '../model/model/machine_setting/machine_setting_model.dart';
 import '../model/model/machine_setting/machine_setting_update_response_model.dart';
 import '../model/repository/machine_setting_repository.dart';
@@ -46,6 +48,7 @@ class MachineSettingNotifier extends StateNotifier<MachineSettingState> {
   }
 
   Future<void> getAll() async {
+    log("triggerrr");
     state = state.copyWith(onGetAll: const AsyncValue.loading());
     final result = await repository.getAll(machineId);
     result.fold(
@@ -55,29 +58,17 @@ class MachineSettingNotifier extends StateNotifier<MachineSettingState> {
     );
   }
 
-  Future<void> getById({
-    required String machineId,
+  Future<MachineSettingState> getById({
     required String settingId,
-    void Function()? onLoading,
-    void Function(String message)? onError,
-    void Function(MachineSettingModel data)? onSuccess,
   }) async {
-    state = state.copyWith(onGetById: const AsyncValue.loading());
-    if (onLoading != null) onLoading();
     final result = await repository.getById(
       machineId: machineId,
       settingId: settingId,
     );
-    result.fold(
-      (failure) {
-        if (onError != null) onError(failure.message);
-        return state = state.copyWith(
-            onGetById: AsyncValue.error(failure.message, StackTrace.current));
-      },
-      (data) {
-        if (onSuccess != null) onSuccess(data);
-        return state = state.copyWith(onGetById: AsyncValue.data(data));
-      },
+    return result.fold(
+      (failure) => state = state.copyWith(
+          onGetById: AsyncValue.error(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onGetById: AsyncValue.data(data)),
     );
   }
 

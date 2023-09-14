@@ -7,6 +7,7 @@ import '../../../model/model/machine/machine_model.dart';
 import '../../../router.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
+import '../../../utils/functions.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
@@ -18,13 +19,30 @@ class MachinePage extends ConsumerStatefulWidget {
 }
 
 class _MachinePageState extends ConsumerState<MachinePage> {
-  Future<void> onClick(MachineModel item) async {
+  Future<void> onEditButton(MachineModel item) async {
     context.pushNamed(
       routeMachineForm,
       pathParameters: {
         "id": item.id,
       },
     );
+  }
+
+  Future<void> onAddMachine() async {
+    final isEmpty = ref.read(isEmptyAvailableSIM);
+
+    if (isEmpty) {
+      showSnackbar(
+        context: context,
+        message: "Please update SIM 1 / SIM 2 first in User Profile",
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
+
+    context.pushNamed(routeMachineForm, pathParameters: {
+      "id": "-1",
+    });
   }
 
   Future<void> onSelected(
@@ -82,9 +100,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                             Card(
                               margin: const EdgeInsets.all(8),
                               child: ListTile(
-                                onTap: () {
-                                  onClick(item);
-                                },
+                                onTap: () => onEditButton(item),
                                 leading: const Column(
                                   children: [
                                     CircleAvatar(child: Icon(Icons.star)),
@@ -192,11 +208,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          context.pushNamed(routeMachineForm, pathParameters: {
-            "id": "-1",
-          });
-        },
+        onPressed: onAddMachine,
         icon: const Icon(Icons.add),
         label: const Text("Add Machine"),
       ),

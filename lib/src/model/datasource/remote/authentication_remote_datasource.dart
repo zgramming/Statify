@@ -4,13 +4,16 @@ import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
 import '../../model/authentication/authentication_response_model.dart';
-import '../../model/authentication/user_model.dart';
+import '../../model/user/user_model.dart';
+import 'user_remote_datasource.dart';
 
 class AuthenticationRemoteDatasource {
   final http.Client client;
+  final UserRemoteDatasource userRemoteDatasource;
 
   const AuthenticationRemoteDatasource({
     required this.client,
+    required this.userRemoteDatasource,
   });
 
   Future<(AuthenticationResponseModel, UserModel)> login({
@@ -34,7 +37,8 @@ class AuthenticationRemoteDatasource {
       final authenticationResponseModel =
           AuthenticationResponseModel.fromJson(data);
 
-      final user = await me(authenticationResponseModel.token);
+      final user =
+          await userRemoteDatasource.me(authenticationResponseModel.token);
 
       return (authenticationResponseModel, user);
     } else {
@@ -42,24 +46,6 @@ class AuthenticationRemoteDatasource {
           ? decoded['message']
           : 'Failed to login';
       throw Exception(message);
-    }
-  }
-
-  Future<UserModel> me(String token) async {
-    final uri = Uri.parse("$kBaseApiUrl/users/me");
-    final response = await client.get(
-      uri,
-      headers: {"Authorization": "Bearer $token"},
-    );
-
-    final body = response.body;
-    final decoded = Map<String, dynamic>.from(jsonDecode(body));
-    if (response.statusCode == 200) {
-      final data = decoded['data'];
-      final userModel = UserModel.fromJson(data);
-      return userModel.copyWith(token: token);
-    } else {
-      throw Exception('Failed to get user');
     }
   }
 }

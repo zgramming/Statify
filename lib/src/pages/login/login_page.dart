@@ -48,6 +48,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         (previous, next) {
       next.when(
         data: (data) {
+          if (data == null) return;
+          final (_, user) = data;
+          // Set User
+          ref.read(userNotifier.notifier).setUser(user);
+
           showSnackbar(
             context: context,
             message: "Success Login",

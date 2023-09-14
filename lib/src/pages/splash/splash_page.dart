@@ -1,11 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../router.dart';
 import '../../utils/colors.dart';
+import '../../utils/functions.dart';
 import '../../view_model/custom_notifier/initialize_application.notifier.dart';
 
 class SplashPage extends ConsumerWidget {
@@ -29,11 +28,13 @@ class SplashPage extends ConsumerWidget {
             }
           },
           error: (error, stackTrace) {
-            log("Error initialize application: $error");
+            showSnackbar(
+              context: context,
+              message: error.toString(),
+              backgroundColor: Colors.red,
+            );
           },
-          loading: () {
-            log("Loading initialize application");
-          },
+          loading: () => "",
         );
       },
     );

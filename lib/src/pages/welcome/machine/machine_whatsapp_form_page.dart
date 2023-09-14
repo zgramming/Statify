@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
-import '../../../model/model/form/dropdown/machine_dropdown_model.dart';
+import '../../../model/model/helper/dropdown/machine_dropdown_model.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';

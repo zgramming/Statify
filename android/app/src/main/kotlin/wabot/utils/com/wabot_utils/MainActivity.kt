@@ -3,6 +3,7 @@ package wabot.utils.com.wabot_utils
 import android.content.IntentFilter
 import android.os.Bundle
 import android.provider.Telephony
+import android.telephony.TelephonyManager
 import android.util.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -51,6 +52,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        registerIncomingCall()
         registerIncomingMessage()
         registerSentSMSReceiver()
 //        registerDeliveredSMSReceiver()
@@ -93,15 +95,15 @@ class MainActivity : FlutterActivity() {
         eventChannel?.setStreamHandler(incomingMessageReceiver)
     }
 
-//    private fun registerCallReceiver() {
-//        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
-//            EventChannel(executor.binaryMessenger, EC)
-//        }
-//        callReceiver = CallReceiver()
-//        registerReceiver(callReceiver,
-//            IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
-//        eventChannel?.setStreamHandler(callReceiver)
-//    }
+    private fun registerIncomingCall() {
+        val callReceiver = CallReceiver()
+        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
+            EventChannel(executor.binaryMessenger, ECIncomingCall)
+        }
+        registerReceiver(callReceiver,
+            IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
+        eventChannel?.setStreamHandler(callReceiver)
+    }
 
 
 }

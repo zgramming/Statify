@@ -16,7 +16,7 @@ class _LogPageState extends State<LogPage> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -49,6 +49,7 @@ class _LogPageState extends State<LogPage> with SingleTickerProviderStateMixin {
             tabs: const [
               Tab(text: "Pending Response"),
               Tab(text: "Incoming Message"),
+              Tab(text: "Incoming Call"),
             ],
           ),
           Expanded(
@@ -57,6 +58,7 @@ class _LogPageState extends State<LogPage> with SingleTickerProviderStateMixin {
               children: const [
                 _PendingResponseTab(),
                 _IncomingMessageTab(),
+                _IncomingCallTab(),
               ],
             ),
           ),
@@ -106,6 +108,31 @@ class _IncomingMessageTab extends ConsumerWidget {
         return ListTile(
           title: Text(type),
           subtitle: Text(message),
+          trailing: IconButton(
+            onPressed: () {
+              ref.read(logIncomingMessageNotifier.notifier).removeLog(index);
+            },
+            icon: const Icon(Icons.delete),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _IncomingCallTab extends ConsumerWidget {
+  const _IncomingCallTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(logIncomingCallNotifier).items;
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return ListTile(
+          title: Text("Get Incoming Call from ${item.number}"),
+          subtitle: Text("Phone State ${item.state}"),
           trailing: IconButton(
             onPressed: () {
               ref.read(logIncomingMessageNotifier.notifier).removeLog(index);

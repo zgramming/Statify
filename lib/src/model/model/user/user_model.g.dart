@@ -7,30 +7,37 @@ part of 'user_model.dart';
 // **************************************************************************
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
+      roles: (json['roles'] as List<dynamic>)
+          .map((e) => UserRoleModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       id: json['id'] as String,
       email: json['email'] as String?,
       username: json['username'] as String,
-      name: json['name'] as String?,
+      name: json['name'] as String,
+      countryCode: json['country_code'] as String?,
+      sim1: json['sim_1'] as String?,
+      sim2: json['sim_2'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      roles: (json['roles'] as List<dynamic>)
-          .map((e) => RoleModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
       token: json['token'] as String?,
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
+      'roles': instance.roles,
       'id': instance.id,
       'email': instance.email,
       'username': instance.username,
       'name': instance.name,
+      'country_code': instance.countryCode,
+      'sim_1': instance.sim1,
+      'sim_2': instance.sim2,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
-      'roles': instance.roles,
       'token': instance.token,
     };
 
-RoleModel _$RoleModelFromJson(Map<String, dynamic> json) => RoleModel(
+UserRoleModel _$UserRoleModelFromJson(Map<String, dynamic> json) =>
+    UserRoleModel(
       id: json['id'] as String,
       name: json['name'] as String,
       label: json['label'] as String,
@@ -38,7 +45,8 @@ RoleModel _$RoleModelFromJson(Map<String, dynamic> json) => RoleModel(
       pivotRoleId: json['pivot_role_id'] as String,
     );
 
-Map<String, dynamic> _$RoleModelToJson(RoleModel instance) => <String, dynamic>{
+Map<String, dynamic> _$UserRoleModelToJson(UserRoleModel instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'label': instance.label,

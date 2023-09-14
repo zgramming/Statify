@@ -1,5 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 part 'machine_whatsapp_create_response_model.g.dart';
 
 @JsonSerializable(
@@ -8,10 +10,11 @@ part 'machine_whatsapp_create_response_model.g.dart';
 class MachineWhatsappCreateResponseModel extends Equatable {
   final String id;
   final String userId;
+  final String name;
   final String number;
+  final String serialNumber;
   final String license;
   final String action;
-  final String smsSetting;
   final int send;
   final int replied;
   final DateTime createdAt;
@@ -21,10 +24,11 @@ class MachineWhatsappCreateResponseModel extends Equatable {
   const MachineWhatsappCreateResponseModel({
     required this.id,
     required this.userId,
+    required this.name,
     required this.number,
+    required this.serialNumber,
     required this.license,
     required this.action,
-    required this.smsSetting,
     required this.send,
     required this.replied,
     required this.createdAt,
@@ -45,10 +49,11 @@ class MachineWhatsappCreateResponseModel extends Equatable {
     return [
       id,
       userId,
+      name,
       number,
+      serialNumber,
       license,
       action,
-      smsSetting,
       send,
       replied,
       createdAt,
@@ -59,6 +64,36 @@ class MachineWhatsappCreateResponseModel extends Equatable {
 
   @override
   bool get stringify => true;
+
+  MachineWhatsappCreateResponseModel copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    String? number,
+    String? serialNumber,
+    String? license,
+    String? action,
+    int? send,
+    int? replied,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    List<MachineWhatsappCreateResponseModelWhatsapp>? whatsapps,
+  }) {
+    return MachineWhatsappCreateResponseModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      number: number ?? this.number,
+      serialNumber: serialNumber ?? this.serialNumber,
+      license: license ?? this.license,
+      action: action ?? this.action,
+      send: send ?? this.send,
+      replied: replied ?? this.replied,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      whatsapps: whatsapps ?? this.whatsapps,
+    );
+  }
 }
 
 @JsonSerializable(

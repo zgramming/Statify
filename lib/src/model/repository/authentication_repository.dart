@@ -1,17 +1,15 @@
 import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
-import '../datasource/local/authentication_local_datasource.dart';
+import '../../utils/flutter_secure_storage.dart';
 import '../datasource/remote/authentication_remote_datasource.dart';
 import '../model/authentication/authentication_response_model.dart';
-import '../model/authentication/user_model.dart';
+import '../model/user/user_model.dart';
 
 class AuthenticationRepository {
   final AuthenticationRemoteDatasource remoteDatasource;
-  final AuthenticationLocalDatasource localDatasource;
   const AuthenticationRepository({
     required this.remoteDatasource,
-    required this.localDatasource,
   });
 
   Future<Either<Failure, (AuthenticationResponseModel, UserModel)>> login({
@@ -24,19 +22,10 @@ class AuthenticationRepository {
         password: password,
       );
 
-      // save user to local storage
+      // save user to local storage when login success
       final (_, user) = result;
-      await localDatasource.saveUserLocalStorage(user);
+      await FlutterSecureStorageUtils.setUserAuth(user);
 
-      return Right(result);
-    } catch (e) {
-      return Left(CommonFailure(e.toString()));
-    }
-  }
-
-  Future<Either<Failure, UserModel>> me(String token) async {
-    try {
-      final result = await remoteDatasource.me(token);
       return Right(result);
     } catch (e) {
       return Left(CommonFailure(e.toString()));
@@ -48,7 +37,7 @@ class AuthenticationRepository {
   Future<Either<Failure, bool>> logout() async {
     try {
       // remove user from local storage
-      await localDatasource.removeUserLocalStorage();
+      await FlutterSecureStorageUtils.removeUserAuth();
       return const Right(true);
     } catch (e) {
       return Left(CommonFailure(e.toString()));
@@ -57,7 +46,7 @@ class AuthenticationRepository {
 
   Future<Either<Failure, UserModel?>> getUserLocalStorage() async {
     try {
-      final result = await localDatasource.loadUserLocalStorage();
+      final result = await FlutterSecureStorageUtils.getUserAuth();
       return Right(result);
     } catch (e) {
       return Left(CommonFailure(e.toString()));

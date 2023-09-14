@@ -1,8 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
-import '../../../model/model/form/form_machine_create_update_model.dart';
+import '../../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
+import '../../../model/model/helper/form/form_machine_create_update_model.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
@@ -27,41 +29,38 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _nameController;
-  late final TextEditingController _numberController;
   late final TextEditingController _licenseController;
   late final TextEditingController _serialNumberController;
 
-  bool _isCreate = true;
+  bool _needReload = false;
+
+  List<SimChooseDropdownModel> availableSim = [];
   MachineActionEnum selectedAction = MachineActionEnum.sms;
-  MachineSMSSettingEnum selectedSMSSetting = MachineSMSSettingEnum.sim_1;
+  SimChooseDropdownModel? selectedSim;
 
   @override
   void initState() {
     super.initState();
+    final id = widget.id;
+
+    final resultAvailableSim = ref.read(getAvailableSIM);
+    availableSim = resultAvailableSim;
 
     // Load Machine detail if id is not -1
-    final id = widget.id;
-    final isCreate = id == "-1";
+
     _nameController = TextEditingController();
-    _numberController = TextEditingController();
     _licenseController = TextEditingController();
     _serialNumberController = TextEditingController();
 
-    if (!isCreate) {
-      Future.microtask(() {
-        ref.read(machineNotifier.notifier).getById(machineId: id);
-      });
-      _isCreate = false;
-    } else {
-      _isCreate = true;
-    }
+    Future.microtask(() {
+      ref.read(machineNotifier.notifier).getById(machineId: id);
+    });
     setState(() {});
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _numberController.dispose();
     _licenseController.dispose();
     _serialNumberController.dispose();
     super.dispose();
@@ -77,17 +76,15 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     final notifier = ref.read(machineNotifier.notifier);
 
     final name = _nameController.text;
-    final number = _numberController.text;
     final license = _licenseController.text;
     final serialNumber = _serialNumberController.text;
 
     final form = FormMachineCreateUpdateModel(
       serialNumber: serialNumber,
       name: name,
-      number: number,
+      number: selectedSim?.value ?? "",
       license: license,
       action: selectedAction.valueString,
-      smsSetting: selectedSMSSetting.valueString,
     );
 
     if (isCreate) {
@@ -95,6 +92,17 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     } else {
       await notifier.update(machineId: id, form: form);
     }
+  }
+
+  void resetForm() {
+    _nameController.clear();
+    _licenseController.clear();
+    _serialNumberController.clear();
+    selectedAction = MachineActionEnum.sms;
+    _formKey.currentState?.reset();
+    _needReload = true;
+
+    setState(() {});
   }
 
   @override
@@ -112,13 +120,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
           );
 
           // Reset form
-          _numberController.clear();
-          _licenseController.clear();
-          selectedAction = MachineActionEnum.sms;
-          selectedSMSSetting = MachineSMSSettingEnum.sim_1;
-          _formKey.currentState?.reset();
-
-          setState(() {});
+          resetForm();
         },
         error: (error, stackTrace) {
           showSnackbar(
@@ -150,6 +152,10 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
               message: "Berhasil mengubah mesin dengan nomor ${data.number}",
               backgroundColor: Colors.green,
             );
+
+            // Update need reload
+            _needReload = true;
+            setState(() {});
           },
           error: (error, stackTrace) {
             showSnackbar(
@@ -177,13 +183,14 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
         next.whenData((value) {
           if (value == null) return;
           _nameController.text = value.name;
-          _numberController.text = value.number;
           _licenseController.text = value.license;
           _serialNumberController.text = value.serialNumber;
           selectedAction =
               MachineActionEnum.values.byName(value.action.valueString);
-          selectedSMSSetting =
-              MachineSMSSettingEnum.values.byName(value.smsSetting);
+
+          final currentSim = availableSim
+              .firstWhereOrNull((element) => element.value == value.number);
+          selectedSim = currentSim;
 
           setState(() {});
         });
@@ -193,7 +200,9 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     final machine = ref.watch(machineNotifier).onGetById.unwrapPrevious();
     return WillPopScope(
       onWillPop: () {
-        ref.invalidate(machineNotifier);
+        if (_needReload) {
+          ref.invalidate(machineNotifier);
+        }
         return Future.value(true);
       },
       child: Scaffold(
@@ -202,7 +211,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
         ),
         body: Builder(builder: (context) {
           return machine.when(
-            data: (data) => SingleChildScrollView(
+            data: (machineDetail) => SingleChildScrollView(
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -231,15 +240,35 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                             const SizedBox(height: 20),
                             FormBodyRow(
                               title: "Number Machine",
-                              child: TextFormField(
-                                controller: _numberController,
-                                style: bodyFont.copyWith(fontSize: 14.0),
-                                keyboardType: TextInputType.phone,
+                              child: DropdownButtonFormField<
+                                  SimChooseDropdownModel>(
+                                value: selectedSim,
+                                onChanged: (value) {
+                                  if (value == null) return;
+                                  setState(() {
+                                    selectedSim = value;
+                                  });
+                                },
                                 decoration: inputDecorationRounded().copyWith(
-                                  border: const UnderlineInputBorder(),
-                                  fillColor: Colors.transparent,
+                                  hintText: "Choose Sim",
                                   contentPadding: EdgeInsets.zero,
+                                  fillColor: Colors.transparent,
+                                  border: const UnderlineInputBorder(),
                                 ),
+                                items: availableSim
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e.label),
+                                      ),
+                                    )
+                                    .toList(),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Action Should not be empty";
+                                  }
+                                  return null;
+                                },
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -261,6 +290,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                               child: TextFormField(
                                 controller: _serialNumberController,
                                 style: bodyFont.copyWith(fontSize: 14.0),
+                                keyboardType: TextInputType.phone,
                                 decoration: inputDecorationRounded().copyWith(
                                   border: const UnderlineInputBorder(),
                                   fillColor: Colors.transparent,
@@ -301,39 +331,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            FormBodyRow(
-                              title: "SMS Setting",
-                              child: DropdownButtonFormField<
-                                  MachineSMSSettingEnum>(
-                                value: selectedSMSSetting,
-                                onChanged: (value) {
-                                  if (value == null) return;
-                                  setState(() {
-                                    selectedSMSSetting = value;
-                                  });
-                                },
-                                decoration: inputDecorationRounded().copyWith(
-                                  contentPadding: EdgeInsets.zero,
-                                  fillColor: Colors.transparent,
-                                  border: const UnderlineInputBorder(),
-                                ),
-                                items: MachineSMSSettingEnum.values
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(e.valueStringReadable),
-                                      ),
-                                    )
-                                    .toList(),
-                                validator: (value) {
-                                  if (value == null) {
-                                    return "SMS Should not be empty";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: onSubmit,
                               style: elevatedButtonStyle(),
@@ -344,7 +341,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                         ),
                       ),
                     ),
-                    if (!_isCreate) ...[
+                    if (machineDetail != null) ...[
                       MachineTabBarConfiguration(idMachine: widget.id)
                     ],
                   ],

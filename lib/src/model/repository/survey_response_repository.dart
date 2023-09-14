@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../utils/enum.dart';
 import '../../utils/failure.dart';
 import '../datasource/remote/survey_response_remote_datasource.dart';
-import '../model/form/form_survey_response_create_model.dart';
+import '../model/helper/form/form_survey_response_create_model.dart';
 import '../model/survey_response/survey_response_by_machine_and_type_model.dart';
 import '../model/survey_response/survey_response_create_response_model.dart';
 import '../model/survey_response/survey_response_fail_model.dart';

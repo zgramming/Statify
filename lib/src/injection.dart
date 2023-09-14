@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'model/database/database.dart';
 import 'model/datasource/local/application_config_local_datasource.dart';
-import 'model/datasource/local/authentication_local_datasource.dart';
 import 'model/datasource/local/phone_number_setting_local_datasource.dart';
 import 'model/datasource/remote/authentication_remote_datasource.dart';
 import 'model/datasource/remote/incoming_message_remote_datasource.dart';
@@ -13,6 +12,8 @@ import 'model/datasource/remote/machine_setting_remote_datasource.dart';
 import 'model/datasource/remote/machine_whatsapp_remote_datasource.dart';
 import 'model/datasource/remote/survey_remote_datasource.dart';
 import 'model/datasource/remote/survey_response_remote_datasource.dart';
+import 'model/datasource/remote/user_remote_datasource.dart';
+import 'model/model/helper/dropdown/sim_choose_dropdown_model.dart';
 import 'model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import 'model/repository/application_config.repository.dart';
 import 'model/repository/authentication_repository.dart';
@@ -26,6 +27,7 @@ import 'model/repository/survey_response_repository.dart';
 import 'utils/http_client.dart';
 import 'view_model/application_config.notifier.dart';
 import 'view_model/authentication_notifier.dart';
+import 'view_model/custom_notifier/log_incoming_call.notifier.dart';
 import 'view_model/custom_notifier/log_incoming_message.notifier.dart';
 import 'view_model/custom_notifier/log_listen_pending_response.notifier.dart';
 import 'view_model/machine_notifier.dart';
@@ -37,14 +39,57 @@ import 'view_model/survey_notifier.dart';
 import 'view_model/survey_response_notifier.dart';
 
 // Custom Provider
+final userChooseSIMMachineProvider =
+    ProviderFamily<int, String>((ref, machineId) {
+  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
 
+  final machine = machines.firstWhere(
+    (element) => element.id == machineId,
+    orElse: () => machines.first,
+  );
+
+  final user = ref.watch(userNotifier).user;
+  if (user == null) throw Exception('User is null');
+
+  int simSlot = -1;
+  if (machine.number == user.sim1) {
+    simSlot = 0;
+  } else if (machine.number == user.sim2) {
+    simSlot = 1;
+  } else {
+    throw Exception('Machine number is not found in user sim');
+  }
+
+  return simSlot;
+});
+final isUserAlreadySetupSIMProvider = Provider((ref) {
+  final user = ref.watch(userNotifier).user;
+  final isExistsSIM1 = user?.sim1 != null && (user?.sim1?.isNotEmpty ?? false);
+  final isExistsSIM2 = user?.sim2 != null && (user?.sim2?.isNotEmpty ?? false);
+  return isExistsSIM1 || isExistsSIM2;
+});
+final isEmptyAvailableSIM = Provider((ref) {
+  final items = ref.watch(getAvailableSIM);
+  return items.isEmpty;
+});
+final getAvailableSIM = Provider((ref) {
+  final user = ref.watch(userNotifier).user;
+  final isExistsSIM1 = user?.sim1 != null && (user?.sim1?.isNotEmpty ?? false);
+  final isExistsSIM2 = user?.sim2 != null && (user?.sim2?.isNotEmpty ?? false);
+  final List<SimChooseDropdownModel> items = [
+    if (isExistsSIM1)
+      SimChooseDropdownModel(label: "SIM 1", value: "${user?.sim1}"),
+    if (isExistsSIM2)
+      SimChooseDropdownModel(label: "SIM 2", value: "${user?.sim2}"),
+  ];
+  return items;
+});
 final getOnlyWhatsAppMachine = Provider((ref) {
   final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
   final result = machines.map((e) => e.whatsapps).toList();
   final flatten = result.expand((element) => element).toList();
   return flatten;
 });
-
 final getMachineWhatsApp =
     Provider.family<List<MachineWhatsappModel>, String>((ref, machineId) {
   final machines = ref.watch(machineNotifier).onGetAll.valueOrNull;
@@ -58,6 +103,10 @@ final getMachineWhatsApp =
 });
 // End Custom Provider
 
+final logIncomingCallNotifier =
+    StateNotifierProvider<LogIncomingCallNotifier, LogIncomingCallState>(
+  (ref) => LogIncomingCallNotifier(),
+);
 final logListenPendingResponseNotifier = StateNotifierProvider<
     LogListenPendingResponseNotifier, LogListenPendingResponseState>(
   (ref) => LogListenPendingResponseNotifier(),
@@ -103,7 +152,8 @@ final machineWhatsappNotifier =
 );
 final machineNotifier = StateNotifierProvider<MachineNotifier, MachineState>(
   (ref) {
-    final userId = ref.watch(authenticationNotifier).user?.id ?? '';
+    final userId = ref.watch(userNotifier).user?.id;
+    if (userId == null) throw UnimplementedError('User Id is null');
     return MachineNotifier(
       repository: ref.watch(_machineRepository),
       userId: userId,
@@ -116,6 +166,11 @@ final authenticationNotifier =
     repository: ref.watch(_authenticationRepository),
   ),
 );
+final userNotifier = StateNotifierProvider<UserNotifier, UserState>((ref) {
+  return UserNotifier(
+    repository: ref.watch(_userRepository),
+  );
+});
 final applicationConfigNotifier =
     StateNotifierProvider<ApplicationConfigNotifier, ApplicationConfigState>(
   (ref) => ApplicationConfigNotifier(
@@ -148,7 +203,11 @@ final _machineRepository = Provider((ref) =>
 final _authenticationRepository = Provider(
   (ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource),
-    localDatasource: ref.watch(_authenticationLocalDatasource),
+  ),
+);
+final _userRepository = Provider(
+  (ref) => UserRepository(
+    remoteDatasource: ref.watch(_userRemoteDatasource),
   ),
 );
 final _applicationConfigRepository = Provider(
@@ -187,11 +246,15 @@ final _machineWhatsappRemoteDatasource = Provider(
 final _machineRemoteDatasource =
     Provider((ref) => MachineRemoteDatasource(client: ref.watch(_httpClient)));
 final _authenticationRemoteDatasource = Provider(
-    (ref) => AuthenticationRemoteDatasource(client: ref.watch(_httpClient)));
+  (ref) => AuthenticationRemoteDatasource(
+    client: ref.watch(_httpClient),
+    userRemoteDatasource: ref.watch(_userRemoteDatasource),
+  ),
+);
+final _userRemoteDatasource =
+    Provider((ref) => UserRemoteDatasource(client: ref.watch(_httpClient)));
 
 // local datasource
-final _authenticationLocalDatasource =
-    Provider((ref) => AuthenticationLocalDatasource());
 final _phoneNumberSettingLocalDatasource = Provider(
   (ref) => PhoneNumberSettingLocalDatasource(
     database: ref.watch(databaseProvider),

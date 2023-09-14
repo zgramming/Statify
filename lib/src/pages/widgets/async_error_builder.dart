@@ -20,6 +20,8 @@ class AsyncErrorBuilder extends ConsumerStatefulWidget {
 }
 
 class _AsyncErrorBuilderState extends ConsumerState<AsyncErrorBuilder> {
+  late bool isUnauthenticated;
+  late bool isJWTInvalid;
   Future<void> onLogout() async {
     final notifier = ref.read(authenticationNotifier.notifier);
     await notifier.logout();
@@ -29,16 +31,27 @@ class _AsyncErrorBuilderState extends ConsumerState<AsyncErrorBuilder> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    isUnauthenticated = widget.error.toLowerCase().contains('unauthenticated');
+    isJWTInvalid =
+        widget.error.toLowerCase().contains('jwt string must have two dots');
+    if (isUnauthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        onLogout();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isUnauthenticated =
-        widget.error.toLowerCase().contains('unauthenticated');
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(widget.error.toString()),
           const SizedBox(height: 16.0),
-          if (isUnauthenticated) ...[
+          if (isUnauthenticated || isJWTInvalid) ...[
             ElevatedButton(
               onPressed: onLogout,
               style: ElevatedButton.styleFrom(

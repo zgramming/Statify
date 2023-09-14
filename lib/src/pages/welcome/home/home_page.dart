@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
+import '../../../model/model/incoming_call_model.dart';
 import '../../../model/model/incoming_sms/incoming_sms.model.dart';
 import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
@@ -13,7 +14,6 @@ import '../../../model/model/send_sms_model.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/flutter_local_notification.dart';
 import '../../../utils/fonts.dart';
-import '../../../utils/functions.dart';
 import '../../../utils/method_channel.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../widgets/async_error_builder.dart';
@@ -28,9 +28,18 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  StreamSubscription<IncomingCallModel>? _subscriptionIncomingCall;
   StreamSubscription<IncomingSMSModel>? _subscriptionIncomingSMS;
   StreamSubscription<ListenOnsentSMSModel>? _subscriptionSentSMS;
   final eventChannelUtils = EventChannelUtils();
+
+  void listenIncomingCallV2() async {
+    final logNotifier = ref.read(logIncomingCallNotifier.notifier);
+    _subscriptionIncomingCall =
+        EventChannelUtils.listenIncomingCall().listen((event) {
+      logNotifier.addLog(event);
+    });
+  }
 
   void listenOnSentSMSV2() async {
     final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
@@ -38,7 +47,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     _subscriptionSentSMS = eventChannelUtils.listenOnSentSMS().listen(
       (event) async {
         // If status is success then update survey response to sent and add log
+        if (event.surveyResponseId.isEmpty) return;
+
         logNotifier.addLog(event.message);
+
         if (event.status) {
           final result = await srvNotifier.sent(event.surveyResponseId);
           result.onSent.whenOrNull(
@@ -59,13 +71,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void listenIncomingSMSV2() async {
-    final phoneSetting =
-        ref.read(phoneNumberSettingNotifier).onGetFirst.valueOrNull;
-
-    if (phoneSetting == null) {
+    final isAlreadySetupSIM = ref.read(isUserAlreadySetupSIMProvider);
+    if (!isAlreadySetupSIM) {
       FlutterLocalNotificationUtils().showNotification(
         title: "Tracking Incoming SMS Pending",
-        body: "Please set phone number first",
+        body:
+            "Please set SIM 1 / 2 card number first in Profile Page before tracking incoming SMS",
         payload: "Error",
       );
       return;
@@ -82,10 +93,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     _subscriptionIncomingSMS =
         eventChannelUtils.listenIncomingSMS().listen((event) async {
       log("Incoming SMS: $event");
-      final smsSetting = chooseSMSSettingfromSIMSlot(event.simSlot);
       final machines = ref.read(machineNotifier).onGetAll.valueOrNull ?? [];
-      final machine = machines
-          .firstWhereOrNull((element) => element.smsSetting == smsSetting);
+      final user = ref.read(userNotifier).user;
+      final phoneNumber =
+          event.simSlot == 0 ? user?.sim1 ?? "" : user?.sim2 ?? "";
+      final machine =
+          machines.firstWhereOrNull((element) => element.number == phoneNumber);
 
       if (machine == null) {
         logNotifier.addLog(
@@ -108,7 +121,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             message: msg,
             type: type,
           );
-
       log("Handling Incoming Message Result: $result");
     });
   }
@@ -117,6 +129,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     Future.microtask(() {
+      listenIncomingCallV2();
       listenIncomingSMSV2();
       listenOnSentSMSV2();
     });
@@ -126,6 +139,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   void dispose() {
     _subscriptionIncomingSMS?.cancel();
     _subscriptionSentSMS?.cancel();
+    _subscriptionIncomingCall?.cancel();
     super.dispose();
   }
 
@@ -151,11 +165,16 @@ class _HomePageState extends ConsumerState<HomePage> {
         ElevatedButton(
           onPressed: () async {
             final methodChannel = MethodChannelUtils();
+            const number = "085159412440";
+            // const message = "Test Message from Flutter";
+            const message = """
+Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga, dan diri sendiri untuk mencapai kebahagiaan dan produktivitas yang berkelanjutan. Keharmonisan dalam hubungan serta perawatan terhadap kesehatan mental dan fisik sangat penting. Selain itu, komitmen terhadap tujuan dan impian kita juga merupakan kunci kesuksesan. Dengan menggabungkan semua elemen ini, kita dapat mencapai kehidupan yang bermakna dan penuh prestasi.
+""";
             const model = SendSMSModel(
-              phoneNumber: "08123456789",
-              message: "Test Message from Flutter",
+              phoneNumber: number,
+              message: message,
               simSlot: 0,
-              surveyResponseId: "123",
+              surveyResponseId: "",
             );
             await methodChannel.sendSMS(model);
           },

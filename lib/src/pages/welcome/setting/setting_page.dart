@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
 import '../../../router.dart';
+import '../../../utils/functions.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/listtile_setting_menu.dart';
 
@@ -18,14 +19,35 @@ class _SettingPageState extends ConsumerState<SettingPage> {
   Future<void> onLogout() async {
     final notifier = ref.read(authenticationNotifier.notifier);
     await notifier.logout();
-
-    if (context.mounted) {
-      context.goNamed(routeLogin);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(
+      authenticationNotifier.select((value) => value.onLogout),
+      (previous, next) {
+        next.when(
+          data: (data) {
+            if (data == null) return;
+            showSnackbar(
+              context: context,
+              message: "Logout Success",
+              backgroundColor: Colors.green,
+            );
+          },
+          error: (error, stackTrace) => showSnackbar(
+            context: context,
+            message: error.toString(),
+            backgroundColor: Colors.red,
+          ),
+          loading: () => showSnackbar(
+            context: context,
+            message: "Loading...",
+            backgroundColor: Colors.blue,
+          ),
+        );
+      },
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -37,7 +59,9 @@ class _SettingPageState extends ConsumerState<SettingPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ListTileSettingMenu(
-                  onTap: () {},
+                  onTap: () {
+                    context.pushNamed(routeMyAccountPage);
+                  },
                   title: "My Account",
                   subtitle: "Manage your account",
                   leadingIcon: Icons.person,

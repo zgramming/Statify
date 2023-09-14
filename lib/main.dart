@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:telephony/telephony.dart';
 import 'src/injection.dart';
 import 'src/model/database/database.dart';
 
@@ -16,11 +13,6 @@ import 'src/utils/flutter_local_notification.dart';
 // Map<String, dynamic> toJson() => _$AuthenticationResponseModelToJson(this);
 
 // dart run build_runner watch --delete-conflicting-outputs
-
-@pragma('vm:entry-point')
-void onBackgroundMessage(SmsMessage msg) {
-  log("new message from background : ${msg.body}");
-}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
