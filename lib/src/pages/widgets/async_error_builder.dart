@@ -13,7 +13,7 @@ class AsyncErrorBuilder extends ConsumerStatefulWidget {
   });
 
   final String error;
-  final void Function() onRetry;
+  final void Function()? onRetry;
 
   @override
   ConsumerState<AsyncErrorBuilder> createState() => _AsyncErrorBuilderState();
@@ -60,10 +60,13 @@ class _AsyncErrorBuilderState extends ConsumerState<AsyncErrorBuilder> {
               child: const Text("Login again"),
             ),
           ] else ...[
-            ElevatedButton(
-              onPressed: widget.onRetry,
-              child: const Text("Retry again"),
-            ),
+            if (widget.onRetry != null) ...[
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: widget.onRetry,
+                child: const Text("Retry again"),
+              ),
+            ],
           ],
         ],
       ),

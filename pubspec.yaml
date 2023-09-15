@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # Read more about iOS versioning at
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.5.0+11
+version: 1.6.0+12
 
 environment:
   sdk: ">=3.0.3 <4.0.0"
@@ -75,6 +75,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/image/intro/
+    - assets/image/logo-hitech.png
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

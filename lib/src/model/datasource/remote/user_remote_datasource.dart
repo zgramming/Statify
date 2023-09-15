@@ -62,10 +62,6 @@ class UserRemoteDatasource {
     FormUserUpdateModel form,
   ) async {
     final uri = Uri.parse("$kBaseApiUrl/users/$userId");
-    final user = await getById(userId);
-    if (user == null) {
-      throw Exception('Failed to update user, user not found');
-    }
 
     final response = await client.patch(
       uri,
@@ -84,8 +80,15 @@ class UserRemoteDatasource {
       throw Exception('Failed to update user');
     }
     if (response.statusCode == 200) {
+      final user = await getById(userId);
+      if (user == null) {
+        throw Exception(
+            'Failed to update user, when try to get user by id after update');
+      }
+
       final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
       final result = UserUpdateResponseModel.fromJson(data);
+
       return (
         result,
         user.copyWith(

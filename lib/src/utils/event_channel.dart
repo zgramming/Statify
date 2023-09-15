@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 
 import '../model/model/incoming_call_model.dart';
 import '../model/model/incoming_sms/incoming_sms.model.dart';
+import '../model/model/listen_ondelivered_sms.model.dart';
 import '../model/model/listen_onsent_sms.model.dart';
 
 class EventChannelUtils {
@@ -30,9 +31,10 @@ class EventChannelUtils {
     return result;
   }
 
-  Stream<dynamic> listenOnDeliveredSMS() {
+  Stream<ListenOnDeliveredSMSModel> listenOnDeliveredSMS() {
     final result = channelDeliveredSMS.receiveBroadcastStream().map((event) {
-      return event;
+      final map = Map<String, dynamic>.from(event);
+      return ListenOnDeliveredSMSModel.fromMap(map);
     });
 
     return result;

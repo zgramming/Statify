@@ -37,6 +37,7 @@ class _LogPageState extends State<LogPage> with SingleTickerProviderStateMixin {
         children: [
           TabBar(
             controller: _tabController,
+            isScrollable: true,
             indicator: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(

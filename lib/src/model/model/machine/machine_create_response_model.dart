@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -10,12 +11,11 @@ class MachineCreateResponseModel extends Equatable {
   final String id;
   final int send;
   final int replied;
-  final String serialNumber;
   final String name;
   final String number;
+  final String serialNumber;
   final String license;
   final String action;
-  final String smsSetting;
   final String userId;
   final DateTime updatedAt;
   final DateTime createdAt;
@@ -25,12 +25,11 @@ class MachineCreateResponseModel extends Equatable {
     required this.id,
     required this.send,
     required this.replied,
-    required this.serialNumber,
     required this.name,
     required this.number,
+    required this.serialNumber,
     required this.license,
     required this.action,
-    required this.smsSetting,
     required this.userId,
     required this.updatedAt,
     required this.createdAt,
@@ -49,12 +48,11 @@ class MachineCreateResponseModel extends Equatable {
       id,
       send,
       replied,
-      serialNumber,
       name,
       number,
+      serialNumber,
       license,
       action,
-      smsSetting,
       userId,
       updatedAt,
       createdAt,
@@ -64,38 +62,6 @@ class MachineCreateResponseModel extends Equatable {
 
   @override
   bool get stringify => true;
-
-  MachineCreateResponseModel copyWith({
-    String? id,
-    int? send,
-    int? replied,
-    String? serialNumber,
-    String? name,
-    String? number,
-    String? license,
-    String? action,
-    String? smsSetting,
-    String? userId,
-    DateTime? updatedAt,
-    DateTime? createdAt,
-    MachineCreateResponseModelUser? user,
-  }) {
-    return MachineCreateResponseModel(
-      id: id ?? this.id,
-      send: send ?? this.send,
-      replied: replied ?? this.replied,
-      serialNumber: serialNumber ?? this.serialNumber,
-      name: name ?? this.name,
-      number: number ?? this.number,
-      license: license ?? this.license,
-      action: action ?? this.action,
-      smsSetting: smsSetting ?? this.smsSetting,
-      userId: userId ?? this.userId,
-      updatedAt: updatedAt ?? this.updatedAt,
-      createdAt: createdAt ?? this.createdAt,
-      user: user ?? this.user,
-    );
-  }
 }
 
 @JsonSerializable(
@@ -104,8 +70,11 @@ class MachineCreateResponseModel extends Equatable {
 class MachineCreateResponseModelUser extends Equatable {
   final String id;
   final String? email;
-  final String username;
+  final String? username;
   final String? name;
+  final String? countryCode;
+  final String? sim1;
+  final String? sim2;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -114,6 +83,9 @@ class MachineCreateResponseModelUser extends Equatable {
     required this.email,
     required this.username,
     required this.name,
+    this.countryCode,
+    this.sim1,
+    this.sim2,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -131,6 +103,9 @@ class MachineCreateResponseModelUser extends Equatable {
       email,
       username,
       name,
+      countryCode,
+      sim1,
+      sim2,
       createdAt,
       updatedAt,
     ];

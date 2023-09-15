@@ -34,6 +34,8 @@ class _SettingPageState extends ConsumerState<SettingPage> {
               message: "Logout Success",
               backgroundColor: Colors.green,
             );
+
+            context.goNamed(routeLogin);
           },
           error: (error, stackTrace) => showSnackbar(
             context: context,
@@ -77,18 +79,18 @@ class _SettingPageState extends ConsumerState<SettingPage> {
                   leadingIcon: Icons.devices_rounded,
                   leadingBackgroundColor: Colors.green,
                 ),
-                const SizedBox(height: 16),
-                ListTileSettingMenu(
-                  onTap: () {
-                    context.pushNamed(
-                      routePhoneNumberSettingFormPage,
-                    );
-                  },
-                  title: "Phone Number Setting",
-                  subtitle: "Manage phone number setting",
-                  leadingIcon: Icons.assignment,
-                  leadingBackgroundColor: Colors.orange,
-                ),
+                // const SizedBox(height: 16),
+                // ListTileSettingMenu(
+                //   onTap: () {
+                //     context.pushNamed(
+                //       routePhoneNumberSettingFormPage,
+                //     );
+                //   },
+                //   title: "Phone Number Setting",
+                //   subtitle: "Manage phone number setting",
+                //   leadingIcon: Icons.assignment,
+                //   leadingBackgroundColor: Colors.orange,
+                // ),
                 const SizedBox(height: 16),
                 ListTileSettingMenu(
                   onTap: () {

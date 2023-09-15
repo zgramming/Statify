@@ -9,3 +9,5 @@ const kBaseApiUrl = kReleaseMode
 const kTokenAuth = 'token_auth';
 
 const kUserAuth = 'user_auth';
+
+const kURLLogoHitech = "assets/image/logo-hitech.png";

@@ -12,6 +12,8 @@ part 'survey_create_response_model.g.dart';
 class SurveyCreateResponseModel extends Equatable {
   final String id;
   final bool locked;
+  final int attempt;
+  final bool finish;
   final String number;
   final String machineId;
   final DateTime updatedAt;
@@ -21,6 +23,8 @@ class SurveyCreateResponseModel extends Equatable {
   const SurveyCreateResponseModel({
     required this.id,
     required this.locked,
+    required this.attempt,
+    required this.finish,
     required this.number,
     required this.machineId,
     required this.updatedAt,
@@ -39,6 +43,8 @@ class SurveyCreateResponseModel extends Equatable {
     return [
       id,
       locked,
+      attempt,
+      finish,
       number,
       machineId,
       updatedAt,
@@ -53,6 +59,8 @@ class SurveyCreateResponseModel extends Equatable {
   SurveyCreateResponseModel copyWith({
     String? id,
     bool? locked,
+    int? attempt,
+    bool? finish,
     String? number,
     String? machineId,
     DateTime? updatedAt,
@@ -62,6 +70,8 @@ class SurveyCreateResponseModel extends Equatable {
     return SurveyCreateResponseModel(
       id: id ?? this.id,
       locked: locked ?? this.locked,
+      attempt: attempt ?? this.attempt,
+      finish: finish ?? this.finish,
       number: number ?? this.number,
       machineId: machineId ?? this.machineId,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -79,10 +89,9 @@ class SurveyMachine extends Equatable {
   final String userId;
   final String name;
   final String number;
-  final String license;
   final String serialNumber;
+  final String license;
   final MachineActionEnum action;
-  final String smsSetting;
   final int send;
   final int replied;
   final DateTime createdAt;
@@ -94,10 +103,9 @@ class SurveyMachine extends Equatable {
     required this.userId,
     required this.name,
     required this.number,
-    required this.license,
     required this.serialNumber,
+    required this.license,
     required this.action,
-    required this.smsSetting,
     required this.send,
     required this.replied,
     required this.createdAt,
@@ -118,10 +126,9 @@ class SurveyMachine extends Equatable {
       userId,
       name,
       number,
-      license,
       serialNumber,
+      license,
       action,
-      smsSetting,
       send,
       replied,
       createdAt,
@@ -138,10 +145,9 @@ class SurveyMachine extends Equatable {
     String? userId,
     String? name,
     String? number,
-    String? license,
     String? serialNumber,
+    String? license,
     MachineActionEnum? action,
-    String? smsSetting,
     int? send,
     int? replied,
     DateTime? createdAt,
@@ -153,10 +159,9 @@ class SurveyMachine extends Equatable {
       userId: userId ?? this.userId,
       name: name ?? this.name,
       number: number ?? this.number,
-      license: license ?? this.license,
       serialNumber: serialNumber ?? this.serialNumber,
+      license: license ?? this.license,
       action: action ?? this.action,
-      smsSetting: smsSetting ?? this.smsSetting,
       send: send ?? this.send,
       replied: replied ?? this.replied,
       createdAt: createdAt ?? this.createdAt,
@@ -172,10 +177,11 @@ class SurveyMachine extends Equatable {
 class SurveyMachineResponse extends Equatable {
   final String id;
   final String machineId;
-  final MachineActionEnum platform;
+  final MachineResponsePlatformEnum platform;
   final String key;
   final String value;
   final String type;
+  final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -186,6 +192,7 @@ class SurveyMachineResponse extends Equatable {
     required this.key,
     required this.value,
     required this.type,
+    required this.finish,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -205,6 +212,7 @@ class SurveyMachineResponse extends Equatable {
       key,
       value,
       type,
+      finish,
       createdAt,
       updatedAt,
     ];
@@ -216,10 +224,11 @@ class SurveyMachineResponse extends Equatable {
   SurveyMachineResponse copyWith({
     String? id,
     String? machineId,
-    MachineActionEnum? platform,
+    MachineResponsePlatformEnum? platform,
     String? key,
     String? value,
     String? type,
+    bool? finish,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -230,6 +239,7 @@ class SurveyMachineResponse extends Equatable {
       key: key ?? this.key,
       value: value ?? this.value,
       type: type ?? this.type,
+      finish: finish ?? this.finish,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

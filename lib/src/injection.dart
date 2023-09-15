@@ -73,7 +73,7 @@ final isEmptyAvailableSIM = Provider((ref) {
   return items.isEmpty;
 });
 final getAvailableSIM = Provider((ref) {
-  final user = ref.watch(userNotifier).user;
+  final user = ref.watch(userNotifier.select((value) => value.user));
   final isExistsSIM1 = user?.sim1 != null && (user?.sim1?.isNotEmpty ?? false);
   final isExistsSIM2 = user?.sim2 != null && (user?.sim2?.isNotEmpty ?? false);
   final List<SimChooseDropdownModel> items = [

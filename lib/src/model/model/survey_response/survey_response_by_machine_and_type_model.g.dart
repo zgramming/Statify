@@ -15,6 +15,7 @@ SurveyResponseByMachineAndTypeModel
           key: json['key'] as String,
           value: json['value'] as String,
           status: json['status'] as String,
+          finish: json['finish'] as bool,
           createdAt: DateTime.parse(json['created_at'] as String),
           updatedAt: DateTime.parse(json['updated_at'] as String),
           survey: SurveyResponseSurvey.fromJson(
@@ -30,6 +31,7 @@ Map<String, dynamic> _$SurveyResponseByMachineAndTypeModelToJson(
       'key': instance.key,
       'value': instance.value,
       'status': instance.status,
+      'finish': instance.finish,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'survey': instance.survey,
@@ -47,6 +49,7 @@ SurveyResponseSurvey _$SurveyResponseSurveyFromJson(
       bannedUntil: json['banned_until'] == null
           ? null
           : DateTime.parse(json['banned_until'] as String),
+      finish: json['finish'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -61,6 +64,7 @@ Map<String, dynamic> _$SurveyResponseSurveyToJson(
       'locked': instance.locked,
       'attempt': instance.attempt,
       'banned_until': instance.bannedUntil?.toIso8601String(),
+      'finish': instance.finish,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
     };

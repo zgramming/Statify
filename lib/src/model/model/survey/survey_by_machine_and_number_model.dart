@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -9,18 +10,26 @@ part 'survey_by_machine_and_number_model.g.dart';
 class SurveyByMachineAndNumberModel extends Equatable {
   final String id;
   final String machineId;
+  final String? machineWhatsappId;
   final String number;
+  final bool locked;
+  final int attempt;
+  final DateTime? bannedUntil;
+  final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final bool locked;
 
   const SurveyByMachineAndNumberModel({
     required this.id,
     required this.machineId,
+    required this.machineWhatsappId,
     required this.number,
+    required this.locked,
+    required this.attempt,
+    this.bannedUntil,
+    required this.finish,
     required this.createdAt,
     required this.updatedAt,
-    required this.locked,
   });
 
   factory SurveyByMachineAndNumberModel.fromJson(Map<String, dynamic> json) =>
@@ -30,14 +39,18 @@ class SurveyByMachineAndNumberModel extends Equatable {
   Map<String, dynamic> toJson() => _$SurveyByMachineAndNumberModelToJson(this);
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       id,
       machineId,
+      machineWhatsappId,
       number,
+      locked,
+      attempt,
+      bannedUntil,
+      finish,
       createdAt,
       updatedAt,
-      locked,
     ];
   }
 
@@ -47,18 +60,26 @@ class SurveyByMachineAndNumberModel extends Equatable {
   SurveyByMachineAndNumberModel copyWith({
     String? id,
     String? machineId,
+    String? machineWhatsappId,
     String? number,
+    bool? locked,
+    int? attempt,
+    DateTime? bannedUntil,
+    bool? finish,
     DateTime? createdAt,
     DateTime? updatedAt,
-    bool? locked,
   }) {
     return SurveyByMachineAndNumberModel(
       id: id ?? this.id,
       machineId: machineId ?? this.machineId,
+      machineWhatsappId: machineWhatsappId ?? this.machineWhatsappId,
       number: number ?? this.number,
+      locked: locked ?? this.locked,
+      attempt: attempt ?? this.attempt,
+      bannedUntil: bannedUntil ?? this.bannedUntil,
+      finish: finish ?? this.finish,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      locked: locked ?? this.locked,
     );
   }
 }

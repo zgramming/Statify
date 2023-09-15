@@ -24,11 +24,15 @@ class MainActivity : FlutterActivity() {
                 val message = call.argument<String>("message")
                 val sim = call.argument<Int>("simSlot")
                 val surveyResponseId = call.argument<String>("surveyResponseId")
-
                 if (phoneNumber != null && message != null && sim != null && surveyResponseId != null) {
                     try {
                         val exec =
-                            methodChannelUtils.sendSMS(phoneNumber, message, sim, surveyResponseId)
+                            methodChannelUtils.sendSMS(
+                                phoneNumber,
+                                message,
+                                sim,
+                                surveyResponseId,
+                            )
 
                         if (!exec) {
                             result.error("ERROR", "Permission not granted", null)

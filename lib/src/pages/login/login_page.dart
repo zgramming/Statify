@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../injection.dart';
 import '../../router.dart';
 import '../../utils/colors.dart';
+import '../../utils/constant.dart';
 import '../../utils/fonts.dart';
 import '../../utils/functions.dart';
 import '../../utils/styles.dart';
@@ -93,6 +94,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: kGradientColor,
+                // colors: [Colors.red, Colors.black],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -105,6 +107,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Image.asset(
+                      kURLLogoHitech,
+                      // width: 100,
+                    ),
+                    const SizedBox(height: 40.0),
                     Text(
                       "Welcome Back",
                       style: bodyFont.copyWith(
@@ -112,6 +119,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     Form(

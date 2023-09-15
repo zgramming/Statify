@@ -8,13 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../injection.dart';
 import '../../../model/model/incoming_call_model.dart';
 import '../../../model/model/incoming_sms/incoming_sms.model.dart';
+import '../../../model/model/listen_ondelivered_sms.model.dart';
 import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
-import '../../../model/model/send_sms_model.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/flutter_local_notification.dart';
 import '../../../utils/fonts.dart';
-import '../../../utils/method_channel.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/custom_appbar.dart';
@@ -31,7 +30,36 @@ class _HomePageState extends ConsumerState<HomePage> {
   StreamSubscription<IncomingCallModel>? _subscriptionIncomingCall;
   StreamSubscription<IncomingSMSModel>? _subscriptionIncomingSMS;
   StreamSubscription<ListenOnsentSMSModel>? _subscriptionSentSMS;
+  StreamSubscription<ListenOnDeliveredSMSModel>? _subscriptionDeliveredSMS;
+
   final eventChannelUtils = EventChannelUtils();
+
+  void listenDeliveredSMS() async {
+    final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
+    final srvNotifier = ref.read(surveyResponseNotifier.notifier);
+
+    _subscriptionDeliveredSMS =
+        eventChannelUtils.listenOnDeliveredSMS().listen((event) async {
+      if (event.surveyResponseId.isEmpty) return;
+      logNotifier.addLog(event.message);
+
+      if (event.status) {
+        final result = await srvNotifier.sent(event.surveyResponseId);
+        result.onSent.whenOrNull(
+          data: (data) =>
+              logNotifier.addLog("Survey Response Sent With Id: ${data?.id}"),
+          error: (error, stackTrace) => logNotifier.addLog(error.toString()),
+        );
+      } else {
+        final result = await srvNotifier.fail(event.surveyResponseId);
+        result.onFail.whenOrNull(
+          data: (data) =>
+              logNotifier.addLog("Survey Response Fail With Id: ${data?.id}"),
+          error: (error, stackTrace) => logNotifier.addLog(error.toString()),
+        );
+      }
+    });
+  }
 
   void listenIncomingCallV2() async {
     final logNotifier = ref.read(logIncomingCallNotifier.notifier);
@@ -43,29 +71,11 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void listenOnSentSMSV2() async {
     final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
-    final srvNotifier = ref.read(surveyResponseNotifier.notifier);
     _subscriptionSentSMS = eventChannelUtils.listenOnSentSMS().listen(
       (event) async {
         // If status is success then update survey response to sent and add log
         if (event.surveyResponseId.isEmpty) return;
-
         logNotifier.addLog(event.message);
-
-        if (event.status) {
-          final result = await srvNotifier.sent(event.surveyResponseId);
-          result.onSent.whenOrNull(
-            data: (data) =>
-                logNotifier.addLog("Survey Response Sent With Id: ${data?.id}"),
-            error: (error, stackTrace) => logNotifier.addLog(error.toString()),
-          );
-        } else {
-          final result = await srvNotifier.fail(event.surveyResponseId);
-          result.onFail.whenOrNull(
-            data: (data) =>
-                logNotifier.addLog("Survey Response Fail With Id: ${data?.id}"),
-            error: (error, stackTrace) => logNotifier.addLog(error.toString()),
-          );
-        }
       },
     );
   }
@@ -129,9 +139,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      // listenIncomingCallV2();
-      // listenIncomingSMSV2();
-      // listenOnSentSMSV2();
+      listenIncomingCallV2();
+      listenIncomingSMSV2();
+      listenOnSentSMSV2();
+      listenDeliveredSMS();
     });
   }
 
@@ -140,6 +151,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     _subscriptionIncomingSMS?.cancel();
     _subscriptionSentSMS?.cancel();
     _subscriptionIncomingCall?.cancel();
+    _subscriptionDeliveredSMS?.cancel();
     super.dispose();
   }
 
@@ -162,24 +174,28 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Column(
       children: [
         const CustomAppbar(title: "Home"),
-        ElevatedButton(
-          onPressed: () async {
-            final methodChannel = MethodChannelUtils();
-            const number = "085159412440";
-            // const message =
-            //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
-            const message =
-                "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
-            const model = SendSMSModel(
-              phoneNumber: number,
-              message: message,
-              simSlot: 0,
-              surveyResponseId: "",
-            );
-            await methodChannel.sendSMS(model);
-          },
-          child: const Text("Send SMS"),
-        ),
+        // ElevatedButton(
+        //   onPressed: () async {
+        //     // Get file from folder asset
+        //     // final file = await rootBundle.load(kURLLogoHitech);
+        //     // final fileBytes = file.buffer.asUint8List();
+
+        //     final methodChannel = MethodChannelUtils();
+        //     const number = "085159412440";
+        //     // const message =
+        //     //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
+        //     const message =
+        //         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
+        //     const model = SendSMSModel(
+        //       phoneNumber: number,
+        //       message: message,
+        //       simSlot: 0,
+        //       surveyResponseId: "",
+        //     );
+        //     await methodChannel.sendSMS(model);
+        //   },
+        //   child: const Text("Send SMS"),
+        // ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {

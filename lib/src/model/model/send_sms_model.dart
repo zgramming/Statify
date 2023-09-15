@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
 
@@ -8,15 +9,25 @@ class SendSMSModel extends Equatable {
   final String message;
   final int simSlot;
   final String surveyResponseId;
+  final Uint8List? image;
   const SendSMSModel({
     required this.phoneNumber,
     required this.message,
     required this.simSlot,
     required this.surveyResponseId,
+    this.image,
   });
 
   @override
-  List<Object> get props => [phoneNumber, message, simSlot, surveyResponseId];
+  List<Object?> get props {
+    return [
+      phoneNumber,
+      message,
+      simSlot,
+      surveyResponseId,
+      image,
+    ];
+  }
 
   @override
   bool get stringify => true;
@@ -26,12 +37,14 @@ class SendSMSModel extends Equatable {
     String? message,
     int? simSlot,
     String? surveyResponseId,
+    Uint8List? image,
   }) {
     return SendSMSModel(
       phoneNumber: phoneNumber ?? this.phoneNumber,
       message: message ?? this.message,
       simSlot: simSlot ?? this.simSlot,
       surveyResponseId: surveyResponseId ?? this.surveyResponseId,
+      image: image ?? this.image,
     );
   }
 

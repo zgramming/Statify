@@ -26,36 +26,14 @@ Map<String, dynamic> _$MachineUpdateResponseModelToJson(
         MachineUpdateResponseModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'user_id': instance.userId,
+      'send': instance.send,
+      'replied': instance.replied,
       'name': instance.name,
       'number': instance.number,
       'serial_number': instance.serialNumber,
       'license': instance.license,
       'action': instance.action,
-      'send': instance.send,
-      'replied': instance.replied,
-      'created_at': instance.createdAt.toIso8601String(),
+      'user_id': instance.userId,
       'updated_at': instance.updatedAt.toIso8601String(),
-    };
-
-MachineUpdateResponseModelUser _$MachineUpdateResponseModelUserFromJson(
-        Map<String, dynamic> json) =>
-    MachineUpdateResponseModelUser(
-      id: json['id'] as String,
-      email: json['email'] as String?,
-      username: json['username'] as String,
-      name: json['name'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-    );
-
-Map<String, dynamic> _$MachineUpdateResponseModelUserToJson(
-        MachineUpdateResponseModelUser instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'email': instance.email,
-      'username': instance.username,
-      'name': instance.name,
       'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
     };

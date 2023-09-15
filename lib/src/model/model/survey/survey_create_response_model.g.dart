@@ -11,6 +11,8 @@ SurveyCreateResponseModel _$SurveyCreateResponseModelFromJson(
     SurveyCreateResponseModel(
       id: json['id'] as String,
       locked: json['locked'] as bool,
+      attempt: json['attempt'] as int,
+      finish: json['finish'] as bool,
       number: json['number'] as String,
       machineId: json['machine_id'] as String,
       updatedAt: DateTime.parse(json['updated_at'] as String),
@@ -23,6 +25,8 @@ Map<String, dynamic> _$SurveyCreateResponseModelToJson(
     <String, dynamic>{
       'id': instance.id,
       'locked': instance.locked,
+      'attempt': instance.attempt,
+      'finish': instance.finish,
       'number': instance.number,
       'machine_id': instance.machineId,
       'updated_at': instance.updatedAt.toIso8601String(),
@@ -36,10 +40,9 @@ SurveyMachine _$SurveyMachineFromJson(Map<String, dynamic> json) =>
       userId: json['user_id'] as String,
       name: json['name'] as String,
       number: json['number'] as String,
-      license: json['license'] as String,
       serialNumber: json['serial_number'] as String,
+      license: json['license'] as String,
       action: $enumDecode(_$MachineActionEnumEnumMap, json['action']),
-      smsSetting: json['sms_setting'] as String,
       send: json['send'] as int,
       replied: json['replied'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -55,10 +58,9 @@ Map<String, dynamic> _$SurveyMachineToJson(SurveyMachine instance) =>
       'user_id': instance.userId,
       'name': instance.name,
       'number': instance.number,
-      'license': instance.license,
       'serial_number': instance.serialNumber,
+      'license': instance.license,
       'action': _$MachineActionEnumEnumMap[instance.action]!,
-      'sms_setting': instance.smsSetting,
       'send': instance.send,
       'replied': instance.replied,
       'created_at': instance.createdAt.toIso8601String(),
@@ -78,10 +80,12 @@ SurveyMachineResponse _$SurveyMachineResponseFromJson(
     SurveyMachineResponse(
       id: json['id'] as String,
       machineId: json['machine_id'] as String,
-      platform: $enumDecode(_$MachineActionEnumEnumMap, json['platform']),
+      platform:
+          $enumDecode(_$MachineResponsePlatformEnumEnumMap, json['platform']),
       key: json['key'] as String,
       value: json['value'] as String,
       type: json['type'] as String,
+      finish: json['finish'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -91,10 +95,16 @@ Map<String, dynamic> _$SurveyMachineResponseToJson(
     <String, dynamic>{
       'id': instance.id,
       'machine_id': instance.machineId,
-      'platform': _$MachineActionEnumEnumMap[instance.platform]!,
+      'platform': _$MachineResponsePlatformEnumEnumMap[instance.platform]!,
       'key': instance.key,
       'value': instance.value,
       'type': instance.type,
+      'finish': instance.finish,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
     };
+
+const _$MachineResponsePlatformEnumEnumMap = {
+  MachineResponsePlatformEnum.whatsapp: 'whatsapp',
+  MachineResponsePlatformEnum.sms: 'sms',
+};

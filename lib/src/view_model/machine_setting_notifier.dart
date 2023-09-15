@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -48,7 +46,6 @@ class MachineSettingNotifier extends StateNotifier<MachineSettingState> {
   }
 
   Future<void> getAll() async {
-    log("triggerrr");
     state = state.copyWith(onGetAll: const AsyncValue.loading());
     final result = await repository.getAll(machineId);
     result.fold(

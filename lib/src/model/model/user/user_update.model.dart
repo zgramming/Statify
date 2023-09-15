@@ -12,7 +12,9 @@ class UserUpdateResponseModel extends Equatable {
   final String username;
   final String name;
   final String? countryCode;
+  @JsonKey(name: "sim_1")
   final String? sim1;
+  @JsonKey(name: "sim_2")
   final String? sim2;
   final DateTime createdAt;
   final DateTime updatedAt;

@@ -14,9 +14,10 @@ class SurveyResponseSentModel extends Equatable {
   final String key;
   final String value;
   final String status;
+  final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final SurveySent survey;
+  final SurveyResponseSentSrv survey;
 
   const SurveyResponseSentModel({
     required this.id,
@@ -25,6 +26,7 @@ class SurveyResponseSentModel extends Equatable {
     required this.key,
     required this.value,
     required this.status,
+    required this.finish,
     required this.createdAt,
     required this.updatedAt,
     required this.survey,
@@ -45,6 +47,7 @@ class SurveyResponseSentModel extends Equatable {
       key,
       value,
       status,
+      finish,
       createdAt,
       updatedAt,
       survey,
@@ -53,36 +56,12 @@ class SurveyResponseSentModel extends Equatable {
 
   @override
   bool get stringify => true;
-
-  SurveyResponseSentModel copyWith({
-    String? id,
-    String? surveyId,
-    String? platform,
-    String? key,
-    String? value,
-    String? status,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    SurveySent? survey,
-  }) {
-    return SurveyResponseSentModel(
-      id: id ?? this.id,
-      surveyId: surveyId ?? this.surveyId,
-      platform: platform ?? this.platform,
-      key: key ?? this.key,
-      value: value ?? this.value,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      survey: survey ?? this.survey,
-    );
-  }
 }
 
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class SurveySent extends Equatable {
+class SurveyResponseSentSrv extends Equatable {
   final String id;
   final String machineId;
   final String? machineWhatsappId;
@@ -90,26 +69,27 @@ class SurveySent extends Equatable {
   final bool locked;
   final int attempt;
   final DateTime? bannedUntil;
+  final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
-
-  const SurveySent({
+  const SurveyResponseSentSrv({
     required this.id,
     required this.machineId,
-    required this.machineWhatsappId,
+    this.machineWhatsappId,
     required this.number,
     required this.locked,
     required this.attempt,
-    required this.bannedUntil,
+    this.bannedUntil,
+    required this.finish,
     required this.createdAt,
     required this.updatedAt,
   });
 
-  factory SurveySent.fromJson(Map<String, dynamic> json) =>
-      _$SurveySentFromJson(json);
+  factory SurveyResponseSentSrv.fromJson(Map<String, dynamic> json) =>
+      _$SurveyResponseSentSrvFromJson(json);
 
-  /// Connect the generated [_$SurveySentToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$SurveySentToJson(this);
+  /// Connect the generated [_$SurveyResponseSentSrvToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$SurveyResponseSentSrvToJson(this);
 
   @override
   List<Object?> get props {
@@ -121,6 +101,7 @@ class SurveySent extends Equatable {
       locked,
       attempt,
       bannedUntil,
+      finish,
       createdAt,
       updatedAt,
     ];
@@ -128,28 +109,4 @@ class SurveySent extends Equatable {
 
   @override
   bool get stringify => true;
-
-  SurveySent copyWith({
-    String? id,
-    String? machineId,
-    String? machineWhatsappId,
-    String? number,
-    bool? locked,
-    int? attempt,
-    DateTime? bannedUntil,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return SurveySent(
-      id: id ?? this.id,
-      machineId: machineId ?? this.machineId,
-      machineWhatsappId: machineWhatsappId ?? this.machineWhatsappId,
-      number: number ?? this.number,
-      locked: locked ?? this.locked,
-      attempt: attempt ?? this.attempt,
-      bannedUntil: bannedUntil ?? this.bannedUntil,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 }

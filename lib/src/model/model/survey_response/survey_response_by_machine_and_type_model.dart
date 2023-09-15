@@ -14,6 +14,7 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
   final String key;
   final String value;
   final String status;
+  final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
   final SurveyResponseSurvey survey;
@@ -25,6 +26,7 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
     required this.key,
     required this.value,
     required this.status,
+    required this.finish,
     required this.createdAt,
     required this.updatedAt,
     required this.survey,
@@ -47,6 +49,7 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
       key,
       value,
       status,
+      finish,
       createdAt,
       updatedAt,
       survey,
@@ -55,30 +58,6 @@ class SurveyResponseByMachineAndTypeModel extends Equatable {
 
   @override
   bool get stringify => true;
-
-  SurveyResponseByMachineAndTypeModel copyWith({
-    String? id,
-    String? surveyId,
-    String? platform,
-    String? key,
-    String? value,
-    String? status,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    SurveyResponseSurvey? survey,
-  }) {
-    return SurveyResponseByMachineAndTypeModel(
-      id: id ?? this.id,
-      surveyId: surveyId ?? this.surveyId,
-      platform: platform ?? this.platform,
-      key: key ?? this.key,
-      value: value ?? this.value,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      survey: survey ?? this.survey,
-    );
-  }
 }
 
 @JsonSerializable(
@@ -92,6 +71,7 @@ class SurveyResponseSurvey extends Equatable {
   final bool locked;
   final int attempt;
   final DateTime? bannedUntil;
+  final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
   const SurveyResponseSurvey({
@@ -102,6 +82,7 @@ class SurveyResponseSurvey extends Equatable {
     required this.locked,
     required this.attempt,
     this.bannedUntil,
+    required this.finish,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -122,6 +103,7 @@ class SurveyResponseSurvey extends Equatable {
       locked,
       attempt,
       bannedUntil,
+      finish,
       createdAt,
       updatedAt,
     ];
@@ -129,28 +111,4 @@ class SurveyResponseSurvey extends Equatable {
 
   @override
   bool get stringify => true;
-
-  SurveyResponseSurvey copyWith({
-    String? id,
-    String? machineId,
-    String? machineWhatsappId,
-    String? number,
-    bool? locked,
-    int? attempt,
-    DateTime? bannedUntil,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return SurveyResponseSurvey(
-      id: id ?? this.id,
-      machineId: machineId ?? this.machineId,
-      machineWhatsappId: machineWhatsappId ?? this.machineWhatsappId,
-      number: number ?? this.number,
-      locked: locked ?? this.locked,
-      attempt: attempt ?? this.attempt,
-      bannedUntil: bannedUntil ?? this.bannedUntil,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 }
