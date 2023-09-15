@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'model/database/database.dart';
 import 'model/datasource/local/application_config_local_datasource.dart';
-import 'model/datasource/local/phone_number_setting_local_datasource.dart';
+import 'model/datasource/local/logo_local.datasource.dart';
 import 'model/datasource/remote/authentication_remote_datasource.dart';
 import 'model/datasource/remote/incoming_message_remote_datasource.dart';
 import 'model/datasource/remote/machine_remote_datasource.dart';
@@ -21,7 +21,6 @@ import 'model/repository/machine_repository.dart';
 import 'model/repository/machine_response_repository.dart';
 import 'model/repository/machine_setting_repository.dart';
 import 'model/repository/machine_whatsapp_repository.dart';
-import 'model/repository/phone_numer_setting.repository.dart';
 import 'model/repository/survey_repository.dart';
 import 'model/repository/survey_response_repository.dart';
 import 'utils/http_client.dart';
@@ -34,7 +33,6 @@ import 'view_model/machine_notifier.dart';
 import 'view_model/machine_response_notifier.dart';
 import 'view_model/machine_setting_notifier.dart';
 import 'view_model/machine_whatsapp_notifier.dart';
-import 'view_model/phone_number_setting.notifier.dart';
 import 'view_model/survey_notifier.dart';
 import 'view_model/survey_response_notifier.dart';
 
@@ -177,12 +175,11 @@ final applicationConfigNotifier =
     repository: ref.watch(_applicationConfigRepository),
   ),
 );
-final phoneNumberSettingNotifier =
-    StateNotifierProvider<PhoneNumberSettingNotifier, PhoneNumberSettingState>(
-  (ref) => PhoneNumberSettingNotifier(
-    repository: ref.watch(_phoneNumberSettingRepository),
-  ),
-);
+final logoNotifier = StateNotifierProvider<LogoNotifier, LogoState>((ref) {
+  return LogoNotifier(
+    repository: ref.watch(_logoRepository),
+  );
+});
 
 // repository
 
@@ -215,9 +212,9 @@ final _applicationConfigRepository = Provider(
     localDatasource: ref.watch(_applicationConfigLocalDatasource),
   ),
 );
-final _phoneNumberSettingRepository = Provider(
-  (ref) => PhoneNumberSettingRepository(
-    localDatasource: ref.watch(_phoneNumberSettingLocalDatasource),
+final _logoRepository = Provider(
+  (ref) => LogoRepository(
+    localDatasource: ref.watch(_logoLocalDatasource),
   ),
 );
 
@@ -255,15 +252,14 @@ final _userRemoteDatasource =
     Provider((ref) => UserRemoteDatasource(client: ref.watch(_httpClient)));
 
 // local datasource
-final _phoneNumberSettingLocalDatasource = Provider(
-  (ref) => PhoneNumberSettingLocalDatasource(
-    database: ref.watch(databaseProvider),
-  ),
-);
+
 final _applicationConfigLocalDatasource = Provider(
   (ref) => ApplicationConfigLocalDatasource(
     database: ref.watch(databaseProvider),
   ),
+);
+final _logoLocalDatasource = Provider(
+  (ref) => LogoLocalDatasource(database: ref.watch(databaseProvider)),
 );
 
 // Utils & Helpers

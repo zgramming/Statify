@@ -45,6 +45,16 @@ class MyAccountPage extends ConsumerWidget {
                   const SizedBox(height: 16.0),
                   ListTileSettingMenu(
                     onTap: () {
+                      context.pushNamed(routeChangeLogoPage);
+                    },
+                    title: "Change Logo Company",
+                    subtitle: "Change your logo company",
+                    leadingIcon: Icons.image,
+                    leadingBackgroundColor: Colors.orange,
+                  ),
+                  const SizedBox(height: 16.0),
+                  ListTileSettingMenu(
+                    onTap: () {
                       showSnackbar(
                         context: context,
                         message: "Coming soon",

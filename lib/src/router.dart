@@ -9,9 +9,9 @@ import 'pages/welcome/machine/machine_survey_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_page.dart';
 import 'pages/welcome/setting/log/log_page.dart';
+import 'pages/welcome/setting/my_account/change_logo_form.page.dart';
 import 'pages/welcome/setting/my_account/my_account.page.dart';
 import 'pages/welcome/setting/my_account/my_account_form.page.dart';
-import 'pages/welcome/setting/phone_number_setting/phone_number_setting_form_page.dart';
 import 'pages/welcome/welcome_page.dart';
 import 'pages/introduction/introduction_page.dart';
 import 'pages/login/login_page.dart';
@@ -42,6 +42,7 @@ const routePhoneNumberSettingFormPage = "phone-number-setting/form";
 const routeLogPage = "log";
 const routeMyAccountPage = "my-account";
 const routeMyAccountFormPage = "my-account/form/:id";
+const routeChangeLogoPage = "change-logo";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -147,14 +148,6 @@ final _routes = <RouteBase>[
   ),
 
   GoRoute(
-    path: "/phone-number-setting/form",
-    name: routePhoneNumberSettingFormPage,
-    builder: (context, state) {
-      return const PhoneNumberSettingFormPage();
-    },
-  ),
-
-  GoRoute(
     path: "/log",
     name: routeLogPage,
     builder: (context, state) {
@@ -168,6 +161,12 @@ final _routes = <RouteBase>[
     builder: (context, state) {
       return const MyAccountPage();
     },
+  ),
+
+  GoRoute(
+    path: "/change-logo",
+    name: routeChangeLogoPage,
+    builder: (context, state) => const ChangeLogoPage(),
   ),
 
   GoRoute(

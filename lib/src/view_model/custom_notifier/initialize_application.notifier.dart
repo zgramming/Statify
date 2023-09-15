@@ -1,43 +1,24 @@
-import 'package:equatable/equatable.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../injection.dart';
-import '../../model/model/user/user_model.dart';
-import '../../model/model/phone_number_setting/phone_number_setting_model.dart';
+import '../../model/model/initialize_application.model.dart';
 import '../../utils/constant.dart';
 import '../../utils/flutter_secure_storage.dart';
 
-class InitializeApplicationModel extends Equatable {
-  final UserModel? user;
-  final PhoneNumberSettingModel? phoneNumberSetting;
-  final bool isAlreadyIntroduction;
-
-  const InitializeApplicationModel({
-    this.user,
-    this.phoneNumberSetting,
-    required this.isAlreadyIntroduction,
-  });
-
-  @override
-  List<Object?> get props => [user, phoneNumberSetting, isAlreadyIntroduction];
-
-  @override
-  bool get stringify => true;
-}
-
 final initializeApplicationNotifier = AutoDisposeFutureProvider((ref) async {
   final appConfig = ref.watch(applicationConfigNotifier.notifier);
-  final phoneNumberSetting = ref.watch(phoneNumberSettingNotifier.notifier);
-
-  // Load phone number setting
-  final phoneSetting = (await phoneNumberSetting.getFirstPhoneNumberSetting())
-      .onGetFirst
-      .valueOrNull;
+  final logo = ref.watch(logoNotifier.notifier);
 
   final user = await FlutterSecureStorageUtils.getUserAuth();
   final introduction =
       (await appConfig.getByKey(kIntroductionKey)).onGetByKey.valueOrNull;
   final isAlreadyIntroduction = introduction?.value == 'true';
+  final resultLogo = (await logo.getFirstLogo(
+    invalidate: false,
+  ))
+      .onGetFirstLogo
+      .valueOrNull;
 
   if (user != null) {
     ref.read(userNotifier.notifier).setUser(user);
@@ -46,6 +27,6 @@ final initializeApplicationNotifier = AutoDisposeFutureProvider((ref) async {
   return InitializeApplicationModel(
     isAlreadyIntroduction: isAlreadyIntroduction,
     user: user,
-    phoneNumberSetting: phoneSetting,
+    logo: resultLogo,
   );
 });

@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
 import '../../../model/model/incoming_call_model.dart';
-import '../../../model/model/listen_ondelivered_sms.model.dart';
-import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/fonts.dart';

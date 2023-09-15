@@ -5,16 +5,13 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
-import '../model/phone_number_setting/phone_number_setting_model.dart';
+import '../model/logo/logo.model.dart';
 import 'table/application_config.table.dart';
-import 'table/phone_number_setting.table.dart';
+import 'table/logo.table.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [
-  ApplicationConfigTable,
-  PhoneNumberSettingTable,
-])
+@DriftDatabase(tables: [ApplicationConfigTable, LogoTable])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
   MyDatabase() : super(_openConnection());
@@ -62,41 +59,32 @@ class MyDatabase extends _$MyDatabase {
     return result > 0;
   }
 
-  // Phone Number Setting Query Start
+  //! Logo Table Query Start
 
-  // Get All Phone Number Setting
-  Future<List<PhoneNumberSettingModel>> getAllPhoneNumberSetting() async {
-    final result = (await select(phoneNumberSettingTable).get())
-        .map((e) => PhoneNumberSettingModel(
-              id: e.id,
-              sim1: e.sim1Number,
-              sim2: e.sim2Number,
-            ))
-        .toList();
-    return result;
-  }
+  // Get First Logo Table
+  Future<LogoTableData?> getFirstLogo() => select(logoTable).getSingleOrNull();
 
-  // Get First Phone Number Setting
-  Future<PhoneNumberSettingModel?> getFirstPhoneNumberSetting() async {
-    // Delete all data
+  // Upload Logo Table
+  Future<LogoModel?> uploadLogo(LogoTableCompanion logo) async {
+    // Delete first previous logo
+    await (delete(logoTable)).go();
 
-    final result = (await select(phoneNumberSettingTable).get())
-        .map((e) => PhoneNumberSettingModel(
-              id: e.id,
-              sim1: e.sim1Number,
-              sim2: e.sim2Number,
-            ))
-        .firstOrNull;
-    return result;
-  }
+    final result = await into(logoTable).insert(logo);
 
-  // Upsert Phone Number Setting
-  Future<bool> upsertPhoneNumberSetting(
-    PhoneNumberSettingTableCompanion phoneNumberSetting,
-  ) async {
-    final result = await into(phoneNumberSettingTable)
-        .insertOnConflictUpdate(phoneNumberSetting);
-    return result > 0;
+    if (result == 0) {
+      throw Exception("Failed to upload logo");
+    }
+
+    // return previous inserted id
+
+    final currentLogo = await getFirstLogo();
+    if (currentLogo == null) {
+      throw Exception("Failed to get logo after upload");
+    }
+    return LogoModel(
+      id: currentLogo.id,
+      logo: currentLogo.logo,
+    );
   }
 }
 

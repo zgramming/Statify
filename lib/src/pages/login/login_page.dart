@@ -9,6 +9,7 @@ import '../../utils/constant.dart';
 import '../../utils/fonts.dart';
 import '../../utils/functions.dart';
 import '../../utils/styles.dart';
+import '../widgets/async_error_builder.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -80,6 +81,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       );
     });
 
+    final logoAsync = ref.watch(logoNotifier).onGetFirstLogo.unwrapPrevious();
+
     final h = MediaQuery.of(context).size.height;
     const border = OutlineInputBorder(
       borderSide: BorderSide(color: darkPrimaryColor),
@@ -107,9 +110,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      kURLLogoHitech,
-                      // width: 100,
+                    Builder(
+                      builder: (context) {
+                        return logoAsync.when(
+                          data: (image) {
+                            if (image == null) {
+                              return Image.asset(
+                                kURLLogoHitech,
+                                // width: 100,
+                              );
+                            }
+
+                            return Image.memory(
+                              image.logo!,
+                            );
+                          },
+                          error: (error, stackTrace) => AsyncErrorBuilder(
+                            error: error.toString(),
+                            onRetry: () {
+                              ref.invalidate(logoNotifier);
+                            },
+                          ),
+                          loading: () => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 40.0),
                     Text(

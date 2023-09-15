@@ -227,12 +227,12 @@ class ApplicationConfigTableCompanion
   }
 }
 
-class $PhoneNumberSettingTableTable extends PhoneNumberSettingTable
-    with TableInfo<$PhoneNumberSettingTableTable, PhoneNumberSettingTableData> {
+class $LogoTableTable extends LogoTable
+    with TableInfo<$LogoTableTable, LogoTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $PhoneNumberSettingTableTable(this.attachedDatabase, [this._alias]);
+  $LogoTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -242,48 +242,30 @@ class $PhoneNumberSettingTableTable extends PhoneNumberSettingTable
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _sim1NumberMeta =
-      const VerificationMeta('sim1Number');
+  static const VerificationMeta _logoMeta = const VerificationMeta('logo');
   @override
-  late final GeneratedColumn<String> sim1Number = GeneratedColumn<String>(
-      'sim1_number', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _sim2NumberMeta =
-      const VerificationMeta('sim2Number');
+  late final GeneratedColumn<Uint8List> logo = GeneratedColumn<Uint8List>(
+      'logo', aliasedName, false,
+      type: DriftSqlType.blob, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> sim2Number = GeneratedColumn<String>(
-      'sim2_number', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  List<GeneratedColumn> get $columns => [id, logo];
   @override
-  List<GeneratedColumn> get $columns => [id, sim1Number, sim2Number];
+  String get aliasedName => _alias ?? 'logo';
   @override
-  String get aliasedName => _alias ?? 'phone_number_setting';
+  String get actualTableName => 'logo';
   @override
-  String get actualTableName => 'phone_number_setting';
-  @override
-  VerificationContext validateIntegrity(
-      Insertable<PhoneNumberSettingTableData> instance,
+  VerificationContext validateIntegrity(Insertable<LogoTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('sim1_number')) {
+    if (data.containsKey('logo')) {
       context.handle(
-          _sim1NumberMeta,
-          sim1Number.isAcceptableOrUnknown(
-              data['sim1_number']!, _sim1NumberMeta));
+          _logoMeta, logo.isAcceptableOrUnknown(data['logo']!, _logoMeta));
     } else if (isInserting) {
-      context.missing(_sim1NumberMeta);
-    }
-    if (data.containsKey('sim2_number')) {
-      context.handle(
-          _sim2NumberMeta,
-          sim2Number.isAcceptableOrUnknown(
-              data['sim2_number']!, _sim2NumberMeta));
-    } else if (isInserting) {
-      context.missing(_sim2NumberMeta);
+      context.missing(_logoMeta);
     }
     return context;
   }
@@ -291,56 +273,47 @@ class $PhoneNumberSettingTableTable extends PhoneNumberSettingTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  PhoneNumberSettingTableData map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
+  LogoTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return PhoneNumberSettingTableData(
+    return LogoTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      sim1Number: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}sim1_number'])!,
-      sim2Number: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}sim2_number'])!,
+      logo: attachedDatabase.typeMapping
+          .read(DriftSqlType.blob, data['${effectivePrefix}logo'])!,
     );
   }
 
   @override
-  $PhoneNumberSettingTableTable createAlias(String alias) {
-    return $PhoneNumberSettingTableTable(attachedDatabase, alias);
+  $LogoTableTable createAlias(String alias) {
+    return $LogoTableTable(attachedDatabase, alias);
   }
 }
 
-class PhoneNumberSettingTableData extends DataClass
-    implements Insertable<PhoneNumberSettingTableData> {
+class LogoTableData extends DataClass implements Insertable<LogoTableData> {
   final int id;
-  final String sim1Number;
-  final String sim2Number;
-  const PhoneNumberSettingTableData(
-      {required this.id, required this.sim1Number, required this.sim2Number});
+  final Uint8List logo;
+  const LogoTableData({required this.id, required this.logo});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['sim1_number'] = Variable<String>(sim1Number);
-    map['sim2_number'] = Variable<String>(sim2Number);
+    map['logo'] = Variable<Uint8List>(logo);
     return map;
   }
 
-  PhoneNumberSettingTableCompanion toCompanion(bool nullToAbsent) {
-    return PhoneNumberSettingTableCompanion(
+  LogoTableCompanion toCompanion(bool nullToAbsent) {
+    return LogoTableCompanion(
       id: Value(id),
-      sim1Number: Value(sim1Number),
-      sim2Number: Value(sim2Number),
+      logo: Value(logo),
     );
   }
 
-  factory PhoneNumberSettingTableData.fromJson(Map<String, dynamic> json,
+  factory LogoTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return PhoneNumberSettingTableData(
+    return LogoTableData(
       id: serializer.fromJson<int>(json['id']),
-      sim1Number: serializer.fromJson<String>(json['sim1Number']),
-      sim2Number: serializer.fromJson<String>(json['sim2Number']),
+      logo: serializer.fromJson<Uint8List>(json['logo']),
     );
   }
   @override
@@ -348,73 +321,58 @@ class PhoneNumberSettingTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'sim1Number': serializer.toJson<String>(sim1Number),
-      'sim2Number': serializer.toJson<String>(sim2Number),
+      'logo': serializer.toJson<Uint8List>(logo),
     };
   }
 
-  PhoneNumberSettingTableData copyWith(
-          {int? id, String? sim1Number, String? sim2Number}) =>
-      PhoneNumberSettingTableData(
+  LogoTableData copyWith({int? id, Uint8List? logo}) => LogoTableData(
         id: id ?? this.id,
-        sim1Number: sim1Number ?? this.sim1Number,
-        sim2Number: sim2Number ?? this.sim2Number,
+        logo: logo ?? this.logo,
       );
   @override
   String toString() {
-    return (StringBuffer('PhoneNumberSettingTableData(')
+    return (StringBuffer('LogoTableData(')
           ..write('id: $id, ')
-          ..write('sim1Number: $sim1Number, ')
-          ..write('sim2Number: $sim2Number')
+          ..write('logo: $logo')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, sim1Number, sim2Number);
+  int get hashCode => Object.hash(id, $driftBlobEquality.hash(logo));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is PhoneNumberSettingTableData &&
+      (other is LogoTableData &&
           other.id == this.id &&
-          other.sim1Number == this.sim1Number &&
-          other.sim2Number == this.sim2Number);
+          $driftBlobEquality.equals(other.logo, this.logo));
 }
 
-class PhoneNumberSettingTableCompanion
-    extends UpdateCompanion<PhoneNumberSettingTableData> {
+class LogoTableCompanion extends UpdateCompanion<LogoTableData> {
   final Value<int> id;
-  final Value<String> sim1Number;
-  final Value<String> sim2Number;
-  const PhoneNumberSettingTableCompanion({
+  final Value<Uint8List> logo;
+  const LogoTableCompanion({
     this.id = const Value.absent(),
-    this.sim1Number = const Value.absent(),
-    this.sim2Number = const Value.absent(),
+    this.logo = const Value.absent(),
   });
-  PhoneNumberSettingTableCompanion.insert({
+  LogoTableCompanion.insert({
     this.id = const Value.absent(),
-    required String sim1Number,
-    required String sim2Number,
-  })  : sim1Number = Value(sim1Number),
-        sim2Number = Value(sim2Number);
-  static Insertable<PhoneNumberSettingTableData> custom({
+    required Uint8List logo,
+  }) : logo = Value(logo);
+  static Insertable<LogoTableData> custom({
     Expression<int>? id,
-    Expression<String>? sim1Number,
-    Expression<String>? sim2Number,
+    Expression<Uint8List>? logo,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (sim1Number != null) 'sim1_number': sim1Number,
-      if (sim2Number != null) 'sim2_number': sim2Number,
+      if (logo != null) 'logo': logo,
     });
   }
 
-  PhoneNumberSettingTableCompanion copyWith(
-      {Value<int>? id, Value<String>? sim1Number, Value<String>? sim2Number}) {
-    return PhoneNumberSettingTableCompanion(
+  LogoTableCompanion copyWith({Value<int>? id, Value<Uint8List>? logo}) {
+    return LogoTableCompanion(
       id: id ?? this.id,
-      sim1Number: sim1Number ?? this.sim1Number,
-      sim2Number: sim2Number ?? this.sim2Number,
+      logo: logo ?? this.logo,
     );
   }
 
@@ -424,21 +382,17 @@ class PhoneNumberSettingTableCompanion
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (sim1Number.present) {
-      map['sim1_number'] = Variable<String>(sim1Number.value);
-    }
-    if (sim2Number.present) {
-      map['sim2_number'] = Variable<String>(sim2Number.value);
+    if (logo.present) {
+      map['logo'] = Variable<Uint8List>(logo.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('PhoneNumberSettingTableCompanion(')
+    return (StringBuffer('LogoTableCompanion(')
           ..write('id: $id, ')
-          ..write('sim1Number: $sim1Number, ')
-          ..write('sim2Number: $sim2Number')
+          ..write('logo: $logo')
           ..write(')'))
         .toString();
   }
@@ -448,12 +402,11 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(e);
   late final $ApplicationConfigTableTable applicationConfigTable =
       $ApplicationConfigTableTable(this);
-  late final $PhoneNumberSettingTableTable phoneNumberSettingTable =
-      $PhoneNumberSettingTableTable(this);
+  late final $LogoTableTable logoTable = $LogoTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [applicationConfigTable, phoneNumberSettingTable];
+      [applicationConfigTable, logoTable];
 }
