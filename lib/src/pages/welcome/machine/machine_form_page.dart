@@ -239,7 +239,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                             ),
                             const SizedBox(height: 20),
                             FormBodyRow(
-                              title: "Number Machine",
+                              title: "Machine Phone Number",
                               child: DropdownButtonFormField<
                                   SimChooseDropdownModel>(
                                 value: selectedSim,
@@ -273,9 +273,9 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                             ),
                             const SizedBox(height: 20),
                             FormBodyRow(
-                              title: "Activation License",
+                              title: "Machine Serial Number",
                               child: TextFormField(
-                                controller: _licenseController,
+                                controller: _serialNumberController,
                                 style: bodyFont.copyWith(fontSize: 14.0),
                                 decoration: inputDecorationRounded().copyWith(
                                   border: const UnderlineInputBorder(),
@@ -286,9 +286,9 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                             ),
                             const SizedBox(height: 20),
                             FormBodyRow(
-                              title: "Serial Number",
+                              title: "Activation License",
                               child: TextFormField(
-                                controller: _serialNumberController,
+                                controller: _licenseController,
                                 style: bodyFont.copyWith(fontSize: 14.0),
                                 keyboardType: TextInputType.phone,
                                 decoration: inputDecorationRounded().copyWith(

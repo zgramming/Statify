@@ -14,7 +14,6 @@ class SentSMSReceiver : BroadcastReceiver(), StreamHandler {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        // Check intent if equal to INTENT_SENT_SMS_ACTION
         if (intent?.action == INTENT_SENT_SMS_ACTION) {
             val bundle = intent.extras
             val surveyResponseId = bundle?.getString("surveyResponseId") ?: ""

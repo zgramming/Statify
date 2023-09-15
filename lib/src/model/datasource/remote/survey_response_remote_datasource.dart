@@ -134,6 +134,8 @@ class SurveyResponseRemoteDatasource {
           MachineResponsePlatformEnum.sms,
         );
 
+        log("While Response Pending: $pendingResponse");
+
         if (pendingResponse != null) {
           // Send SMS to user
           final model = SendSMSModel(

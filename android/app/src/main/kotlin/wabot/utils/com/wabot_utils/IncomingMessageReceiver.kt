@@ -5,14 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Telephony
+import android.telephony.SmsMessage
+import android.telephony.TelephonyManager
 import android.util.Log
+import android.widget.Toast
 import io.flutter.plugin.common.EventChannel
 import java.util.*
 
 class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
     private var eventSink: EventChannel.EventSink? = null
-
-
     private fun detectSim(bundle: Bundle): Int {
         var slot = -1
         val keySet: Set<String> = bundle.keySet()
@@ -38,7 +39,7 @@ class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler 
                         }
                     }
                 } catch (e: Error) {
-                    throw Exception("Error while detecting sim slot");
+                    throw Exception("Error while detecting sim slot")
                 }
             }
         }
@@ -46,8 +47,7 @@ class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler 
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-
-        if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION == intent!!.action) {
+        if (intent?.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
             val bundle = intent.extras
             val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
 
@@ -69,6 +69,10 @@ class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler 
                 "simSlot" to simSlot,
             )
             Log.wtf("IncomingMessageReceiver", "onReceive: $map");
+
+            // Show toast
+            Toast.makeText(context, "Incoming SMS detected", Toast.LENGTH_LONG).show();
+
             eventSink?.success(map);
         } else {
             // Send the message, sender, date, simSlot to Flutter

@@ -1,6 +1,5 @@
 package wabot.utils.com.wabot_utils
 
-import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.provider.Telephony
@@ -14,10 +13,23 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     private val methodChannelUtils = MethodChannelUtils(this)
+    private val incomingMessageRCV = IncomingMessageReceiver()
+    private val incomingCallRCV = CallReceiver()
+    private val sentSMSRCV = SentSMSReceiver()
+    private val deliveredSMSRCV = DeliveredSMSReceiver()
+
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
+
+        // Setup event channels
+        registerIncomingMessageEventChannel()
+        registerIncomingCallEventChannel()
+        registerSentSMSEventChannel()
+        registerDeliveredSMSEventChannel()
+
+        // Setup method channel
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger,
             MC).setMethodCallHandler { call, result ->
             if (call.method == "sendSMS") {
@@ -27,13 +39,13 @@ class MainActivity : FlutterActivity() {
                 val surveyResponseId = call.argument<String>("surveyResponseId")
                 if (phoneNumber != null && message != null && sim != null && surveyResponseId != null) {
                     try {
-                        val exec =
-                            methodChannelUtils.sendSMS(
-                                phoneNumber,
-                                message,
-                                sim,
-                                surveyResponseId,
-                            )
+                        Log.wtf("sendSMS", "sendSMS")
+                        val exec = methodChannelUtils.sendSMS(
+                            phoneNumber,
+                            message,
+                            sim,
+                            surveyResponseId,
+                        )
 
                         if (!exec) {
                             result.error("ERROR", "Permission not granted", null)
@@ -48,77 +60,56 @@ class MainActivity : FlutterActivity() {
                 } else {
                     result.error("ERROR", "Arguments are null", null)
                 }
-            } else if (
-                call.method == "triggerIncomingMessage"
-            ) {
-                val intent = Intent(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
-                val bundle = Bundle()
-                bundle.putString("format", "3gpp")
-
-                sendBroadcast(intent)
-
-                result.success(true)
-
-
             } else {
                 result.notImplemented()
             }
         }
-
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        registerIncomingCall()
-        registerIncomingMessage()
-        registerSentSMSReceiver()
-        registerDeliveredSMSReceiver()
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.wtf("MainActivity", "onDestroy")
+        unregisterReceiver(incomingMessageRCV)
+        unregisterReceiver(incomingCallRCV)
+        unregisterReceiver(sentSMSRCV)
+        unregisterReceiver(deliveredSMSRCV)
     }
 
-    private fun registerSentSMSReceiver() {
-        val sentSMSReceiver = SentSMSReceiver()
-        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
-            EventChannel(executor.binaryMessenger, ECSentSMS)
-        }
-        registerReceiver(
-            sentSMSReceiver,
-            IntentFilter(INTENT_SENT_SMS_ACTION),
-        )
-        eventChannel?.setStreamHandler(sentSMSReceiver)
-    }
-
-    private fun registerDeliveredSMSReceiver() {
-        val deliveredSMSReceiver = DeliveredSMSReceiver()
-        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
-            EventChannel(executor.binaryMessenger, ECDeliveredSMS)
-        }
-        registerReceiver(
-            deliveredSMSReceiver,
-            IntentFilter(INTENT_DELIVERED_SMS_ACTION),
-        )
-        eventChannel?.setStreamHandler(deliveredSMSReceiver)
-    }
-
-    private fun registerIncomingMessage() {
-        val incomingMessageReceiver = IncomingMessageReceiver()
+    private fun registerIncomingMessageEventChannel() {
         val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
             EventChannel(executor.binaryMessenger, ECIncomingSMS)
         }
-        registerReceiver(
-            incomingMessageReceiver,
-            IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION),
-        )
-        eventChannel?.setStreamHandler(incomingMessageReceiver)
+        eventChannel?.setStreamHandler(incomingMessageRCV)
+        registerReceiver(incomingMessageRCV,
+            IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION))
+
     }
 
-    private fun registerIncomingCall() {
-        val callReceiver = CallReceiver()
+    private fun registerIncomingCallEventChannel() {
         val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
             EventChannel(executor.binaryMessenger, ECIncomingCall)
         }
-        registerReceiver(callReceiver,
-            IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
-        eventChannel?.setStreamHandler(callReceiver)
+        eventChannel?.setStreamHandler(incomingCallRCV)
+        registerReceiver(incomingCallRCV, IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
+    }
+
+    private fun registerSentSMSEventChannel() {
+        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
+            EventChannel(executor.binaryMessenger, ECSentSMS)
+        }
+        eventChannel?.setStreamHandler(sentSMSRCV)
+        // Register the broadcast receiver.
+        registerReceiver(sentSMSRCV, IntentFilter(INTENT_SENT_SMS_ACTION))
+    }
+
+    private fun registerDeliveredSMSEventChannel() {
+        val receiver = DeliveredSMSReceiver()
+        val eventChannel = flutterEngine?.dartExecutor?.let { executor ->
+            EventChannel(executor.binaryMessenger, ECDeliveredSMS)
+        }
+        eventChannel?.setStreamHandler(receiver)
+        // Register the broadcast receiver.
+        registerReceiver(deliveredSMSRCV, IntentFilter(INTENT_DELIVERED_SMS_ACTION))
     }
 
 
