@@ -12,6 +12,7 @@ import java.util.*
 class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
     private var eventSink: EventChannel.EventSink? = null
 
+
     private fun detectSim(bundle: Bundle): Int {
         var slot = -1
         val keySet: Set<String> = bundle.keySet()
@@ -49,6 +50,12 @@ class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler 
         if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION == intent!!.action) {
             val bundle = intent.extras
             val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
+
+            if (messages == null || messages.isEmpty()) {
+                eventSink?.success(null)
+                return
+            };
+
             val message = messages[0]
 
             val body = message.messageBody
@@ -61,7 +68,7 @@ class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler 
                 "date" to date,
                 "simSlot" to simSlot,
             )
-        Log.wtf("IncomingMessageReceiver", "onReceive: $map");
+            Log.wtf("IncomingMessageReceiver", "onReceive: $map");
             eventSink?.success(map);
         } else {
             // Send the message, sender, date, simSlot to Flutter

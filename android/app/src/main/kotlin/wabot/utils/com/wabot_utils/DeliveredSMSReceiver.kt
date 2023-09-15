@@ -16,7 +16,13 @@ class DeliveredSMSReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
         // Check intent if equal to INTENT_DELIVERED_SMS_ACTION
         if (intent?.action == INTENT_DELIVERED_SMS_ACTION) {
             val bundle = intent.extras
-            val surveyResponseId = bundle?.getString("surveyResponseId") ?: ""
+            val surveyResponseId = bundle?.getString("surveyResponseId");
+            if (surveyResponseId == null) {
+                Log.wtf("DELIVERED_SMS_RECEIVER", "surveyResponseId is null")
+                eventSink?.error("DELIVERED_SMS_RECEIVER", "surveyResponseId is null", null)
+                return
+            }
+
             var message = ""
             var code = 0
             var status = false
@@ -52,7 +58,8 @@ class DeliveredSMSReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
                     Log.wtf("DELIVERED_SMS_RECEIVER", "RESULT_ERROR_RADIO_OFF")
                 }
                 else -> {
-                    message = "SMS_DELIVERED_RESULT_ERROR_UNKNOWN : Unknown error with code $resultCode"
+                    message =
+                        "SMS_DELIVERED_RESULT_ERROR_UNKNOWN : Unknown error with code $resultCode"
                     code = resultCode
                     status = false
                     Log.wtf("DELIVERED_SMS_RECEIVER", "RESULT_ERROR_UNKNOWN")

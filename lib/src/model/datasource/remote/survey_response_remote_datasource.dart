@@ -144,7 +144,6 @@ class SurveyResponseRemoteDatasource {
             simSlot: simSlot,
             surveyResponseId: pendingResponse.id,
           );
-          log("Model to sent SMS: $model");
           final msg = await methodChannelUtils.sendSMS(model);
 
           if (msg) {

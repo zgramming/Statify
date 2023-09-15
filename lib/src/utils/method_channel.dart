@@ -27,4 +27,18 @@ class MethodChannelUtils {
       return false;
     }
   }
+
+  Future<bool> triggerIncomingMessage() async {
+    try {
+      final result =
+          await platform.invokeMethod<bool>('triggerIncomingMessage');
+      return result ?? false;
+    } on PlatformException catch (e) {
+      log("Error PlatformException Flutter: $e");
+      return false;
+    } catch (e) {
+      log("Error Flutter: $e");
+      return false;
+    }
+  }
 }

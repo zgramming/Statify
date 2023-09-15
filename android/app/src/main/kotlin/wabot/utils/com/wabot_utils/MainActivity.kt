@@ -1,5 +1,6 @@
 package wabot.utils.com.wabot_utils
 
+import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.provider.Telephony
@@ -47,6 +48,18 @@ class MainActivity : FlutterActivity() {
                 } else {
                     result.error("ERROR", "Arguments are null", null)
                 }
+            } else if (
+                call.method == "triggerIncomingMessage"
+            ) {
+                val intent = Intent(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
+                val bundle = Bundle()
+                bundle.putString("format", "3gpp")
+
+                sendBroadcast(intent)
+
+                result.success(true)
+
+
             } else {
                 result.notImplemented()
             }
@@ -60,7 +73,6 @@ class MainActivity : FlutterActivity() {
         registerIncomingMessage()
         registerSentSMSReceiver()
         registerDeliveredSMSReceiver()
-
     }
 
     private fun registerSentSMSReceiver() {

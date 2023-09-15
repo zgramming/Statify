@@ -112,14 +112,14 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
           if (value == null) return;
           _usernameController.text = value.username;
           _nameController.text = value.name;
-          _countryCodeController.text = "${value.countryCode}";
+          _countryCodeController.text = value.countryCode ?? "";
           _sim1Controller.text = value.sim1 ?? "";
           _sim2Controller.text = value.sim2 ?? "";
         });
       },
     );
 
-    final userAsync = ref.watch(userNotifier).onGetById.unwrapPrevious();
+    final userAsync = ref.watch(userNotifier).onGetById;
     return Scaffold(
       appBar: AppBar(title: const Text("Edit Profile")),
       body: Builder(

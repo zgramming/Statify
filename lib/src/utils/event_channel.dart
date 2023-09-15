@@ -14,10 +14,16 @@ class EventChannelUtils {
   final channelDeliveredSMS =
       const EventChannel('STATIFY_EVENT_CHANNEL_DELIVERED_SMS');
 
-  Stream<IncomingSMSModel> listenIncomingSMS() {
+  Stream<IncomingSMSModel?> listenIncomingSMS() {
     final result = channelIncomignSMS
         .receiveBroadcastStream()
-        .map((event) => IncomingSMSModel.fromMap(Map.from(event)));
+        .map<IncomingSMSModel?>((event) {
+      if (event == null) {
+        return null;
+      }
+
+      return IncomingSMSModel.fromMap(Map.from(event));
+    });
 
     return result;
   }
