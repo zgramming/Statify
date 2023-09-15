@@ -90,10 +90,9 @@ class SurveyResponseRemoteDatasource {
 
     final body = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
-    final data = decodedData['data'];
-    if (data == null) throw Exception('Failed to sent survey response');
 
     if (response.statusCode == 200) {
+      final data = decodedData['data'];
       return SurveyResponseSentModel.fromJson(data);
     } else {
       final message = decodedData.containsKey('message')
@@ -111,10 +110,9 @@ class SurveyResponseRemoteDatasource {
 
     final body = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
-    final data = decodedData['data'];
-    if (data == null) throw Exception('Failed to fail survey response');
 
     if (response.statusCode == 200) {
+      final data = decodedData['data'];
       return SurveyResponseFailModel.fromJson(data);
     } else {
       final message = decodedData.containsKey('message')

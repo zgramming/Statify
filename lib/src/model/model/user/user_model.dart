@@ -8,11 +8,10 @@ part 'user_model.g.dart';
   fieldRename: FieldRename.snake,
 )
 class UserModel extends Equatable {
-  final List<UserRoleModel> roles;
   final String id;
   final String? email;
-  final String username;
-  final String name;
+  final String? username;
+  final String? name;
   final String? countryCode;
   @JsonKey(name: "sim_1")
   final String? sim1;
@@ -21,9 +20,9 @@ class UserModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? token;
+  final List<UserRoleModel> roles;
 
   const UserModel({
-    required this.roles,
     required this.id,
     required this.email,
     required this.username,
@@ -34,6 +33,7 @@ class UserModel extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.token,
+    required this.roles,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -45,7 +45,6 @@ class UserModel extends Equatable {
   @override
   List<Object?> get props {
     return [
-      roles,
       id,
       email,
       username,
@@ -56,6 +55,7 @@ class UserModel extends Equatable {
       createdAt,
       updatedAt,
       token,
+      roles,
     ];
   }
 
@@ -63,7 +63,6 @@ class UserModel extends Equatable {
   bool get stringify => true;
 
   UserModel copyWith({
-    List<UserRoleModel>? roles,
     String? id,
     String? email,
     String? username,
@@ -74,9 +73,9 @@ class UserModel extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? token,
+    List<UserRoleModel>? roles,
   }) {
     return UserModel(
-      roles: roles ?? this.roles,
       id: id ?? this.id,
       email: email ?? this.email,
       username: username ?? this.username,
@@ -87,6 +86,7 @@ class UserModel extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       token: token ?? this.token,
+      roles: roles ?? this.roles,
     );
   }
 }

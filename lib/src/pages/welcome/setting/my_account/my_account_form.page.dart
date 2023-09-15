@@ -110,8 +110,8 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
       (previous, next) {
         next.whenData((value) {
           if (value == null) return;
-          _usernameController.text = value.username;
-          _nameController.text = value.name;
+          _usernameController.text = value.username ?? "";
+          _nameController.text = value.name ?? "";
           _countryCodeController.text = value.countryCode ?? "";
           _sim1Controller.text = value.sim1 ?? "";
           _sim2Controller.text = value.sim2 ?? "";

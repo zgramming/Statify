@@ -76,10 +76,18 @@ class ChangeLogoPageState extends ConsumerState<ChangeLogoPage> {
         next.when(
           data: (data) {
             if (data == null) return;
+            log("data logo ${data.id}");
 
-            setState(() {
-              _selectedFile = data.logo;
-            });
+            if (mounted) {
+              showSnackbar(
+                context: context,
+                message: "Success Upload Logo",
+                backgroundColor: Colors.green,
+              );
+              setState(() {
+                _selectedFile = data.logo;
+              });
+            }
           },
           error: (error, stackTrace) => showSnackbar(
             context: context,

@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 part 'user_update.model.g.dart';
 
 @JsonSerializable(
@@ -9,8 +10,8 @@ part 'user_update.model.g.dart';
 class UserUpdateResponseModel extends Equatable {
   final String id;
   final String? email;
-  final String username;
-  final String name;
+  final String? username;
+  final String? name;
   final String? countryCode;
   @JsonKey(name: "sim_1")
   final String? sim1;

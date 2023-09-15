@@ -11,8 +11,8 @@ UserUpdateResponseModel _$UserUpdateResponseModelFromJson(
     UserUpdateResponseModel(
       id: json['id'] as String,
       email: json['email'] as String?,
-      username: json['username'] as String,
-      name: json['name'] as String,
+      username: json['username'] as String?,
+      name: json['name'] as String?,
       countryCode: json['country_code'] as String?,
       sim1: json['sim_1'] as String?,
       sim2: json['sim_2'] as String?,

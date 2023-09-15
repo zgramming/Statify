@@ -48,8 +48,8 @@ class UserRemoteDatasource {
 
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
-    final data = decoded['data'];
     if (response.statusCode == 200) {
+      final data = decoded['data'];
       final userModel = UserModel.fromJson(data);
       return userModel.copyWith(token: token);
     } else {
@@ -75,10 +75,6 @@ class UserRemoteDatasource {
     );
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
-    final data = decoded['data'];
-    if (data == null) {
-      throw Exception('Failed to update user');
-    }
     if (response.statusCode == 200) {
       final user = await getById(userId);
       if (user == null) {
@@ -86,6 +82,7 @@ class UserRemoteDatasource {
             'Failed to update user, when try to get user by id after update');
       }
 
+      final data = decoded['data'];
       final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
       final result = UserUpdateResponseModel.fromJson(data);
 

@@ -41,9 +41,9 @@ class MachineSettingRemoteDatasource {
     final response = await client.get(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decoded['data'];
 
     if (response.statusCode == 200) {
-      final data = decoded['data'];
       final machine = MachineSettingModel.fromJson(data);
       return machine;
     } else {
