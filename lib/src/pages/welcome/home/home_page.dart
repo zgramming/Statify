@@ -8,12 +8,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../injection.dart';
 import '../../../model/model/incoming_call_model.dart';
 import '../../../model/model/incoming_sms/incoming_sms.model.dart';
+import '../../../model/model/listen_ondelivered_sms.model.dart';
 import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
-import '../../../model/model/send_sms_model.dart';
+import '../../../model/model/temporary_pending_response/temporary_pending_response.model.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/fonts.dart';
-import '../../../utils/method_channel.dart';
+import '../../../view_model/custom_notifier/log_listen_pending_response.notifier.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
@@ -27,34 +28,76 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   StreamSubscription<IncomingCallModel>? _subscriptionIncomingCall;
   StreamSubscription<IncomingSMSModel?>? _subscriptionIncomingMessage;
-  StreamSubscription<ListenOnsentSMSModel>? _subscriptionDeliveredMessage;
+  StreamSubscription<ListenOnsentSMSModel>? _subscriptionSentMessage;
+  StreamSubscription<List<TemporaryPendingResponseModel>>?
+      _subscriptionTemporaryPendingResponse;
 
   final eventChannelUtils = EventChannelUtils();
 
-  void listenSentMessage() {
-    final logNotifier = ref.watch(logListenPendingResponseNotifier.notifier);
-    final srvNotifier = ref.watch(surveyResponseNotifier.notifier);
-    _subscriptionDeliveredMessage =
-        eventChannelUtils.listenOnSentSMS().listen((event) async {
-      log("listenSentMessage event: $event");
-      final surveyResponseId = event.surveyResponseId;
-      if (surveyResponseId.isEmpty) return;
-      logNotifier.addLog(event.message);
+  Future<void> deleteTemporaryPendingResponse({
+    required String surveyResponseId,
+    required LogListenPendingResponseNotifier logNotifier,
+  }) async {
+    final notifier = ref.read(temporaryPendingResponseNotifier.notifier);
+    final result = await notifier.deleteAll();
+    result.onDeleteBySurveyResponseId.whenOrNull(
+      data: (data) => logNotifier.addLog(
+          "Delete Temporary Pending Response Success with id $surveyResponseId"),
+      error: (error, stackTrace) => log(error.toString()),
+    );
+  }
 
-      if (event.status) {
-        final result = await srvNotifier.sent(surveyResponseId);
-        result.onSent.whenOrNull(
-          data: (data) =>
-              logNotifier.addLog("Survey Response Sent With Id: ${data?.id}"),
-          error: (error, stackTrace) => logNotifier.addLog(error.toString()),
-        );
-      } else {
-        final result = await srvNotifier.fail(surveyResponseId);
-        result.onFail.whenOrNull(
-          data: (data) =>
-              logNotifier.addLog("Survey Response Fail With Id: ${data?.id}"),
-          error: (error, stackTrace) => logNotifier.addLog(error.toString()),
-        );
+  void listenTemporaryPendingResponse() async {
+    final notifier = ref.read(temporaryPendingResponseNotifier.notifier);
+    _subscriptionTemporaryPendingResponse = notifier.listenNewChange().listen(
+      (event) {
+        log("Listen Temporary Pending Response:\n Length: ${event.length} | Data: $event");
+      },
+    );
+  }
+
+  void listenOnSentMessage() {
+    final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
+    final srvNotifier = ref.read(surveyResponseNotifier.notifier);
+    _subscriptionSentMessage =
+        eventChannelUtils.listenOnSentSMS().listen((event) async {
+      try {
+        log("listenOnSentMessage event: $event");
+        final surveyResponseId = event.surveyResponseId;
+        if (surveyResponseId.isEmpty) return;
+        logNotifier.addLog(event.message);
+
+        if (event.status) {
+          final result = await srvNotifier.sent(surveyResponseId);
+          result.onSent.whenOrNull(
+            data: (data) async {
+              if (data == null) return;
+              logNotifier.addLog("Survey Response Sent With Id: ${data.id}");
+
+              // Delete Temporary Pending Response
+              await deleteTemporaryPendingResponse(
+                  surveyResponseId: surveyResponseId, logNotifier: logNotifier);
+            },
+            error: (error, stackTrace) => logNotifier.addLog(error.toString()),
+          );
+        } else {
+          final result = await srvNotifier.fail(surveyResponseId);
+          result.onFail.whenOrNull(
+            data: (data) async {
+              if (data == null) return;
+              logNotifier.addLog("Survey Response Fail With Id: ${data.id}");
+
+              // Delete Temporary Pending Response
+              await deleteTemporaryPendingResponse(
+                surveyResponseId: surveyResponseId,
+                logNotifier: logNotifier,
+              );
+            },
+            error: (error, stackTrace) => logNotifier.addLog(error.toString()),
+          );
+        }
+      } catch (e) {
+        logNotifier.addLog(e.toString());
       }
     });
   }
@@ -63,34 +106,41 @@ class _HomePageState extends ConsumerState<HomePage> {
     final logNotifier = ref.read(logIncomingMessageNotifier.notifier);
     _subscriptionIncomingMessage =
         eventChannelUtils.listenIncomingSMS().listen((event) async {
-      log("Listen Incoming Message: $event");
-      if (event == null) {
-        return;
+      try {
+        log("Listen Incoming Message: $event");
+        if (event == null) {
+          return;
+        }
+
+        final machines = ref.read(machineNotifier).onGetAll.valueOrNull ?? [];
+        final user = ref.read(userNotifier).user;
+        final phoneNumber =
+            event.simSlot == 0 ? user?.sim1 ?? "" : user?.sim2 ?? "";
+        final machine = machines
+            .firstWhereOrNull((element) => element.number == phoneNumber);
+        if (machine == null) {
+          throw Exception("Machine not found when listen incoming message");
+        }
+
+        final result = await ref
+            .read(incomingMessageNotifier.notifier)
+            .handlingIncomingMessage(
+              machineId: machine.id,
+              number: event.address,
+              message: event.body,
+            );
+
+        final (type, msg) = result;
+        logNotifier.addLog(
+          type: type,
+          message: msg,
+        );
+      } catch (e) {
+        logNotifier.addLog(
+          type: "ERROR_TRY_CATCH",
+          message: e.toString(),
+        );
       }
-
-      final machines = ref.read(machineNotifier).onGetAll.valueOrNull ?? [];
-      final user = ref.read(userNotifier).user;
-      final phoneNumber =
-          event.simSlot == 0 ? user?.sim1 ?? "" : user?.sim2 ?? "";
-      final machine =
-          machines.firstWhereOrNull((element) => element.number == phoneNumber);
-      if (machine == null) {
-        throw Exception("Machine not found when listen incoming message");
-      }
-
-      final result = await ref
-          .read(incomingMessageNotifier.notifier)
-          .handlingIncomingMessage(
-            machineId: machine.id,
-            number: event.address,
-            message: event.body,
-          );
-
-      final (type, msg) = result;
-      logNotifier.addLog(
-        type: type,
-        message: msg,
-      );
     });
   }
 
@@ -107,18 +157,20 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      // listenIncomingCallV2();
+      listenIncomingCallV2();
       listenIncomingMessage();
-      listenSentMessage();
+      listenOnSentMessage();
+      listenTemporaryPendingResponse();
     });
   }
 
   @override
   void dispose() {
     log("DISPOSE AT HOME PAGE");
-    _subscriptionDeliveredMessage?.cancel();
+    _subscriptionSentMessage?.cancel();
     _subscriptionIncomingMessage?.cancel();
     _subscriptionIncomingCall?.cancel();
+    _subscriptionTemporaryPendingResponse?.cancel();
     super.dispose();
   }
 
@@ -142,30 +194,30 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Column(
       children: [
         const CustomAppbar(title: "Home"),
-        ElevatedButton(
-          onPressed: () async {
-            // Get file from folder asset
-            // final file = await rootBundle.load(kURLLogoHitech);
-            // final fileBytes = file.buffer.asUint8List();
+        // ElevatedButton(
+        //   onPressed: () async {
+        //     // Get file from folder asset
+        //     // final file = await rootBundle.load(kURLLogoHitech);
+        //     // final fileBytes = file.buffer.asUint8List();
 
-            final methodChannel = MethodChannelUtils();
-            const number = "085159412440";
-            // const number = "089517229249";
-            // const message =
-            //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
-            // const message =
-            //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
-            const message = "ok";
-            const model = SendSMSModel(
-              phoneNumber: number,
-              message: message,
-              simSlot: 0,
-              surveyResponseId: "",
-            );
-            await methodChannel.sendSMS(model);
-          },
-          child: const Text("Send SMS"),
-        ),
+        //     final methodChannel = MethodChannelUtils();
+        //     const number = "085159412440";
+        //     // const number = "089517229249";
+        //     // const message =
+        //     //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
+        //     // const message =
+        //     //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
+        //     const message = "ok";
+        //     const model = SendSMSModel(
+        //       phoneNumber: number,
+        //       message: message,
+        //       simSlot: 0,
+        //       surveyResponseId: "",
+        //     );
+        //     await methodChannel.sendSMS(model);
+        //   },
+        //   child: const Text("Send SMS"),
+        // ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {

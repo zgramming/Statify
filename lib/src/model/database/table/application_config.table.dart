@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
+
 import 'package:uuid/uuid.dart';
 
-const uuid = Uuid();
-
 class ApplicationConfigTable extends Table {
+  final uuid = const Uuid();
   TextColumn get id => text().clientDefault(
         () => uuid.v4(),
       )();

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../model/model/machine_setting/machine_setting_model.dart';
 import 'enum.dart';
+import 'package:uuid/uuid.dart';
+
+String generateUUID() {
+  return const Uuid().v4();
+}
 
 int generateUniqueNotificationId() {
   // Get the current timestamp in milliseconds

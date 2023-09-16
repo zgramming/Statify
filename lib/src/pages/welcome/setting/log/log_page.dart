@@ -80,15 +80,7 @@ class _PendingResponseTab extends ConsumerWidget {
       itemBuilder: (context, index) {
         final item = items[index];
         return ListTile(
-          title: Text("$item"),
-          trailing: IconButton(
-            onPressed: () {
-              ref
-                  .read(logListenPendingResponseNotifier.notifier)
-                  .removeLog(index);
-            },
-            icon: const Icon(Icons.delete),
-          ),
+          subtitle: Text(item ?? ""),
         );
       },
     );
@@ -109,12 +101,6 @@ class _IncomingMessageTab extends ConsumerWidget {
         return ListTile(
           title: Text(type),
           subtitle: Text(message),
-          trailing: IconButton(
-            onPressed: () {
-              ref.read(logIncomingMessageNotifier.notifier).removeLog(index);
-            },
-            icon: const Icon(Icons.delete),
-          ),
         );
       },
     );
@@ -134,12 +120,6 @@ class _IncomingCallTab extends ConsumerWidget {
         return ListTile(
           title: Text("Get Incoming Call from ${item.number}"),
           subtitle: Text("Phone State ${item.state}"),
-          trailing: IconButton(
-            onPressed: () {
-              ref.read(logIncomingMessageNotifier.notifier).removeLog(index);
-            },
-            icon: const Icon(Icons.delete),
-          ),
         );
       },
     );

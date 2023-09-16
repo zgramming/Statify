@@ -8,10 +8,15 @@ import 'package:path/path.dart' as p;
 import '../model/logo/logo.model.dart';
 import 'table/application_config.table.dart';
 import 'table/logo.table.dart';
+import 'table/temporary_pending_response.table.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [ApplicationConfigTable, LogoTable])
+@DriftDatabase(tables: [
+  ApplicationConfigTable,
+  LogoTable,
+  TemporaryPendingResponseTable,
+])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
   MyDatabase() : super(_openConnection());
@@ -19,6 +24,75 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+      // beforeOpen: (details) async {
+      // await customStatement('PRAGMA foreign_keys = ON');
+      // },
+      // onCreate: (details) async {
+      //   await customStatement('PRAGMA foreign_keys = ON');
+      // },
+      // onUpgrade: (m, from, to) {
+      //   return m.createAll();
+      // },
+      );
+
+  //! Temporary Pending Response Table Query Start
+
+  // Listen when have new Temporary Pending Response
+  Stream<List<TemporaryPendingResponseTableData>>
+      listenNewTemporaryPendingResponse() {
+    final query = select(temporaryPendingResponseTable)
+      ..orderBy([
+        (tbl) => OrderingTerm(
+              expression: tbl.createdAt,
+              mode: OrderingMode.desc,
+            ),
+      ]);
+
+    return query.watch();
+  }
+
+  // Get All Temporary Pending Response
+  Future<List<TemporaryPendingResponseTableData>>
+      getAllTemporaryPendingResponse() =>
+          select(temporaryPendingResponseTable).get();
+
+  // Get by surveyResponseId Temporary Pending Response
+  Future<TemporaryPendingResponseTableData?>
+      getBySurveyResponseIdTemporaryPendingResponse(
+    String surveyResponseId,
+  ) =>
+          (select(temporaryPendingResponseTable)
+                ..where((tbl) => tbl.surveyResponseId.equals(surveyResponseId)))
+              .getSingleOrNull();
+
+  // Create Temporary Pending Response, error when have same surveyResponseId
+  Future<TemporaryPendingResponseTableData> createTemporaryPendingResponse(
+    TemporaryPendingResponseTableCompanion temporaryPendingResponse,
+  ) async {
+    final result = await into(temporaryPendingResponseTable)
+        .insertReturning(temporaryPendingResponse);
+    return result;
+  }
+
+  // Delete all Temporary Pending Response
+  Future<int> deleteAllTemporaryPendingResponse() async {
+    final result = await (delete(temporaryPendingResponseTable)).go();
+    return result;
+  }
+
+  // Delete by surveyResponseId Temporary Pending Response
+  Future<bool> deleteBySurveyResponseIdTemporaryPendingResponse(
+    String surveyResponseId,
+  ) async {
+    final result = await (delete(temporaryPendingResponseTable)
+          ..where((tbl) => tbl.surveyResponseId.equals(surveyResponseId)))
+        .go();
+    return result > 0;
+  }
+
+  //! Application Config Table Query Start
   // Get All Application Config
   Future<List<ApplicationConfigTableData>> getAllApplicationConfig() =>
       select(applicationConfigTable).get();

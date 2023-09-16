@@ -398,15 +398,481 @@ class LogoTableCompanion extends UpdateCompanion<LogoTableData> {
   }
 }
 
+class $TemporaryPendingResponseTableTable extends TemporaryPendingResponseTable
+    with
+        TableInfo<$TemporaryPendingResponseTableTable,
+            TemporaryPendingResponseTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TemporaryPendingResponseTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _surveyResponseIdMeta =
+      const VerificationMeta('surveyResponseId');
+  @override
+  late final GeneratedColumn<String> surveyResponseId = GeneratedColumn<String>(
+      'survey_response_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      clientDefault: () => uuid.v4());
+  static const VerificationMeta _surveyIdMeta =
+      const VerificationMeta('surveyId');
+  @override
+  late final GeneratedColumn<String> surveyId = GeneratedColumn<String>(
+      'survey_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _machineIdMeta =
+      const VerificationMeta('machineId');
+  @override
+  late final GeneratedColumn<String> machineId = GeneratedColumn<String>(
+      'machine_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _simSlotMeta =
+      const VerificationMeta('simSlot');
+  @override
+  late final GeneratedColumn<int> simSlot = GeneratedColumn<int>(
+      'sim_slot', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _phoneNumberMeta =
+      const VerificationMeta('phoneNumber');
+  @override
+  late final GeneratedColumn<String> phoneNumber = GeneratedColumn<String>(
+      'phone_number', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _messageMeta =
+      const VerificationMeta('message');
+  @override
+  late final GeneratedColumn<String> message = GeneratedColumn<String>(
+      'message', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _deletedAtMeta =
+      const VerificationMeta('deletedAt');
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+      'deleted_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        surveyResponseId,
+        surveyId,
+        machineId,
+        simSlot,
+        phoneNumber,
+        message,
+        createdAt,
+        updatedAt,
+        deletedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'temporary_pending_response';
+  @override
+  String get actualTableName => 'temporary_pending_response';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<TemporaryPendingResponseTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('survey_response_id')) {
+      context.handle(
+          _surveyResponseIdMeta,
+          surveyResponseId.isAcceptableOrUnknown(
+              data['survey_response_id']!, _surveyResponseIdMeta));
+    }
+    if (data.containsKey('survey_id')) {
+      context.handle(_surveyIdMeta,
+          surveyId.isAcceptableOrUnknown(data['survey_id']!, _surveyIdMeta));
+    } else if (isInserting) {
+      context.missing(_surveyIdMeta);
+    }
+    if (data.containsKey('machine_id')) {
+      context.handle(_machineIdMeta,
+          machineId.isAcceptableOrUnknown(data['machine_id']!, _machineIdMeta));
+    } else if (isInserting) {
+      context.missing(_machineIdMeta);
+    }
+    if (data.containsKey('sim_slot')) {
+      context.handle(_simSlotMeta,
+          simSlot.isAcceptableOrUnknown(data['sim_slot']!, _simSlotMeta));
+    } else if (isInserting) {
+      context.missing(_simSlotMeta);
+    }
+    if (data.containsKey('phone_number')) {
+      context.handle(
+          _phoneNumberMeta,
+          phoneNumber.isAcceptableOrUnknown(
+              data['phone_number']!, _phoneNumberMeta));
+    } else if (isInserting) {
+      context.missing(_phoneNumberMeta);
+    }
+    if (data.containsKey('message')) {
+      context.handle(_messageMeta,
+          message.isAcceptableOrUnknown(data['message']!, _messageMeta));
+    } else if (isInserting) {
+      context.missing(_messageMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta,
+          deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {surveyResponseId};
+  @override
+  TemporaryPendingResponseTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TemporaryPendingResponseTableData(
+      surveyResponseId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}survey_response_id'])!,
+      surveyId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}survey_id'])!,
+      machineId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}machine_id'])!,
+      simSlot: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}sim_slot'])!,
+      phoneNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}phone_number'])!,
+      message: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}message'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      deletedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
+    );
+  }
+
+  @override
+  $TemporaryPendingResponseTableTable createAlias(String alias) {
+    return $TemporaryPendingResponseTableTable(attachedDatabase, alias);
+  }
+}
+
+class TemporaryPendingResponseTableData extends DataClass
+    implements Insertable<TemporaryPendingResponseTableData> {
+  final String surveyResponseId;
+  final String surveyId;
+  final String machineId;
+  final int simSlot;
+  final String phoneNumber;
+  final String message;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  const TemporaryPendingResponseTableData(
+      {required this.surveyResponseId,
+      required this.surveyId,
+      required this.machineId,
+      required this.simSlot,
+      required this.phoneNumber,
+      required this.message,
+      required this.createdAt,
+      required this.updatedAt,
+      this.deletedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['survey_response_id'] = Variable<String>(surveyResponseId);
+    map['survey_id'] = Variable<String>(surveyId);
+    map['machine_id'] = Variable<String>(machineId);
+    map['sim_slot'] = Variable<int>(simSlot);
+    map['phone_number'] = Variable<String>(phoneNumber);
+    map['message'] = Variable<String>(message);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    return map;
+  }
+
+  TemporaryPendingResponseTableCompanion toCompanion(bool nullToAbsent) {
+    return TemporaryPendingResponseTableCompanion(
+      surveyResponseId: Value(surveyResponseId),
+      surveyId: Value(surveyId),
+      machineId: Value(machineId),
+      simSlot: Value(simSlot),
+      phoneNumber: Value(phoneNumber),
+      message: Value(message),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory TemporaryPendingResponseTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TemporaryPendingResponseTableData(
+      surveyResponseId: serializer.fromJson<String>(json['surveyResponseId']),
+      surveyId: serializer.fromJson<String>(json['surveyId']),
+      machineId: serializer.fromJson<String>(json['machineId']),
+      simSlot: serializer.fromJson<int>(json['simSlot']),
+      phoneNumber: serializer.fromJson<String>(json['phoneNumber']),
+      message: serializer.fromJson<String>(json['message']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'surveyResponseId': serializer.toJson<String>(surveyResponseId),
+      'surveyId': serializer.toJson<String>(surveyId),
+      'machineId': serializer.toJson<String>(machineId),
+      'simSlot': serializer.toJson<int>(simSlot),
+      'phoneNumber': serializer.toJson<String>(phoneNumber),
+      'message': serializer.toJson<String>(message),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+    };
+  }
+
+  TemporaryPendingResponseTableData copyWith(
+          {String? surveyResponseId,
+          String? surveyId,
+          String? machineId,
+          int? simSlot,
+          String? phoneNumber,
+          String? message,
+          DateTime? createdAt,
+          DateTime? updatedAt,
+          Value<DateTime?> deletedAt = const Value.absent()}) =>
+      TemporaryPendingResponseTableData(
+        surveyResponseId: surveyResponseId ?? this.surveyResponseId,
+        surveyId: surveyId ?? this.surveyId,
+        machineId: machineId ?? this.machineId,
+        simSlot: simSlot ?? this.simSlot,
+        phoneNumber: phoneNumber ?? this.phoneNumber,
+        message: message ?? this.message,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TemporaryPendingResponseTableData(')
+          ..write('surveyResponseId: $surveyResponseId, ')
+          ..write('surveyId: $surveyId, ')
+          ..write('machineId: $machineId, ')
+          ..write('simSlot: $simSlot, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('message: $message, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(surveyResponseId, surveyId, machineId,
+      simSlot, phoneNumber, message, createdAt, updatedAt, deletedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TemporaryPendingResponseTableData &&
+          other.surveyResponseId == this.surveyResponseId &&
+          other.surveyId == this.surveyId &&
+          other.machineId == this.machineId &&
+          other.simSlot == this.simSlot &&
+          other.phoneNumber == this.phoneNumber &&
+          other.message == this.message &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class TemporaryPendingResponseTableCompanion
+    extends UpdateCompanion<TemporaryPendingResponseTableData> {
+  final Value<String> surveyResponseId;
+  final Value<String> surveyId;
+  final Value<String> machineId;
+  final Value<int> simSlot;
+  final Value<String> phoneNumber;
+  final Value<String> message;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<int> rowid;
+  const TemporaryPendingResponseTableCompanion({
+    this.surveyResponseId = const Value.absent(),
+    this.surveyId = const Value.absent(),
+    this.machineId = const Value.absent(),
+    this.simSlot = const Value.absent(),
+    this.phoneNumber = const Value.absent(),
+    this.message = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TemporaryPendingResponseTableCompanion.insert({
+    this.surveyResponseId = const Value.absent(),
+    required String surveyId,
+    required String machineId,
+    required int simSlot,
+    required String phoneNumber,
+    required String message,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : surveyId = Value(surveyId),
+        machineId = Value(machineId),
+        simSlot = Value(simSlot),
+        phoneNumber = Value(phoneNumber),
+        message = Value(message),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<TemporaryPendingResponseTableData> custom({
+    Expression<String>? surveyResponseId,
+    Expression<String>? surveyId,
+    Expression<String>? machineId,
+    Expression<int>? simSlot,
+    Expression<String>? phoneNumber,
+    Expression<String>? message,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (surveyResponseId != null) 'survey_response_id': surveyResponseId,
+      if (surveyId != null) 'survey_id': surveyId,
+      if (machineId != null) 'machine_id': machineId,
+      if (simSlot != null) 'sim_slot': simSlot,
+      if (phoneNumber != null) 'phone_number': phoneNumber,
+      if (message != null) 'message': message,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TemporaryPendingResponseTableCompanion copyWith(
+      {Value<String>? surveyResponseId,
+      Value<String>? surveyId,
+      Value<String>? machineId,
+      Value<int>? simSlot,
+      Value<String>? phoneNumber,
+      Value<String>? message,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<DateTime?>? deletedAt,
+      Value<int>? rowid}) {
+    return TemporaryPendingResponseTableCompanion(
+      surveyResponseId: surveyResponseId ?? this.surveyResponseId,
+      surveyId: surveyId ?? this.surveyId,
+      machineId: machineId ?? this.machineId,
+      simSlot: simSlot ?? this.simSlot,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      message: message ?? this.message,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (surveyResponseId.present) {
+      map['survey_response_id'] = Variable<String>(surveyResponseId.value);
+    }
+    if (surveyId.present) {
+      map['survey_id'] = Variable<String>(surveyId.value);
+    }
+    if (machineId.present) {
+      map['machine_id'] = Variable<String>(machineId.value);
+    }
+    if (simSlot.present) {
+      map['sim_slot'] = Variable<int>(simSlot.value);
+    }
+    if (phoneNumber.present) {
+      map['phone_number'] = Variable<String>(phoneNumber.value);
+    }
+    if (message.present) {
+      map['message'] = Variable<String>(message.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemporaryPendingResponseTableCompanion(')
+          ..write('surveyResponseId: $surveyResponseId, ')
+          ..write('surveyId: $surveyId, ')
+          ..write('machineId: $machineId, ')
+          ..write('simSlot: $simSlot, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('message: $message, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(e);
   late final $ApplicationConfigTableTable applicationConfigTable =
       $ApplicationConfigTableTable(this);
   late final $LogoTableTable logoTable = $LogoTableTable(this);
+  late final $TemporaryPendingResponseTableTable temporaryPendingResponseTable =
+      $TemporaryPendingResponseTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [applicationConfigTable, logoTable];
+      [applicationConfigTable, logoTable, temporaryPendingResponseTable];
 }

@@ -8,21 +8,26 @@ import '../../../utils/enum.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../../utils/method_channel.dart';
 import '../../model/helper/form/form_survey_response_create_model.dart';
+import '../../model/helper/form/form_temporary_pending_response_create.model.dart';
 import '../../model/send_sms_model.dart';
 import '../../model/survey_response/survey_response_by_machine_and_type_model.dart';
 import '../../model/survey_response/survey_response_create_response_model.dart';
 import '../../model/survey_response/survey_response_fail_model.dart';
 import '../../model/survey_response/survey_response_sent_model.dart';
+import '../local/temporary_pending_response_local_datasource.dart';
 import 'survey_remote_datasource.dart';
 
 class SurveyResponseRemoteDatasource {
   SurveyResponseRemoteDatasource({
     required this.client,
     required this.surveyRemoteDatasource,
+    required this.temporaryPendingResponseLocalDatasource,
   });
 
   final http.Client client;
   final SurveyRemoteDatasource surveyRemoteDatasource;
+  final TemporaryPendingResponseLocalDatasource
+      temporaryPendingResponseLocalDatasource;
 
   Future<SurveyResponseByMachineAndTypeModel?> getPendingResponse(
     String machineId,
@@ -127,6 +132,7 @@ class SurveyResponseRemoteDatasource {
     required int simSlot,
   }) async* {
     final methodChannelUtils = MethodChannelUtils();
+
     while (true) {
       try {
         final pendingResponse = await getPendingResponse(
@@ -134,30 +140,52 @@ class SurveyResponseRemoteDatasource {
           MachineResponsePlatformEnum.sms,
         );
 
-        log("While Response Pending: $pendingResponse");
-
-        if (pendingResponse != null) {
-          // Send SMS to user
-          final model = SendSMSModel(
-            phoneNumber: pendingResponse.survey.number,
-            message: pendingResponse.value,
-            simSlot: simSlot,
+        if (pendingResponse == null) {
+          yield "Pending Response is not found, wait for 10 seconds to check again";
+        } else {
+          // Check if pending response is exist in temporary pending response
+          final tempPendingResponse =
+              await temporaryPendingResponseLocalDatasource
+                  .getBySurveyResponseId(
             surveyResponseId: pendingResponse.id,
           );
-          final msg = await methodChannelUtils.sendSMS(model);
 
-          if (msg) {
-            yield "Process Send SMS to User, Please waiting...";
+          // If exist, skip this pending response
+          log("tempPendingResponse: $tempPendingResponse");
+          if (tempPendingResponse != null) {
+            log(" Pending Response is exist in temporary pending response, skip this pending response");
+            yield "Pending Response is exist in temporary pending response, skip this pending response";
           } else {
-            yield "Failed Process Send SMS to User, Please try again...";
+            log("Pending Response is not exist in temporary pending response, create temporary pending response and send message to ${pendingResponse.survey.number}");
+            // create temporary pending response to local database for prevent duplicate
+            final form = FormTemporaryPendingResponseCreateModel(
+              surveyId: pendingResponse.survey.id,
+              machineId: machineId,
+              simSlot: simSlot,
+              phoneNumber: pendingResponse.survey.number,
+              message: pendingResponse.value,
+            );
+
+            await temporaryPendingResponseLocalDatasource.create(form);
+            // Send SMS to user
+            final model = SendSMSModel(
+              phoneNumber: pendingResponse.survey.number,
+              message: pendingResponse.value,
+              simSlot: simSlot,
+              surveyResponseId: pendingResponse.id,
+            );
+            final msg = await methodChannelUtils.sendSMS(model);
+
+            if (!msg) {
+              yield "Failed to send message to ${pendingResponse.survey.number}, wait for 10 seconds to check again";
+            } else {
+              yield "Process to send message to ${pendingResponse.survey.number}, wait for 10 seconds to check again";
+            }
           }
-        } else {
-          log("Pending Response is null or empty, wait for 10 seconds to check again");
-          yield null;
         }
       } catch (e) {
         log("Error When Listen Pending Response: ${e.toString()}");
-        yield null;
+        yield "Error When Listen Pending Response: ${e.toString()}";
       }
 
       await Future.delayed(const Duration(seconds: 10));
