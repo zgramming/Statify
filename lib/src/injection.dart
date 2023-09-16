@@ -238,6 +238,7 @@ final _incomingMessageRemoteDatasource = Provider(
   (ref) => IncomingMessageRemoteDatasource(
     client: ref.watch(_httpClient),
     surveyRemoteDatasource: ref.watch(_surveyRemoteDatasource),
+    surveyResponseRemoteDatasource: ref.watch(_surveyResponseRemoteDatasource),
   ),
 );
 final _surveyResponseRemoteDatasource = Provider(

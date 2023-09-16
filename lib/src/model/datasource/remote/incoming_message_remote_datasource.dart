@@ -1,17 +1,23 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/enum.dart';
+import '../../model/helper/form/form_survey_response_create_model.dart';
 import 'survey_remote_datasource.dart';
+import 'survey_response_remote_datasource.dart';
 
 class IncomingMessageRemoteDatasource {
   final http.Client client;
   final SurveyRemoteDatasource surveyRemoteDatasource;
+  final SurveyResponseRemoteDatasource surveyResponseRemoteDatasource;
 
   const IncomingMessageRemoteDatasource({
     required this.client,
     required this.surveyRemoteDatasource,
+    required this.surveyResponseRemoteDatasource,
   });
 
   Future<(String, String)> handlingIncomingMessage({
@@ -53,13 +59,23 @@ class IncomingMessageRemoteDatasource {
 
           return ("SNE_US", "Survey Not Empty and Unlock Survey");
         } else {
-          // We should create new survey
-          await surveyRemoteDatasource.create(
-            machineId: machineId,
-            number: number,
+          // We should create new survey response
+          final form = FormSurveyResponseCreateModel(
+            surveyId: survey.id,
+            key: message,
+            platform: MachineResponsePlatformEnum.sms.valueString,
+          );
+          final surveyResponse = await surveyResponseRemoteDatasource.create(
+            form,
           );
 
-          return ("SNE_CNS", "Survey Not Empty and Create New Survey");
+          log("SURVEY NOT EMPTY AND CREATE NEW SURVEY RESPONSE: ${surveyResponse.toJson()}");
+
+          // return ("SNE_CNS", "Survey Not Empty and Create Survey Response New");
+          return (
+            "SNE_CNSR",
+            "Survey Not Empty and Create New Survey Response"
+          );
         }
       }
     } catch (e) {

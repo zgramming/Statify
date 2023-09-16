@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../injection.dart';
 import '../../../model/model/incoming_call_model.dart';
 import '../../../model/model/incoming_sms/incoming_sms.model.dart';
-import '../../../model/model/listen_ondelivered_sms.model.dart';
 import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
 import '../../../model/model/temporary_pending_response/temporary_pending_response.model.dart';

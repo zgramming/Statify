@@ -2,9 +2,9 @@
     package="wabot.utils.com.wabot_utils">
 
     <application
+        android:label="Hitech Bot"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:label="Statify"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"

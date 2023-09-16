@@ -63,13 +63,13 @@ class SurveyResponseRemoteDatasource {
   }
 
   Future<SurveyResponseCreateResponseModel> create(
-      FormSurveyResponseCreateModel form) async {
+    FormSurveyResponseCreateModel form,
+  ) async {
     final uri = Uri.parse("$kBaseApiUrl/surveys/${form.surveyId}/responses");
     final response = await client.post(
       uri,
       body: {
         'key': form.key,
-        'type': form.type,
         'platform': form.platform,
       },
     );
