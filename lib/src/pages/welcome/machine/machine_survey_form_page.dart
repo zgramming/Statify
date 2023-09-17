@@ -67,7 +67,7 @@ class _MachineSurveyFormPageState extends ConsumerState<MachineSurveyFormPage> {
         data: (data) {
           showSnackbar(
             context: context,
-            message: "Berhasil membuat survey dengan nomor ${data?.number}",
+            message: "Berhasil membuat survey",
             backgroundColor: Colors.green,
           );
         },

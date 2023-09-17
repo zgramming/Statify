@@ -59,11 +59,10 @@ class SurveyRemoteDatasource {
 
     final body = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
-
     if (response.statusCode == 200) {
       final data = decodedData['data'];
-
-      final result = SurveyUnlockResponseModel.fromJson(data);
+      final result =
+          SurveyUnlockResponseModel.fromJson(Map<String, dynamic>.from(data));
       return result;
     } else {
       final message = decodedData.containsKey('message')
