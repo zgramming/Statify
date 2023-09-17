@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -74,18 +76,10 @@ final isEmptyAvailableSIM = Provider((ref) {
 final getSIM1orSIM2Provider =
     Provider.family<String, String>((ref, phoneNumber) {
   final availableSIM = ref.watch(getAvailableSIM);
-  final isSIM1 = availableSIM.firstWhereOrNull(
-        (element) => element.value == phoneNumber,
-      ) !=
-      null;
-  final isSIM2 = availableSIM.firstWhereOrNull(
-        (element) => element.value == phoneNumber,
-      ) !=
-      null;
-
-  if (isSIM1) return "SIM 1";
-  if (isSIM2) return "SIM 2";
-  return "";
+  final choosenNumber = availableSIM.firstWhereOrNull(
+    (element) => element.value == phoneNumber,
+  );
+  return choosenNumber?.label ?? "";
 });
 final getAvailableSIM = Provider((ref) {
   final user = ref.watch(userNotifier.select((value) => value.user));
