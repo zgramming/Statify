@@ -65,11 +65,13 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
   Future<void> create({
     required String number,
     required String machineId,
+    required String? key,
   }) async {
     state = state.copyWith(onCreate: const AsyncLoading());
     final result = await repository.create(
       number: number,
       machineId: machineId,
+      key: key,
     );
 
     result.fold(

@@ -23,9 +23,6 @@ SurveyUnlockResponseModel _$SurveyUnlockResponseModelFromJson(
       updatedAt: DateTime.parse(json['updated_at'] as String),
       machine:
           SurveyUnlockMachine.fromJson(json['machine'] as Map<String, dynamic>),
-      responses: (json['responses'] as List<dynamic>)
-          .map((e) => SurveyUnlockRsp.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$SurveyUnlockResponseModelToJson(
@@ -42,7 +39,6 @@ Map<String, dynamic> _$SurveyUnlockResponseModelToJson(
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'machine': instance.machine,
-      'responses': instance.responses,
     };
 
 SurveyUnlockMachine _$SurveyUnlockMachineFromJson(Map<String, dynamic> json) =>

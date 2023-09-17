@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -95,7 +96,6 @@ class SurveyMachine extends Equatable {
   final int replied;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<SurveyMachineResponse> responses;
 
   const SurveyMachine({
     required this.id,
@@ -109,7 +109,6 @@ class SurveyMachine extends Equatable {
     required this.replied,
     required this.createdAt,
     required this.updatedAt,
-    required this.responses,
   });
 
   factory SurveyMachine.fromJson(Map<String, dynamic> json) =>
@@ -132,42 +131,11 @@ class SurveyMachine extends Equatable {
       replied,
       createdAt,
       updatedAt,
-      responses,
     ];
   }
 
   @override
   bool get stringify => true;
-
-  SurveyMachine copyWith({
-    String? id,
-    String? userId,
-    String? name,
-    String? number,
-    String? serialNumber,
-    String? license,
-    MachineActionEnum? action,
-    int? send,
-    int? replied,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    List<SurveyMachineResponse>? responses,
-  }) {
-    return SurveyMachine(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      name: name ?? this.name,
-      number: number ?? this.number,
-      serialNumber: serialNumber ?? this.serialNumber,
-      license: license ?? this.license,
-      action: action ?? this.action,
-      send: send ?? this.send,
-      replied: replied ?? this.replied,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      responses: responses ?? this.responses,
-    );
-  }
 }
 
 @JsonSerializable(

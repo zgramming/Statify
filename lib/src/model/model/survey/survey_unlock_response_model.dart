@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -18,7 +19,6 @@ class SurveyUnlockResponseModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final SurveyUnlockMachine machine;
-  final List<SurveyUnlockRsp> responses;
 
   const SurveyUnlockResponseModel({
     required this.id,
@@ -32,7 +32,6 @@ class SurveyUnlockResponseModel extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.machine,
-    required this.responses,
   });
 
   factory SurveyUnlockResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -55,7 +54,6 @@ class SurveyUnlockResponseModel extends Equatable {
       createdAt,
       updatedAt,
       machine,
-      responses,
     ];
   }
 

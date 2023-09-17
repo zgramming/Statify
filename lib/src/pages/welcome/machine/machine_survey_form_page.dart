@@ -40,6 +40,7 @@ class _MachineSurveyFormPageState extends ConsumerState<MachineSurveyFormPage> {
       await notifier.create(
         machineId: machineId,
         number: _numberController.text,
+        key: null,
       );
     } catch (e) {
       log(e.toString());

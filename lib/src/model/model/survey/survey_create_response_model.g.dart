@@ -47,9 +47,6 @@ SurveyMachine _$SurveyMachineFromJson(Map<String, dynamic> json) =>
       replied: json['replied'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      responses: (json['responses'] as List<dynamic>)
-          .map((e) => SurveyMachineResponse.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$SurveyMachineToJson(SurveyMachine instance) =>
@@ -65,7 +62,6 @@ Map<String, dynamic> _$SurveyMachineToJson(SurveyMachine instance) =>
       'replied': instance.replied,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
-      'responses': instance.responses,
     };
 
 const _$MachineActionEnumEnumMap = {

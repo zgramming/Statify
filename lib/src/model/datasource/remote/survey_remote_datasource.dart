@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
+import '../../../utils/enum.dart';
 import '../../model/survey/survey_by_machine_and_number_model.dart';
 import '../../model/survey/survey_create_response_model.dart';
 import '../../model/survey/survey_unlock_response_model.dart';
@@ -75,12 +76,15 @@ class SurveyRemoteDatasource {
   Future<SurveyCreateResponseModel> create({
     required String number,
     required String machineId,
+    required String? key,
   }) async {
     final uri = Uri.parse("$kBaseApiUrl/machines/$machineId/surveys");
     final response = await client.post(
       uri,
       body: {
         'number': number,
+        'key': key,
+        'platform': MachineResponsePlatformEnum.sms.valueString,
       },
     );
 

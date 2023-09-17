@@ -12,7 +12,8 @@ class SurveyRepository {
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, SurveyByMachineAndNumberModel?>> getByMachineAndNumber({
+  Future<Either<Failure, SurveyByMachineAndNumberModel?>>
+      getByMachineAndNumber({
     required String machineId,
     required String number,
   }) async {
@@ -30,11 +31,13 @@ class SurveyRepository {
   Future<Either<Failure, SurveyCreateResponseModel>> create({
     required String number,
     required String machineId,
+    required String? key,
   }) async {
     try {
       final result = await remoteDatasource.create(
         number: number,
         machineId: machineId,
+        key: key,
       );
       return Right(result);
     } catch (e) {

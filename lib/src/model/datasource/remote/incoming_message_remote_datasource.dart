@@ -34,18 +34,13 @@ class IncomingMessageRemoteDatasource {
 
       final isSurveyEmpty = survey == null;
       if (isSurveyEmpty) {
-        final isMessageOK = message.toLowerCase() == "ok";
-        if (!isMessageOK) {
-          return ("SE_NOK", "Survey Empty and Message is not OK, do nothing");
-        } else {
-          // We should create new survey
-          await surveyRemoteDatasource.create(
-            machineId: machineId,
-            number: number,
-          );
-
-          return ("SE_CNS", "Survey Empty and Create New Survey");
-        }
+        // We should create new survey
+        await surveyRemoteDatasource.create(
+          machineId: machineId,
+          number: number,
+          key: message,
+        );
+        return ("SE_CNS", "Survey Empty and Create New Survey");
       } else {
         final isLocked = survey.locked;
 
@@ -65,6 +60,7 @@ class IncomingMessageRemoteDatasource {
             key: message,
             platform: MachineResponsePlatformEnum.sms.valueString,
           );
+
           final surveyResponse = await surveyResponseRemoteDatasource.create(
             form,
           );
