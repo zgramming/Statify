@@ -182,15 +182,15 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
       (previous, next) {
         next.whenData((value) {
           if (value == null) return;
+          final currentSim = availableSim
+              .firstWhereOrNull((element) => element.value == value.number);
+
           _nameController.text = value.name;
           _licenseController.text = value.license;
           _serialNumberController.text = value.serialNumber;
+          selectedSim = currentSim;
           selectedAction =
               MachineActionEnum.values.byName(value.action.valueString);
-
-          final currentSim = availableSim
-              .firstWhereOrNull((element) => element.value == value.number);
-          selectedSim = currentSim;
 
           setState(() {});
         });

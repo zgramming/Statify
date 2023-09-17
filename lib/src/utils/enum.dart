@@ -18,9 +18,11 @@ enum MachineActionEnum {
   sms,
   whatsapp,
   @JsonValue('whatsapp_priority')
-  whatsappPriority,
+  // ignore: constant_identifier_names
+  whatsapp_priority,
   @JsonValue('whatsapp_sms')
-  whatsappSMS
+  // ignore: constant_identifier_names
+  whatsapp_sms
 }
 
 enum MachineResponseTypeEnum {
@@ -87,9 +89,9 @@ extension MachineActionEnumEXT on MachineActionEnum {
         return 'sms';
       case MachineActionEnum.whatsapp:
         return 'whatsapp';
-      case MachineActionEnum.whatsappPriority:
+      case MachineActionEnum.whatsapp_priority:
         return 'whatsapp_priority';
-      case MachineActionEnum.whatsappSMS:
+      case MachineActionEnum.whatsapp_sms:
         return 'whatsapp_sms';
     }
   }
@@ -100,9 +102,9 @@ extension MachineActionEnumEXT on MachineActionEnum {
         return 'SMS';
       case MachineActionEnum.whatsapp:
         return 'Whatsapp';
-      case MachineActionEnum.whatsappPriority:
+      case MachineActionEnum.whatsapp_priority:
         return 'Whatsapp Priority';
-      case MachineActionEnum.whatsappSMS:
+      case MachineActionEnum.whatsapp_sms:
         return 'Whatsapp + SMS';
     }
   }

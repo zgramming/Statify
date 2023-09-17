@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -61,13 +59,10 @@ class IncomingMessageRemoteDatasource {
             platform: MachineResponsePlatformEnum.sms.valueString,
           );
 
-          final surveyResponse = await surveyResponseRemoteDatasource.create(
+          await surveyResponseRemoteDatasource.create(
             form,
           );
 
-          log("SURVEY NOT EMPTY AND CREATE NEW SURVEY RESPONSE: ${surveyResponse.toJson()}");
-
-          // return ("SNE_CNS", "Survey Not Empty and Create Survey Response New");
           return (
             "SNE_CNSR",
             "Survey Not Empty and Create New Survey Response"

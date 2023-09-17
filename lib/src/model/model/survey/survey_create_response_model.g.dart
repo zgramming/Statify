@@ -67,8 +67,8 @@ Map<String, dynamic> _$SurveyMachineToJson(SurveyMachine instance) =>
 const _$MachineActionEnumEnumMap = {
   MachineActionEnum.sms: 'sms',
   MachineActionEnum.whatsapp: 'whatsapp',
-  MachineActionEnum.whatsappPriority: 'whatsapp_priority',
-  MachineActionEnum.whatsappSMS: 'whatsapp_sms',
+  MachineActionEnum.whatsapp_priority: 'whatsapp_priority',
+  MachineActionEnum.whatsapp_sms: 'whatsapp_sms',
 };
 
 SurveyMachineResponse _$SurveyMachineResponseFromJson(

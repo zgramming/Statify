@@ -71,6 +71,22 @@ final isEmptyAvailableSIM = Provider((ref) {
   final items = ref.watch(getAvailableSIM);
   return items.isEmpty;
 });
+final getSIM1orSIM2Provider =
+    Provider.family<String, String>((ref, phoneNumber) {
+  final availableSIM = ref.watch(getAvailableSIM);
+  final isSIM1 = availableSIM.firstWhereOrNull(
+        (element) => element.value == phoneNumber,
+      ) !=
+      null;
+  final isSIM2 = availableSIM.firstWhereOrNull(
+        (element) => element.value == phoneNumber,
+      ) !=
+      null;
+
+  if (isSIM1) return "SIM 1";
+  if (isSIM2) return "SIM 2";
+  return "";
+});
 final getAvailableSIM = Provider((ref) {
   final user = ref.watch(userNotifier.select((value) => value.user));
   final isExistsSIM1 = user?.sim1 != null && (user?.sim1?.isNotEmpty ?? false);
