@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/fonts.dart';
+
 class RowBody extends StatelessWidget {
   const RowBody({
     Key? key,
@@ -8,6 +10,8 @@ class RowBody extends StatelessWidget {
     this.titleFlex,
     this.contentFlex,
     this.spacing = 8.0,
+    this.titleStyle,
+    this.contentStyle,
   }) : super(key: key);
 
   final String title;
@@ -15,14 +19,33 @@ class RowBody extends StatelessWidget {
   final int? titleFlex;
   final int? contentFlex;
   final double spacing;
+  final TextStyle? titleStyle;
+
+  final TextStyle? contentStyle;
   @override
   Widget build(BuildContext context) {
+    final defaultStyle = bodyFont.copyWith(
+      fontSize: 12.0,
+      color: Colors.black,
+    );
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(flex: titleFlex ?? 1, child: Text(title)),
+        Expanded(
+          flex: titleFlex ?? 1,
+          child: Text(
+            title,
+            style: titleStyle ?? defaultStyle,
+          ),
+        ),
         SizedBox(width: spacing),
-        Expanded(flex: contentFlex ?? 2, child: Text(content)),
+        Expanded(
+          flex: contentFlex ?? 2,
+          child: Text(
+            content,
+            style: contentStyle ?? defaultStyle,
+          ),
+        ),
       ],
     );
   }

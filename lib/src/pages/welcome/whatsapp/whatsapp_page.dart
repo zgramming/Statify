@@ -8,6 +8,9 @@ import '../../../router.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
+import '../../../utils/styles.dart';
+import '../../../view_model/custom_provider/custom_provider.dart';
+import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/dialog_view_qrcode.dart';
 import '../../widgets/row_body.dart';
@@ -152,99 +155,118 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Card(
-          margin: const EdgeInsets.only(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 8.0,
+    final machine = ref.watch(getMachineByIdProvider(widget.item.machineId));
+
+    return Card(
+      margin: const EdgeInsets.only(),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            RowBody(
+              title: "Machine",
+              content: machine?.name ?? "",
+              titleFlex: 1,
+              contentFlex: 1,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            const SizedBox(height: 8.0),
+            RowBody(
+              title: "WhatsApp Number",
+              content: widget.item.number,
+              titleFlex: 1,
+              contentFlex: 1,
+            ),
+            const SizedBox(height: 16.0),
+            Row(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "WhatsApp ${widget.index + 1}",
-                            style: headerFont.copyWith(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w500,
-                            ),
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleIndexNumber(radius: 30.0, index: widget.index),
+                      const SizedBox(height: 8.0),
+                      ElevatedButton(
+                        onPressed: () => onClickQRCode(widget.item.qrCode!),
+                        style: elevatedButtonStyle(
+                          padding: const EdgeInsets.all(
+                            8.0,
                           ),
-                          const SizedBox(height: 8.0),
-                          const CircleAvatar(
-                            radius: 24.0,
-                            backgroundColor: Colors.green,
-                            child: Icon(
-                              Icons.check,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            widget.item.number,
-                            textAlign: TextAlign.center,
-                            style: bodyFont.copyWith(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ],
+                        ),
+                        child: const Text("QR CODE"),
                       ),
-                    ),
-                    const SizedBox(width: 16.0),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          RowBody(
-                            title: "Status",
-                            content: widget.item.status.valueStringReadable,
-                          ),
-                          const SizedBox(height: 8.0),
-                        ],
+                      Text(
+                        widget.item.status.valueStringReadable,
+                        style: bodyFont.copyWith(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 16.0),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          top: 10,
-          right: 10,
-          child: PopupMenuButton(
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  value: "qr_code",
-                  child: Text("QR Code"),
-                ),
-                PopupMenuItem(
-                  value: "delete",
-                  child: Text(
-                    "Delete WhatsApp Machine",
-                    style: bodyFont.copyWith(
-                      color: Colors.red,
-                    ),
+                    ],
                   ),
                 ),
-              ];
-            },
-            onSelected: (value) => onSelected(value, widget.item),
-          ),
+                const Expanded(
+                  flex: 8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RowBody(
+                        title: "Total WA Sent",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Replied",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Finished",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Voted",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Choose 1",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Choose 2",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Choose 3",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

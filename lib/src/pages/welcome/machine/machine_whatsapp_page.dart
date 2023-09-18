@@ -11,6 +11,7 @@ import '../../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../../../router.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/functions.dart';
+import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/dialog_view_qrcode.dart';
 

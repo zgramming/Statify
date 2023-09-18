@@ -9,6 +9,7 @@ import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
+import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/form_row_body.dart';
 import 'widget/machine_tabbar_configuration.dart';

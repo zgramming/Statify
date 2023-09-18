@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
 import '../../../model/model/incoming_call_model.dart';
@@ -11,9 +12,13 @@ import '../../../model/model/incoming_sms/incoming_sms.model.dart';
 import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
 import '../../../model/model/temporary_pending_response/temporary_pending_response.model.dart';
+import '../../../router.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/fonts.dart';
+import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/log_listen_pending_response.notifier.dart';
+import '../../../view_model/custom_provider/custom_provider.dart';
+import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
@@ -267,13 +272,28 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
         .listenPendingResponse(machineId: widget.item.id, simSlot: simSlot)
         .listen((event) {
       log("Listen Pending Response: $event");
-      if (event == null) {
-        return;
-      }
+      if (event == null) return;
 
       // Add Log to Log Listen Pending Response
       logNotifier.addLog(event);
     });
+  }
+
+  Future<void> onTapMachine() async {
+    context.pushNamed(
+      routeMachineForm,
+      pathParameters: {
+        "id": widget.item.id,
+      },
+    );
+  }
+
+  Future<void> onTapExport() async {
+    showSnackbar(
+      context: context,
+      message: "Coming Soon",
+      backgroundColor: Colors.orange,
+    );
   }
 
   @override
@@ -294,56 +314,127 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
 
   @override
   Widget build(BuildContext context) {
+    final item = widget.item;
+    final sim1ORsim2 = ref.watch(getSIM1orSIM2Provider(item.number));
+    const radius = 30.0;
     return Card(
       margin: const EdgeInsets.only(),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 16.0,
-          horizontal: 8.0,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-              child: Text(
-                "${widget.index + 1}. ${widget.item.number}",
-                style: headerFont.copyWith(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            RowBody(
+              title: "Machine",
+              content: item.name,
+              titleFlex: 1,
+              contentFlex: 1,
             ),
-            const SizedBox(width: 16.0),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  RowBody(
-                    title: "SMS Sent",
-                    content: "${widget.item.send}",
-                    titleFlex: 2,
-                    contentFlex: 1,
+            const SizedBox(height: 8.0),
+            RowBody(
+              title: "Machine Phone Number",
+              content: "$sim1ORsim2 (${item.number})",
+              titleFlex: 1,
+              contentFlex: 1,
+            ),
+            const SizedBox(height: 16.0),
+            Row(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleIndexNumber(radius: radius, index: widget.index),
+                      const SizedBox(height: 8.0),
+                      InkWell(
+                        onTap: onTapExport,
+                        child: CircleAvatar(
+                          radius: radius,
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.upload_rounded,
+                                size: radius,
+                              ),
+                              FittedBox(
+                                child: Text(
+                                  "API Export",
+                                  style: bodyFont.copyWith(
+                                    fontSize: 8.0,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                  const SizedBox(height: 8.0),
-                  RowBody(
-                    title: "Total Reply",
-                    content: "${widget.item.replied}",
-                    titleFlex: 2,
-                    contentFlex: 1,
+                ),
+                const Expanded(
+                  flex: 8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RowBody(
+                        title: "Total SMS Sent",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Replied",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Finished",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Voted",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Choose 1",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Choose 2",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Total Choose 3",
+                        content: '-',
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8.0),
-                  const RowBody(
-                    title: "Total Finished",
-                    content: "0",
-                    titleFlex: 2,
-                    contentFlex: 1,
-                  ),
-                  const SizedBox(height: 8.0),
-                ],
-              ),
-            )
+                )
+              ],
+            ),
           ],
         ),
       ),

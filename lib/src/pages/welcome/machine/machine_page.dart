@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,24 +6,27 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../model/model/machine/machine_model.dart';
 import '../../../router.dart';
-import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
+import '../../../view_model/custom_provider/custom_provider.dart';
+import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
 
 class _MachinePageItem extends ConsumerStatefulWidget {
   const _MachinePageItem({
     required this.item,
+    required this.index,
   });
   final MachineModel item;
+  final int index;
 
   @override
   ConsumerState<_MachinePageItem> createState() => _MachinePageItemState();
 }
 
 class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
-  Future<void> onEditButton(MachineModel item) async {
+  Future<void> onTapMachine(MachineModel item) async {
     context.pushNamed(
       routeMachineForm,
       pathParameters: {
@@ -31,113 +35,65 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
     );
   }
 
-  Future<void> onSelected(
-    String value, {
-    required MachineModel item,
-  }) async {
-    final notifier = ref.read(machineNotifier.notifier);
-    switch (value) {
-      case "edit":
-        context.pushNamed(
-          routeMachineForm,
-          pathParameters: {
-            "id": item.id,
-          },
-        );
-        break;
-      case "delete":
-        await notifier.delete(machineId: item.id);
-        ref.invalidate(machineNotifier);
-        break;
-
-      default:
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
+    final textStyle = bodyFont.copyWith(
+      color: Colors.grey[700],
+      fontSize: 10.0,
+    );
     final sim1ORsim2 = ref.watch(getSIM1orSIM2Provider(item.number));
-    return Stack(
-      children: [
-        Card(
-          margin: const EdgeInsets.all(8),
-          child: ListTile(
-            onTap: () => onEditButton(item),
-            leading: const Column(
-              children: [
-                CircleAvatar(child: Icon(Icons.star)),
-                SizedBox(height: 10.0),
-              ],
-            ),
-            title: Text(
-              item.name,
-              style: headerFont.copyWith(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 10.0),
-                RowBody(
-                  title: "No Serial Machine",
-                  content: item.serialNumber,
-                  titleFlex: 6,
-                  contentFlex: 6,
-                ),
-                const SizedBox(height: 4.0),
-                RowBody(
-                  title: "Activation License",
-                  content: item.license,
-                  titleFlex: 6,
-                  contentFlex: 6,
-                ),
-                const SizedBox(height: 4.0),
-                RowBody(
-                  title: "Action",
-                  content: item.action.valueStringReadable,
-                  titleFlex: 6,
-                  contentFlex: 6,
-                ),
-                const SizedBox(height: 4.0),
-                RowBody(
-                  title: "Machine Phone Number",
-                  content: "$sim1ORsim2 (${item.number})",
-                  titleFlex: 6,
-                  contentFlex: 6,
-                ),
-                const SizedBox(height: 10.0),
-              ],
-            ),
+    const radius = 30.0;
+    return Card(
+      margin: const EdgeInsets.only(),
+      child: ListTile(
+        onTap: () => onTapMachine(item),
+        contentPadding: const EdgeInsets.all(16.0),
+        leading: CircleIndexNumber(
+          radius: radius,
+          index: widget.index,
+        ),
+        title: Text(
+          item.name,
+          style: headerFont.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0,
           ),
         ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: PopupMenuButton(
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  value: "edit",
-                  child: Text("Edit"),
-                ),
-                PopupMenuItem(
-                  value: "delete",
-                  child: Text(
-                    "Delete Machine",
-                    style: bodyFont.copyWith(
-                      color: Colors.red,
-                    ),
-                  ),
-                ),
-              ];
-            },
-            onSelected: (value) => onSelected(value, item: item),
-          ),
-        )
-      ],
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 8.0),
+            RowBody(
+              title: "No Serial Machine",
+              content: item.serialNumber,
+              titleFlex: 7,
+              contentFlex: 5,
+              contentStyle: textStyle,
+              titleStyle: textStyle,
+            ),
+            const SizedBox(height: 4.0),
+            RowBody(
+              title: "Activation License",
+              content: item.license,
+              titleFlex: 7,
+              contentFlex: 5,
+              contentStyle: textStyle,
+              titleStyle: textStyle,
+            ),
+            const SizedBox(height: 4.0),
+            RowBody(
+              title: "Machine Phone Number",
+              content: "$sim1ORsim2 (${item.number})",
+              titleFlex: 7,
+              contentFlex: 5,
+              contentStyle: textStyle,
+              titleStyle: textStyle,
+            ),
+            const SizedBox(height: 4.0),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -194,7 +150,10 @@ class _MachinePageState extends ConsumerState<MachinePage> {
                       itemCount: items.length,
                       itemBuilder: (context, index) {
                         final item = items[index];
-                        return _MachinePageItem(item: item);
+                        return _MachinePageItem(
+                          item: item,
+                          index: index + 1,
+                        );
                       },
                     );
                   },
