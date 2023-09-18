@@ -7,7 +7,7 @@ final listenPendingResponseNotifier =
   final simSlot = ref.watch(userChooseSIMMachineProvider(machineId));
 
   final stream = ref
-      .watch(surveyResponseNotifier.notifier)
+      .watch(surveyRespondenResponseNotifier.notifier)
       .listenPendingResponse(machineId: machineId, simSlot: simSlot);
 
   return stream;

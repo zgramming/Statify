@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'survey_response_sent_model.dart';
+part of 'survey_responden_response_sent_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SurveyResponseSentModel _$SurveyResponseSentModelFromJson(
+SurveyRespondenResponseSentModel _$SurveyRespondenResponseSentModelFromJson(
         Map<String, dynamic> json) =>
-    SurveyResponseSentModel(
+    SurveyRespondenResponseSentModel(
       id: json['id'] as String,
       surveyId: json['survey_id'] as String,
       platform: json['platform'] as String,
@@ -22,8 +22,8 @@ SurveyResponseSentModel _$SurveyResponseSentModelFromJson(
           json['survey'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$SurveyResponseSentModelToJson(
-        SurveyResponseSentModel instance) =>
+Map<String, dynamic> _$SurveyRespondenResponseSentModelToJson(
+        SurveyRespondenResponseSentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'survey_id': instance.surveyId,

@@ -1,24 +1,23 @@
 import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
-import '../datasource/remote/survey_remote_datasource.dart';
-import '../model/survey/survey_by_machine_and_number_model.dart';
-import '../model/survey/survey_create_response_model.dart';
-import '../model/survey/survey_unlock_response_model.dart';
+import '../datasource/remote/survey_responden_remote_datasource.dart';
+import '../model/survey_responden/survey_responden_by_number.model.dart';
+import '../model/survey_responden/survey_responden_create.model.dart';
+import '../model/survey_responden/survey_responden_unlock.model.dart';
 
 class SurveyRepository {
-  final SurveyRemoteDatasource remoteDatasource;
+  final SurveyRespondenRemoteDatasource remoteDatasource;
   const SurveyRepository({
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, SurveyByMachineAndNumberModel?>>
-      getByMachineAndNumber({
+  Future<Either<Failure, SurveyRespondenByNumberModel?>> getByNumber({
     required String machineId,
     required String number,
   }) async {
     try {
-      final result = await remoteDatasource.getByMachineAndNumber(
+      final result = await remoteDatasource.getByNumber(
         machineId: machineId,
         number: number,
       );
@@ -28,7 +27,7 @@ class SurveyRepository {
     }
   }
 
-  Future<Either<Failure, SurveyCreateResponseModel>> create({
+  Future<Either<Failure, SurveyRespondenCreateModel>> create({
     required String number,
     required String machineId,
     required String? key,
@@ -45,7 +44,7 @@ class SurveyRepository {
     }
   }
 
-  Future<Either<Failure, SurveyUnlockResponseModel>> unlock({
+  Future<Either<Failure, SurveyRespondenUnlockModel>> unlock({
     required String surveyId,
     required String key,
     required String platform,

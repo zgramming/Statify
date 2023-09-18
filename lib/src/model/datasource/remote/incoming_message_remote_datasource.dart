@@ -4,18 +4,19 @@ import 'package:http/http.dart' as http;
 
 import '../../../utils/enum.dart';
 import '../../model/helper/form/form_survey_response_create_model.dart';
-import 'survey_remote_datasource.dart';
-import 'survey_response_remote_datasource.dart';
+import 'survey_responden_remote_datasource.dart';
+import 'survey_responden_response_remote_datasource.dart';
 
 class IncomingMessageRemoteDatasource {
   final http.Client client;
-  final SurveyRemoteDatasource surveyRemoteDatasource;
-  final SurveyResponseRemoteDatasource surveyResponseRemoteDatasource;
+  final SurveyRespondenRemoteDatasource surveyRespondenRemoteDatasource;
+  final SurveyRespondenResponseRemoteDatasource
+      surveyRespondenResponseRemoteDatasource;
 
   const IncomingMessageRemoteDatasource({
     required this.client,
-    required this.surveyRemoteDatasource,
-    required this.surveyResponseRemoteDatasource,
+    required this.surveyRespondenRemoteDatasource,
+    required this.surveyRespondenResponseRemoteDatasource,
   });
 
   Future<(String, String)> handlingIncomingMessage({
@@ -25,7 +26,7 @@ class IncomingMessageRemoteDatasource {
   }) async {
     try {
       // Find number survey is exists or not
-      final survey = await surveyRemoteDatasource.getByMachineAndNumber(
+      final survey = await surveyRespondenRemoteDatasource.getByNumber(
         machineId: machineId,
         number: number,
       );
@@ -33,7 +34,7 @@ class IncomingMessageRemoteDatasource {
       final isSurveyEmpty = survey == null;
       if (isSurveyEmpty) {
         // We should create new survey
-        await surveyRemoteDatasource.create(
+        await surveyRespondenRemoteDatasource.create(
           machineId: machineId,
           number: number,
           key: message,
@@ -44,7 +45,7 @@ class IncomingMessageRemoteDatasource {
 
         if (isLocked) {
           // We should unlock the survey
-          await surveyRemoteDatasource.unlock(
+          await surveyRespondenRemoteDatasource.unlock(
             surveyId: survey.id,
             key: message,
             platform: MachineResponsePlatformEnum.sms.valueString,
@@ -59,7 +60,7 @@ class IncomingMessageRemoteDatasource {
             platform: MachineResponsePlatformEnum.sms.valueString,
           );
 
-          await surveyResponseRemoteDatasource.create(
+          await surveyRespondenResponseRemoteDatasource.create(
             form,
           );
 

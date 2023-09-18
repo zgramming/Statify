@@ -35,7 +35,7 @@ class _MachineSurveyFormPageState extends ConsumerState<MachineSurveyFormPage> {
         return;
       }
 
-      final notifier = ref.read(surveyNotifier.notifier);
+      final notifier = ref.read(surveyRespondenNotifier.notifier);
       final machineId = widget.idMachine;
       await notifier.create(
         machineId: machineId,
@@ -61,7 +61,7 @@ class _MachineSurveyFormPageState extends ConsumerState<MachineSurveyFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(surveyNotifier.select((value) => value.onCreate),
+    ref.listen(surveyRespondenNotifier.select((value) => value.onCreate),
         (previous, next) {
       next.when(
         data: (data) {

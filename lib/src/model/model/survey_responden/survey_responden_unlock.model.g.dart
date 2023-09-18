@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'survey_unlock_response_model.dart';
+part of 'survey_responden_unlock.model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SurveyUnlockResponseModel _$SurveyUnlockResponseModelFromJson(
+SurveyRespondenUnlockModel _$SurveyRespondenUnlockModelFromJson(
         Map<String, dynamic> json) =>
-    SurveyUnlockResponseModel(
+    SurveyRespondenUnlockModel(
       id: json['id'] as String,
       machineId: json['machine_id'] as String,
       machineWhatsappId: json['machine_whatsapp_id'],
@@ -23,8 +23,8 @@ SurveyUnlockResponseModel _$SurveyUnlockResponseModelFromJson(
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$SurveyUnlockResponseModelToJson(
-        SurveyUnlockResponseModel instance) =>
+Map<String, dynamic> _$SurveyRespondenUnlockModelToJson(
+        SurveyRespondenUnlockModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'machine_id': instance.machineId,

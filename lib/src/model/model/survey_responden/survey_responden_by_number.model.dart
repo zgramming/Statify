@@ -1,16 +1,15 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'survey_unlock_response_model.g.dart';
+part 'survey_responden_by_number.model.g.dart';
 
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class SurveyUnlockResponseModel extends Equatable {
+class SurveyRespondenByNumberModel extends Equatable {
   final String id;
   final String machineId;
-  final dynamic machineWhatsappId;
+  final String? machineWhatsappId;
   final String number;
   final bool locked;
   final int attempt;
@@ -19,10 +18,10 @@ class SurveyUnlockResponseModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  const SurveyUnlockResponseModel({
+  const SurveyRespondenByNumberModel({
     required this.id,
     required this.machineId,
-    this.machineWhatsappId,
+    required this.machineWhatsappId,
     required this.number,
     required this.locked,
     required this.attempt,
@@ -32,11 +31,11 @@ class SurveyUnlockResponseModel extends Equatable {
     required this.updatedAt,
   });
 
-  factory SurveyUnlockResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$SurveyUnlockResponseModelFromJson(json);
+  factory SurveyRespondenByNumberModel.fromJson(Map<String, dynamic> json) =>
+      _$SurveyRespondenByNumberModelFromJson(json);
 
-  /// Connect the generated [_$SurveyUnlockResponseModelToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$SurveyUnlockResponseModelToJson(this);
+  /// Connect the generated [_$SurveyRespondenByNumberModelToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$SurveyRespondenByNumberModelToJson(this);
 
   @override
   List<Object?> get props {

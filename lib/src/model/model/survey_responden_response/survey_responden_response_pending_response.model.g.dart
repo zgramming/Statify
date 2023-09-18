@@ -1,14 +1,15 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'survey_response_by_machine_and_type_model.dart';
+part of 'survey_responden_response_pending_response.model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SurveyResponseByMachineAndTypeModel
-    _$SurveyResponseByMachineAndTypeModelFromJson(Map<String, dynamic> json) =>
-        SurveyResponseByMachineAndTypeModel(
+SurveyRespondenResponsePendingResponseModel
+    _$SurveyRespondenResponsePendingResponseModelFromJson(
+            Map<String, dynamic> json) =>
+        SurveyRespondenResponsePendingResponseModel(
           id: json['id'] as String,
           surveyId: json['survey_id'] as String,
           platform: json['platform'] as String,
@@ -22,8 +23,8 @@ SurveyResponseByMachineAndTypeModel
               json['survey'] as Map<String, dynamic>),
         );
 
-Map<String, dynamic> _$SurveyResponseByMachineAndTypeModelToJson(
-        SurveyResponseByMachineAndTypeModel instance) =>
+Map<String, dynamic> _$SurveyRespondenResponsePendingResponseModelToJson(
+        SurveyRespondenResponsePendingResponseModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'survey_id': instance.surveyId,

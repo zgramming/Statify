@@ -2,21 +2,21 @@ import 'package:dartz/dartz.dart';
 
 import '../../utils/enum.dart';
 import '../../utils/failure.dart';
-import '../datasource/remote/survey_response_remote_datasource.dart';
+import '../datasource/remote/survey_responden_response_remote_datasource.dart';
 import '../model/helper/form/form_survey_response_create_model.dart';
-import '../model/survey_response/survey_response_by_machine_and_type_model.dart';
-import '../model/survey_response/survey_response_create_response_model.dart';
-import '../model/survey_response/survey_response_fail_model.dart';
-import '../model/survey_response/survey_response_sent_model.dart';
+import '../model/survey_responden_response/survey_responden_response_create_response_model.dart';
+import '../model/survey_responden_response/survey_responden_response_pending_response.model.dart';
+import '../model/survey_responden_response/survey_responden_response_fail_model.dart';
+import '../model/survey_responden_response/survey_responden_response_sent_model.dart';
 
-class SurveyResponseRepository {
-  final SurveyResponseRemoteDatasource remoteDatasource;
+class SurveyRespondenResponseRepository {
+  final SurveyRespondenResponseRemoteDatasource remoteDatasource;
 
-  const SurveyResponseRepository({
+  const SurveyRespondenResponseRepository({
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, SurveyResponseByMachineAndTypeModel?>>
+  Future<Either<Failure, SurveyRespondenResponsePendingResponseModel?>>
       getPendingResponse(
           String machineId, MachineResponsePlatformEnum platform) async {
     try {
@@ -28,7 +28,7 @@ class SurveyResponseRepository {
     }
   }
 
-  Future<Either<Failure, SurveyResponseCreateResponseModel>> create(
+  Future<Either<Failure, SurveyRespondenResponseCreateResponseModel>> create(
       FormSurveyResponseCreateModel form) async {
     try {
       final response = await remoteDatasource.create(form);
@@ -38,7 +38,7 @@ class SurveyResponseRepository {
     }
   }
 
-  Future<Either<Failure, SurveyResponseSentModel>> sent(
+  Future<Either<Failure, SurveyRespondenResponseSentModel>> sent(
     String surveyResponseId,
   ) async {
     try {
@@ -49,7 +49,7 @@ class SurveyResponseRepository {
     }
   }
 
-  Future<Either<Failure, SurveyResponseFailModel>> fail(
+  Future<Either<Failure, SurveyRespondenResponseFailModel>> fail(
     String surveyResponseId,
   ) async {
     try {

@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'survey_by_machine_and_number_model.dart';
+part of 'survey_responden_by_number.model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SurveyByMachineAndNumberModel _$SurveyByMachineAndNumberModelFromJson(
+SurveyRespondenByNumberModel _$SurveyRespondenByNumberModelFromJson(
         Map<String, dynamic> json) =>
-    SurveyByMachineAndNumberModel(
+    SurveyRespondenByNumberModel(
       id: json['id'] as String,
       machineId: json['machine_id'] as String,
       machineWhatsappId: json['machine_whatsapp_id'] as String?,
@@ -23,8 +23,8 @@ SurveyByMachineAndNumberModel _$SurveyByMachineAndNumberModelFromJson(
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$SurveyByMachineAndNumberModelToJson(
-        SurveyByMachineAndNumberModel instance) =>
+Map<String, dynamic> _$SurveyRespondenByNumberModelToJson(
+        SurveyRespondenByNumberModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'machine_id': instance.machineId,

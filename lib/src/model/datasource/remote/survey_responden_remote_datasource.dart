@@ -4,18 +4,18 @@ import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
 import '../../../utils/enum.dart';
-import '../../model/survey/survey_by_machine_and_number_model.dart';
-import '../../model/survey/survey_create_response_model.dart';
-import '../../model/survey/survey_unlock_response_model.dart';
+import '../../model/survey_responden/survey_responden_by_number.model.dart';
+import '../../model/survey_responden/survey_responden_create.model.dart';
+import '../../model/survey_responden/survey_responden_unlock.model.dart';
 
-class SurveyRemoteDatasource {
+class SurveyRespondenRemoteDatasource {
   final http.Client client;
 
-  const SurveyRemoteDatasource({
+  const SurveyRespondenRemoteDatasource({
     required this.client,
   });
 
-  Future<SurveyByMachineAndNumberModel?> getByMachineAndNumber({
+  Future<SurveyRespondenByNumberModel?> getByNumber({
     required String machineId,
     required String number,
   }) async {
@@ -31,7 +31,7 @@ class SurveyRemoteDatasource {
     if (data == null) return null;
 
     if (response.statusCode == 200) {
-      final result = SurveyByMachineAndNumberModel.fromJson(data);
+      final result = SurveyRespondenByNumberModel.fromJson(data);
       return result;
     } else {
       final message = decodedData.containsKey('message')
@@ -41,7 +41,7 @@ class SurveyRemoteDatasource {
     }
   }
 
-  Future<SurveyUnlockResponseModel> unlock({
+  Future<SurveyRespondenUnlockModel> unlock({
     required String surveyId,
     required String key,
     required String platform,
@@ -62,7 +62,7 @@ class SurveyRemoteDatasource {
     if (response.statusCode == 200) {
       final data = decodedData['data'];
       final result =
-          SurveyUnlockResponseModel.fromJson(Map<String, dynamic>.from(data));
+          SurveyRespondenUnlockModel.fromJson(Map<String, dynamic>.from(data));
       return result;
     } else {
       final message = decodedData.containsKey('message')
@@ -72,7 +72,7 @@ class SurveyRemoteDatasource {
     }
   }
 
-  Future<SurveyCreateResponseModel> create({
+  Future<SurveyRespondenCreateModel> create({
     required String number,
     required String machineId,
     required String? key,
@@ -92,7 +92,7 @@ class SurveyRemoteDatasource {
 
     if (response.statusCode == 200) {
       final data = decodedData['data'];
-      final result = SurveyCreateResponseModel.fromJson(data);
+      final result = SurveyRespondenCreateModel.fromJson(data);
       return result;
     } else {
       final message = decodedData.containsKey('message')

@@ -265,7 +265,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                                     .toList(),
                                 validator: (value) {
                                   if (value == null) {
-                                    return "Action Should not be empty";
+                                    return "Sim Should not be empty";
                                   }
                                   return null;
                                 },

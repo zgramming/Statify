@@ -10,26 +10,26 @@ import '../../../utils/method_channel.dart';
 import '../../model/helper/form/form_survey_response_create_model.dart';
 import '../../model/helper/form/form_temporary_pending_response_create.model.dart';
 import '../../model/send_sms_model.dart';
-import '../../model/survey_response/survey_response_by_machine_and_type_model.dart';
-import '../../model/survey_response/survey_response_create_response_model.dart';
-import '../../model/survey_response/survey_response_fail_model.dart';
-import '../../model/survey_response/survey_response_sent_model.dart';
+import '../../model/survey_responden_response/survey_responden_response_pending_response.model.dart';
+import '../../model/survey_responden_response/survey_responden_response_create_response_model.dart';
+import '../../model/survey_responden_response/survey_responden_response_fail_model.dart';
+import '../../model/survey_responden_response/survey_responden_response_sent_model.dart';
 import '../local/temporary_pending_response_local_datasource.dart';
-import 'survey_remote_datasource.dart';
+import 'survey_responden_remote_datasource.dart';
 
-class SurveyResponseRemoteDatasource {
-  SurveyResponseRemoteDatasource({
+class SurveyRespondenResponseRemoteDatasource {
+  SurveyRespondenResponseRemoteDatasource({
     required this.client,
-    required this.surveyRemoteDatasource,
+    required this.surveyRespondenRemoteDatasource,
     required this.temporaryPendingResponseLocalDatasource,
   });
 
   final http.Client client;
-  final SurveyRemoteDatasource surveyRemoteDatasource;
+  final SurveyRespondenRemoteDatasource surveyRespondenRemoteDatasource;
   final TemporaryPendingResponseLocalDatasource
       temporaryPendingResponseLocalDatasource;
 
-  Future<SurveyResponseByMachineAndTypeModel?> getPendingResponse(
+  Future<SurveyRespondenResponsePendingResponseModel?> getPendingResponse(
     String machineId,
     MachineResponsePlatformEnum platform,
   ) async {
@@ -54,7 +54,7 @@ class SurveyResponseRemoteDatasource {
     }
 
     if (response.statusCode == 200) {
-      final result = SurveyResponseByMachineAndTypeModel.fromJson(data);
+      final result = SurveyRespondenResponsePendingResponseModel.fromJson(data);
 
       return result;
     } else {
@@ -62,7 +62,7 @@ class SurveyResponseRemoteDatasource {
     }
   }
 
-  Future<SurveyResponseCreateResponseModel> create(
+  Future<SurveyRespondenResponseCreateResponseModel> create(
     FormSurveyResponseCreateModel form,
   ) async {
     final uri = Uri.parse("$kBaseApiUrl/surveys/${form.surveyId}/responses");
@@ -78,7 +78,7 @@ class SurveyResponseRemoteDatasource {
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final data = decodedData['data'];
-      return SurveyResponseCreateResponseModel.fromJson(data);
+      return SurveyRespondenResponseCreateResponseModel.fromJson(data);
     } else {
       final message = decodedData.containsKey('message')
           ? decodedData['message']
@@ -87,7 +87,7 @@ class SurveyResponseRemoteDatasource {
     }
   }
 
-  Future<SurveyResponseSentModel> sent(String surveyResponseId) async {
+  Future<SurveyRespondenResponseSentModel> sent(String surveyResponseId) async {
     final uri = Uri.parse(
       "$kBaseApiUrl/survey-responses/$surveyResponseId/sent",
     );
@@ -98,7 +98,7 @@ class SurveyResponseRemoteDatasource {
 
     if (response.statusCode == 200) {
       final data = decodedData['data'];
-      return SurveyResponseSentModel.fromJson(data);
+      return SurveyRespondenResponseSentModel.fromJson(data);
     } else {
       final message = decodedData.containsKey('message')
           ? decodedData['message']
@@ -107,7 +107,7 @@ class SurveyResponseRemoteDatasource {
     }
   }
 
-  Future<SurveyResponseFailModel> fail(String surveyResponseId) async {
+  Future<SurveyRespondenResponseFailModel> fail(String surveyResponseId) async {
     final uri = Uri.parse(
       "$kBaseApiUrl/survey-responses/$surveyResponseId/fail",
     );
@@ -118,7 +118,7 @@ class SurveyResponseRemoteDatasource {
 
     if (response.statusCode == 200) {
       final data = decodedData['data'];
-      return SurveyResponseFailModel.fromJson(data);
+      return SurveyRespondenResponseFailModel.fromJson(data);
     } else {
       final message = decodedData.containsKey('message')
           ? decodedData['message']

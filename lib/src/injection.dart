@@ -11,8 +11,8 @@ import 'model/datasource/remote/machine_remote_datasource.dart';
 import 'model/datasource/remote/machine_response_remote_datasource.dart';
 import 'model/datasource/remote/machine_setting_remote_datasource.dart';
 import 'model/datasource/remote/machine_whatsapp_remote_datasource.dart';
-import 'model/datasource/remote/survey_remote_datasource.dart';
-import 'model/datasource/remote/survey_response_remote_datasource.dart';
+import 'model/datasource/remote/survey_responden_remote_datasource.dart';
+import 'model/datasource/remote/survey_responden_response_remote_datasource.dart';
 import 'model/datasource/remote/user_remote_datasource.dart';
 import 'model/model/helper/dropdown/sim_choose_dropdown_model.dart';
 import 'model/model/machine_whatsapp/machine_whatsapp_model.dart';
@@ -22,8 +22,8 @@ import 'model/repository/machine_repository.dart';
 import 'model/repository/machine_response_repository.dart';
 import 'model/repository/machine_setting_repository.dart';
 import 'model/repository/machine_whatsapp_repository.dart';
-import 'model/repository/survey_repository.dart';
-import 'model/repository/survey_response_repository.dart';
+import 'model/repository/survey_responden.repository.dart';
+import 'model/repository/survey_responden_response.repository.dart';
 import 'utils/http_client.dart';
 import 'view_model/application_config.notifier.dart';
 import 'view_model/authentication_notifier.dart';
@@ -34,8 +34,8 @@ import 'view_model/machine_notifier.dart';
 import 'view_model/machine_response_notifier.dart';
 import 'view_model/machine_setting_notifier.dart';
 import 'view_model/machine_whatsapp_notifier.dart';
-import 'view_model/survey_notifier.dart';
-import 'view_model/survey_response_notifier.dart';
+import 'view_model/survey_responden.notifier.dart';
+import 'view_model/survey_responden_response.notifier.dart';
 
 // Custom Provider
 final userChooseSIMMachineProvider =
@@ -128,13 +128,14 @@ final incomingMessageNotifier =
     repository: ref.watch(_incomingMessageRepository),
   );
 });
-final surveyNotifier = StateNotifierProvider<SurveyNotifier, SurveyState>(
-  (ref) => SurveyNotifier(repository: ref.watch(_surveyRepository)),
+final surveyRespondenNotifier =
+    StateNotifierProvider<SurveyNotifier, SurveyState>(
+  (ref) => SurveyNotifier(repository: ref.watch(_surveyRespondenRepository)),
 );
-final surveyResponseNotifier =
+final surveyRespondenResponseNotifier =
     StateNotifierProvider<SurveyResponseNotifier, SurveyResponseState>(
   (ref) => SurveyResponseNotifier(
-    repository: ref.watch(_surveyResponseRepository),
+    repository: ref.watch(_surveyRespondenResponseRepository),
   ),
 );
 final machineSettingNotifier = StateNotifierProviderFamily<
@@ -201,10 +202,11 @@ final logoNotifier = StateNotifierProvider<LogoNotifier, LogoState>((ref) {
 
 final _incomingMessageRepository = Provider((ref) => IncomingMessageRepository(
     remoteDatasource: ref.watch(_incomingMessageRemoteDatasource)));
-final _surveyRepository = Provider((ref) =>
-    SurveyRepository(remoteDatasource: ref.watch(_surveyRemoteDatasource)));
-final _surveyResponseRepository = Provider((ref) => SurveyResponseRepository(
-    remoteDatasource: ref.watch(_surveyResponseRemoteDatasource)));
+final _surveyRespondenRepository = Provider((ref) => SurveyRepository(
+    remoteDatasource: ref.watch(_surveyRespondenRemoteDatasource)));
+final _surveyRespondenResponseRepository = Provider((ref) =>
+    SurveyRespondenResponseRepository(
+        remoteDatasource: ref.watch(_surveyRespondenResponseRemoteDatasource)));
 final _machineSettingRepository = Provider((ref) => MachineSettingRepository(
     remoteDatasource: ref.watch(_machineSettingRemoteDatasource)));
 final _machineResponseRepository = Provider((ref) => MachineResponseRepository(
@@ -245,20 +247,25 @@ final _logoRepository = Provider(
 final _incomingMessageRemoteDatasource = Provider(
   (ref) => IncomingMessageRemoteDatasource(
     client: ref.watch(_httpClient),
-    surveyRemoteDatasource: ref.watch(_surveyRemoteDatasource),
-    surveyResponseRemoteDatasource: ref.watch(_surveyResponseRemoteDatasource),
+    surveyRespondenRemoteDatasource:
+        ref.watch(_surveyRespondenRemoteDatasource),
+    surveyRespondenResponseRemoteDatasource:
+        ref.watch(_surveyRespondenResponseRemoteDatasource),
   ),
 );
-final _surveyResponseRemoteDatasource = Provider(
-  (ref) => SurveyResponseRemoteDatasource(
+final _surveyRespondenResponseRemoteDatasource = Provider(
+  (ref) => SurveyRespondenResponseRemoteDatasource(
     client: ref.watch(_httpClient),
-    surveyRemoteDatasource: ref.watch(_surveyRemoteDatasource),
+    surveyRespondenRemoteDatasource:
+        ref.watch(_surveyRespondenRemoteDatasource),
     temporaryPendingResponseLocalDatasource:
         ref.watch(_temporaryPendingResponseLocalDatasource),
   ),
 );
-final _surveyRemoteDatasource =
-    Provider((ref) => SurveyRemoteDatasource(client: ref.watch(_httpClient)));
+final _surveyRespondenRemoteDatasource =
+    Provider((ref) => SurveyRespondenRemoteDatasource(
+          client: ref.watch(_httpClient),
+        ));
 final _machineSettingRemoteDatasource = Provider(
     (ref) => MachineSettingRemoteDatasource(client: ref.watch(_httpClient)));
 final _machineResponseRemoteDatasource = Provider(

@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'survey_response_create_response_model.dart';
+part of 'survey_responden_response_fail_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SurveyResponseCreateResponseModel _$SurveyResponseCreateResponseModelFromJson(
+SurveyRespondenResponseFailModel _$SurveyRespondenResponseFailModelFromJson(
         Map<String, dynamic> json) =>
-    SurveyResponseCreateResponseModel(
+    SurveyRespondenResponseFailModel(
       id: json['id'] as String,
       surveyId: json['survey_id'] as String,
       platform: json['platform'] as String,
@@ -20,8 +20,8 @@ SurveyResponseCreateResponseModel _$SurveyResponseCreateResponseModelFromJson(
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$SurveyResponseCreateResponseModelToJson(
-        SurveyResponseCreateResponseModel instance) =>
+Map<String, dynamic> _$SurveyRespondenResponseFailModelToJson(
+        SurveyRespondenResponseFailModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'survey_id': instance.surveyId,

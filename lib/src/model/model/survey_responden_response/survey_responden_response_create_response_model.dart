@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'survey_create_response_model.g.dart';
+part 'survey_responden_response_create_response_model.g.dart';
 
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class SurveyCreateResponseModel extends Equatable {
+class SurveyRespondenResponseCreateResponseModel extends Equatable {
   final String id;
   final String surveyId;
   final String platform;
@@ -17,7 +17,7 @@ class SurveyCreateResponseModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  const SurveyCreateResponseModel({
+  const SurveyRespondenResponseCreateResponseModel({
     required this.id,
     required this.surveyId,
     required this.platform,
@@ -29,11 +29,13 @@ class SurveyCreateResponseModel extends Equatable {
     required this.updatedAt,
   });
 
-  factory SurveyCreateResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$SurveyCreateResponseModelFromJson(json);
+  factory SurveyRespondenResponseCreateResponseModel.fromJson(
+          Map<String, dynamic> json) =>
+      _$SurveyRespondenResponseCreateResponseModelFromJson(json);
 
-  /// Connect the generated [_$SurveyCreateResponseModelToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$SurveyCreateResponseModelToJson(this);
+  /// Connect the generated [_$SurveyRespondenResponseCreateResponseModelToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() =>
+      _$SurveyRespondenResponseCreateResponseModelToJson(this);
 
   @override
   List<Object> get props {

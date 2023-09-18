@@ -57,7 +57,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void listenOnSentMessage() {
     final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
-    final srvNotifier = ref.read(surveyResponseNotifier.notifier);
+    final srvNotifier = ref.read(surveyRespondenResponseNotifier.notifier);
     _subscriptionSentMessage =
         eventChannelUtils.listenOnSentSMS().listen((event) async {
       try {
@@ -261,7 +261,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
   void listenPendingResponse() async {
     final simSlot = ref.read(userChooseSIMMachineProvider(widget.item.id));
     final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
-    final srvResponseNotifier = ref.read(surveyResponseNotifier.notifier);
+    final srvResponseNotifier =
+        ref.read(surveyRespondenResponseNotifier.notifier);
     _subscriptionPendingResponse = srvResponseNotifier
         .listenPendingResponse(machineId: widget.item.id, simSlot: simSlot)
         .listen((event) {

@@ -2,18 +2,19 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/model/helper/form/form_survey_response_create_model.dart';
-import '../model/model/survey_response/survey_response_by_machine_and_type_model.dart';
-import '../model/model/survey_response/survey_response_create_response_model.dart';
-import '../model/model/survey_response/survey_response_fail_model.dart';
-import '../model/model/survey_response/survey_response_sent_model.dart';
-import '../model/repository/survey_response_repository.dart';
+import '../model/model/survey_responden_response/survey_responden_response_pending_response.model.dart';
+import '../model/model/survey_responden_response/survey_responden_response_create_response_model.dart';
+import '../model/model/survey_responden_response/survey_responden_response_fail_model.dart';
+import '../model/model/survey_responden_response/survey_responden_response_sent_model.dart';
+import '../model/repository/survey_responden_response.repository.dart';
 import '../utils/enum.dart';
 
 class SurveyResponseState extends Equatable {
-  final AsyncValue<SurveyResponseCreateResponseModel?> onCreate;
-  final AsyncValue<SurveyResponseByMachineAndTypeModel?> onGetPendingResponse;
-  final AsyncValue<SurveyResponseFailModel?> onFail;
-  final AsyncValue<SurveyResponseSentModel?> onSent;
+  final AsyncValue<SurveyRespondenResponseCreateResponseModel?> onCreate;
+  final AsyncValue<SurveyRespondenResponsePendingResponseModel?>
+      onGetPendingResponse;
+  final AsyncValue<SurveyRespondenResponseFailModel?> onFail;
+  final AsyncValue<SurveyRespondenResponseSentModel?> onSent;
   final Stream<int>? onListenPendingResponse;
 
   const SurveyResponseState({
@@ -39,10 +40,11 @@ class SurveyResponseState extends Equatable {
   bool get stringify => true;
 
   SurveyResponseState copyWith({
-    AsyncValue<SurveyResponseCreateResponseModel?>? onCreate,
-    AsyncValue<SurveyResponseByMachineAndTypeModel?>? onGetPendingResponse,
-    AsyncValue<SurveyResponseFailModel?>? onFail,
-    AsyncValue<SurveyResponseSentModel?>? onSent,
+    AsyncValue<SurveyRespondenResponseCreateResponseModel?>? onCreate,
+    AsyncValue<SurveyRespondenResponsePendingResponseModel?>?
+        onGetPendingResponse,
+    AsyncValue<SurveyRespondenResponseFailModel?>? onFail,
+    AsyncValue<SurveyRespondenResponseSentModel?>? onSent,
     Stream<int>? onListenPendingResponse,
   }) {
     return SurveyResponseState(
@@ -57,7 +59,7 @@ class SurveyResponseState extends Equatable {
 }
 
 class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
-  final SurveyResponseRepository repository;
+  final SurveyRespondenResponseRepository repository;
 
   SurveyResponseNotifier({
     required this.repository,
