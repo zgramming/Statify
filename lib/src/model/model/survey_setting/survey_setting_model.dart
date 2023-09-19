@@ -1,17 +1,18 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../utils/enum.dart';
 import '../../../utils/functions.dart';
 
-part 'machine_setting_model.g.dart';
+part 'survey_setting_model.g.dart';
 
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class MachineSettingModel extends Equatable {
+class SurveySettingModel extends Equatable {
   final String id;
-  final String machineId;
+  final String surveyId;
   final MachineResponsePlatformEnum platform;
   final bool usePassword;
   final int timeout;
@@ -30,9 +31,9 @@ class MachineSettingModel extends Equatable {
     return result;
   }
 
-  const MachineSettingModel({
+  const SurveySettingModel({
     required this.id,
-    required this.machineId,
+    required this.surveyId,
     required this.platform,
     required this.usePassword,
     required this.timeout,
@@ -42,17 +43,17 @@ class MachineSettingModel extends Equatable {
     required this.updatedAt,
   });
 
-  factory MachineSettingModel.fromJson(Map<String, dynamic> json) =>
-      _$MachineSettingModelFromJson(json);
+  factory SurveySettingModel.fromJson(Map<String, dynamic> json) =>
+      _$SurveySettingModelFromJson(json);
 
-  /// Connect the generated [_$MachineSettingModelToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$MachineSettingModelToJson(this);
+  /// Connect the generated [_$SurveySettingModelToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$SurveySettingModelToJson(this);
 
   @override
   List<Object> get props {
     return [
       id,
-      machineId,
+      surveyId,
       platform,
       usePassword,
       timeout,
@@ -65,28 +66,4 @@ class MachineSettingModel extends Equatable {
 
   @override
   bool get stringify => true;
-
-  MachineSettingModel copyWith({
-    String? id,
-    String? machineId,
-    MachineResponsePlatformEnum? platform,
-    bool? usePassword,
-    int? timeout,
-    int? tries,
-    int? backoff,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return MachineSettingModel(
-      id: id ?? this.id,
-      machineId: machineId ?? this.machineId,
-      platform: platform ?? this.platform,
-      usePassword: usePassword ?? this.usePassword,
-      timeout: timeout ?? this.timeout,
-      tries: tries ?? this.tries,
-      backoff: backoff ?? this.backoff,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 }

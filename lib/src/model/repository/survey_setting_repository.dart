@@ -1,18 +1,17 @@
 import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
-import '../datasource/remote/machine_setting_remote_datasource.dart';
-import '../model/helper/form/form_machine_setting_create_update_model.dart';
-import '../model/machine_setting/machine_setting_model.dart';
-import '../model/machine_setting/machine_setting_update_response_model.dart';
+import '../datasource/remote/survey_setting_remote_datasource.dart';
+import '../model/helper/form/form_survey_setting_create_update_model.dart';
+import '../model/survey_setting/survey_setting_model.dart';
 
-class MachineSettingRepository {
-  final MachineSettingRemoteDatasource remoteDatasource;
-  const MachineSettingRepository({
+class SurveySettingRepository {
+  final SurveySettingRemoteDatasource remoteDatasource;
+  const SurveySettingRepository({
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, List<MachineSettingModel>>> getAll(
+  Future<Either<Failure, List<SurveySettingModel>>> getAll(
       String machineId) async {
     try {
       final result = await remoteDatasource.getAll(machineId);
@@ -22,13 +21,13 @@ class MachineSettingRepository {
     }
   }
 
-  Future<Either<Failure, MachineSettingModel>> getById({
-    required String machineId,
+  Future<Either<Failure, SurveySettingModel>> getById({
     required String settingId,
+    required String surveyId,
   }) async {
     try {
       final result = await remoteDatasource.getById(
-        machineId: machineId,
+        surveyId: surveyId,
         settingId: settingId,
       );
       return Right(result);
@@ -37,14 +36,16 @@ class MachineSettingRepository {
     }
   }
 
-  Future<Either<Failure, MachineSettingUpdateResponseModel>> update({
-    required FormMachineSettingCreateUpdateModel form,
+  Future<Either<Failure, SurveySettingModel>> update({
+    required FormSurveySettingCreateUpdateModel form,
     required String settingId,
+    required String surveyId,
   }) async {
     try {
       final result = await remoteDatasource.update(
         form: form,
         settingId: settingId,
+        surveyId: surveyId,
       );
       return Right(result);
     } catch (e) {

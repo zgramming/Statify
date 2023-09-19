@@ -10,6 +10,7 @@ import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
 import '../../../widgets/async_error_builder.dart';
 import '../../../widgets/form_row_body.dart';
+import 'widgets/survey_tabbar_configuration.dart';
 
 class SurveyFormPage extends ConsumerStatefulWidget {
   const SurveyFormPage({
@@ -268,6 +269,10 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                             child: const Text("Submit"),
                           ),
                           const SizedBox(height: 20),
+
+                          if (isEdit) ...[
+                            SurveyTabBarConfiguration(surveyId: widget.id)
+                          ],
                         ],
                       ),
                     ),

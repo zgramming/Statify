@@ -406,26 +406,14 @@ class $TemporaryPendingResponseTableTable extends TemporaryPendingResponseTable
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $TemporaryPendingResponseTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _surveyResponseIdMeta =
-      const VerificationMeta('surveyResponseId');
+  static const VerificationMeta _surveyRespondentIdMeta =
+      const VerificationMeta('surveyRespondentId');
   @override
-  late final GeneratedColumn<String> surveyResponseId = GeneratedColumn<String>(
-      'survey_response_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      clientDefault: () => uuid.v4());
-  static const VerificationMeta _surveyIdMeta =
-      const VerificationMeta('surveyId');
-  @override
-  late final GeneratedColumn<String> surveyId = GeneratedColumn<String>(
-      'survey_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _machineIdMeta =
-      const VerificationMeta('machineId');
-  @override
-  late final GeneratedColumn<String> machineId = GeneratedColumn<String>(
-      'machine_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> surveyRespondentId =
+      GeneratedColumn<String>('survey_respondent_id', aliasedName, false,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          clientDefault: () => uuid.v4());
   static const VerificationMeta _simSlotMeta =
       const VerificationMeta('simSlot');
   @override
@@ -464,9 +452,7 @@ class $TemporaryPendingResponseTableTable extends TemporaryPendingResponseTable
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
-        surveyResponseId,
-        surveyId,
-        machineId,
+        surveyRespondentId,
         simSlot,
         phoneNumber,
         message,
@@ -484,23 +470,11 @@ class $TemporaryPendingResponseTableTable extends TemporaryPendingResponseTable
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('survey_response_id')) {
+    if (data.containsKey('survey_respondent_id')) {
       context.handle(
-          _surveyResponseIdMeta,
-          surveyResponseId.isAcceptableOrUnknown(
-              data['survey_response_id']!, _surveyResponseIdMeta));
-    }
-    if (data.containsKey('survey_id')) {
-      context.handle(_surveyIdMeta,
-          surveyId.isAcceptableOrUnknown(data['survey_id']!, _surveyIdMeta));
-    } else if (isInserting) {
-      context.missing(_surveyIdMeta);
-    }
-    if (data.containsKey('machine_id')) {
-      context.handle(_machineIdMeta,
-          machineId.isAcceptableOrUnknown(data['machine_id']!, _machineIdMeta));
-    } else if (isInserting) {
-      context.missing(_machineIdMeta);
+          _surveyRespondentIdMeta,
+          surveyRespondentId.isAcceptableOrUnknown(
+              data['survey_respondent_id']!, _surveyRespondentIdMeta));
     }
     if (data.containsKey('sim_slot')) {
       context.handle(_simSlotMeta,
@@ -542,18 +516,14 @@ class $TemporaryPendingResponseTableTable extends TemporaryPendingResponseTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {surveyResponseId};
+  Set<GeneratedColumn> get $primaryKey => {surveyRespondentId};
   @override
   TemporaryPendingResponseTableData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TemporaryPendingResponseTableData(
-      surveyResponseId: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}survey_response_id'])!,
-      surveyId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}survey_id'])!,
-      machineId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}machine_id'])!,
+      surveyRespondentId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}survey_respondent_id'])!,
       simSlot: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}sim_slot'])!,
       phoneNumber: attachedDatabase.typeMapping
@@ -577,9 +547,7 @@ class $TemporaryPendingResponseTableTable extends TemporaryPendingResponseTable
 
 class TemporaryPendingResponseTableData extends DataClass
     implements Insertable<TemporaryPendingResponseTableData> {
-  final String surveyResponseId;
-  final String surveyId;
-  final String machineId;
+  final String surveyRespondentId;
   final int simSlot;
   final String phoneNumber;
   final String message;
@@ -587,9 +555,7 @@ class TemporaryPendingResponseTableData extends DataClass
   final DateTime updatedAt;
   final DateTime? deletedAt;
   const TemporaryPendingResponseTableData(
-      {required this.surveyResponseId,
-      required this.surveyId,
-      required this.machineId,
+      {required this.surveyRespondentId,
       required this.simSlot,
       required this.phoneNumber,
       required this.message,
@@ -599,9 +565,7 @@ class TemporaryPendingResponseTableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['survey_response_id'] = Variable<String>(surveyResponseId);
-    map['survey_id'] = Variable<String>(surveyId);
-    map['machine_id'] = Variable<String>(machineId);
+    map['survey_respondent_id'] = Variable<String>(surveyRespondentId);
     map['sim_slot'] = Variable<int>(simSlot);
     map['phone_number'] = Variable<String>(phoneNumber);
     map['message'] = Variable<String>(message);
@@ -615,9 +579,7 @@ class TemporaryPendingResponseTableData extends DataClass
 
   TemporaryPendingResponseTableCompanion toCompanion(bool nullToAbsent) {
     return TemporaryPendingResponseTableCompanion(
-      surveyResponseId: Value(surveyResponseId),
-      surveyId: Value(surveyId),
-      machineId: Value(machineId),
+      surveyRespondentId: Value(surveyRespondentId),
       simSlot: Value(simSlot),
       phoneNumber: Value(phoneNumber),
       message: Value(message),
@@ -633,9 +595,8 @@ class TemporaryPendingResponseTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TemporaryPendingResponseTableData(
-      surveyResponseId: serializer.fromJson<String>(json['surveyResponseId']),
-      surveyId: serializer.fromJson<String>(json['surveyId']),
-      machineId: serializer.fromJson<String>(json['machineId']),
+      surveyRespondentId:
+          serializer.fromJson<String>(json['surveyRespondentId']),
       simSlot: serializer.fromJson<int>(json['simSlot']),
       phoneNumber: serializer.fromJson<String>(json['phoneNumber']),
       message: serializer.fromJson<String>(json['message']),
@@ -648,9 +609,7 @@ class TemporaryPendingResponseTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'surveyResponseId': serializer.toJson<String>(surveyResponseId),
-      'surveyId': serializer.toJson<String>(surveyId),
-      'machineId': serializer.toJson<String>(machineId),
+      'surveyRespondentId': serializer.toJson<String>(surveyRespondentId),
       'simSlot': serializer.toJson<int>(simSlot),
       'phoneNumber': serializer.toJson<String>(phoneNumber),
       'message': serializer.toJson<String>(message),
@@ -661,9 +620,7 @@ class TemporaryPendingResponseTableData extends DataClass
   }
 
   TemporaryPendingResponseTableData copyWith(
-          {String? surveyResponseId,
-          String? surveyId,
-          String? machineId,
+          {String? surveyRespondentId,
           int? simSlot,
           String? phoneNumber,
           String? message,
@@ -671,9 +628,7 @@ class TemporaryPendingResponseTableData extends DataClass
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent()}) =>
       TemporaryPendingResponseTableData(
-        surveyResponseId: surveyResponseId ?? this.surveyResponseId,
-        surveyId: surveyId ?? this.surveyId,
-        machineId: machineId ?? this.machineId,
+        surveyRespondentId: surveyRespondentId ?? this.surveyRespondentId,
         simSlot: simSlot ?? this.simSlot,
         phoneNumber: phoneNumber ?? this.phoneNumber,
         message: message ?? this.message,
@@ -684,9 +639,7 @@ class TemporaryPendingResponseTableData extends DataClass
   @override
   String toString() {
     return (StringBuffer('TemporaryPendingResponseTableData(')
-          ..write('surveyResponseId: $surveyResponseId, ')
-          ..write('surveyId: $surveyId, ')
-          ..write('machineId: $machineId, ')
+          ..write('surveyRespondentId: $surveyRespondentId, ')
           ..write('simSlot: $simSlot, ')
           ..write('phoneNumber: $phoneNumber, ')
           ..write('message: $message, ')
@@ -698,15 +651,13 @@ class TemporaryPendingResponseTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(surveyResponseId, surveyId, machineId,
-      simSlot, phoneNumber, message, createdAt, updatedAt, deletedAt);
+  int get hashCode => Object.hash(surveyRespondentId, simSlot, phoneNumber,
+      message, createdAt, updatedAt, deletedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TemporaryPendingResponseTableData &&
-          other.surveyResponseId == this.surveyResponseId &&
-          other.surveyId == this.surveyId &&
-          other.machineId == this.machineId &&
+          other.surveyRespondentId == this.surveyRespondentId &&
           other.simSlot == this.simSlot &&
           other.phoneNumber == this.phoneNumber &&
           other.message == this.message &&
@@ -717,9 +668,7 @@ class TemporaryPendingResponseTableData extends DataClass
 
 class TemporaryPendingResponseTableCompanion
     extends UpdateCompanion<TemporaryPendingResponseTableData> {
-  final Value<String> surveyResponseId;
-  final Value<String> surveyId;
-  final Value<String> machineId;
+  final Value<String> surveyRespondentId;
   final Value<int> simSlot;
   final Value<String> phoneNumber;
   final Value<String> message;
@@ -728,9 +677,7 @@ class TemporaryPendingResponseTableCompanion
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const TemporaryPendingResponseTableCompanion({
-    this.surveyResponseId = const Value.absent(),
-    this.surveyId = const Value.absent(),
-    this.machineId = const Value.absent(),
+    this.surveyRespondentId = const Value.absent(),
     this.simSlot = const Value.absent(),
     this.phoneNumber = const Value.absent(),
     this.message = const Value.absent(),
@@ -740,9 +687,7 @@ class TemporaryPendingResponseTableCompanion
     this.rowid = const Value.absent(),
   });
   TemporaryPendingResponseTableCompanion.insert({
-    this.surveyResponseId = const Value.absent(),
-    required String surveyId,
-    required String machineId,
+    this.surveyRespondentId = const Value.absent(),
     required int simSlot,
     required String phoneNumber,
     required String message,
@@ -750,17 +695,13 @@ class TemporaryPendingResponseTableCompanion
     required DateTime updatedAt,
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : surveyId = Value(surveyId),
-        machineId = Value(machineId),
-        simSlot = Value(simSlot),
+  })  : simSlot = Value(simSlot),
         phoneNumber = Value(phoneNumber),
         message = Value(message),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<TemporaryPendingResponseTableData> custom({
-    Expression<String>? surveyResponseId,
-    Expression<String>? surveyId,
-    Expression<String>? machineId,
+    Expression<String>? surveyRespondentId,
     Expression<int>? simSlot,
     Expression<String>? phoneNumber,
     Expression<String>? message,
@@ -770,9 +711,8 @@ class TemporaryPendingResponseTableCompanion
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (surveyResponseId != null) 'survey_response_id': surveyResponseId,
-      if (surveyId != null) 'survey_id': surveyId,
-      if (machineId != null) 'machine_id': machineId,
+      if (surveyRespondentId != null)
+        'survey_respondent_id': surveyRespondentId,
       if (simSlot != null) 'sim_slot': simSlot,
       if (phoneNumber != null) 'phone_number': phoneNumber,
       if (message != null) 'message': message,
@@ -784,9 +724,7 @@ class TemporaryPendingResponseTableCompanion
   }
 
   TemporaryPendingResponseTableCompanion copyWith(
-      {Value<String>? surveyResponseId,
-      Value<String>? surveyId,
-      Value<String>? machineId,
+      {Value<String>? surveyRespondentId,
       Value<int>? simSlot,
       Value<String>? phoneNumber,
       Value<String>? message,
@@ -795,9 +733,7 @@ class TemporaryPendingResponseTableCompanion
       Value<DateTime?>? deletedAt,
       Value<int>? rowid}) {
     return TemporaryPendingResponseTableCompanion(
-      surveyResponseId: surveyResponseId ?? this.surveyResponseId,
-      surveyId: surveyId ?? this.surveyId,
-      machineId: machineId ?? this.machineId,
+      surveyRespondentId: surveyRespondentId ?? this.surveyRespondentId,
       simSlot: simSlot ?? this.simSlot,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       message: message ?? this.message,
@@ -811,14 +747,8 @@ class TemporaryPendingResponseTableCompanion
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (surveyResponseId.present) {
-      map['survey_response_id'] = Variable<String>(surveyResponseId.value);
-    }
-    if (surveyId.present) {
-      map['survey_id'] = Variable<String>(surveyId.value);
-    }
-    if (machineId.present) {
-      map['machine_id'] = Variable<String>(machineId.value);
+    if (surveyRespondentId.present) {
+      map['survey_respondent_id'] = Variable<String>(surveyRespondentId.value);
     }
     if (simSlot.present) {
       map['sim_slot'] = Variable<int>(simSlot.value);
@@ -847,9 +777,7 @@ class TemporaryPendingResponseTableCompanion
   @override
   String toString() {
     return (StringBuffer('TemporaryPendingResponseTableCompanion(')
-          ..write('surveyResponseId: $surveyResponseId, ')
-          ..write('surveyId: $surveyId, ')
-          ..write('machineId: $machineId, ')
+          ..write('surveyRespondentId: $surveyRespondentId, ')
           ..write('simSlot: $simSlot, ')
           ..write('phoneNumber: $phoneNumber, ')
           ..write('message: $message, ')

@@ -7,21 +7,21 @@ import 'model/datasource/local/temporary_pending_response_local_datasource.dart'
 import 'model/datasource/remote/authentication_remote_datasource.dart';
 import 'model/datasource/remote/incoming_message_remote_datasource.dart';
 import 'model/datasource/remote/machine_remote_datasource.dart';
-import 'model/datasource/remote/machine_response_remote_datasource.dart';
-import 'model/datasource/remote/machine_setting_remote_datasource.dart';
 import 'model/datasource/remote/machine_whatsapp_remote_datasource.dart';
 import 'model/datasource/remote/survey_remote_datasource.dart';
 import 'model/datasource/remote/survey_responden_remote_datasource.dart';
 import 'model/datasource/remote/survey_responden_response_remote_datasource.dart';
+import 'model/datasource/remote/survey_response_remote_datasource.dart';
+import 'model/datasource/remote/survey_setting_remote_datasource.dart';
 import 'model/datasource/remote/user_remote_datasource.dart';
 import 'model/repository/application_config.repository.dart';
 import 'model/repository/authentication_repository.dart';
 import 'model/repository/machine_repository.dart';
-import 'model/repository/machine_response_repository.dart';
-import 'model/repository/machine_setting_repository.dart';
 import 'model/repository/machine_whatsapp_repository.dart';
 import 'model/repository/survey_responden.repository.dart';
 import 'model/repository/survey_responden_response.repository.dart';
+import 'model/repository/survey_response_repository.dart';
+import 'model/repository/survey_setting_repository.dart';
 import 'utils/http_client.dart';
 import 'view_model/application_config.notifier.dart';
 import 'view_model/authentication_notifier.dart';
@@ -29,11 +29,11 @@ import 'view_model/custom_notifier/log_incoming_call.notifier.dart';
 import 'view_model/custom_notifier/log_incoming_message.notifier.dart';
 import 'view_model/custom_notifier/log_listen_pending_response.notifier.dart';
 import 'view_model/machine_notifier.dart';
-import 'view_model/machine_response_notifier.dart';
-import 'view_model/machine_setting_notifier.dart';
+import 'view_model/survey_response_notifier.dart';
 import 'view_model/machine_whatsapp_notifier.dart';
 import 'view_model/survey_responden.notifier.dart';
 import 'view_model/survey_responden_response.notifier.dart';
+import 'view_model/survey_setting_notifier.dart';
 
 final logIncomingCallNotifier =
     StateNotifierProvider<LogIncomingCallNotifier, LogIncomingCallState>(
@@ -61,32 +61,35 @@ final surveyNotifier =
     machineId: machineId,
   ),
 );
-final surveyRespondenNotifier =
-    StateNotifierProvider<SurveyRespondenNotifier, SurveyRespondenState>(
-  (ref) => SurveyRespondenNotifier(
+final surveyRespondenNotifier = StateNotifierProvider.family<
+    SurveyRespondenNotifier, SurveyRespondenState, String>(
+  (ref, surveyId) => SurveyRespondenNotifier(
     repository: ref.watch(_surveyRespondenRepository),
+    surveyId: surveyId,
   ),
 );
-final surveyRespondenResponseNotifier =
-    StateNotifierProvider<SurveyResponseNotifier, SurveyResponseState>(
-  (ref) => SurveyResponseNotifier(
+final surveyRespondenResponseNotifier = StateNotifierProvider.family<
+    SurveyRespondenResponseNotifier, SurveyRespondenResponseState, String>(
+  (ref, surveyRespondenId) => SurveyRespondenResponseNotifier(
     repository: ref.watch(_surveyRespondenResponseRepository),
+    surveyRespondenId: surveyRespondenId,
   ),
 );
-final machineSettingNotifier = StateNotifierProviderFamily<
-    MachineSettingNotifier, MachineSettingState, String>((ref, machineId) {
-  return MachineSettingNotifier(
-    repository: ref.watch(_machineSettingRepository),
-    machineId: machineId,
-  );
-});
-final machineResponseNotifier = StateNotifierProviderFamily<
-    MachineResponseNotifier, MachineResponseState, String>(
-  (ref, machineId) => MachineResponseNotifier(
-    repository: ref.watch(_machineResponseRepository),
-    machineId: machineId,
+final surveySettingNotifier = StateNotifierProvider.family<
+    SurveySettingNotifier, SurveySettingState, String>(
+  (ref, surveyId) => SurveySettingNotifier(
+    repository: ref.watch(_surveySettingRepository),
+    surveyId: surveyId,
   ),
 );
+final surveyResponseNotifier = StateNotifierProvider.family<
+    SurveyResponseNotifier, SurveyResponseState, String>(
+  (ref, surveyId) => SurveyResponseNotifier(
+    repository: ref.watch(_surveyResponseRepository),
+    surveyId: surveyId,
+  ),
+);
+
 final machineWhatsappNotifier =
     StateNotifierProvider<MachineWhatsappNotifier, MachineWhatsappState>(
   (ref) => MachineWhatsappNotifier(
@@ -147,15 +150,21 @@ final _surveyRespondenRepository = Provider(
     remoteDatasource: ref.watch(_surveyRespondenRemoteDatasource),
   ),
 );
+final _surveySettingRepository = Provider(
+  (ref) => SurveySettingRepository(
+    remoteDatasource: ref.watch(_surveySettingRemoteDatasource),
+  ),
+);
 final _surveyRepository = Provider(
   (ref) => SurveyRepository(
     remoteDatasource: ref.watch(_surveyRemoteDatasource),
   ),
 );
-final _machineSettingRepository = Provider((ref) => MachineSettingRepository(
-    remoteDatasource: ref.watch(_machineSettingRemoteDatasource)));
-final _machineResponseRepository = Provider((ref) => MachineResponseRepository(
-    remoteDatasource: ref.watch(_machineResponseRemoteDatasource)));
+final _surveyResponseRepository = Provider(
+  (ref) => SurveyResponseRepository(
+    remoteDatasource: ref.watch(_surveyResponseRemoteDatasource),
+  ),
+);
 final _machineWhatsappRepository = Provider((ref) => MachineWhatsappRepository(
     remoteDatasource: ref.watch(_machineWhatsappRemoteDatasource)));
 final _machineRepository = Provider((ref) =>
@@ -201,10 +210,6 @@ final _incomingMessageRemoteDatasource = Provider(
 final _surveyRespondenResponseRemoteDatasource = Provider(
   (ref) => SurveyRespondenResponseRemoteDatasource(
     client: ref.watch(_httpClient),
-    surveyRespondenRemoteDatasource:
-        ref.watch(_surveyRespondenRemoteDatasource),
-    temporaryPendingResponseLocalDatasource:
-        ref.watch(_temporaryPendingResponseLocalDatasource),
   ),
 );
 final _surveyRespondenRemoteDatasource = Provider(
@@ -212,27 +217,44 @@ final _surveyRespondenRemoteDatasource = Provider(
     client: ref.watch(_httpClient),
   ),
 );
-final _surveyRemoteDatasource = Provider(
-  (ref) => SurveyRemoteDatasource(
+final _surveySettingRemoteDatasource = Provider(
+  (ref) => SurveySettingRemoteDatasource(
     client: ref.watch(_httpClient),
   ),
 );
-final _machineSettingRemoteDatasource = Provider(
-    (ref) => MachineSettingRemoteDatasource(client: ref.watch(_httpClient)));
-final _machineResponseRemoteDatasource = Provider(
-    (ref) => MachineResponseRemoteDatasource(client: ref.watch(_httpClient)));
+final _surveyRemoteDatasource = Provider(
+  (ref) => SurveyRemoteDatasource(
+    client: ref.watch(_httpClient),
+    temporaryPendingResponseLocalDatasource:
+        ref.watch(_temporaryPendingResponseLocalDatasource),
+  ),
+);
+final _surveyResponseRemoteDatasource = Provider(
+  (ref) => SurveyResponseRemoteDatasource(
+    client: ref.watch(_httpClient),
+  ),
+);
 final _machineWhatsappRemoteDatasource = Provider(
-    (ref) => MachineWhatsappRemoteDatasource(client: ref.watch(_httpClient)));
-final _machineRemoteDatasource =
-    Provider((ref) => MachineRemoteDatasource(client: ref.watch(_httpClient)));
+  (ref) => MachineWhatsappRemoteDatasource(
+    client: ref.watch(_httpClient),
+  ),
+);
+final _machineRemoteDatasource = Provider(
+  (ref) => MachineRemoteDatasource(
+    client: ref.watch(_httpClient),
+  ),
+);
 final _authenticationRemoteDatasource = Provider(
   (ref) => AuthenticationRemoteDatasource(
     client: ref.watch(_httpClient),
     userRemoteDatasource: ref.watch(_userRemoteDatasource),
   ),
 );
-final _userRemoteDatasource =
-    Provider((ref) => UserRemoteDatasource(client: ref.watch(_httpClient)));
+final _userRemoteDatasource = Provider(
+  (ref) => UserRemoteDatasource(
+    client: ref.watch(_httpClient),
+  ),
+);
 
 // local datasource
 

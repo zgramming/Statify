@@ -1,11 +1,10 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 import '../../database/database.dart';
 
 class TemporaryPendingResponseModel extends Equatable {
-  final String surveyResponseId;
-  final String surveyId;
-  final String machineId;
+  final String surveyRespondenId;
   final int simSlot;
   final String phoneNumber;
   final String message;
@@ -14,9 +13,7 @@ class TemporaryPendingResponseModel extends Equatable {
   final DateTime? deletedAt;
 
   const TemporaryPendingResponseModel({
-    required this.surveyResponseId,
-    required this.surveyId,
-    required this.machineId,
+    required this.surveyRespondenId,
     required this.simSlot,
     required this.phoneNumber,
     required this.message,
@@ -28,9 +25,7 @@ class TemporaryPendingResponseModel extends Equatable {
   factory TemporaryPendingResponseModel.fromData(
       TemporaryPendingResponseTableData data) {
     return TemporaryPendingResponseModel(
-      surveyResponseId: data.surveyResponseId,
-      surveyId: data.surveyId,
-      machineId: data.machineId,
+      surveyRespondenId: data.surveyRespondentId,
       simSlot: data.simSlot,
       phoneNumber: data.phoneNumber,
       message: data.message,
@@ -43,9 +38,7 @@ class TemporaryPendingResponseModel extends Equatable {
   @override
   List<Object?> get props {
     return [
-      surveyResponseId,
-      surveyId,
-      machineId,
+      surveyRespondenId,
       simSlot,
       phoneNumber,
       message,

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
@@ -6,40 +7,38 @@ class ListenOnDeliveredSMSModel extends Equatable {
   final String message;
   final int code;
   final bool status;
-  final String surveyResponseId;
+  final String surveyRespondenId;
+  final String surveyRespondenResponseId;
+
   const ListenOnDeliveredSMSModel({
     required this.message,
     required this.code,
     required this.status,
-    required this.surveyResponseId,
+    required this.surveyRespondenId,
+    required this.surveyRespondenResponseId,
   });
 
   @override
-  List<Object> get props => [message, code, status, surveyResponseId];
+  List<Object> get props {
+    return [
+      message,
+      code,
+      status,
+      surveyRespondenId,
+      surveyRespondenResponseId,
+    ];
+  }
 
   @override
   bool get stringify => true;
-
-  ListenOnDeliveredSMSModel copyWith({
-    String? message,
-    int? code,
-    bool? status,
-    String? surveyResponseId,
-  }) {
-    return ListenOnDeliveredSMSModel(
-      message: message ?? this.message,
-      code: code ?? this.code,
-      status: status ?? this.status,
-      surveyResponseId: surveyResponseId ?? this.surveyResponseId,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'message': message,
       'code': code,
       'status': status,
-      'surveyResponseId': surveyResponseId,
+      'surveyRespondenId': surveyRespondenId,
+      'surveyRespondenResponseId': surveyRespondenResponseId,
     };
   }
 
@@ -48,7 +47,8 @@ class ListenOnDeliveredSMSModel extends Equatable {
       message: map['message'] as String,
       code: map['code'] as int,
       status: map['status'] as bool,
-      surveyResponseId: map['surveyResponseId'] as String,
+      surveyRespondenId: map['surveyRespondenId'] as String,
+      surveyRespondenResponseId: map['surveyRespondenResponseId'] as String,
     );
   }
 

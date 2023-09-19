@@ -2,43 +2,41 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'survey_responden_response_pending_response.model.g.dart';
+part 'survey_pending.model.g.dart';
 
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class SurveyRespondenResponsePendingResponseModel extends Equatable {
+class SurveyPendingModel extends Equatable {
   final String id;
   final String surveyRespondentId;
   final String platform;
   final String key;
   final String value;
   final String status;
+  final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final bool finish;
-  final SurveyResponseSurvey survey;
+  final SurveyPendingRespondenModel responden;
 
-  const SurveyRespondenResponsePendingResponseModel({
+  const SurveyPendingModel({
     required this.id,
     required this.surveyRespondentId,
     required this.platform,
     required this.key,
     required this.value,
     required this.status,
+    required this.finish,
     required this.createdAt,
     required this.updatedAt,
-    required this.finish,
-    required this.survey,
+    required this.responden,
   });
 
-  factory SurveyRespondenResponsePendingResponseModel.fromJson(
-          Map<String, dynamic> json) =>
-      _$SurveyRespondenResponsePendingResponseModelFromJson(json);
+  factory SurveyPendingModel.fromJson(Map<String, dynamic> json) =>
+      _$SurveyPendingModelFromJson(json);
 
-  /// Connect the generated [_$SurveyRespondenResponsePendingResponseModelToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() =>
-      _$SurveyRespondenResponsePendingResponseModelToJson(this);
+  /// Connect the generated [_$SurveyPendingModelToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$SurveyPendingModelToJson(this);
 
   @override
   List<Object> get props {
@@ -49,10 +47,10 @@ class SurveyRespondenResponsePendingResponseModel extends Equatable {
       key,
       value,
       status,
+      finish,
       createdAt,
       updatedAt,
-      finish,
-      survey,
+      responden,
     ];
   }
 
@@ -63,41 +61,41 @@ class SurveyRespondenResponsePendingResponseModel extends Equatable {
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class SurveyResponseSurvey extends Equatable {
+class SurveyPendingRespondenModel extends Equatable {
   final String id;
-  final String machineId;
-  final String? machineWhatsappId;
+  final String surveyId;
+  final dynamic machineWhatsappId;
   final String number;
   final bool locked;
   final int attempt;
-  final DateTime? bannedUntil;
+  final dynamic bannedUntil;
   final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
-  const SurveyResponseSurvey({
+  const SurveyPendingRespondenModel({
     required this.id,
-    required this.machineId,
-    this.machineWhatsappId,
+    required this.surveyId,
+    required this.machineWhatsappId,
     required this.number,
     required this.locked,
     required this.attempt,
-    this.bannedUntil,
+    required this.bannedUntil,
     required this.finish,
     required this.createdAt,
     required this.updatedAt,
   });
 
-  factory SurveyResponseSurvey.fromJson(Map<String, dynamic> json) =>
-      _$SurveyResponseSurveyFromJson(json);
+  factory SurveyPendingRespondenModel.fromJson(Map<String, dynamic> json) =>
+      _$SurveyPendingRespondenModelFromJson(json);
 
-  /// Connect the generated [_$SurveyResponseSurveyToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$SurveyResponseSurveyToJson(this);
+  /// Connect the generated [_$SurveyPendingRespondenModelToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$SurveyPendingRespondenModelToJson(this);
 
   @override
-  List<Object?> get props {
+  List<Object> get props {
     return [
       id,
-      machineId,
+      surveyId,
       machineWhatsappId,
       number,
       locked,

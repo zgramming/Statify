@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,19 +34,20 @@ class SurveyRespondenState extends Equatable {
 
 class SurveyRespondenNotifier extends StateNotifier<SurveyRespondenState> {
   final SurveyRespondenRepository repository;
+  final String surveyId;
   SurveyRespondenNotifier({
     required this.repository,
+    required this.surveyId,
   }) : super(const SurveyRespondenState());
 
   Future<void> create({
     required String number,
-    required String machineId,
     required String? key,
   }) async {
     state = state.copyWith(onCreate: const AsyncLoading());
     final result = await repository.create(
       number: number,
-      machineId: machineId,
+      surveyId: surveyId,
       key: key,
     );
 
@@ -57,15 +59,16 @@ class SurveyRespondenNotifier extends StateNotifier<SurveyRespondenState> {
   }
 
   Future<void> unlock({
-    required String surveyId,
     required String key,
     required String platform,
+    required String surveyRespondenId,
   }) async {
     state = state.copyWith(onUnlock: const AsyncLoading());
     final result = await repository.unlock(
       surveyId: surveyId,
       key: key,
       platform: platform,
+      surveyRespondenId: surveyRespondenId,
     );
 
     result.fold(

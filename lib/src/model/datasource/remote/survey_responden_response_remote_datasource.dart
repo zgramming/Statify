@@ -1,72 +1,26 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
-import '../../../utils/enum.dart';
-import '../../../utils/flutter_secure_storage.dart';
-import '../../../utils/method_channel.dart';
-import '../../model/helper/form/form_survey_response_create_model.dart';
-import '../../model/helper/form/form_temporary_pending_response_create.model.dart';
-import '../../model/send_sms_model.dart';
-import '../../model/survey_responden_response/survey_responden_response_pending_response.model.dart';
+import '../../model/helper/form/form_survey_responden_response_create_model.dart';
 import '../../model/survey_responden_response/survey_responden_response_create_response_model.dart';
 import '../../model/survey_responden_response/survey_responden_response_fail_model.dart';
 import '../../model/survey_responden_response/survey_responden_response_sent_model.dart';
-import '../local/temporary_pending_response_local_datasource.dart';
-import 'survey_responden_remote_datasource.dart';
 
-// TODO: Rombak URL API
 class SurveyRespondenResponseRemoteDatasource {
   SurveyRespondenResponseRemoteDatasource({
     required this.client,
-    required this.surveyRespondenRemoteDatasource,
-    required this.temporaryPendingResponseLocalDatasource,
   });
 
   final http.Client client;
-  final SurveyRespondenRemoteDatasource surveyRespondenRemoteDatasource;
-  final TemporaryPendingResponseLocalDatasource
-      temporaryPendingResponseLocalDatasource;
 
-  Future<SurveyRespondenResponsePendingResponseModel?> getPendingResponse(
-    String machineId,
-    MachineResponsePlatformEnum platform,
-  ) async {
-    final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
-    final uri = Uri.parse("$kBaseApiUrl/machines/$machineId/pending-response");
-    final request = http.Request('GET', uri);
-    request.body = json.encode({"platform": platform.valueString});
-    request.headers.addAll({
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $currentToken",
-    });
-
-    final response = await request.send();
-
-    final body = await response.stream.bytesToString();
-    final decodedData = Map<String, dynamic>.from(jsonDecode(body));
-    final data = decodedData['data'];
-
-    if (data == null) {
-      return null;
-    }
-
-    if (response.statusCode == 200) {
-      final result = SurveyRespondenResponsePendingResponseModel.fromJson(data);
-
-      return result;
-    } else {
-      throw Exception('Failed to get survey response');
-    }
-  }
-
-  Future<SurveyRespondenResponseCreateResponseModel> create(
-    FormSurveyResponseCreateModel form,
-  ) async {
-    final uri = Uri.parse("$kBaseApiUrl/surveys/${form.surveyId}/responses");
+  Future<SurveyRespondenResponseCreateResponseModel> create({
+    required FormSurveyRespondenResponseCreateModel form,
+  }) async {
+    final uri = Uri.parse(
+      "$kBaseApiUrl/survey-respondents/${form.surveyRespondenId}/responses",
+    );
     final response = await client.post(
       uri,
       body: {
@@ -88,9 +42,12 @@ class SurveyRespondenResponseRemoteDatasource {
     }
   }
 
-  Future<SurveyRespondenResponseSentModel> sent(String surveyResponseId) async {
+  Future<SurveyRespondenResponseSentModel> sent({
+    required String surveyRespondenId,
+    required String surveyRespondenResponseId,
+  }) async {
     final uri = Uri.parse(
-      "$kBaseApiUrl/survey-responses/$surveyResponseId/sent",
+      "$kBaseApiUrl/survey-respondents/$surveyRespondenId/responses/$surveyRespondenResponseId/sent",
     );
     final response = await client.patch(uri);
 
@@ -108,9 +65,12 @@ class SurveyRespondenResponseRemoteDatasource {
     }
   }
 
-  Future<SurveyRespondenResponseFailModel> fail(String surveyResponseId) async {
+  Future<SurveyRespondenResponseFailModel> fail(
+      {required String surveyRespondenId,
+      required String surveyRespondenResponseId,
+      required}) async {
     final uri = Uri.parse(
-      "$kBaseApiUrl/survey-responses/$surveyResponseId/fail",
+      "$kBaseApiUrl/survey-respondents/$surveyRespondenId/responses/$surveyRespondenResponseId/fail",
     );
     final response = await client.patch(uri);
 
@@ -125,71 +85,6 @@ class SurveyRespondenResponseRemoteDatasource {
           ? decodedData['message']
           : 'Failed to fail survey response';
       throw Exception(message);
-    }
-  }
-
-  Stream<String?> listenPendingResponse({
-    required String machineId,
-    required int simSlot,
-  }) async* {
-    final methodChannelUtils = MethodChannelUtils();
-
-    while (true) {
-      try {
-        final pendingResponse = await getPendingResponse(
-          machineId,
-          MachineResponsePlatformEnum.sms,
-        );
-
-        if (pendingResponse == null) {
-          yield "Pending Response is not found, wait for 10 seconds to check again";
-        } else {
-          // Check if pending response is exist in temporary pending response
-          final tempPendingResponse =
-              await temporaryPendingResponseLocalDatasource
-                  .getBySurveyResponseId(
-            surveyResponseId: pendingResponse.id,
-          );
-
-          // If exist, skip this pending response
-          log("tempPendingResponse: $tempPendingResponse");
-          if (tempPendingResponse != null) {
-            log(" Pending Response is exist in temporary pending response, skip this pending response");
-            yield "Pending Response is exist in temporary pending response, skip this pending response";
-          } else {
-            log("Pending Response is not exist in temporary pending response, create temporary pending response and send message to ${pendingResponse.survey.number}");
-            // create temporary pending response to local database for prevent duplicate
-            final form = FormTemporaryPendingResponseCreateModel(
-              surveyId: pendingResponse.survey.id,
-              machineId: machineId,
-              simSlot: simSlot,
-              phoneNumber: pendingResponse.survey.number,
-              message: pendingResponse.value,
-            );
-
-            await temporaryPendingResponseLocalDatasource.create(form);
-            // Send SMS to user
-            final model = SendSMSModel(
-              phoneNumber: pendingResponse.survey.number,
-              message: pendingResponse.value,
-              simSlot: simSlot,
-              surveyResponseId: pendingResponse.id,
-            );
-            final msg = await methodChannelUtils.sendSMS(model);
-
-            if (!msg) {
-              yield "Failed to send message to ${pendingResponse.survey.number}, wait for 10 seconds to check again";
-            } else {
-              yield "Process to send message to ${pendingResponse.survey.number}, wait for 10 seconds to check again";
-            }
-          }
-        }
-      } catch (e) {
-        log("Error When Listen Pending Response: ${e.toString()}");
-        yield "Error When Listen Pending Response: ${e.toString()}";
-      }
-
-      await Future.delayed(const Duration(seconds: 10));
     }
   }
 }

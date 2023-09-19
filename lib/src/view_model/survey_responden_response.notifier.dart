@@ -1,55 +1,42 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/model/helper/form/form_survey_response_create_model.dart';
-import '../model/model/survey_responden_response/survey_responden_response_pending_response.model.dart';
+import '../model/model/helper/form/form_survey_responden_response_create_model.dart';
 import '../model/model/survey_responden_response/survey_responden_response_create_response_model.dart';
 import '../model/model/survey_responden_response/survey_responden_response_fail_model.dart';
 import '../model/model/survey_responden_response/survey_responden_response_sent_model.dart';
 import '../model/repository/survey_responden_response.repository.dart';
-import '../utils/enum.dart';
 
-class SurveyResponseState extends Equatable {
+class SurveyRespondenResponseState extends Equatable {
   final AsyncValue<SurveyRespondenResponseCreateResponseModel?> onCreate;
-  final AsyncValue<SurveyRespondenResponsePendingResponseModel?>
-      onGetPendingResponse;
+
   final AsyncValue<SurveyRespondenResponseFailModel?> onFail;
   final AsyncValue<SurveyRespondenResponseSentModel?> onSent;
   final Stream<int>? onListenPendingResponse;
 
-  const SurveyResponseState({
+  const SurveyRespondenResponseState({
     this.onCreate = const AsyncData(null),
-    this.onGetPendingResponse = const AsyncData(null),
     this.onFail = const AsyncData(null),
     this.onSent = const AsyncData(null),
-    this.onListenPendingResponse,
+    this.onListenPendingResponse = const Stream.empty(),
   });
 
   @override
-  List<Object?> get props {
-    return [
-      onCreate,
-      onGetPendingResponse,
-      onFail,
-      onSent,
-      onListenPendingResponse,
-    ];
-  }
+  List<Object?> get props =>
+      [onCreate, onFail, onSent, onListenPendingResponse];
 
   @override
   bool get stringify => true;
 
-  SurveyResponseState copyWith({
+  SurveyRespondenResponseState copyWith({
     AsyncValue<SurveyRespondenResponseCreateResponseModel?>? onCreate,
-    AsyncValue<SurveyRespondenResponsePendingResponseModel?>?
-        onGetPendingResponse,
     AsyncValue<SurveyRespondenResponseFailModel?>? onFail,
     AsyncValue<SurveyRespondenResponseSentModel?>? onSent,
     Stream<int>? onListenPendingResponse,
   }) {
-    return SurveyResponseState(
+    return SurveyRespondenResponseState(
       onCreate: onCreate ?? this.onCreate,
-      onGetPendingResponse: onGetPendingResponse ?? this.onGetPendingResponse,
       onFail: onFail ?? this.onFail,
       onSent: onSent ?? this.onSent,
       onListenPendingResponse:
@@ -58,28 +45,19 @@ class SurveyResponseState extends Equatable {
   }
 }
 
-class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
+class SurveyRespondenResponseNotifier
+    extends StateNotifier<SurveyRespondenResponseState> {
   final SurveyRespondenResponseRepository repository;
+  final String surveyRespondenId;
 
-  SurveyResponseNotifier({
+  SurveyRespondenResponseNotifier({
     required this.repository,
-  }) : super(const SurveyResponseState());
+    required this.surveyRespondenId,
+  }) : super(const SurveyRespondenResponseState());
 
-  Future<void> getPendingResponse(
-      String machineId, MachineResponsePlatformEnum platform) async {
-    state = state.copyWith(onGetPendingResponse: const AsyncLoading());
-    final result = await repository.getPendingResponse(machineId, platform);
-    result.fold(
-      (failure) => state = state.copyWith(
-          onGetPendingResponse:
-              AsyncError(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onGetPendingResponse: AsyncData(data)),
-    );
-  }
-
-  Future<void> create(FormSurveyResponseCreateModel form) async {
+  Future<void> create(FormSurveyRespondenResponseCreateModel form) async {
     state = state.copyWith(onCreate: const AsyncLoading());
-    final result = await repository.create(form);
+    final result = await repository.create(form: form);
     result.fold(
       (failure) => state = state.copyWith(
           onCreate: AsyncError(failure.message, StackTrace.current)),
@@ -87,9 +65,14 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
     );
   }
 
-  Future<SurveyResponseState> sent(String surveyResponseId) async {
+  Future<SurveyRespondenResponseState> sent({
+    required String surveyRespondenResponseId,
+  }) async {
     state = state.copyWith(onSent: const AsyncLoading());
-    final result = await repository.sent(surveyResponseId);
+    final result = await repository.sent(
+      surveyRespondenId: surveyRespondenId,
+      surveyRespondenResponseId: surveyRespondenResponseId,
+    );
     final fold = result.fold(
       (failure) => state = state.copyWith(
           onSent: AsyncError(failure.message, StackTrace.current)),
@@ -99,27 +82,19 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
     return fold;
   }
 
-  Future<SurveyResponseState> fail(String surveyResponseId) async {
+  Future<SurveyRespondenResponseState> fail({
+    required String surveyRespondenResponseId,
+  }) async {
     state = state.copyWith(onFail: const AsyncLoading());
-    final result = await repository.fail(surveyResponseId);
+    final result = await repository.fail(
+      surveyRespondenId: surveyRespondenId,
+      surveyRespondenResponseId: surveyRespondenResponseId,
+    );
     final fold = result.fold(
       (failure) => state = state.copyWith(
           onFail: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onFail: AsyncData(data)),
     );
-    return fold;
-  }
-
-  Stream<String?> listenPendingResponse({
-    required String machineId,
-    required int simSlot,
-  }) {
-    final result = repository.listenPendingResponse(
-      machineId: machineId,
-      simSlot: simSlot,
-    );
-    final fold = result.getOrElse(() => Stream.value(null));
-
     return fold;
   }
 }

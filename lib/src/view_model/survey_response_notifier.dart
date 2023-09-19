@@ -1,20 +1,19 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/model/helper/form/form_machine_response_create_update_model.dart';
-import '../model/model/machine_response/machine_response_create_response_model.dart';
-import '../model/model/machine_response/machine_response_delete_response_model.dart';
-import '../model/model/machine_response/machine_response_model.dart';
-import '../model/model/machine_response/machine_response_update_response_model.dart';
-import '../model/repository/machine_response_repository.dart';
+import '../model/model/survey_response/survey_response_create_response_model.dart';
+import '../model/model/survey_response/survey_response_model.dart';
+import '../model/repository/survey_response_repository.dart';
 
-class MachineResponseState extends Equatable {
-  final AsyncValue<List<MachineResponseModel>> onGetAll;
-  final AsyncValue<MachineResponseModel?> onGetById;
-  final AsyncValue<MachineResponseCreateResponseModel?> onCreate;
-  final AsyncValue<MachineResponseUpdateResponseModel?> onUpdate;
-  final AsyncValue<MachineResponseDeleteResponseModel?> onDelete;
-  const MachineResponseState({
+class SurveyResponseState extends Equatable {
+  final AsyncValue<List<SurveyResponseModel>> onGetAll;
+  final AsyncValue<SurveyResponseModel?> onGetById;
+  final AsyncValue<SurveyResponseCreateModel?> onCreate;
+  final AsyncValue<SurveyResponseModel?> onUpdate;
+  final AsyncValue<SurveyResponseModel?> onDelete;
+  const SurveyResponseState({
     this.onGetAll = const AsyncValue.data([]),
     this.onGetById = const AsyncValue.data(null),
     this.onCreate = const AsyncValue.data(null),
@@ -36,14 +35,14 @@ class MachineResponseState extends Equatable {
   @override
   bool get stringify => true;
 
-  MachineResponseState copyWith({
-    AsyncValue<List<MachineResponseModel>>? onGetAll,
-    AsyncValue<MachineResponseModel?>? onGetById,
-    AsyncValue<MachineResponseCreateResponseModel?>? onCreate,
-    AsyncValue<MachineResponseUpdateResponseModel?>? onUpdate,
-    AsyncValue<MachineResponseDeleteResponseModel?>? onDelete,
+  SurveyResponseState copyWith({
+    AsyncValue<List<SurveyResponseModel>>? onGetAll,
+    AsyncValue<SurveyResponseModel?>? onGetById,
+    AsyncValue<SurveyResponseCreateModel?>? onCreate,
+    AsyncValue<SurveyResponseModel?>? onUpdate,
+    AsyncValue<SurveyResponseModel?>? onDelete,
   }) {
-    return MachineResponseState(
+    return SurveyResponseState(
       onGetAll: onGetAll ?? this.onGetAll,
       onGetById: onGetById ?? this.onGetById,
       onCreate: onCreate ?? this.onCreate,
@@ -53,20 +52,20 @@ class MachineResponseState extends Equatable {
   }
 }
 
-class MachineResponseNotifier extends StateNotifier<MachineResponseState> {
-  MachineResponseNotifier({
+class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
+  SurveyResponseNotifier({
     required this.repository,
-    required this.machineId,
-  }) : super(const MachineResponseState()) {
+    required this.surveyId,
+  }) : super(const SurveyResponseState()) {
     getAll();
   }
 
-  final MachineResponseRepository repository;
-  final String machineId;
+  final SurveyResponseRepository repository;
+  final String surveyId;
 
   Future<void> getAll() async {
     state = state.copyWith(onGetAll: const AsyncValue.loading());
-    final result = await repository.getAll(machineId);
+    final result = await repository.getAll(surveyId);
     result.fold(
       (failure) => state = state.copyWith(
           onGetAll: AsyncValue.error(failure.message, StackTrace.current)),
@@ -79,7 +78,7 @@ class MachineResponseNotifier extends StateNotifier<MachineResponseState> {
   }) async {
     state = state.copyWith(onGetById: const AsyncValue.loading());
     final result = await repository.getById(
-      machineId: machineId,
+      surveyId: surveyId,
       responseId: responseId,
     );
     result.fold(
@@ -95,7 +94,7 @@ class MachineResponseNotifier extends StateNotifier<MachineResponseState> {
     state = state.copyWith(onCreate: const AsyncValue.loading());
     final result = await repository.create(
       form: form,
-      machineId: machineId,
+      surveyId: surveyId,
     );
     result.fold(
       (failure) => state = state.copyWith(
@@ -111,7 +110,7 @@ class MachineResponseNotifier extends StateNotifier<MachineResponseState> {
     state = state.copyWith(onUpdate: const AsyncValue.loading());
     final result = await repository.update(
       form: form,
-      machineId: machineId,
+      surveyId: surveyId,
       responseId: responseId,
     );
     result.fold(
@@ -121,29 +120,21 @@ class MachineResponseNotifier extends StateNotifier<MachineResponseState> {
     );
   }
 
-  Future<void> delete({
-    required String responseId,
-    void Function(MachineResponseDeleteResponseModel data)? onSuccess,
-    void Function(String error)? onError,
-    void Function()? onLoading,
-  }) async {
+  Future<SurveyResponseState> delete({required String responseId}) async {
     state = state.copyWith(onDelete: const AsyncValue.loading());
-    onLoading?.call();
 
     final result = await repository.delete(
-      machineId: machineId,
+      surveyId: surveyId,
       responseId: responseId,
     );
-    result.fold(
-      (failure) {
-        onError?.call(failure.message);
-        return state = state.copyWith(
-            onDelete: AsyncValue.error(failure.message, StackTrace.current));
-      },
-      (data) {
-        onSuccess?.call(data);
-        return state = state.copyWith(onDelete: AsyncValue.data(data));
-      },
+    return result.fold(
+      (failure) => state = state.copyWith(
+        onDelete: AsyncValue.error(
+          failure.message,
+          StackTrace.current,
+        ),
+      ),
+      (data) => state = state.copyWith(onDelete: AsyncValue.data(data)),
     );
   }
 }

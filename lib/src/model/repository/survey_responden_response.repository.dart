@@ -1,11 +1,9 @@
 import 'package:dartz/dartz.dart';
 
-import '../../utils/enum.dart';
 import '../../utils/failure.dart';
 import '../datasource/remote/survey_responden_response_remote_datasource.dart';
-import '../model/helper/form/form_survey_response_create_model.dart';
+import '../model/helper/form/form_survey_responden_response_create_model.dart';
 import '../model/survey_responden_response/survey_responden_response_create_response_model.dart';
-import '../model/survey_responden_response/survey_responden_response_pending_response.model.dart';
 import '../model/survey_responden_response/survey_responden_response_fail_model.dart';
 import '../model/survey_responden_response/survey_responden_response_sent_model.dart';
 
@@ -16,58 +14,40 @@ class SurveyRespondenResponseRepository {
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, SurveyRespondenResponsePendingResponseModel?>>
-      getPendingResponse(
-          String machineId, MachineResponsePlatformEnum platform) async {
+  Future<Either<Failure, SurveyRespondenResponseCreateResponseModel>> create({
+    required FormSurveyRespondenResponseCreateModel form,
+  }) async {
     try {
-      final response =
-          await remoteDatasource.getPendingResponse(machineId, platform);
+      final response = await remoteDatasource.create(form: form);
       return Right(response);
     } catch (e) {
       return Left(CommonFailure(e.toString()));
     }
   }
 
-  Future<Either<Failure, SurveyRespondenResponseCreateResponseModel>> create(
-      FormSurveyResponseCreateModel form) async {
+  Future<Either<Failure, SurveyRespondenResponseSentModel>> sent({
+    required String surveyRespondenId,
+    required String surveyRespondenResponseId,
+  }) async {
     try {
-      final response = await remoteDatasource.create(form);
+      final response = await remoteDatasource.sent(
+        surveyRespondenId: surveyRespondenId,
+        surveyRespondenResponseId: surveyRespondenResponseId,
+      );
       return Right(response);
     } catch (e) {
       return Left(CommonFailure(e.toString()));
     }
   }
 
-  Future<Either<Failure, SurveyRespondenResponseSentModel>> sent(
-    String surveyResponseId,
-  ) async {
+  Future<Either<Failure, SurveyRespondenResponseFailModel>> fail({
+    required String surveyRespondenId,
+    required String surveyRespondenResponseId,
+  }) async {
     try {
-      final response = await remoteDatasource.sent(surveyResponseId);
-      return Right(response);
-    } catch (e) {
-      return Left(CommonFailure(e.toString()));
-    }
-  }
-
-  Future<Either<Failure, SurveyRespondenResponseFailModel>> fail(
-    String surveyResponseId,
-  ) async {
-    try {
-      final response = await remoteDatasource.fail(surveyResponseId);
-      return Right(response);
-    } catch (e) {
-      return Left(CommonFailure(e.toString()));
-    }
-  }
-
-  Either<Failure, Stream<String?>> listenPendingResponse({
-    required String machineId,
-    required int simSlot,
-  }) {
-    try {
-      final response = remoteDatasource.listenPendingResponse(
-        machineId: machineId,
-        simSlot: simSlot,
+      final response = await remoteDatasource.fail(
+        surveyRespondenId: surveyRespondenId,
+        surveyRespondenResponseId: surveyRespondenResponseId,
       );
       return Right(response);
     } catch (e) {

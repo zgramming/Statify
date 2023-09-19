@@ -3,48 +3,44 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
-import '../../model/helper/form/form_machine_setting_create_update_model.dart';
-import '../../model/machine_setting/machine_setting_model.dart';
-import '../../model/machine_setting/machine_setting_update_response_model.dart';
+import '../../model/helper/form/form_survey_setting_create_update_model.dart';
+import '../../model/survey_setting/survey_setting_model.dart';
 
-class MachineSettingRemoteDatasource {
+class SurveySettingRemoteDatasource {
   final http.Client client;
-  const MachineSettingRemoteDatasource({
+  const SurveySettingRemoteDatasource({
     required this.client,
   });
 
-  Future<List<MachineSettingModel>> getAll(String machineId) async {
-    final uri = Uri.parse('$kBaseApiUrl/machines/$machineId/settings');
+  Future<List<SurveySettingModel>> getAll(String surveyId) async {
+    final uri = Uri.parse("$kBaseApiUrl/surveys/$surveyId/settings");
     final response = await client.get(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final list = decoded['data'] as List;
-      final machines =
-          list.map((e) => MachineSettingModel.fromJson(e)).toList();
-      return machines;
+      final result = list.map((e) => SurveySettingModel.fromJson(e)).toList();
+      return result;
     } else {
       final message = decoded.containsKey('message')
           ? decoded['message']
-          : 'Failed to load machine';
+          : 'Failed to load survey setting';
       throw Exception(message);
     }
   }
 
-  Future<MachineSettingModel> getById({
-    required String machineId,
+  Future<SurveySettingModel> getById({
+    required String surveyId,
     required String settingId,
   }) async {
-    final uri = Uri.parse(
-      '$kBaseApiUrl/machines/$machineId/settings/$settingId',
-    );
+    final uri = Uri.parse("$kBaseApiUrl/surveys/$surveyId/settings/$settingId");
     final response = await client.get(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     final data = decoded['data'];
 
     if (response.statusCode == 200) {
-      final machine = MachineSettingModel.fromJson(data);
+      final machine = SurveySettingModel.fromJson(data);
       return machine;
     } else {
       final message = decoded.containsKey('message')
@@ -54,13 +50,12 @@ class MachineSettingRemoteDatasource {
     }
   }
 
-  Future<MachineSettingUpdateResponseModel> update({
-    required FormMachineSettingCreateUpdateModel form,
+  Future<SurveySettingModel> update({
+    required FormSurveySettingCreateUpdateModel form,
     required String settingId,
+    required String surveyId,
   }) async {
-    final uri = Uri.parse(
-      '$kBaseApiUrl/machines/${form.machineId}/settings/$settingId',
-    );
+    final uri = Uri.parse("$kBaseApiUrl/surveys/$surveyId/settings/$settingId");
 
     final response = await client.patch(
       uri,
@@ -82,7 +77,7 @@ class MachineSettingRemoteDatasource {
 
     if (response.statusCode == 200) {
       final data = decoded['data'];
-      final machine = MachineSettingUpdateResponseModel.fromJson(data);
+      final machine = SurveySettingModel.fromJson(data);
       return machine;
     } else {
       final message = decoded.containsKey('message')

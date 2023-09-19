@@ -10,7 +10,7 @@ SurveyRespondenByNumberModel _$SurveyRespondenByNumberModelFromJson(
         Map<String, dynamic> json) =>
     SurveyRespondenByNumberModel(
       id: json['id'] as String,
-      machineId: json['machine_id'] as String,
+      surveyId: json['survey_id'] as String,
       machineWhatsappId: json['machine_whatsapp_id'] as String?,
       number: json['number'] as String,
       locked: json['locked'] as bool,
@@ -27,7 +27,7 @@ Map<String, dynamic> _$SurveyRespondenByNumberModelToJson(
         SurveyRespondenByNumberModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'machine_id': instance.machineId,
+      'survey_id': instance.surveyId,
       'machine_whatsapp_id': instance.machineWhatsappId,
       'number': instance.number,
       'locked': instance.locked,

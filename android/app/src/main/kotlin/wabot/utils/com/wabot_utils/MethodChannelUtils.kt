@@ -20,7 +20,8 @@ class MethodChannelUtils(private val context: Context) {
         phoneNumber: String,
         message: String,
         sim: Int,
-        surveyResponseId: String,
+        surveyRespondenId: String,
+        surveyRespondenResponseId: String,
     ): Boolean {
 
         try {
@@ -42,8 +43,11 @@ class MethodChannelUtils(private val context: Context) {
 
             val iSentIntent = Intent(INTENT_SENT_SMS_ACTION)
             val iDeliveryIntent = Intent(INTENT_DELIVERED_SMS_ACTION)
-            iSentIntent.putExtra("surveyResponseId", surveyResponseId)
-            iDeliveryIntent.putExtra("surveyResponseId", surveyResponseId)
+            iSentIntent.putExtra("surveyRespondenId", surveyRespondenId)
+            iSentIntent.putExtra("surveyRespondenResponseId", surveyRespondenResponseId)
+
+            iDeliveryIntent.putExtra("surveyRespondenId", surveyRespondenId)
+            iDeliveryIntent.putExtra("surveyRespondenResponseId", surveyRespondenResponseId)
 
             val sentPendingIntent = PendingIntent.getBroadcast(
                 context,
@@ -94,9 +98,12 @@ class MethodChannelUtils(private val context: Context) {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     if (intent?.action == INTENT_SENT_SMS_ACTION) {
                         val bundle = intent.extras
-                        val surveyResponseIdX = bundle?.getString("surveyResponseId") ?: ""
+                        val surveyRespondenIdX = bundle?.getString("surveyRespondenId") ?: ""
+                        val surveyRespondenResponseIdX =
+                            bundle?.getString("surveyRespondenResponseId") ?: ""
 
-                        intent.putExtra("surveyResponseId", surveyResponseIdX)
+                        intent.putExtra("surveyRespondenId", surveyRespondenIdX)
+                        intent.putExtra("surveyRespondenResponseId", surveyRespondenResponseIdX)
 
                     }
                 }
@@ -107,9 +114,12 @@ class MethodChannelUtils(private val context: Context) {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     if (intent?.action == INTENT_DELIVERED_SMS_ACTION) {
                         val bundle = intent.extras
-                        val surveyResponseIdX = bundle?.getString("surveyResponseId") ?: ""
+                        val surveyRespondenIdX = bundle?.getString("surveyRespondenId") ?: ""
+                        val surveyRespondenResponseIdX =
+                            bundle?.getString("surveyRespondenResponseId") ?: ""
 
-                        intent.putExtra("surveyResponseId", surveyResponseIdX)
+                        intent.putExtra("surveyRespondenId", surveyRespondenIdX)
+                        intent.putExtra("surveyRespondenResponseId", surveyRespondenResponseIdX)
                     }
                 }
             }, IntentFilter(INTENT_DELIVERED_SMS_ACTION))

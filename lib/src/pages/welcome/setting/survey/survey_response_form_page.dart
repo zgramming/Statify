@@ -1,33 +1,34 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../injection.dart';
-import '../../../model/model/helper/form/form_machine_response_create_update_model.dart';
-import '../../../utils/enum.dart';
-import '../../../utils/fonts.dart';
-import '../../../utils/functions.dart';
-import '../../../utils/styles.dart';
-import '../../widgets/form_row_body.dart';
+import '../../../../injection.dart';
+import '../../../../model/model/helper/form/form_machine_response_create_update_model.dart';
+import '../../../../utils/enum.dart';
+import '../../../../utils/fonts.dart';
+import '../../../../utils/functions.dart';
+import '../../../../utils/styles.dart';
+import '../../../widgets/form_row_body.dart';
 
-class MachineResponseFormPage extends ConsumerStatefulWidget {
-  const MachineResponseFormPage({
+class SurveyResponseFormPage extends ConsumerStatefulWidget {
+  const SurveyResponseFormPage({
     Key? key,
     required this.isSMSBot,
-    required this.idMachine,
     required this.id,
+    required this.idSurvey,
   }) : super(key: key);
 
   final bool isSMSBot;
-  final String idMachine;
   final String id;
+  final String idSurvey;
 
   @override
-  ConsumerState<MachineResponseFormPage> createState() =>
-      _MachineResponseFormPageState();
+  ConsumerState<SurveyResponseFormPage> createState() =>
+      _SurveyResponseFormPageState();
 }
 
-class _MachineResponseFormPageState
-    extends ConsumerState<MachineResponseFormPage> {
+class _SurveyResponseFormPageState
+    extends ConsumerState<SurveyResponseFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController keyController;
@@ -43,10 +44,9 @@ class _MachineResponseFormPageState
     keyController = TextEditingController();
     valueController = TextEditingController();
 
-    final idMachine = widget.idMachine;
     final id = widget.id;
     final isCreate = id == "-1";
-    final notifier = ref.read(machineResponseNotifier(idMachine).notifier);
+    final notifier = ref.read(surveyResponseNotifier(widget.idSurvey).notifier);
     if (!isCreate) {
       Future.microtask(() {
         notifier.getById(responseId: id);
@@ -71,11 +71,10 @@ class _MachineResponseFormPageState
     final validate = _formKey.currentState?.validate() ?? false;
     if (!validate) return;
 
-    final idMachine = widget.idMachine;
     final id = widget.id;
     final isCreate = id == "-1";
 
-    final notifier = ref.read(machineResponseNotifier(idMachine).notifier);
+    final notifier = ref.read(surveyResponseNotifier(widget.idSurvey).notifier);
     final key = keyController.text;
     final value = valueController.text;
 
@@ -97,10 +96,11 @@ class _MachineResponseFormPageState
 
   @override
   Widget build(BuildContext context) {
+    final listenNotifier = surveyResponseNotifier(widget.idSurvey);
+
     // Listen onCreate
-    ref.listen(
-        machineResponseNotifier(widget.idMachine)
-            .select((value) => value.onCreate), (previous, next) {
+    ref.listen(listenNotifier.select((value) => value.onCreate),
+        (previous, next) {
       next.when(
         data: (data) {
           showSnackbar(
@@ -137,8 +137,7 @@ class _MachineResponseFormPageState
 
     // Listen onUpdate
     ref.listen(
-      machineResponseNotifier(widget.idMachine)
-          .select((value) => value.onUpdate),
+      listenNotifier.select((value) => value.onUpdate),
       (previous, next) {
         next.when(
           data: (data) {
@@ -173,8 +172,7 @@ class _MachineResponseFormPageState
 
     // Listen onGetById
     ref.listen(
-      machineResponseNotifier(widget.idMachine)
-          .select((value) => value.onGetById),
+      listenNotifier.select((value) => value.onGetById),
       (previous, next) {
         next.whenData((value) {
           if (value != null) {
@@ -190,7 +188,7 @@ class _MachineResponseFormPageState
     return WillPopScope(
       onWillPop: () {
         if (shouldReload) {
-          ref.invalidate(machineResponseNotifier(widget.idMachine));
+          ref.invalidate(surveyResponseNotifier(widget.idSurvey));
         }
         return Future.value(true);
       },

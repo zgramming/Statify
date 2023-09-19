@@ -7,6 +7,14 @@ import '../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
 import '../../model/model/machine/machine_model.dart';
 import '../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 
+final getActiveSurveyIdByMachineId = ProviderFamily((ref, machineId) {
+  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
+  final machine =
+      machines.firstWhereOrNull((element) => element.id == machineId);
+  final activeSurveyId = machine?.activeSurveyId;
+  return activeSurveyId;
+});
+
 final userChooseSIMMachineProvider =
     ProviderFamily<int, String>((ref, machineId) {
   final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];

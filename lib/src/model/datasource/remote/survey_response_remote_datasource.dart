@@ -4,62 +4,61 @@ import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
 import '../../model/helper/form/form_machine_response_create_update_model.dart';
-import '../../model/machine_response/machine_response_create_response_model.dart';
-import '../../model/machine_response/machine_response_delete_response_model.dart';
-import '../../model/machine_response/machine_response_model.dart';
-import '../../model/machine_response/machine_response_update_response_model.dart';
+import '../../model/survey_response/survey_response_create_response_model.dart';
+import '../../model/survey_response/survey_response_model.dart';
 
-class MachineResponseRemoteDatasource {
+class SurveyResponseRemoteDatasource {
   final http.Client client;
-  const MachineResponseRemoteDatasource({
+  const SurveyResponseRemoteDatasource({
     required this.client,
   });
 
-  Future<List<MachineResponseModel>> getAll(String machineId) async {
-    final uri = Uri.parse('$kBaseApiUrl/machines/$machineId/responses');
+  Future<List<SurveyResponseModel>> getAll(String surveyId) async {
+    final uri = Uri.parse('$kBaseApiUrl/surveys/$surveyId/responses');
     final response = await client.get(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final list = decoded['data'] as List;
       final machines =
-          list.map((e) => MachineResponseModel.fromJson(e)).toList();
+          list.map((e) => SurveyResponseModel.fromJson(e)).toList();
       return machines;
     } else {
       final message = decoded.containsKey('message')
           ? decoded['message']
-          : 'Failed to load machine';
+          : 'Failed to load survey response';
       throw Exception(message);
     }
   }
 
-  Future<MachineResponseModel> getById({
-    required String machineId,
+  Future<SurveyResponseModel> getById({
     required String responseId,
+    required String surveyId,
   }) async {
-    final uri =
-        Uri.parse('$kBaseApiUrl/machines/$machineId/responses/$responseId');
+    final uri = Uri.parse(
+      '$kBaseApiUrl/surveys/$surveyId/responses/$responseId',
+    );
     final response = await client.get(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
 
     if (response.statusCode == 200) {
       final data = decoded['data'];
-      final machine = MachineResponseModel.fromJson(data);
+      final machine = SurveyResponseModel.fromJson(data);
       return machine;
     } else {
       final message = decoded.containsKey('message')
           ? decoded['message']
-          : 'Failed to load machine';
+          : 'Failed to load survey response';
       throw Exception(message);
     }
   }
 
-  Future<MachineResponseCreateResponseModel> create({
+  Future<SurveyResponseCreateModel> create({
     required FormMachineResponseCreateUpdateModel form,
-    required String machineId,
+    required String surveyId,
   }) async {
-    final uri = Uri.parse('$kBaseApiUrl/machines/$machineId/responses');
+    final uri = Uri.parse('$kBaseApiUrl/surveys/$surveyId/responses');
     final response = await client.post(
       uri,
       body: {
@@ -74,7 +73,7 @@ class MachineResponseRemoteDatasource {
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final data = decoded['data'];
-      final machine = MachineResponseCreateResponseModel.fromJson(data);
+      final machine = SurveyResponseCreateModel.fromJson(data);
       return machine;
     } else {
       final message = decoded.containsKey('message')
@@ -84,13 +83,13 @@ class MachineResponseRemoteDatasource {
     }
   }
 
-  Future<MachineResponseUpdateResponseModel> update({
+  Future<SurveyResponseModel> update({
     required String responseId,
-    required String machineId,
+    required String surveyId,
     required FormMachineResponseCreateUpdateModel form,
   }) async {
     final uri = Uri.parse(
-      '$kBaseApiUrl/machines/$machineId/responses/$responseId',
+      '$kBaseApiUrl/surveys/$surveyId/responses/$responseId',
     );
     final response = await client.patch(
       uri,
@@ -105,7 +104,7 @@ class MachineResponseRemoteDatasource {
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final data = decoded['data'];
-      final machine = MachineResponseUpdateResponseModel.fromJson(data);
+      final machine = SurveyResponseModel.fromJson(data);
       return machine;
     } else {
       final message = decoded.containsKey('message')
@@ -115,18 +114,19 @@ class MachineResponseRemoteDatasource {
     }
   }
 
-  Future<MachineResponseDeleteResponseModel> delete({
-    required String machineId,
+  Future<SurveyResponseModel> delete({
+    required String surveyId,
     required String responseId,
   }) async {
-    final uri =
-        Uri.parse('$kBaseApiUrl/machines/$machineId/responses/$responseId');
+    final uri = Uri.parse(
+      '$kBaseApiUrl/surveys/$surveyId/responses/$responseId',
+    );
     final response = await client.delete(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final data = decoded['data'];
-      final machine = MachineResponseDeleteResponseModel.fromJson(data);
+      final machine = SurveyResponseModel.fromJson(data);
       return machine;
     } else {
       final message = decoded.containsKey('message')

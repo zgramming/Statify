@@ -36,15 +36,16 @@ class MainActivity : FlutterActivity() {
                 val phoneNumber = call.argument<String>("phoneNumber")
                 val message = call.argument<String>("message")
                 val sim = call.argument<Int>("simSlot")
-                val surveyResponseId = call.argument<String>("surveyResponseId")
-                if (phoneNumber != null && message != null && sim != null && surveyResponseId != null) {
+                val surveyRespondenId = call.argument<String>("surveyRespondenId")
+                val surveyRespondenResponseId = call.argument<String>("surveyRespondenResponseId")
+                if (phoneNumber != null && message != null && sim != null && surveyRespondenId != null && surveyRespondenResponseId != null) {
                     try {
                         Log.wtf("sendSMS", "sendSMS")
                         val exec = methodChannelUtils.sendSMS(
                             phoneNumber,
                             message,
                             sim,
-                            surveyResponseId,
+                            surveyRespondenId,
                         )
 
                         if (!exec) {

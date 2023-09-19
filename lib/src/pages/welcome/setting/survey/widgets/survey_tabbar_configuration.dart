@@ -1,32 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../injection.dart';
-import '../../../../utils/enum.dart';
-import '../../../../utils/fonts.dart';
-import '../../../widgets/async_error_builder.dart';
-import 'machine_tabbarview_smsbotorwhatsapp.dart';
+import '../../../../../injection.dart';
+import '../../../../../utils/enum.dart';
+import '../../../../../utils/fonts.dart';
+import '../../../../widgets/async_error_builder.dart';
+import 'survey_tabbarview_smsbotorwhatsapp.dart';
 
-class MachineTabBarConfiguration extends ConsumerStatefulWidget {
-  const MachineTabBarConfiguration({
+class SurveyTabBarConfiguration extends ConsumerStatefulWidget {
+  const SurveyTabBarConfiguration({
     super.key,
-    required this.idMachine,
+    required this.surveyId,
   });
-  final String idMachine;
 
+  final String surveyId;
   @override
-  ConsumerState<MachineTabBarConfiguration> createState() =>
-      MachineTabBarConfigurationState();
+  ConsumerState<SurveyTabBarConfiguration> createState() =>
+      SurveyTabBarConfigurationState();
 }
 
-class MachineTabBarConfigurationState
-    extends ConsumerState<MachineTabBarConfiguration>
+class SurveyTabBarConfigurationState
+    extends ConsumerState<SurveyTabBarConfiguration>
     with SingleTickerProviderStateMixin {
   int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     final settingsAsync = ref
-        .watch(machineSettingNotifier(widget.idMachine))
+        .watch(surveySettingNotifier(widget.surveyId))
         .onGetAll
         .unwrapPrevious();
 
@@ -72,14 +73,14 @@ class MachineTabBarConfigurationState
                             builder: (context) {
                               if (e.platform ==
                                   MachineResponsePlatformEnum.sms) {
-                                return MachineTabBarViewSMSBotOrWhatsapp(
-                                  idMachine: widget.idMachine,
+                                return SurveyTabBarViewSMSBotOrWhatsapp(
+                                  surveyId: widget.surveyId,
                                   idSetting: e.id,
                                   isSMSBot: true,
                                 );
                               } else {
-                                return MachineTabBarViewSMSBotOrWhatsapp(
-                                  idMachine: widget.idMachine,
+                                return SurveyTabBarViewSMSBotOrWhatsapp(
+                                  surveyId: widget.surveyId,
                                   idSetting: e.id,
                                   isSMSBot: false,
                                 );
@@ -97,8 +98,9 @@ class MachineTabBarConfigurationState
         );
       },
       error: (error, stackTrace) => AsyncErrorBuilder(
-          error: error.toString(),
-          onRetry: () => ref.invalidate(machineSettingNotifier)),
+        error: error.toString(),
+        onRetry: () => ref.invalidate(surveySettingNotifier),
+      ),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }

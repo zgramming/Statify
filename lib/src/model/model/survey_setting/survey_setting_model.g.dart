@@ -1,17 +1,17 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'machine_setting_update_response_model.dart';
+part of 'survey_setting_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-MachineSettingUpdateResponseModel _$MachineSettingUpdateResponseModelFromJson(
-        Map<String, dynamic> json) =>
-    MachineSettingUpdateResponseModel(
+SurveySettingModel _$SurveySettingModelFromJson(Map<String, dynamic> json) =>
+    SurveySettingModel(
       id: json['id'] as String,
-      machineId: json['machine_id'] as String,
-      platform: json['platform'] as String,
+      surveyId: json['survey_id'] as String,
+      platform:
+          $enumDecode(_$MachineResponsePlatformEnumEnumMap, json['platform']),
       usePassword: json['use_password'] as bool,
       timeout: json['timeout'] as int,
       tries: json['tries'] as int,
@@ -20,12 +20,11 @@ MachineSettingUpdateResponseModel _$MachineSettingUpdateResponseModelFromJson(
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$MachineSettingUpdateResponseModelToJson(
-        MachineSettingUpdateResponseModel instance) =>
+Map<String, dynamic> _$SurveySettingModelToJson(SurveySettingModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'machine_id': instance.machineId,
-      'platform': instance.platform,
+      'survey_id': instance.surveyId,
+      'platform': _$MachineResponsePlatformEnumEnumMap[instance.platform]!,
       'use_password': instance.usePassword,
       'timeout': instance.timeout,
       'tries': instance.tries,
@@ -33,3 +32,8 @@ Map<String, dynamic> _$MachineSettingUpdateResponseModelToJson(
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
     };
+
+const _$MachineResponsePlatformEnumEnumMap = {
+  MachineResponsePlatformEnum.whatsapp: 'whatsapp',
+  MachineResponsePlatformEnum.sms: 'sms',
+};

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dartz/dartz.dart';
 import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
@@ -32,11 +33,14 @@ class TemporaryPendingResponseLocalDatasource {
         .toList();
   }
 
-  Future<TemporaryPendingResponseModel?> getBySurveyResponseId({
-    required String surveyResponseId,
+  Future<TemporaryPendingResponseModel?>
+      getBySurveyRespondenIdTemporaryPendingResponse({
+    required String surveyRespondenId,
   }) async {
-    final result = await database
-        .getBySurveyResponseIdTemporaryPendingResponse(surveyResponseId);
+    final result =
+        await database.getBySurveyRespondenIdTemporaryPendingResponse(
+      surveyRespondenId: surveyRespondenId,
+    );
 
     if (result == null) {
       return null;
@@ -50,8 +54,7 @@ class TemporaryPendingResponseLocalDatasource {
   ) async {
     final result = await database.createTemporaryPendingResponse(
       TemporaryPendingResponseTableCompanion(
-        surveyId: Value(form.surveyId),
-        machineId: Value(form.machineId),
+        surveyRespondentId: Value(form.surveyRespondentId),
         simSlot: Value(form.simSlot),
         phoneNumber: Value(form.phoneNumber),
         message: Value(form.message),
@@ -69,11 +72,13 @@ class TemporaryPendingResponseLocalDatasource {
     return result;
   }
 
-  Future<bool> deleteBySurveyResponseId({
-    required String surveyResponseId,
+  Future<bool> deleteBySurveyRespondenIdTemporaryPendingResponse({
+    required String surveyRespondenId,
   }) async {
-    final result = await database
-        .deleteBySurveyResponseIdTemporaryPendingResponse(surveyResponseId);
+    final result =
+        await database.deleteBySurveyRespondenIdTemporaryPendingResponse(
+      surveyRespondenId: surveyRespondenId,
+    );
 
     return result;
   }
@@ -90,12 +95,13 @@ class TemporaryPendingResponseRepository {
   }
 
   Future<Either<Failure, TemporaryPendingResponseModel?>>
-      getBySurveyResponseId({
-    required String surveyResponseId,
+      getBySurveyRespondenIdTemporaryPendingResponse({
+    required String surveyRespondenId,
   }) async {
     try {
-      final result = await localDatasource.getBySurveyResponseId(
-        surveyResponseId: surveyResponseId,
+      final result =
+          await localDatasource.getBySurveyRespondenIdTemporaryPendingResponse(
+        surveyRespondenId: surveyRespondenId,
       );
 
       return Right(result);
@@ -136,13 +142,14 @@ class TemporaryPendingResponseRepository {
     }
   }
 
-  Future<Either<Failure, bool>> deleteBySurveyResponseId({
-    required String surveyResponseId,
+  Future<Either<Failure, bool>>
+      deleteBySurveyRespondenIdTemporaryPendingResponse({
+    required String surveyRespondenId,
   }) async {
     try {
-      final result = await localDatasource.deleteBySurveyResponseId(
-        surveyResponseId: surveyResponseId,
-      );
+      final result = await localDatasource
+          .deleteBySurveyRespondenIdTemporaryPendingResponse(
+              surveyRespondenId: surveyRespondenId);
 
       return Right(result);
     } catch (e) {
@@ -153,30 +160,30 @@ class TemporaryPendingResponseRepository {
 
 class TemporaryPendingResponseState extends Equatable {
   final List<TemporaryPendingResponseModel> items;
-  final AsyncValue<TemporaryPendingResponseModel?> onGetBySurveyResponseId;
+  final AsyncValue<TemporaryPendingResponseModel?> onGetBySurveyRespondenId;
   final AsyncValue<TemporaryPendingResponseModel?> onCreate;
   final AsyncValue<List<TemporaryPendingResponseModel>?> onGetAll;
   final AsyncValue<int?> onDeleteAll;
-  final AsyncValue<bool?> onDeleteBySurveyResponseId;
+  final AsyncValue<bool?> onDeleteBySurveyRespondenId;
 
   const TemporaryPendingResponseState({
     this.items = const [],
-    this.onGetBySurveyResponseId = const AsyncData(null),
+    this.onGetBySurveyRespondenId = const AsyncData(null),
     this.onCreate = const AsyncData(null),
     this.onGetAll = const AsyncData([]),
     this.onDeleteAll = const AsyncData(null),
-    this.onDeleteBySurveyResponseId = const AsyncData(null),
+    this.onDeleteBySurveyRespondenId = const AsyncData(null),
   });
 
   @override
   List<Object> get props {
     return [
       items,
-      onGetBySurveyResponseId,
+      onGetBySurveyRespondenId,
       onCreate,
       onGetAll,
       onDeleteAll,
-      onDeleteBySurveyResponseId,
+      onDeleteBySurveyRespondenId,
     ];
   }
 
@@ -185,21 +192,21 @@ class TemporaryPendingResponseState extends Equatable {
 
   TemporaryPendingResponseState copyWith({
     List<TemporaryPendingResponseModel>? items,
-    AsyncValue<TemporaryPendingResponseModel?>? onGetBySurveyResponseId,
+    AsyncValue<TemporaryPendingResponseModel?>? onGetBySurveyRespondenId,
     AsyncValue<TemporaryPendingResponseModel?>? onCreate,
     AsyncValue<List<TemporaryPendingResponseModel>?>? onGetAll,
     AsyncValue<int?>? onDeleteAll,
-    AsyncValue<bool?>? onDeleteBySurveyResponseId,
+    AsyncValue<bool?>? onDeleteBySurveyRespondenId,
   }) {
     return TemporaryPendingResponseState(
       items: items ?? this.items,
-      onGetBySurveyResponseId:
-          onGetBySurveyResponseId ?? this.onGetBySurveyResponseId,
+      onGetBySurveyRespondenId:
+          onGetBySurveyRespondenId ?? this.onGetBySurveyRespondenId,
       onCreate: onCreate ?? this.onCreate,
       onGetAll: onGetAll ?? this.onGetAll,
       onDeleteAll: onDeleteAll ?? this.onDeleteAll,
-      onDeleteBySurveyResponseId:
-          onDeleteBySurveyResponseId ?? this.onDeleteBySurveyResponseId,
+      onDeleteBySurveyRespondenId:
+          onDeleteBySurveyRespondenId ?? this.onDeleteBySurveyRespondenId,
     );
   }
 }
@@ -237,25 +244,26 @@ class TemporaryPendingResponseNotifier
   }
 
   Future<TemporaryPendingResponseState> getBySurveyResponseId({
-    required String surveyResponseId,
+    required String surveyRespondenId,
   }) async {
     state = state.copyWith(
-      onGetBySurveyResponseId: const AsyncLoading(),
+      onGetBySurveyRespondenId: const AsyncLoading(),
     );
 
-    final result = await repository.getBySurveyResponseId(
-      surveyResponseId: surveyResponseId,
+    final result =
+        await repository.getBySurveyRespondenIdTemporaryPendingResponse(
+      surveyRespondenId: surveyRespondenId,
     );
 
     return result.fold(
       (failure) => state = state.copyWith(
-        onGetBySurveyResponseId: AsyncError(
+        onGetBySurveyRespondenId: AsyncError(
           failure.message,
           StackTrace.current,
         ),
       ),
       (data) => state = state.copyWith(
-        onGetBySurveyResponseId: AsyncData(data),
+        onGetBySurveyRespondenId: AsyncData(data),
       ),
     );
   }
@@ -308,27 +316,28 @@ class TemporaryPendingResponseNotifier
   }
 
   Future<TemporaryPendingResponseState> deleteBySurveyResponseId({
-    required String surveyResponseId,
+    required String surveyRespondenId,
   }) async {
     state = state.copyWith(
-      onDeleteBySurveyResponseId: const AsyncLoading(),
+      onDeleteBySurveyRespondenId: const AsyncLoading(),
     );
 
-    final result = await repository.deleteBySurveyResponseId(
-      surveyResponseId: surveyResponseId,
+    final result =
+        await repository.deleteBySurveyRespondenIdTemporaryPendingResponse(
+      surveyRespondenId: surveyRespondenId,
     );
 
     return result.fold(
       (failure) => state = state.copyWith(
-        onDeleteBySurveyResponseId: AsyncError(
+        onDeleteBySurveyRespondenId: AsyncError(
           failure.message,
           StackTrace.current,
         ),
       ),
       (data) => state = state.copyWith(
-        onDeleteBySurveyResponseId: AsyncData(data),
+        onDeleteBySurveyRespondenId: AsyncData(data),
         items: state.items.where((element) {
-          return element.surveyResponseId != surveyResponseId;
+          return element.surveyRespondenId != surveyRespondenId;
         }).toList(),
       ),
     );

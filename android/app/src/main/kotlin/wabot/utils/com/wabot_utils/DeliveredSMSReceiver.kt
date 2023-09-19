@@ -8,18 +8,21 @@ import android.telephony.SmsManager
 import android.util.Log
 import io.flutter.plugin.common.EventChannel
 
-    class DeliveredSMSReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
-        private var eventSink: EventChannel.EventSink? = null
+class DeliveredSMSReceiver : BroadcastReceiver(), EventChannel.StreamHandler {
+    private var eventSink: EventChannel.EventSink? = null
 
-        override fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(context: Context?, intent: Intent?) {
 
-            // Check intent if equal to INTENT_DELIVERED_SMS_ACTION
-            if (intent?.action == INTENT_DELIVERED_SMS_ACTION) {
+        // Check intent if equal to INTENT_DELIVERED_SMS_ACTION
+        if (intent?.action == INTENT_DELIVERED_SMS_ACTION) {
+            try {
                 val bundle = intent.extras
-                val surveyResponseId = bundle?.getString("surveyResponseId")
-                if (surveyResponseId == null) {
-                    Log.wtf("DELIVERED_SMS_RECEIVER", "surveyResponseId is null")
-                    eventSink?.error("DELIVERED_SMS_RECEIVER", "surveyResponseId is null", null)
+                val surveyRespondenId = bundle?.getString("surveyRespondenId")
+                val surveyRespondenResponseId = bundle?.getString("surveyRespondenResponseId")
+
+                if (surveyRespondenId == null) {
+                    Log.wtf("DELIVERED_SMS_RECEIVER", "surveyRespondenId is null")
+                    eventSink?.error("DELIVERED_SMS_RECEIVER", "surveyRespondenId is null", null)
                     return
                 }
 
@@ -70,22 +73,27 @@ import io.flutter.plugin.common.EventChannel
                     "message" to message,
                     "code" to code,
                     "status" to status,
-                    "surveyResponseId" to surveyResponseId
+                    "surveyRespondenId" to surveyRespondenId,
+                    "surveyRespondenResponseId" to surveyRespondenResponseId
                 )
 
                 Log.wtf("DELIVERED_SMS_RECEIVER", "Called with $map")
 
                 eventSink?.success(map)
+            } catch (e: Exception) {
+                Log.wtf("DELIVERED_SMS_RECEIVER", "Error: ${e.message}")
+                eventSink?.error("DELIVERED_SMS_RECEIVER", "Error: ${e.message}", null)
             }
-
-
         }
 
-        override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-            eventSink = events
-        }
 
-        override fun onCancel(arguments: Any?) {
-            eventSink = null
-        }
     }
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        eventSink = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        eventSink = null
+    }
+}

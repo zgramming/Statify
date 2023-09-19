@@ -8,8 +8,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
+import '../../../utils/enum.dart';
 import '../../../utils/failure.dart';
+import '../../../utils/flutter_secure_storage.dart';
+import '../../../utils/method_channel.dart';
+import '../../model/helper/form/form_temporary_pending_response_create.model.dart';
+import '../../model/send_sms_model.dart';
 import '../../model/survey/survey.model.dart';
+import '../../model/survey/survey_pending.model.dart';
+import '../local/temporary_pending_response_local_datasource.dart';
 
 class FormSurveyCreateOrUpdateModel extends Equatable {
   final String name;
@@ -30,10 +37,14 @@ class FormSurveyCreateOrUpdateModel extends Equatable {
 }
 
 class SurveyRemoteDatasource {
-  final http.Client client;
   const SurveyRemoteDatasource({
     required this.client,
+    required this.temporaryPendingResponseLocalDatasource,
   });
+
+  final http.Client client;
+  final TemporaryPendingResponseLocalDatasource
+      temporaryPendingResponseLocalDatasource;
 
   Future<List<SurveyModel>> getAll({
     required String machineId,
@@ -107,6 +118,42 @@ class SurveyRemoteDatasource {
       final message = decodedData.containsKey('message')
           ? decodedData['message']
           : 'Failed to get survey';
+      throw Exception(message);
+    }
+  }
+
+  Future<SurveyPendingModel?> getPendingResponse({
+    required String surveyId,
+    required MachineResponsePlatformEnum platform,
+  }) async {
+    final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
+    final uri = Uri.parse("$kBaseApiUrl/surveys/$surveyId/pending-response");
+    final request = http.Request('GET', uri);
+    request.body = json.encode({"platform": platform.valueString});
+    request.headers.addAll({
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $currentToken",
+    });
+
+    final response = await request.send();
+
+    final body = await response.stream.bytesToString();
+    final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decodedData['data'];
+
+    if (data == null) {
+      return null;
+    }
+
+    if (response.statusCode == 200) {
+      final result = SurveyPendingModel.fromJson(data);
+
+      return result;
+    } else {
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to create survey';
       throw Exception(message);
     }
   }
@@ -221,6 +268,71 @@ class SurveyRemoteDatasource {
       throw Exception(message);
     }
   }
+
+  Stream<String?> listenPendingResponse({
+    required int simSlot,
+    required String surveyId,
+  }) async* {
+    final methodChannelUtils = MethodChannelUtils();
+
+    while (true) {
+      try {
+        final pendingResponse = await getPendingResponse(
+          surveyId: surveyId,
+          platform: MachineResponsePlatformEnum.sms,
+        );
+
+        if (pendingResponse == null) {
+          yield "Pending Response is not found, wait for 10 seconds to check again";
+        } else {
+          // Check if pending response is exist in temporary pending response
+          final tempPendingResponse =
+              await temporaryPendingResponseLocalDatasource
+                  .getBySurveyRespondenIdTemporaryPendingResponse(
+            surveyRespondenId: pendingResponse.surveyRespondentId,
+          );
+
+          // If exist, skip this pending response
+          if (tempPendingResponse != null) {
+            log(" Pending Response is exist in temporary pending response, skip this pending response");
+            yield "Pending Response is exist in temporary pending response, skip this pending response";
+          } else {
+            final number = pendingResponse.responden.number;
+            log("Pending Response is not exist in temporary pending response, create temporary pending response and send message to $number");
+            // create temporary pending response to local database for prevent duplicate
+            final form = FormTemporaryPendingResponseCreateModel(
+              message: pendingResponse.value,
+              phoneNumber: number,
+              simSlot: simSlot,
+              surveyRespondentId: pendingResponse.surveyRespondentId,
+            );
+
+            await temporaryPendingResponseLocalDatasource.create(form);
+            // Send SMS to user
+            final model = SendSMSModel(
+              surveyRespondenResponseId: pendingResponse.id,
+              surveyRespondenId: pendingResponse.surveyRespondentId,
+              message: pendingResponse.value,
+              simSlot: simSlot,
+              phoneNumber: number,
+            );
+            final msg = await methodChannelUtils.sendSMS(model);
+
+            if (!msg) {
+              yield "Failed to send message to $number, wait for 10 seconds to check again";
+            } else {
+              yield "Process to send message to $number, wait for 10 seconds to check again";
+            }
+          }
+        }
+      } catch (e) {
+        log("Error When Listen Pending Response: ${e.toString()}");
+        yield "Error When Listen Pending Response: ${e.toString()}";
+      }
+
+      await Future.delayed(const Duration(seconds: 10));
+    }
+  }
 }
 
 class SurveyRepository {
@@ -330,6 +442,18 @@ class SurveyRepository {
     } catch (e) {
       return Left(CommonFailure(e.toString()));
     }
+  }
+
+  Stream<String?> listenPendingResponse({
+    required int simSlot,
+    required String surveyId,
+  }) {
+    final result = remoteDatasource.listenPendingResponse(
+      simSlot: simSlot,
+      surveyId: surveyId,
+    );
+
+    return result;
   }
 }
 
@@ -587,5 +711,17 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
         );
       },
     );
+  }
+
+  Stream<String?> listenPendingResponse({
+    required int simSlot,
+    required String surveyId,
+  }) {
+    final result = repository.listenPendingResponse(
+      simSlot: simSlot,
+      surveyId: surveyId,
+    );
+
+    return result;
   }
 }

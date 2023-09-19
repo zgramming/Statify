@@ -1,14 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
-class FormMachineSettingCreateUpdateModel extends Equatable {
-  final String machineId;
+class FormSurveySettingCreateUpdateModel extends Equatable {
   final bool usePassword;
   final int timeout;
   final int tries;
   final int backoff;
 
-  const FormMachineSettingCreateUpdateModel({
-    required this.machineId,
+  const FormSurveySettingCreateUpdateModel({
     required this.usePassword,
     required this.timeout,
     required this.tries,
@@ -16,28 +15,18 @@ class FormMachineSettingCreateUpdateModel extends Equatable {
   });
 
   @override
-  List<Object> get props {
-    return [
-      machineId,
-      usePassword,
-      timeout,
-      tries,
-      backoff,
-    ];
-  }
+  List<Object> get props => [usePassword, timeout, tries, backoff];
 
   @override
   bool get stringify => true;
 
-  FormMachineSettingCreateUpdateModel copyWith({
-    String? machineId,
+  FormSurveySettingCreateUpdateModel copyWith({
     bool? usePassword,
     int? timeout,
     int? tries,
     int? backoff,
   }) {
-    return FormMachineSettingCreateUpdateModel(
-      machineId: machineId ?? this.machineId,
+    return FormSurveySettingCreateUpdateModel(
       usePassword: usePassword ?? this.usePassword,
       timeout: timeout ?? this.timeout,
       tries: tries ?? this.tries,

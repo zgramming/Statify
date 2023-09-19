@@ -1,17 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../injection.dart';
-import '../../model/model/helper/props/props.get_machine_setting_detail.dart';
-import '../../model/model/machine_setting/machine_setting_model.dart';
+import '../../model/model/helper/props/props_get_survey_setting_detail.model.dart';
+import '../../model/model/survey_setting/survey_setting_model.dart';
 
-final getMachineSettingDetailNotifier = AutoDisposeFutureProviderFamily<
-    MachineSettingModel?, PropsGetMachineSettingDetail>(
+final getSurveySettingDetailNotifier = AutoDisposeFutureProviderFamily<
+    SurveySettingModel?, PropsGetSurveySettingDetail>(
   (ref, props) async {
     final result = await ref
-        .watch(machineSettingNotifier(props.machineId).notifier)
-        .getById(
-          settingId: props.settingId,
-        );
+        .watch(surveySettingNotifier(props.surveyId).notifier)
+        .getById(settingId: props.settingId);
     final setting = result.onGetById.valueOrNull;
     return setting;
   },

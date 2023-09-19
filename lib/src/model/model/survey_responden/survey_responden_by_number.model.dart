@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,7 +9,7 @@ part 'survey_responden_by_number.model.g.dart';
 )
 class SurveyRespondenByNumberModel extends Equatable {
   final String id;
-  final String machineId;
+  final String surveyId;
   final String? machineWhatsappId;
   final String number;
   final bool locked;
@@ -20,7 +21,7 @@ class SurveyRespondenByNumberModel extends Equatable {
 
   const SurveyRespondenByNumberModel({
     required this.id,
-    required this.machineId,
+    required this.surveyId,
     required this.machineWhatsappId,
     required this.number,
     required this.locked,
@@ -41,7 +42,7 @@ class SurveyRespondenByNumberModel extends Equatable {
   List<Object?> get props {
     return [
       id,
-      machineId,
+      surveyId,
       machineWhatsappId,
       number,
       locked,

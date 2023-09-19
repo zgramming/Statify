@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/enum.dart';
-import '../../model/helper/form/form_survey_response_create_model.dart';
+import '../../model/helper/form/form_survey_responden_response_create_model.dart';
 import 'survey_responden_remote_datasource.dart';
 import 'survey_responden_response_remote_datasource.dart';
 
@@ -20,33 +20,35 @@ class IncomingMessageRemoteDatasource {
   });
 
   Future<(String, String)> handlingIncomingMessage({
-    required String machineId,
+    required String surveyId,
     required String number,
     required String message,
   }) async {
     try {
       // Find number survey is exists or not
-      final survey = await surveyRespondenRemoteDatasource.getByNumber(
-        machineId: machineId,
+      final surveyRespondent =
+          await surveyRespondenRemoteDatasource.getByNumber(
         number: number,
+        surveyId: surveyId,
       );
 
-      final isSurveyEmpty = survey == null;
-      if (isSurveyEmpty) {
+      final isSurveyRespondenEmpty = surveyRespondent == null;
+      if (isSurveyRespondenEmpty) {
         // We should create new survey
         await surveyRespondenRemoteDatasource.create(
-          machineId: machineId,
+          surveyId: surveyId,
           number: number,
           key: message,
         );
         return ("SE_CNS", "Survey Empty and Create New Survey");
       } else {
-        final isLocked = survey.locked;
+        final isLocked = surveyRespondent.locked;
 
         if (isLocked) {
           // We should unlock the survey
           await surveyRespondenRemoteDatasource.unlock(
-            surveyId: survey.id,
+            surveyRespondenId: surveyRespondent.id,
+            surveyId: surveyRespondent.surveyId,
             key: message,
             platform: MachineResponsePlatformEnum.sms.valueString,
           );
@@ -54,15 +56,13 @@ class IncomingMessageRemoteDatasource {
           return ("SNE_US", "Survey Not Empty and Unlock Survey");
         } else {
           // We should create new survey response
-          final form = FormSurveyResponseCreateModel(
-            surveyId: survey.id,
+
+          final form = FormSurveyRespondenResponseCreateModel(
             key: message,
             platform: MachineResponsePlatformEnum.sms.valueString,
+            surveyRespondenId: surveyRespondent.id,
           );
-
-          await surveyRespondenResponseRemoteDatasource.create(
-            form,
-          );
+          await surveyRespondenResponseRemoteDatasource.create(form: form);
 
           return (
             "SNE_CNSR",
@@ -84,13 +84,13 @@ class IncomingMessageRepository {
   });
 
   Future<Either<(String, String), (String, String)>> handlingIncomingMessage({
-    required String machineId,
+    required String surveyId,
     required String number,
     required String message,
   }) async {
     try {
       final result = await remoteDatasource.handlingIncomingMessage(
-        machineId: machineId,
+        surveyId: surveyId,
         number: number,
         message: message,
       );
@@ -118,12 +118,12 @@ class IncomingMessageNotifier extends StateNotifier<IncomingMessageState> {
   }) : super(IncomingMessageState());
 
   Future<(String, String)> handlingIncomingMessage({
-    required String machineId,
+    required String surveyId,
     required String number,
     required String message,
   }) async {
     final result = await repository.handlingIncomingMessage(
-      machineId: machineId,
+      surveyId: surveyId,
       number: number,
       message: message,
     );

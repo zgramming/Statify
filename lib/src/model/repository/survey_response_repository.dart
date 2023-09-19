@@ -1,20 +1,18 @@
 import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
-import '../datasource/remote/machine_response_remote_datasource.dart';
+import '../datasource/remote/survey_response_remote_datasource.dart';
 import '../model/helper/form/form_machine_response_create_update_model.dart';
-import '../model/machine_response/machine_response_create_response_model.dart';
-import '../model/machine_response/machine_response_delete_response_model.dart';
-import '../model/machine_response/machine_response_model.dart';
-import '../model/machine_response/machine_response_update_response_model.dart';
+import '../model/survey_response/survey_response_create_response_model.dart';
+import '../model/survey_response/survey_response_model.dart';
 
-class MachineResponseRepository {
-  final MachineResponseRemoteDatasource remoteDatasource;
-  const MachineResponseRepository({
+class SurveyResponseRepository {
+  final SurveyResponseRemoteDatasource remoteDatasource;
+  const SurveyResponseRepository({
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, List<MachineResponseModel>>> getAll(
+  Future<Either<Failure, List<SurveyResponseModel>>> getAll(
       String machineId) async {
     try {
       final result = await remoteDatasource.getAll(machineId);
@@ -24,13 +22,13 @@ class MachineResponseRepository {
     }
   }
 
-  Future<Either<Failure, MachineResponseModel>> getById({
-    required String machineId,
+  Future<Either<Failure, SurveyResponseModel>> getById({
+    required String surveyId,
     required String responseId,
   }) async {
     try {
       final result = await remoteDatasource.getById(
-        machineId: machineId,
+        surveyId: surveyId,
         responseId: responseId,
       );
       return Right(result);
@@ -39,14 +37,14 @@ class MachineResponseRepository {
     }
   }
 
-  Future<Either<Failure, MachineResponseCreateResponseModel>> create({
+  Future<Either<Failure, SurveyResponseCreateModel>> create({
     required FormMachineResponseCreateUpdateModel form,
-    required String machineId,
+    required String surveyId,
   }) async {
     try {
       final result = await remoteDatasource.create(
         form: form,
-        machineId: machineId,
+        surveyId: surveyId,
       );
       return Right(result);
     } catch (e) {
@@ -54,15 +52,15 @@ class MachineResponseRepository {
     }
   }
 
-  Future<Either<Failure, MachineResponseUpdateResponseModel>> update({
+  Future<Either<Failure, SurveyResponseModel>> update({
     required FormMachineResponseCreateUpdateModel form,
-    required String machineId,
     required String responseId,
+    required String surveyId,
   }) async {
     try {
       final result = await remoteDatasource.update(
         form: form,
-        machineId: machineId,
+        surveyId: surveyId,
         responseId: responseId,
       );
       return Right(result);
@@ -71,13 +69,13 @@ class MachineResponseRepository {
     }
   }
 
-  Future<Either<Failure, MachineResponseDeleteResponseModel>> delete({
-    required String machineId,
+  Future<Either<Failure, SurveyResponseModel>> delete({
     required String responseId,
+    required String surveyId,
   }) async {
     try {
       final result = await remoteDatasource.delete(
-        machineId: machineId,
+        surveyId: surveyId,
         responseId: responseId,
       );
       return Right(result);

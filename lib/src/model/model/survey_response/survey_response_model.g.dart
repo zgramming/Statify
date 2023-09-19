@@ -1,35 +1,37 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'machine_setting_model.dart';
+part of 'survey_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-MachineSettingModel _$MachineSettingModelFromJson(Map<String, dynamic> json) =>
-    MachineSettingModel(
+SurveyResponseModel _$SurveyResponseModelFromJson(Map<String, dynamic> json) =>
+    SurveyResponseModel(
       id: json['id'] as String,
-      machineId: json['machine_id'] as String,
+      surveyId: json['survey_id'] as String,
       platform:
           $enumDecode(_$MachineResponsePlatformEnumEnumMap, json['platform']),
-      usePassword: json['use_password'] as bool,
-      timeout: json['timeout'] as int,
-      tries: json['tries'] as int,
-      backoff: json['backoff'] as int,
+      key: json['key'] as String,
+      value: json['value'] as String,
+      type: json['type'] as String,
+      voting: json['voting'] as bool,
+      finish: json['finish'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$MachineSettingModelToJson(
-        MachineSettingModel instance) =>
+Map<String, dynamic> _$SurveyResponseModelToJson(
+        SurveyResponseModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'machine_id': instance.machineId,
+      'survey_id': instance.surveyId,
       'platform': _$MachineResponsePlatformEnumEnumMap[instance.platform]!,
-      'use_password': instance.usePassword,
-      'timeout': instance.timeout,
-      'tries': instance.tries,
-      'backoff': instance.backoff,
+      'key': instance.key,
+      'value': instance.value,
+      'type': instance.type,
+      'voting': instance.voting,
+      'finish': instance.finish,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
     };

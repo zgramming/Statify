@@ -2,38 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../injection.dart';
-import '../../../../model/model/helper/form/form_machine_setting_create_update_model.dart';
-import '../../../../model/model/helper/props/props.get_machine_setting_detail.dart';
-import '../../../../model/model/machine_response/machine_response_model.dart';
-import '../../../../router.dart';
-import '../../../../utils/enum.dart';
-import '../../../../utils/fonts.dart';
-import '../../../../utils/functions.dart';
-import '../../../../utils/styles.dart';
-import '../../../../view_model/custom_notifier/get_machine_setting_detail.notifier.dart';
-import '../../../widgets/async_error_builder.dart';
-import '../../../widgets/form_row_body.dart';
+import '../../../../../injection.dart';
+import '../../../../../model/model/helper/form/form_survey_setting_create_update_model.dart';
+import '../../../../../model/model/helper/props/props_get_survey_setting_detail.model.dart';
+import '../../../../../model/model/survey_response/survey_response_model.dart';
+import '../../../../../router.dart';
+import '../../../../../utils/enum.dart';
+import '../../../../../utils/fonts.dart';
+import '../../../../../utils/functions.dart';
+import '../../../../../utils/styles.dart';
+import '../../../../../view_model/custom_notifier/get_machine_setting_detail.notifier.dart';
+import '../../../../widgets/async_error_builder.dart';
+import '../../../../widgets/form_row_body.dart';
 
-class MachineTabBarViewSMSBotOrWhatsapp extends ConsumerStatefulWidget {
-  const MachineTabBarViewSMSBotOrWhatsapp({
+class SurveyTabBarViewSMSBotOrWhatsapp extends ConsumerStatefulWidget {
+  const SurveyTabBarViewSMSBotOrWhatsapp({
     Key? key,
-    required this.idMachine,
+    required this.surveyId,
     required this.idSetting,
     required this.isSMSBot,
   }) : super(key: key);
 
-  final String idMachine;
+  final String surveyId;
   final String idSetting;
   final bool isSMSBot;
 
   @override
-  ConsumerState<MachineTabBarViewSMSBotOrWhatsapp> createState() =>
-      MachineTabBarViewSMSBotOrWhatsappState();
+  ConsumerState<SurveyTabBarViewSMSBotOrWhatsapp> createState() =>
+      SurveyTabBarViewSMSBotOrWhatsappState();
 }
 
-class MachineTabBarViewSMSBotOrWhatsappState
-    extends ConsumerState<MachineTabBarViewSMSBotOrWhatsapp> {
+class SurveyTabBarViewSMSBotOrWhatsappState
+    extends ConsumerState<SurveyTabBarViewSMSBotOrWhatsapp> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _timeoutController;
@@ -59,12 +59,12 @@ class MachineTabBarViewSMSBotOrWhatsappState
     super.dispose();
   }
 
-  Future<void> onAddMachineResponse() async {
+  Future<void> onAdd() async {
     context.pushNamed(
-      routeMachineResponseForm,
+      routeSurveyResponseForm,
       pathParameters: {
         "id": "-1",
-        "idMachine": widget.idMachine,
+        "idSurvey": widget.surveyId,
       },
       extra: {
         "isSMSBot": widget.isSMSBot,
@@ -76,7 +76,7 @@ class MachineTabBarViewSMSBotOrWhatsappState
     if (!_formKey.currentState!.validate()) return;
 
     final settingId = widget.idSetting;
-    final machineId = widget.idMachine;
+    final surveyId = widget.surveyId;
 
     final timeout = _timeoutController.text;
     final backoff = _backoffController.text;
@@ -86,39 +86,39 @@ class MachineTabBarViewSMSBotOrWhatsappState
             ? true
             : false;
 
-    final notifier = ref.read(machineSettingNotifier(machineId).notifier);
-    final form = FormMachineSettingCreateUpdateModel(
+    final notifier = ref.read(surveySettingNotifier(surveyId).notifier);
+    final form = FormSurveySettingCreateUpdateModel(
       backoff: int.tryParse(backoff) ?? 0,
       timeout: int.tryParse(timeout) ?? 0,
       tries: int.tryParse(tries) ?? 0,
-      machineId: machineId,
       usePassword: usePassword,
     );
 
     try {
-      await notifier.update(
-        form: form,
-        settingId: settingId,
-        onLoading: () => showSnackbar(
-          context: context,
-          message: "Updating...",
-          backgroundColor: Colors.blue,
-        ),
-        onError: (error) => showSnackbar(
-          context: context,
-          message: error,
-          backgroundColor: Colors.red,
-        ),
-        onSuccess: (data) {
+      final result = await notifier.update(form: form, settingId: settingId);
+
+      result.onUpdate.when(
+        data: (data) {
+          if (data == null) return;
           showSnackbar(
             context: context,
             message: "Success update setting",
             backgroundColor: Colors.green,
           );
 
-          // Reload machine setting
-          ref.read(machineSettingNotifier(machineId).notifier).getAll();
+          // Reload survey setting
+          ref.invalidate(surveySettingNotifier);
         },
+        error: (error, stackTrace) => showSnackbar(
+          context: context,
+          message: error.toString(),
+          backgroundColor: Colors.red,
+        ),
+        loading: () => showSnackbar(
+          context: context,
+          message: "Updating...",
+          backgroundColor: Colors.blue,
+        ),
       );
     } catch (e) {
       showSnackbar(
@@ -131,12 +131,12 @@ class MachineTabBarViewSMSBotOrWhatsappState
 
   @override
   Widget build(BuildContext context) {
-    final props = PropsGetMachineSettingDetail(
-      machineId: widget.idMachine,
+    final props = PropsGetSurveySettingDetail(
+      surveyId: widget.surveyId,
       settingId: widget.idSetting,
     );
     ref.listen(
-      getMachineSettingDetailNotifier(props),
+      getSurveySettingDetailNotifier(props),
       (previous, next) {
         next.whenData((value) {
           if (value == null) return;
@@ -150,10 +150,9 @@ class MachineTabBarViewSMSBotOrWhatsappState
       },
     );
 
-    final settingDetailAsync =
-        ref.watch(getMachineSettingDetailNotifier(props));
+    final settingDetailAsync = ref.watch(getSurveySettingDetailNotifier(props));
     final responseAsync =
-        ref.watch(machineResponseNotifier(widget.idMachine)).onGetAll;
+        ref.watch(surveyResponseNotifier(widget.surveyId)).onGetAll;
     return settingDetailAsync.when(
       data: (_) {
         return SingleChildScrollView(
@@ -270,19 +269,19 @@ class MachineTabBarViewSMSBotOrWhatsappState
                             Align(
                               alignment: Alignment.centerRight,
                               child: ElevatedButton.icon(
-                                onPressed: onAddMachineResponse,
+                                onPressed: onAdd,
                                 icon: const Icon(Icons.add),
                                 label: const Text("Add Response"),
                               ),
                             ),
                             if (widget.isSMSBot) ...[
                               ...responseSMS.map((e) {
-                                return _MachineResponseItem(item: e);
+                                return _ResponseItem(item: e);
                               }).toList()
                             ],
                             if (!widget.isSMSBot) ...[
                               ...responseWhatsapp.map((e) {
-                                return _MachineResponseItem(item: e);
+                                return _ResponseItem(item: e);
                               }).toList()
                             ],
                           ]).toList(),
@@ -290,7 +289,7 @@ class MachineTabBarViewSMSBotOrWhatsappState
                       },
                       error: (error, stackTrace) => AsyncErrorBuilder(
                         error: error.toString(),
-                        onRetry: () => ref.invalidate(machineResponseNotifier),
+                        onRetry: () => ref.invalidate(surveyResponseNotifier),
                       ),
                       loading: () => const Center(
                         child: CircularProgressIndicator(color: Colors.blue),
@@ -319,58 +318,30 @@ class MachineTabBarViewSMSBotOrWhatsappState
   }
 }
 
-class _MachineResponseItem extends ConsumerStatefulWidget {
-  const _MachineResponseItem({
+class _ResponseItem extends ConsumerStatefulWidget {
+  const _ResponseItem({
     Key? key,
     required this.item,
   }) : super(key: key);
 
-  final MachineResponseModel item;
+  final SurveyResponseModel item;
 
   @override
-  ConsumerState<_MachineResponseItem> createState() =>
-      _MachineResponseItemState();
+  ConsumerState<_ResponseItem> createState() => _ResponseItemState();
 }
 
-class _MachineResponseItemState extends ConsumerState<_MachineResponseItem> {
+class _ResponseItemState extends ConsumerState<_ResponseItem> {
   Future<void> onEdit() async {
-    context.pushNamed(routeMachineResponseForm, pathParameters: {
+    context.pushNamed(routeSurveyResponseForm, pathParameters: {
       "id": widget.item.id,
-      "idMachine": widget.item.machineId,
+      "idSurvey": widget.item.surveyId,
     });
   }
 
   Future<void> onDelete() async {
     await ref
-        .read(machineResponseNotifier(widget.item.machineId).notifier)
-        .delete(
-          responseId: widget.item.id,
-          onLoading: () {
-            showSnackbar(
-                context: context,
-                message: "Deleting...",
-                backgroundColor: Colors.blue);
-          },
-          onError: (error) {
-            showSnackbar(
-              context: context,
-              message: error,
-              backgroundColor: Colors.red,
-            );
-          },
-          onSuccess: (data) {
-            showSnackbar(
-              context: context,
-              message: "Success delete response",
-              backgroundColor: Colors.green,
-            );
-
-            // Reload machine response
-            ref
-                .read(machineResponseNotifier(widget.item.machineId).notifier)
-                .getAll();
-          },
-        );
+        .read(surveyResponseNotifier(widget.item.surveyId).notifier)
+        .delete(responseId: widget.item.id);
   }
 
   @override

@@ -8,7 +8,6 @@ import '../../model/survey_responden/survey_responden_by_number.model.dart';
 import '../../model/survey_responden/survey_responden_create.model.dart';
 import '../../model/survey_responden/survey_responden_unlock.model.dart';
 
-// TODO: Rombak URL API
 class SurveyRespondenRemoteDatasource {
   final http.Client client;
 
@@ -17,12 +16,10 @@ class SurveyRespondenRemoteDatasource {
   });
 
   Future<SurveyRespondenByNumberModel?> getByNumber({
-    required String machineId,
+    required String surveyId,
     required String number,
   }) async {
-    final uri = Uri.parse(
-      "$kBaseApiUrl/machines/$machineId/surveys/$number",
-    );
+    final uri = Uri.parse("$kBaseApiUrl/surveys/$surveyId/respondents/$number");
     final response = await client.get(uri);
 
     final body = response.body;
@@ -44,11 +41,12 @@ class SurveyRespondenRemoteDatasource {
 
   Future<SurveyRespondenUnlockModel> unlock({
     required String surveyId,
+    required String surveyRespondenId,
     required String key,
     required String platform,
   }) async {
     final uri = Uri.parse(
-      "$kBaseApiUrl/surveys/$surveyId/unlock",
+      "$kBaseApiUrl/surveys/$surveyId/respondents/$surveyRespondenId/unlock",
     );
     final response = await client.patch(
       uri,
@@ -75,10 +73,10 @@ class SurveyRespondenRemoteDatasource {
 
   Future<SurveyRespondenCreateModel> create({
     required String number,
-    required String machineId,
+    required String surveyId,
     required String? key,
   }) async {
-    final uri = Uri.parse("$kBaseApiUrl/machines/$machineId/surveys");
+    final uri = Uri.parse("$kBaseApiUrl/surveys/$surveyId/respondents");
     final response = await client.post(
       uri,
       body: {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model/model/machine_setting/machine_setting_model.dart';
+import '../model/model/survey_setting/survey_setting_model.dart';
 import 'enum.dart';
 import 'package:uuid/uuid.dart';
 
@@ -78,8 +78,8 @@ Widget Function(BuildContext, Widget, ImageChunkEvent?)?
   };
 }
 
-MachineSettingModel? getMachineSettingPlatformList(
-  List<MachineSettingModel> items,
+SurveySettingModel? getMachineSettingPlatformList(
+  List<SurveySettingModel> items,
   MachineResponsePlatformEnum platform,
 ) {
   final result =

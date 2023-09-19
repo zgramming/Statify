@@ -13,13 +13,13 @@ class SurveyRespondenRepository {
 
   Future<Either<Failure, SurveyRespondenCreateModel>> create({
     required String number,
-    required String machineId,
+    required String surveyId,
     required String? key,
   }) async {
     try {
       final result = await remoteDatasource.create(
         number: number,
-        machineId: machineId,
+        surveyId: surveyId,
         key: key,
       );
       return Right(result);
@@ -30,12 +30,14 @@ class SurveyRespondenRepository {
 
   Future<Either<Failure, SurveyRespondenUnlockModel>> unlock({
     required String surveyId,
+    required String surveyRespondenId,
     required String key,
     required String platform,
   }) async {
     try {
       final result = await remoteDatasource.unlock(
         surveyId: surveyId,
+        surveyRespondenId: surveyRespondenId,
         key: key,
         platform: platform,
       );

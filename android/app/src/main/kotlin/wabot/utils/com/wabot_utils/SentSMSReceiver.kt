@@ -15,55 +15,63 @@ class SentSMSReceiver : BroadcastReceiver(), StreamHandler {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         if (intent?.action == INTENT_SENT_SMS_ACTION) {
-            val bundle = intent.extras
-            val surveyResponseId = bundle?.getString("surveyResponseId") ?: ""
+            try {
+                val bundle = intent.extras
+                val surveyRespondenId = bundle?.getString("surveyRespondenId") ?: ""
+                val surveyRespondenResponseId = bundle?.getString("surveyRespondenResponseId") ?: ""
 
-            var message = ""
-            var code = 0
-            var status = false
-            when (resultCode) {
-                RESULT_OK -> {
-                    message = "SMS_SENT_RESULT_OK : SMS sent successfully"
-                    code = RESULT_OK
-                    status = true
-                }
-                SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
-                    message = "SMS_SENT_RESULT_ERROR_GENERIC_FAILURE : Generic failure"
-                    code = SmsManager.RESULT_ERROR_GENERIC_FAILURE
-                    status = false
-                }
-                SmsManager.RESULT_ERROR_NO_SERVICE -> {
-                    message = "SMS_SENT_RESULT_ERROR_NO_SERVICE : No service"
-                    code = SmsManager.RESULT_ERROR_NO_SERVICE
-                    status = false
-                }
-                SmsManager.RESULT_ERROR_NULL_PDU -> {
-                    message = "SMS_SENT_RESULT_ERROR_NULL_PDU : Null PDU"
-                    code = SmsManager.RESULT_ERROR_NULL_PDU
-                    status = false
-                }
-                SmsManager.RESULT_ERROR_RADIO_OFF -> {
-                    message = "SMS_SENT_RESULT_ERROR_RADIO_OFF : Radio off"
-                    code = SmsManager.RESULT_ERROR_RADIO_OFF
-                    status = false
+                var message = ""
+                var code = 0
+                var status = false
+                when (resultCode) {
+                    RESULT_OK -> {
+                        message = "SMS_SENT_RESULT_OK : SMS sent successfully"
+                        code = RESULT_OK
+                        status = true
+                    }
+                    SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
+                        message = "SMS_SENT_RESULT_ERROR_GENERIC_FAILURE : Generic failure"
+                        code = SmsManager.RESULT_ERROR_GENERIC_FAILURE
+                        status = false
+                    }
+                    SmsManager.RESULT_ERROR_NO_SERVICE -> {
+                        message = "SMS_SENT_RESULT_ERROR_NO_SERVICE : No service"
+                        code = SmsManager.RESULT_ERROR_NO_SERVICE
+                        status = false
+                    }
+                    SmsManager.RESULT_ERROR_NULL_PDU -> {
+                        message = "SMS_SENT_RESULT_ERROR_NULL_PDU : Null PDU"
+                        code = SmsManager.RESULT_ERROR_NULL_PDU
+                        status = false
+                    }
+                    SmsManager.RESULT_ERROR_RADIO_OFF -> {
+                        message = "SMS_SENT_RESULT_ERROR_RADIO_OFF : Radio off"
+                        code = SmsManager.RESULT_ERROR_RADIO_OFF
+                        status = false
+                    }
+
+                    else -> {
+                        Log.wtf("SENT_SMS_RECEIVER", "Unknown error with code $resultCode")
+                        message = "SMS_SENT_RESULT_ERROR_UNKNOWN : Unknown error"
+                        code = resultCode
+                        status = false
+                    }
                 }
 
-                else -> {
-                    Log.wtf("SENT_SMS_RECEIVER", "Unknown error with code $resultCode")
-                    message = "SMS_SENT_RESULT_ERROR_UNKNOWN : Unknown error"
-                    code = resultCode
-                    status = false
-                }
+                val map = mapOf(
+                    "message" to message,
+                    "code" to code,
+                    "status" to status,
+                    "surveyRespondenId" to surveyRespondenId,
+                    "surveyRespondenResponseId" to surveyRespondenResponseId
+                )
+
+                Log.wtf("SENT_SMS_RECEIVER", "Called with $map")
+                eventSink?.success(map)
+            } catch (e: Exception) {
+                Log.wtf("SENT_SMS_RECEIVER", "Exception: ${e.message}")
+                eventSink?.error("SENT_SMS_RECEIVER", "Exception: ${e.message}", null)
             }
-
-            val map = mapOf(
-                "message" to message,
-                "code" to code,
-                "status" to status,
-                "surveyResponseId" to surveyResponseId
-            )
-            Log.wtf("SENT_SMS_RECEIVER", "Called with $map")
-            eventSink?.success(map)
         }
 
     }

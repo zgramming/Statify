@@ -16,8 +16,10 @@ import '../../../router.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
+import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../../view_model/custom_notifier/log_listen_pending_response.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
+import '../../widgets/async_error_builder.dart';
 import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/row_body.dart';
@@ -39,14 +41,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   final eventChannelUtils = EventChannelUtils();
 
   Future<void> deleteTemporaryPendingResponse({
-    required String surveyResponseId,
+    required String surveyRespondenId,
     required LogListenPendingResponseNotifier logNotifier,
   }) async {
     final notifier = ref.read(temporaryPendingResponseNotifier.notifier);
     final result = await notifier.deleteAll();
-    result.onDeleteBySurveyResponseId.whenOrNull(
+    result.onDeleteBySurveyRespondenId.whenOrNull(
       data: (data) => logNotifier.addLog(
-          "Delete Temporary Pending Response Success with id $surveyResponseId"),
+          "Delete Temporary Pending Response Success with Survey Responden ID : $surveyRespondenId"),
       error: (error, stackTrace) => log(error.toString()),
     );
   }
@@ -61,18 +63,23 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void listenOnSentMessage() {
-    final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
-    final srvNotifier = ref.read(surveyRespondenResponseNotifier.notifier);
     _subscriptionSentMessage =
         eventChannelUtils.listenOnSentSMS().listen((event) async {
+      final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
+      final srvNotifier = ref.read(
+          surveyRespondenResponseNotifier(event.surveyRespondenId).notifier);
+
       try {
         log("listenOnSentMessage event: $event");
-        final surveyResponseId = event.surveyResponseId;
-        if (surveyResponseId.isEmpty) return;
+
+        final surveyRespondenId = event.surveyRespondenId;
+        final surveyRespondenResponseId = event.surveyRespondenResponseId;
         logNotifier.addLog(event.message);
 
         if (event.status) {
-          final result = await srvNotifier.sent(surveyResponseId);
+          final result = await srvNotifier.sent(
+            surveyRespondenResponseId: surveyRespondenResponseId,
+          );
           result.onSent.whenOrNull(
             data: (data) async {
               if (data == null) return;
@@ -80,12 +87,16 @@ class _HomePageState extends ConsumerState<HomePage> {
 
               // Delete Temporary Pending Response
               await deleteTemporaryPendingResponse(
-                  surveyResponseId: surveyResponseId, logNotifier: logNotifier);
+                surveyRespondenId: surveyRespondenId,
+                logNotifier: logNotifier,
+              );
             },
             error: (error, stackTrace) => logNotifier.addLog(error.toString()),
           );
         } else {
-          final result = await srvNotifier.fail(surveyResponseId);
+          final result = await srvNotifier.fail(
+            surveyRespondenResponseId: surveyRespondenResponseId,
+          );
           result.onFail.whenOrNull(
             data: (data) async {
               if (data == null) return;
@@ -93,7 +104,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
               // Delete Temporary Pending Response
               await deleteTemporaryPendingResponse(
-                surveyResponseId: surveyResponseId,
+                surveyRespondenId: surveyRespondenId,
                 logNotifier: logNotifier,
               );
             },
@@ -126,10 +137,18 @@ class _HomePageState extends ConsumerState<HomePage> {
           throw Exception("Machine not found when listen incoming message");
         }
 
+        final activeSurveyId = machine.activeSurveyId;
+
+        if (activeSurveyId == null) {
+          throw Exception(
+            "Machine not have active survey id when listen incoming message",
+          );
+        }
+
         final result = await ref
             .read(incomingMessageNotifier.notifier)
             .handlingIncomingMessage(
-              machineId: machine.id,
+              surveyId: activeSurveyId,
               number: event.address,
               message: event.body,
             );
@@ -260,26 +279,6 @@ class _MachineItem extends ConsumerStatefulWidget {
 }
 
 class _MachineItemState extends ConsumerState<_MachineItem> {
-  StreamSubscription<String?>? _subscriptionPendingResponse;
-
-  final eventChannelUtils = EventChannelUtils();
-
-  void listenPendingResponse() async {
-    final simSlot = ref.read(userChooseSIMMachineProvider(widget.item.id));
-    final logNotifier = ref.read(logListenPendingResponseNotifier.notifier);
-    final srvResponseNotifier =
-        ref.read(surveyRespondenResponseNotifier.notifier);
-    _subscriptionPendingResponse = srvResponseNotifier
-        .listenPendingResponse(machineId: widget.item.id, simSlot: simSlot)
-        .listen((event) {
-      log("Listen Pending Response: $event");
-      if (event == null) return;
-
-      // Add Log to Log Listen Pending Response
-      logNotifier.addLog(event);
-    });
-  }
-
   Future<void> onTapMachine() async {
     context.pushNamed(
       routeMachineForm,
@@ -298,19 +297,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    Future.microtask(() {
-      // TODO: Nanti di aktifkan lagi
-      // listenPendingResponse();
-    });
-  }
-
-  @override
   void dispose() {
     log("DISPOSE AT MACHINE ITEM");
-    _subscriptionPendingResponse?.cancel();
     super.dispose();
   }
 
@@ -319,127 +307,145 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     final item = widget.item;
     final sim1ORsim2 = ref.watch(getSIM1orSIM2Provider(item.number));
     const radius = 30.0;
-    return Card(
-      margin: const EdgeInsets.only(),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            RowBody(
-              title: "Machine",
-              content: item.name,
-              titleFlex: 1,
-              contentFlex: 1,
-            ),
-            const SizedBox(height: 8.0),
-            RowBody(
-              title: "Machine Phone Number",
-              content: "$sim1ORsim2 (${item.number})",
-              titleFlex: 1,
-              contentFlex: 1,
-            ),
-            const SizedBox(height: 16.0),
-            Row(
+    final streamAsync = ref.watch(listenPendingResponseNotifier(item.id));
+
+    return streamAsync.when(
+      data: (data) {
+        return Card(
+          margin: const EdgeInsets.only(),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  flex: 4,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleIndexNumber(radius: radius, index: widget.index),
-                      const SizedBox(height: 8.0),
-                      InkWell(
-                        onTap: onTapExport,
-                        child: CircleAvatar(
-                          radius: radius,
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.upload_rounded,
-                                size: radius,
-                              ),
-                              FittedBox(
-                                child: Text(
-                                  "API Export",
-                                  style: bodyFont.copyWith(
-                                    fontSize: 8.0,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                RowBody(
+                  title: "Machine",
+                  content: item.name,
+                  titleFlex: 1,
+                  contentFlex: 1,
                 ),
-                const Expanded(
-                  flex: 8,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RowBody(
-                        title: "Total SMS Sent",
-                        content: '-',
-                        titleFlex: 1,
-                        contentFlex: 1,
+                const SizedBox(height: 8.0),
+                RowBody(
+                  title: "Machine Phone Number",
+                  content: "$sim1ORsim2 (${item.number})",
+                  titleFlex: 1,
+                  contentFlex: 1,
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleIndexNumber(
+                              radius: radius, index: widget.index),
+                          const SizedBox(height: 8.0),
+                          InkWell(
+                            onTap: onTapExport,
+                            child: CircleAvatar(
+                              radius: radius,
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.upload_rounded,
+                                    size: radius,
+                                  ),
+                                  FittedBox(
+                                    child: Text(
+                                      "API Export",
+                                      style: bodyFont.copyWith(
+                                        fontSize: 8.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                      SizedBox(height: 8.0),
-                      RowBody(
-                        title: "Total Replied",
-                        content: '-',
-                        titleFlex: 1,
-                        contentFlex: 1,
+                    ),
+                    const Expanded(
+                      flex: 8,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RowBody(
+                            title: "Total SMS Sent",
+                            content: '-',
+                            titleFlex: 1,
+                            contentFlex: 1,
+                          ),
+                          SizedBox(height: 8.0),
+                          RowBody(
+                            title: "Total Replied",
+                            content: '-',
+                            titleFlex: 1,
+                            contentFlex: 1,
+                          ),
+                          SizedBox(height: 8.0),
+                          RowBody(
+                            title: "Total Finished",
+                            content: '-',
+                            titleFlex: 1,
+                            contentFlex: 1,
+                          ),
+                          SizedBox(height: 8.0),
+                          RowBody(
+                            title: "Total Voted",
+                            content: '-',
+                            titleFlex: 1,
+                            contentFlex: 1,
+                          ),
+                          SizedBox(height: 8.0),
+                          RowBody(
+                            title: "Total Choose 1",
+                            content: '-',
+                            titleFlex: 1,
+                            contentFlex: 1,
+                          ),
+                          SizedBox(height: 8.0),
+                          RowBody(
+                            title: "Total Choose 2",
+                            content: '-',
+                            titleFlex: 1,
+                            contentFlex: 1,
+                          ),
+                          SizedBox(height: 8.0),
+                          RowBody(
+                            title: "Total Choose 3",
+                            content: '-',
+                            titleFlex: 1,
+                            contentFlex: 1,
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 8.0),
-                      RowBody(
-                        title: "Total Finished",
-                        content: '-',
-                        titleFlex: 1,
-                        contentFlex: 1,
-                      ),
-                      SizedBox(height: 8.0),
-                      RowBody(
-                        title: "Total Voted",
-                        content: '-',
-                        titleFlex: 1,
-                        contentFlex: 1,
-                      ),
-                      SizedBox(height: 8.0),
-                      RowBody(
-                        title: "Total Choose 1",
-                        content: '-',
-                        titleFlex: 1,
-                        contentFlex: 1,
-                      ),
-                      SizedBox(height: 8.0),
-                      RowBody(
-                        title: "Total Choose 2",
-                        content: '-',
-                        titleFlex: 1,
-                        contentFlex: 1,
-                      ),
-                      SizedBox(height: 8.0),
-                      RowBody(
-                        title: "Total Choose 3",
-                        content: '-',
-                        titleFlex: 1,
-                        contentFlex: 1,
-                      ),
-                    ],
-                  ),
-                )
+                    )
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        return AsyncErrorBuilder(
+          error: error.toString(),
+          onRetry: () {
+            ref.invalidate(listenPendingResponseNotifier(item.id));
+          },
+        );
+      },
+      loading: () {
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 }

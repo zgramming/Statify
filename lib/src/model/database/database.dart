@@ -60,11 +60,13 @@ class MyDatabase extends _$MyDatabase {
 
   // Get by surveyResponseId Temporary Pending Response
   Future<TemporaryPendingResponseTableData?>
-      getBySurveyResponseIdTemporaryPendingResponse(
-    String surveyResponseId,
-  ) =>
+      getBySurveyRespondenIdTemporaryPendingResponse({
+    required String surveyRespondenId,
+  }) =>
           (select(temporaryPendingResponseTable)
-                ..where((tbl) => tbl.surveyResponseId.equals(surveyResponseId)))
+                ..where(
+                  (tbl) => tbl.surveyRespondentId.equals(surveyRespondenId),
+                ))
               .getSingleOrNull();
 
   // Create Temporary Pending Response, error when have same surveyResponseId
@@ -83,11 +85,11 @@ class MyDatabase extends _$MyDatabase {
   }
 
   // Delete by surveyResponseId Temporary Pending Response
-  Future<bool> deleteBySurveyResponseIdTemporaryPendingResponse(
-    String surveyResponseId,
-  ) async {
+  Future<bool> deleteBySurveyRespondenIdTemporaryPendingResponse({
+    required String surveyRespondenId,
+  }) async {
     final result = await (delete(temporaryPendingResponseTable)
-          ..where((tbl) => tbl.surveyResponseId.equals(surveyResponseId)))
+          ..where((tbl) => tbl.surveyRespondentId.equals(surveyRespondenId)))
         .go();
     return result > 0;
   }

@@ -15,7 +15,8 @@ class MethodChannelUtils {
           'phoneNumber': model.phoneNumber,
           'message': model.message,
           'simSlot': model.simSlot,
-          'surveyResponseId': model.surveyResponseId,
+          'surveyRespondenId': model.surveyRespondenId,
+          'surveyRespondenResponseId': model.surveyRespondenResponseId,
         },
       );
       return result;

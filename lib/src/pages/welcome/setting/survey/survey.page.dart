@@ -143,9 +143,10 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
     result.onActive.when(
       data: (data) {
         // Load machine by id
-        ref.read(machineNotifier.notifier).getById(
-              machineId: widget.item.machineId,
-            );
+        // ref.read(machineNotifier.notifier).getById(
+        //       machineId: widget.item.machineId,
+        //     );
+        ref.invalidate(machineNotifier);
       },
       error: (error, stackTrace) => showSnackbar(
         context: context,

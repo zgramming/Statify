@@ -2,8 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
-import 'pages/welcome/machine/machine_response_form_page.dart';
-import 'pages/welcome/machine/machine_response_page.dart';
+import 'pages/welcome/setting/survey/survey_response_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_page.dart';
 import 'pages/welcome/setting/log/log_page.dart';
@@ -25,9 +24,6 @@ const routeLogin = "login";
 const routeMachine = "machine";
 const routeMachineForm = "machine/form/:id";
 
-const routeMachineResponse = "machine/:idMachine/response";
-const routeMachineResponseForm = "machine/:idMachine/response/form/:id";
-
 const routeMachineWhatsApp = "machine/:idMachine/whatsapp";
 const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
 
@@ -35,6 +31,8 @@ const routeLogPage = "log";
 
 const routeSurveyPage = "survey";
 const routeSurveyFormPage = "survey/form/:id";
+
+const routeSurveyResponseForm = "survey/:idSurvey/response/form/:id";
 
 const routeMyAccountPage = "my-account";
 const routeMyAccountFormPage = "my-account/form/:id";
@@ -102,25 +100,17 @@ final _routes = <RouteBase>[
   ),
 
   GoRoute(
-    path: "/machine/:idMachine/response",
-    name: routeMachineResponse,
-    builder: (context, state) {
-      final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return MachineResponsePage(idMachine: idMachine);
-    },
-  ),
-  GoRoute(
-    path: "/machine/:idMachine/response/form/:id",
-    name: routeMachineResponseForm,
+    path: "/survey/:idSurvey/response/form/:id",
+    name: routeSurveyResponseForm,
     builder: (context, state) {
       final id = state.pathParameters['id'] ?? "-1";
-      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      final idSurvey = state.pathParameters['idSurvey'] ?? "-1";
       final isSMSBot = state.extra == null
           ? false
           : (state.extra as Map<String, dynamic>)['isSMSBot'] ?? false;
-      return MachineResponseFormPage(
-        idMachine: idMachine,
+      return SurveyResponseFormPage(
         id: id,
+        idSurvey: idSurvey,
         isSMSBot: isSMSBot,
       );
     },
