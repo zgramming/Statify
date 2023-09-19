@@ -2,30 +2,14 @@ import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
 import '../datasource/remote/survey_responden_remote_datasource.dart';
-import '../model/survey_responden/survey_responden_by_number.model.dart';
 import '../model/survey_responden/survey_responden_create.model.dart';
 import '../model/survey_responden/survey_responden_unlock.model.dart';
 
-class SurveyRepository {
+class SurveyRespondenRepository {
   final SurveyRespondenRemoteDatasource remoteDatasource;
-  const SurveyRepository({
+  const SurveyRespondenRepository({
     required this.remoteDatasource,
   });
-
-  Future<Either<Failure, SurveyRespondenByNumberModel?>> getByNumber({
-    required String machineId,
-    required String number,
-  }) async {
-    try {
-      final result = await remoteDatasource.getByNumber(
-        machineId: machineId,
-        number: number,
-      );
-      return Right(result);
-    } catch (e) {
-      return Left(CommonFailure(e.toString()));
-    }
-  }
 
   Future<Either<Failure, SurveyRespondenCreateModel>> create({
     required String number,

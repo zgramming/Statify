@@ -9,8 +9,8 @@ part 'survey_responden_unlock.model.g.dart';
 )
 class SurveyRespondenUnlockModel extends Equatable {
   final String id;
-  final String machineId;
-  final dynamic machineWhatsappId;
+  final String surveyId;
+  final String? machineWhatsappId;
   final String number;
   final bool locked;
   final int attempt;
@@ -21,7 +21,7 @@ class SurveyRespondenUnlockModel extends Equatable {
 
   const SurveyRespondenUnlockModel({
     required this.id,
-    required this.machineId,
+    required this.surveyId,
     this.machineWhatsappId,
     required this.number,
     required this.locked,
@@ -42,7 +42,7 @@ class SurveyRespondenUnlockModel extends Equatable {
   List<Object?> get props {
     return [
       id,
-      machineId,
+      surveyId,
       machineWhatsappId,
       number,
       locked,

@@ -1,64 +1,41 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/model/survey_responden/survey_responden_by_number.model.dart';
 import '../model/model/survey_responden/survey_responden_create.model.dart';
 import '../model/model/survey_responden/survey_responden_unlock.model.dart';
 import '../model/repository/survey_responden.repository.dart';
 
-class SurveyState extends Equatable {
+class SurveyRespondenState extends Equatable {
   final AsyncValue<SurveyRespondenCreateModel?> onCreate;
-  final AsyncValue<SurveyRespondenByNumberModel?> onGetByNumber;
   final AsyncValue<SurveyRespondenUnlockModel?> onUnlock;
 
-  const SurveyState({
+  const SurveyRespondenState({
     this.onCreate = const AsyncData(null),
-    this.onGetByNumber = const AsyncData(null),
     this.onUnlock = const AsyncData(null),
   });
 
   @override
-  List<Object> get props => [onCreate, onGetByNumber, onUnlock];
+  List<Object> get props => [onCreate, onUnlock];
 
   @override
   bool get stringify => true;
 
-  SurveyState copyWith({
+  SurveyRespondenState copyWith({
     AsyncValue<SurveyRespondenCreateModel?>? onCreate,
-    AsyncValue<SurveyRespondenByNumberModel?>? onGetByNumber,
     AsyncValue<SurveyRespondenUnlockModel?>? onUnlock,
   }) {
-    return SurveyState(
+    return SurveyRespondenState(
       onCreate: onCreate ?? this.onCreate,
-      onGetByNumber: onGetByNumber ?? this.onGetByNumber,
       onUnlock: onUnlock ?? this.onUnlock,
     );
   }
 }
 
-class SurveyNotifier extends StateNotifier<SurveyState> {
-  final SurveyRepository repository;
-  SurveyNotifier({
+class SurveyRespondenNotifier extends StateNotifier<SurveyRespondenState> {
+  final SurveyRespondenRepository repository;
+  SurveyRespondenNotifier({
     required this.repository,
-  }) : super(const SurveyState());
-
-  Future<void> getByNumber({
-    required String machineId,
-    required String number,
-  }) async {
-    state = state.copyWith(onGetByNumber: const AsyncLoading());
-    final result = await repository.getByNumber(
-      machineId: machineId,
-      number: number,
-    );
-
-    result.fold(
-      (failure) => state = state.copyWith(
-          onGetByNumber: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onGetByNumber: AsyncData(data)),
-    );
-  }
+  }) : super(const SurveyRespondenState());
 
   Future<void> create({
     required String number,

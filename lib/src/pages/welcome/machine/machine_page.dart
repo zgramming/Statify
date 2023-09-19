@@ -26,6 +26,67 @@ class _MachinePageItem extends ConsumerStatefulWidget {
 }
 
 class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
+  Future<void> onSelected(String value) async {
+    final item = widget.item;
+    if (value == "survey") {
+      context.pushNamed(
+        routeSurveyPage,
+        pathParameters: {
+          "idMachine": item.id,
+        },
+      );
+    }
+
+    if (value == "delete") {
+      final isDelete = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Delete Machine"),
+            content: const Text(
+              "Are you sure want to delete this machine?",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text("Delete"),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (isDelete == true) {
+        final result = await ref.read(machineNotifier.notifier).delete(
+              machineId: item.id,
+            );
+        result.onDelete.when(
+          data: (data) {
+            if (data == null) {
+              return;
+            }
+            showSnackbar(
+              context: context,
+              message: "Success delete machine ${item.name}",
+            );
+          },
+          error: (error, stackTrace) {
+            showSnackbar(
+              context: context,
+              message: error.toString(),
+              backgroundColor: Colors.red,
+            );
+          },
+          loading: () {},
+        );
+      }
+    }
+  }
+
   Future<void> onTapMachine(MachineModel item) async {
     context.pushNamed(
       routeMachineForm,
@@ -44,56 +105,88 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
     );
     final sim1ORsim2 = ref.watch(getSIM1orSIM2Provider(item.number));
     const radius = 30.0;
-    return Card(
-      margin: const EdgeInsets.only(),
-      child: ListTile(
-        onTap: () => onTapMachine(item),
-        contentPadding: const EdgeInsets.all(16.0),
-        leading: CircleIndexNumber(
-          radius: radius,
-          index: widget.index,
-        ),
-        title: Text(
-          item.name,
-          style: headerFont.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 16.0,
+    return Stack(
+      children: [
+        Card(
+          margin: const EdgeInsets.only(),
+          child: ListTile(
+            onTap: () => onTapMachine(item),
+            contentPadding: const EdgeInsets.all(16.0),
+            leading: CircleIndexNumber(
+              radius: radius,
+              index: widget.index,
+            ),
+            title: Text(
+              item.name,
+              style: headerFont.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 8.0),
+                RowBody(
+                  title: "No Serial Machine",
+                  content: item.serialNumber,
+                  titleFlex: 7,
+                  contentFlex: 5,
+                  contentStyle: textStyle,
+                  titleStyle: textStyle,
+                ),
+                const SizedBox(height: 4.0),
+                RowBody(
+                  title: "Activation License",
+                  content: item.license,
+                  titleFlex: 7,
+                  contentFlex: 5,
+                  contentStyle: textStyle,
+                  titleStyle: textStyle,
+                ),
+                const SizedBox(height: 4.0),
+                RowBody(
+                  title: "Machine Phone Number",
+                  content: "$sim1ORsim2 (${item.number})",
+                  titleFlex: 7,
+                  contentFlex: 5,
+                  contentStyle: textStyle,
+                  titleStyle: textStyle,
+                ),
+                const SizedBox(height: 4.0),
+              ],
+            ),
           ),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 8.0),
-            RowBody(
-              title: "No Serial Machine",
-              content: item.serialNumber,
-              titleFlex: 7,
-              contentFlex: 5,
-              contentStyle: textStyle,
-              titleStyle: textStyle,
-            ),
-            const SizedBox(height: 4.0),
-            RowBody(
-              title: "Activation License",
-              content: item.license,
-              titleFlex: 7,
-              contentFlex: 5,
-              contentStyle: textStyle,
-              titleStyle: textStyle,
-            ),
-            const SizedBox(height: 4.0),
-            RowBody(
-              title: "Machine Phone Number",
-              content: "$sim1ORsim2 (${item.number})",
-              titleFlex: 7,
-              contentFlex: 5,
-              contentStyle: textStyle,
-              titleStyle: textStyle,
-            ),
-            const SizedBox(height: 4.0),
-          ],
+        Positioned(
+          top: 0.0,
+          right: 0.0,
+          child: PopupMenuButton(
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem(
+                  value: 'survey',
+                  child: Text(
+                    "Survey",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: "delete",
+                  child: Text(
+                    "Delete",
+                    style: bodyFont.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ];
+            },
+            onSelected: onSelected,
+            child: const Icon(Icons.more_vert),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

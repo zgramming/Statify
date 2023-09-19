@@ -10,7 +10,8 @@ import 'pages/welcome/setting/log/log_page.dart';
 import 'pages/welcome/setting/my_account/change_logo_form.page.dart';
 import 'pages/welcome/setting/my_account/my_account.page.dart';
 import 'pages/welcome/setting/my_account/my_account_form.page.dart';
-import 'pages/welcome/setting/survey/survey_page.dart';
+import 'pages/welcome/setting/survey/surve_form.page.dart';
+import 'pages/welcome/setting/survey/survey.page.dart';
 import 'pages/welcome/welcome_page.dart';
 import 'pages/introduction/introduction_page.dart';
 import 'pages/login/login_page.dart';
@@ -156,10 +157,26 @@ final _routes = <RouteBase>[
   ),
 
   GoRoute(
-    path: "/survey",
+    path: "/machine/:idMachine/survey",
     name: routeSurveyPage,
     builder: (context, state) {
-      return const SurveyPage();
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return SurveyPage(
+        idMachine: idMachine,
+      );
+    },
+  ),
+
+  GoRoute(
+    path: "/machine/:idMachine/survey/form/:id",
+    name: routeSurveyFormPage,
+    builder: (context, state) {
+      final id = state.pathParameters['id'] ?? "-1";
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return SurveyFormPage(
+        idMachine: idMachine,
+        id: id,
+      );
     },
   ),
 ];

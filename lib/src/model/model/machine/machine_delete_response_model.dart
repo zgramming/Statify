@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -13,11 +14,9 @@ class MachineDeleteResponseModel extends Equatable {
   final String number;
   final String serialNumber;
   final String license;
-  final String action;
-  final int send;
-  final int replied;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? activeSurveyId;
 
   const MachineDeleteResponseModel({
     required this.id,
@@ -26,11 +25,9 @@ class MachineDeleteResponseModel extends Equatable {
     required this.number,
     required this.serialNumber,
     required this.license,
-    required this.action,
-    required this.send,
-    required this.replied,
     required this.createdAt,
     required this.updatedAt,
+    this.activeSurveyId,
   });
 
   factory MachineDeleteResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -40,7 +37,7 @@ class MachineDeleteResponseModel extends Equatable {
   Map<String, dynamic> toJson() => _$MachineDeleteResponseModelToJson(this);
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       id,
       userId,
@@ -48,42 +45,12 @@ class MachineDeleteResponseModel extends Equatable {
       number,
       serialNumber,
       license,
-      action,
-      send,
-      replied,
       createdAt,
       updatedAt,
+      activeSurveyId,
     ];
   }
 
   @override
   bool get stringify => true;
-
-  MachineDeleteResponseModel copyWith({
-    String? id,
-    String? userId,
-    String? name,
-    String? number,
-    String? serialNumber,
-    String? license,
-    String? action,
-    int? send,
-    int? replied,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return MachineDeleteResponseModel(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      name: name ?? this.name,
-      number: number ?? this.number,
-      serialNumber: serialNumber ?? this.serialNumber,
-      license: license ?? this.license,
-      action: action ?? this.action,
-      send: send ?? this.send,
-      replied: replied ?? this.replied,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 }

@@ -82,16 +82,6 @@ class _SettingPageState extends ConsumerState<SettingPage> {
                 const SizedBox(height: 16),
                 ListTileSettingMenu(
                   onTap: () {
-                    context.pushNamed(routeSurveyPage);
-                  },
-                  title: "Survey",
-                  subtitle: "Manage survey",
-                  leadingIcon: Icons.assignment,
-                  leadingBackgroundColor: Colors.orange,
-                ),
-                const SizedBox(height: 16),
-                ListTileSettingMenu(
-                  onTap: () {
                     context.pushNamed(
                       routeLogPage,
                     );

@@ -13,16 +13,11 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
       number: json['number'] as String,
       serialNumber: json['serial_number'] as String,
       license: json['license'] as String,
-      action: $enumDecode(_$MachineActionEnumEnumMap, json['action']),
-      send: json['send'] as int,
-      replied: json['replied'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      activeSurveyId: json['active_survey_id'] as String?,
       whatsapps: (json['whatsapps'] as List<dynamic>)
           .map((e) => MachineWhatsappModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      settings: (json['settings'] as List<dynamic>)
-          .map((e) => MachineSettingModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -34,18 +29,8 @@ Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
       'number': instance.number,
       'serial_number': instance.serialNumber,
       'license': instance.license,
-      'action': _$MachineActionEnumEnumMap[instance.action]!,
-      'send': instance.send,
-      'replied': instance.replied,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
+      'active_survey_id': instance.activeSurveyId,
       'whatsapps': instance.whatsapps,
-      'settings': instance.settings,
     };
-
-const _$MachineActionEnumEnumMap = {
-  MachineActionEnum.sms: 'sms',
-  MachineActionEnum.whatsapp: 'whatsapp',
-  MachineActionEnum.whatsapp_priority: 'whatsapp_priority',
-  MachineActionEnum.whatsapp_sms: 'whatsapp_sms',
-};

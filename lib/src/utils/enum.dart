@@ -50,6 +50,11 @@ enum MachineSettingToolsOptionEnum {
   specificNumber,
 }
 
+enum SurveyTemplateEnum {
+  @JsonValue('candidate')
+  canditate
+}
+
 extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
   String get valueString {
     switch (this) {
@@ -198,6 +203,22 @@ extension MachineSettingToolsOptionEXT on MachineSettingToolsOptionEnum {
         return 'All Numbers Can Join Survey';
       case MachineSettingToolsOptionEnum.specificNumber:
         return 'Only Invited Numbers Can Join Survey';
+    }
+  }
+}
+
+extension SurveyTemplateEnumEXT on SurveyTemplateEnum {
+  String get valueString {
+    switch (this) {
+      case SurveyTemplateEnum.canditate:
+        return 'candidate';
+    }
+  }
+
+  String get valueStringReadable {
+    switch (this) {
+      case SurveyTemplateEnum.canditate:
+        return 'Candidate';
     }
   }
 }

@@ -10,8 +10,8 @@ SurveyRespondenUnlockModel _$SurveyRespondenUnlockModelFromJson(
         Map<String, dynamic> json) =>
     SurveyRespondenUnlockModel(
       id: json['id'] as String,
-      machineId: json['machine_id'] as String,
-      machineWhatsappId: json['machine_whatsapp_id'],
+      surveyId: json['survey_id'] as String,
+      machineWhatsappId: json['machine_whatsapp_id'] as String?,
       number: json['number'] as String,
       locked: json['locked'] as bool,
       attempt: json['attempt'] as int,
@@ -27,7 +27,7 @@ Map<String, dynamic> _$SurveyRespondenUnlockModelToJson(
         SurveyRespondenUnlockModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'machine_id': instance.machineId,
+      'survey_id': instance.surveyId,
       'machine_whatsapp_id': instance.machineWhatsappId,
       'number': instance.number,
       'locked': instance.locked,

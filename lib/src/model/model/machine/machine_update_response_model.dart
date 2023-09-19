@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,16 +9,14 @@ part 'machine_update_response_model.g.dart';
 )
 class MachineUpdateResponseModel extends Equatable {
   final String id;
-  final int send;
-  final int replied;
+  final String userId;
   final String name;
   final String number;
   final String serialNumber;
   final String license;
-  final String action;
-  final String userId;
-  final DateTime updatedAt;
   final DateTime createdAt;
+  final DateTime updatedAt;
+  final String? activeSurveyId;
 
   const MachineUpdateResponseModel({
     required this.id,
@@ -26,11 +25,9 @@ class MachineUpdateResponseModel extends Equatable {
     required this.number,
     required this.serialNumber,
     required this.license,
-    required this.action,
-    required this.send,
-    required this.replied,
     required this.createdAt,
     required this.updatedAt,
+    this.activeSurveyId,
   });
 
   factory MachineUpdateResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -40,7 +37,7 @@ class MachineUpdateResponseModel extends Equatable {
   Map<String, dynamic> toJson() => _$MachineUpdateResponseModelToJson(this);
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       id,
       userId,
@@ -48,11 +45,9 @@ class MachineUpdateResponseModel extends Equatable {
       number,
       serialNumber,
       license,
-      action,
-      send,
-      replied,
       createdAt,
       updatedAt,
+      activeSurveyId,
     ];
   }
 

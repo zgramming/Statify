@@ -138,7 +138,7 @@ class MachineNotifier extends StateNotifier<MachineState> {
     );
   }
 
-  Future<void> delete({
+  Future<MachineState> delete({
     required String machineId,
   }) async {
     state = state.copyWith(onDelete: const AsyncLoading());
@@ -146,7 +146,7 @@ class MachineNotifier extends StateNotifier<MachineState> {
       machineId: machineId,
       userId: userId,
     );
-    result.fold(
+    return result.fold(
       (failure) => state = state.copyWith(
           onDelete: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onDelete: AsyncData(data)),

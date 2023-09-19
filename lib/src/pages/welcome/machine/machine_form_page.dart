@@ -5,14 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../injection.dart';
 import '../../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
 import '../../../model/model/helper/form/form_machine_create_update_model.dart';
-import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/form_row_body.dart';
-import 'widget/machine_tabbar_configuration.dart';
 
 class MachineFormPage extends ConsumerStatefulWidget {
   const MachineFormPage({
@@ -36,7 +34,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   bool _needReload = false;
 
   List<SimChooseDropdownModel> availableSim = [];
-  MachineActionEnum selectedAction = MachineActionEnum.sms;
   SimChooseDropdownModel? selectedSim;
 
   @override
@@ -85,7 +82,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
       name: name,
       number: selectedSim?.value ?? "",
       license: license,
-      action: selectedAction.valueString,
     );
 
     if (isCreate) {
@@ -99,7 +95,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     _nameController.clear();
     _licenseController.clear();
     _serialNumberController.clear();
-    selectedAction = MachineActionEnum.sms;
     _formKey.currentState?.reset();
     _needReload = true;
 
@@ -190,8 +185,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
           _licenseController.text = value.license;
           _serialNumberController.text = value.serialNumber;
           selectedSim = currentSim;
-          selectedAction =
-              MachineActionEnum.values.byName(value.action.valueString);
 
           setState(() {});
         });
@@ -300,38 +293,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            FormBodyRow(
-                              title: "Action",
-                              child: DropdownButtonFormField<MachineActionEnum>(
-                                value: selectedAction,
-                                onChanged: (value) {
-                                  if (value == null) return;
-                                  setState(() {
-                                    selectedAction = value;
-                                  });
-                                },
-                                decoration: inputDecorationRounded().copyWith(
-                                  contentPadding: EdgeInsets.zero,
-                                  fillColor: Colors.transparent,
-                                  border: const UnderlineInputBorder(),
-                                ),
-                                items: MachineActionEnum.values
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(e.valueStringReadable),
-                                      ),
-                                    )
-                                    .toList(),
-                                validator: (value) {
-                                  if (value == null) {
-                                    return "Action Should not be empty";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: onSubmit,
                               style: elevatedButtonStyle(),
@@ -342,9 +303,9 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                         ),
                       ),
                     ),
-                    if (machineDetail != null) ...[
-                      MachineTabBarConfiguration(idMachine: widget.id)
-                    ],
+                    // if (machineDetail != null) ...[
+                    //   MachineTabBarConfiguration(idMachine: widget.id)
+                    // ],
                   ],
                 ),
               ),

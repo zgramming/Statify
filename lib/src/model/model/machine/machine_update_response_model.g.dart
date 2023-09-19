@@ -15,25 +15,21 @@ MachineUpdateResponseModel _$MachineUpdateResponseModelFromJson(
       number: json['number'] as String,
       serialNumber: json['serial_number'] as String,
       license: json['license'] as String,
-      action: json['action'] as String,
-      send: json['send'] as int,
-      replied: json['replied'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      activeSurveyId: json['active_survey_id'] as String?,
     );
 
 Map<String, dynamic> _$MachineUpdateResponseModelToJson(
         MachineUpdateResponseModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'send': instance.send,
-      'replied': instance.replied,
+      'user_id': instance.userId,
       'name': instance.name,
       'number': instance.number,
       'serial_number': instance.serialNumber,
       'license': instance.license,
-      'action': instance.action,
-      'user_id': instance.userId,
-      'updated_at': instance.updatedAt.toIso8601String(),
       'created_at': instance.createdAt.toIso8601String(),
+      'updated_at': instance.updatedAt.toIso8601String(),
+      'active_survey_id': instance.activeSurveyId,
     };

@@ -90,7 +90,6 @@ class MachineRemoteDatasource {
         'number': form.number,
         'license': form.license,
         'serial_number': form.serialNumber,
-        'action': form.action,
       },
     );
 
@@ -122,7 +121,6 @@ class MachineRemoteDatasource {
         'serial_number': form.serialNumber,
         'number': form.number,
         'license': form.license,
-        'action': form.action,
       },
     );
     final body = response.body;

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,25 +9,25 @@ part 'survey_responden_response_fail_model.g.dart';
 )
 class SurveyRespondenResponseFailModel extends Equatable {
   final String id;
-  final String surveyId;
+  final String surveyRespondentId;
   final String platform;
   final String key;
   final String value;
   final String status;
-  final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final bool finish;
 
   const SurveyRespondenResponseFailModel({
     required this.id,
-    required this.surveyId,
+    required this.surveyRespondentId,
     required this.platform,
     required this.key,
     required this.value,
     required this.status,
-    required this.finish,
     required this.createdAt,
     required this.updatedAt,
+    required this.finish,
   });
 
   factory SurveyRespondenResponseFailModel.fromJson(
@@ -41,14 +42,14 @@ class SurveyRespondenResponseFailModel extends Equatable {
   List<Object> get props {
     return [
       id,
-      surveyId,
+      surveyRespondentId,
       platform,
       key,
       value,
       status,
-      finish,
       createdAt,
       updatedAt,
+      finish,
     ];
   }
 

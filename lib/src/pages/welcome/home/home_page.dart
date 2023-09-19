@@ -160,11 +160,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
+    // TODO: Nanti di aktifkan lagi
     Future.microtask(() {
-      listenIncomingCallV2();
-      listenIncomingMessage();
-      listenOnSentMessage();
-      listenTemporaryPendingResponse();
+      // listenIncomingCallV2();
+      // listenIncomingMessage();
+      // listenOnSentMessage();
+      // listenTemporaryPendingResponse();
     });
   }
 
@@ -301,7 +302,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     super.initState();
 
     Future.microtask(() {
-      listenPendingResponse();
+      // TODO: Nanti di aktifkan lagi
+      // listenPendingResponse();
     });
   }
 
