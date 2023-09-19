@@ -105,11 +105,11 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
     );
     final sim1ORsim2 = ref.watch(getSIM1orSIM2Provider(item.number));
     const radius = 30.0;
-    return Stack(
-      children: [
-        Card(
-          margin: const EdgeInsets.only(),
-          child: ListTile(
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Stack(
+        children: [
+          ListTile(
             onTap: () => onTapMachine(item),
             contentPadding: const EdgeInsets.all(16.0),
             leading: CircleIndexNumber(
@@ -157,36 +157,36 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
               ],
             ),
           ),
-        ),
-        Positioned(
-          top: 0.0,
-          right: 0.0,
-          child: PopupMenuButton(
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  value: 'survey',
-                  child: Text(
-                    "Survey",
-                  ),
-                ),
-                PopupMenuItem(
-                  value: "delete",
-                  child: Text(
-                    "Delete",
-                    style: bodyFont.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
+          Positioned(
+            top: 0.0,
+            right: 0.0,
+            child: PopupMenuButton(
+              itemBuilder: (context) {
+                return [
+                  const PopupMenuItem(
+                    value: 'survey',
+                    child: Text(
+                      "Survey",
                     ),
                   ),
-                ),
-              ];
-            },
-            onSelected: onSelected,
-            child: const Icon(Icons.more_vert),
+                  PopupMenuItem(
+                    value: "delete",
+                    child: Text(
+                      "Delete",
+                      style: bodyFont.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ];
+              },
+              onSelected: onSelected,
+              child: const Icon(Icons.more_vert),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

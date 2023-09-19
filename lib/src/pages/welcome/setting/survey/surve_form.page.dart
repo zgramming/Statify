@@ -93,7 +93,7 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
           );
 
           // Invalidate Machine
-          ref.invalidate(machineNotifier);
+          ref.invalidate(surveyNotifier);
         },
         error: (error, stackTrace) => showSnackbar(
           context: context,
@@ -122,7 +122,7 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
           );
 
           // Invalidate Machine
-          ref.invalidate(machineNotifier);
+          ref.invalidate(surveyNotifier);
         },
         error: (error, stackTrace) => showSnackbar(
           context: context,
