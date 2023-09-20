@@ -59,10 +59,8 @@ class SurveyRemoteDatasource {
 
     if (response.statusCode == 200) {
       final data = decodedData['data'] as List<dynamic>;
-      final result = List<SurveyModel>.from(
-        data.map((x) => SurveyModel.fromJson(x)),
-      );
-      log("getAll: $result");
+      final result =
+          List<SurveyModel>.from(data.map((x) => SurveyModel.fromJson(x)));
 
       return result;
     } else {
@@ -77,6 +75,8 @@ class SurveyRemoteDatasource {
     required String machineId,
     required String surveyId,
   }) async {
+    if (surveyId == "-1") return null;
+
     final uri = Uri.parse(
       "$kBaseApiUrl/machines/$machineId/surveys/$surveyId",
     );
@@ -140,6 +140,7 @@ class SurveyRemoteDatasource {
 
     final body = await response.stream.bytesToString();
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+
     final data = decodedData['data'];
 
     if (data == null) {
@@ -297,7 +298,7 @@ class SurveyRemoteDatasource {
             log(" Pending Response is exist in temporary pending response, skip this pending response");
             yield "Pending Response is exist in temporary pending response, skip this pending response";
           } else {
-            final number = pendingResponse.responden.number;
+            final number = pendingResponse.respondent.number;
             log("Pending Response is not exist in temporary pending response, create temporary pending response and send message to $number");
             // create temporary pending response to local database for prevent duplicate
             final form = FormTemporaryPendingResponseCreateModel(

@@ -33,10 +33,12 @@ class _SurveyResponseFormPageState
 
   late final TextEditingController keyController;
   late final TextEditingController valueController;
-
-  bool shouldReload = false;
   MachineResponsePlatformEnum selectedPlatform =
       MachineResponsePlatformEnum.sms;
+  bool isVoting = false;
+  bool isFinish = false;
+
+  bool shouldReload = false;
 
   @override
   void initState() {
@@ -82,6 +84,8 @@ class _SurveyResponseFormPageState
       key: key,
       value: value,
       platform: selectedPlatform.valueString,
+      isVoting: isVoting,
+      isFinish: isFinish,
     );
 
     if (isCreate) {
@@ -179,6 +183,8 @@ class _SurveyResponseFormPageState
             keyController.text = value.key;
             valueController.text = value.value;
             selectedPlatform = value.platform;
+            isVoting = value.voting;
+            isFinish = value.finish;
 
             setState(() {});
           }
@@ -199,58 +205,87 @@ class _SurveyResponseFormPageState
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  FormBodyRow(
-                    title: "Insert key",
-                    child: TextFormField(
-                      controller: keyController,
-                      style: bodyFont.copyWith(fontSize: 14.0),
-                      decoration: inputDecorationRounded().copyWith(
-                        border: const UnderlineInputBorder(),
-                        fillColor: Colors.transparent,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Key is required";
-                        }
-                        return null;
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FormBodyRow(
+                  title: "Insert key",
+                  child: TextFormField(
+                    controller: keyController,
+                    style: bodyFont.copyWith(fontSize: 14.0),
+                    decoration: inputDecorationRounded().copyWith(
+                      border: const UnderlineInputBorder(),
+                      fillColor: Colors.transparent,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Key is required";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                FormBodyRow(
+                  title: "Insert value",
+                  child: TextFormField(
+                    controller: valueController,
+                    style: bodyFont.copyWith(fontSize: 14.0),
+                    keyboardType: TextInputType.multiline,
+                    minLines: 3,
+                    maxLines: 10,
+                    decoration: inputDecorationRounded().copyWith(
+                      border: const UnderlineInputBorder(),
+                      fillColor: Colors.transparent,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Value is required";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                FormBodyRow(
+                  title: "Voting",
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Checkbox(
+                      value: isVoting,
+                      onChanged: (value) {
+                        isVoting = value ?? false;
+                        setState(() {});
                       },
                     ),
                   ),
-                  const SizedBox(height: 16.0),
-                  FormBodyRow(
-                    title: "Insert value",
-                    child: TextFormField(
-                      controller: valueController,
-                      style: bodyFont.copyWith(fontSize: 14.0),
-                      keyboardType: TextInputType.multiline,
-                      minLines: 3,
-                      maxLines: 10,
-                      decoration: inputDecorationRounded().copyWith(
-                        border: const UnderlineInputBorder(),
-                        fillColor: Colors.transparent,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Value is required";
-                        }
-                        return null;
+                ),
+                const SizedBox(height: 16.0),
+                FormBodyRow(
+                  title: "Finish",
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Checkbox(
+                      value: isFinish,
+                      onChanged: (value) {
+                        isFinish = value ?? false;
+                        setState(() {});
                       },
                     ),
                   ),
-                  const SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: onSubmit,
-                    style: elevatedButtonStyle(),
-                    child: const Text("Submit"),
-                  )
-                ],
-              )),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: onSubmit,
+                  style: elevatedButtonStyle(),
+                  child: const Text("Submit"),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -43,22 +43,6 @@ class SurveyTabBarViewSMSBotOrWhatsappState
   MachineSettingToolsOptionEnum selectedToolsOption =
       MachineSettingToolsOptionEnum.allNumber;
 
-  @override
-  void initState() {
-    super.initState();
-    _timeoutController = TextEditingController();
-    _backoffController = TextEditingController();
-    _triesController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _timeoutController.dispose();
-    _backoffController.dispose();
-    _triesController.dispose();
-    super.dispose();
-  }
-
   Future<void> onAdd() async {
     context.pushNamed(
       routeSurveyResponseForm,
@@ -70,6 +54,31 @@ class SurveyTabBarViewSMSBotOrWhatsappState
         "isSMSBot": widget.isSMSBot,
       },
     );
+  }
+
+  Future<void> init() async {
+    final notifier = ref.read(surveyResponseNotifier(widget.surveyId).notifier);
+    await notifier.getAll();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _timeoutController = TextEditingController();
+    _backoffController = TextEditingController();
+    _triesController = TextEditingController();
+
+    Future.microtask(() {
+      init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timeoutController.dispose();
+    _backoffController.dispose();
+    _triesController.dispose();
+    super.dispose();
   }
 
   Future<void> onSaveSetting() async {
@@ -339,9 +348,22 @@ class _ResponseItemState extends ConsumerState<_ResponseItem> {
   }
 
   Future<void> onDelete() async {
-    await ref
+    final result = await ref
         .read(surveyResponseNotifier(widget.item.surveyId).notifier)
         .delete(responseId: widget.item.id);
+    result.onDelete.when(
+      data: (data) => ref.invalidate(surveyResponseNotifier),
+      error: (error, stackTrace) => showSnackbar(
+        context: context,
+        message: error.toString(),
+        backgroundColor: Colors.red,
+      ),
+      loading: () => showSnackbar(
+        context: context,
+        message: "Deleting...",
+        backgroundColor: Colors.blue,
+      ),
+    );
   }
 
   @override

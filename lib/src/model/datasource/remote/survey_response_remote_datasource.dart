@@ -59,14 +59,17 @@ class SurveyResponseRemoteDatasource {
     required String surveyId,
   }) async {
     final uri = Uri.parse('$kBaseApiUrl/surveys/$surveyId/responses');
+    final bodyForm = Map.from({
+      'platform': form.platform,
+      'key': form.key,
+      'value': form.value,
+      'voting': "${form.isVoting ? 1 : 0}",
+      'finish': "${form.isFinish ? 1 : 0}",
+    });
+
     final response = await client.post(
       uri,
-      body: {
-        'platform': form.platform,
-        'key': form.key,
-        'value': form.value,
-        'type': 'regular',
-      },
+      body: bodyForm,
     );
 
     final body = response.body;
@@ -91,13 +94,14 @@ class SurveyResponseRemoteDatasource {
     final uri = Uri.parse(
       '$kBaseApiUrl/surveys/$surveyId/responses/$responseId',
     );
+    final bodyForm = Map.from({
+      "value": form.value,
+      "voting": "${form.isVoting ? 1 : 0}",
+      "finish": "${form.isFinish ? 1 : 0}",
+    });
     final response = await client.patch(
       uri,
-      body: {
-        'platform': form.platform,
-        'key': form.key,
-        'value': form.value,
-      },
+      body: bodyForm,
     );
 
     final body = response.body;

@@ -17,8 +17,8 @@ SurveyPendingModel _$SurveyPendingModelFromJson(Map<String, dynamic> json) =>
       finish: json['finish'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      responden: SurveyPendingRespondenModel.fromJson(
-          json['responden'] as Map<String, dynamic>),
+      respondent: SurveyPendingRespondenModel.fromJson(
+          json['respondent'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SurveyPendingModelToJson(SurveyPendingModel instance) =>
@@ -32,7 +32,7 @@ Map<String, dynamic> _$SurveyPendingModelToJson(SurveyPendingModel instance) =>
       'finish': instance.finish,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
-      'responden': instance.responden,
+      'respondent': instance.respondent,
     };
 
 SurveyPendingRespondenModel _$SurveyPendingRespondenModelFromJson(
@@ -40,11 +40,13 @@ SurveyPendingRespondenModel _$SurveyPendingRespondenModelFromJson(
     SurveyPendingRespondenModel(
       id: json['id'] as String,
       surveyId: json['survey_id'] as String,
-      machineWhatsappId: json['machine_whatsapp_id'],
+      machineWhatsappId: json['machine_whatsapp_id'] as String?,
       number: json['number'] as String,
       locked: json['locked'] as bool,
       attempt: json['attempt'] as int,
-      bannedUntil: json['banned_until'],
+      bannedUntil: json['banned_until'] == null
+          ? null
+          : DateTime.parse(json['banned_until'] as String),
       finish: json['finish'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
@@ -59,7 +61,7 @@ Map<String, dynamic> _$SurveyPendingRespondenModelToJson(
       'number': instance.number,
       'locked': instance.locked,
       'attempt': instance.attempt,
-      'banned_until': instance.bannedUntil,
+      'banned_until': instance.bannedUntil?.toIso8601String(),
       'finish': instance.finish,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),

@@ -17,7 +17,7 @@ class SurveyPendingModel extends Equatable {
   final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final SurveyPendingRespondenModel responden;
+  final SurveyPendingRespondenModel respondent;
 
   const SurveyPendingModel({
     required this.id,
@@ -29,7 +29,7 @@ class SurveyPendingModel extends Equatable {
     required this.finish,
     required this.createdAt,
     required this.updatedAt,
-    required this.responden,
+    required this.respondent,
   });
 
   factory SurveyPendingModel.fromJson(Map<String, dynamic> json) =>
@@ -50,7 +50,7 @@ class SurveyPendingModel extends Equatable {
       finish,
       createdAt,
       updatedAt,
-      responden,
+      respondent,
     ];
   }
 
@@ -64,11 +64,11 @@ class SurveyPendingModel extends Equatable {
 class SurveyPendingRespondenModel extends Equatable {
   final String id;
   final String surveyId;
-  final dynamic machineWhatsappId;
+  final String? machineWhatsappId;
   final String number;
   final bool locked;
   final int attempt;
-  final dynamic bannedUntil;
+  final DateTime? bannedUntil;
   final bool finish;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -92,7 +92,7 @@ class SurveyPendingRespondenModel extends Equatable {
   Map<String, dynamic> toJson() => _$SurveyPendingRespondenModelToJson(this);
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       id,
       surveyId,

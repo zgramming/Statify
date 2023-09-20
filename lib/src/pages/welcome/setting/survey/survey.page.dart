@@ -134,7 +134,15 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
 
   Future<void> onChange(bool value) async {
     // Check if value is false then do nothing
-    if (!value) return;
+    if (!value) {
+      showSnackbar(
+        context: context,
+        message:
+            "Cannot deactivate survey, please activate another survey or create new survey",
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
 
     // update value
     final notifier = ref.read(surveyNotifier(widget.item.machineId).notifier);
@@ -143,10 +151,9 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
     result.onActive.when(
       data: (data) {
         // Load machine by id
-        // ref.read(machineNotifier.notifier).getById(
-        //       machineId: widget.item.machineId,
-        //     );
-        ref.invalidate(machineNotifier);
+        ref.read(machineNotifier.notifier).getById(
+              machineId: widget.item.machineId,
+            );
       },
       error: (error, stackTrace) => showSnackbar(
         context: context,

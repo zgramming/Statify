@@ -181,10 +181,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
     // TODO: Nanti di aktifkan lagi
     Future.microtask(() {
-      // listenIncomingCallV2();
-      // listenIncomingMessage();
-      // listenOnSentMessage();
-      // listenTemporaryPendingResponse();
+      listenIncomingCallV2();
+      listenIncomingMessage();
+      listenOnSentMessage();
+      listenTemporaryPendingResponse();
     });
   }
 

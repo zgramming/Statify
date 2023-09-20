@@ -47,24 +47,4 @@ class MachineWhatsappDeleteResponseModel extends Equatable {
 
   @override
   bool get stringify => true;
-
-  MachineWhatsappDeleteResponseModel copyWith({
-    String? id,
-    String? machineId,
-    String? number,
-    String? qrCode,
-    String? status,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return MachineWhatsappDeleteResponseModel(
-      id: id ?? this.id,
-      machineId: machineId ?? this.machineId,
-      number: number ?? this.number,
-      qrCode: qrCode ?? this.qrCode,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 }

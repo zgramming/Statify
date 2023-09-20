@@ -1,7 +1,6 @@
 package wabot.utils.com.wabot_utils
 
 import android.content.IntentFilter
-import android.os.Bundle
 import android.provider.Telephony
 import android.telephony.TelephonyManager
 import android.util.Log
@@ -22,13 +21,6 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-
-        // Setup event channels
-        registerIncomingMessageEventChannel()
-        registerIncomingCallEventChannel()
-        registerSentSMSEventChannel()
-        registerDeliveredSMSEventChannel()
-
         // Setup method channel
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger,
             MC).setMethodCallHandler { call, result ->
@@ -46,6 +38,7 @@ class MainActivity : FlutterActivity() {
                             message,
                             sim,
                             surveyRespondenId,
+                            surveyRespondenResponseId
                         )
 
                         if (!exec) {
@@ -65,6 +58,12 @@ class MainActivity : FlutterActivity() {
                 result.notImplemented()
             }
         }
+
+        // Setup event channels
+        registerIncomingMessageEventChannel()
+        registerIncomingCallEventChannel()
+        registerSentSMSEventChannel()
+        registerDeliveredSMSEventChannel()
     }
 
     override fun onDestroy() {
