@@ -303,6 +303,18 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(
+      listenPendingResponseNotifier(widget.item.id),
+      (previous, next) {
+        next.whenData((value) {
+          if (value == null) return;
+          final logNotifier =
+              ref.read(logListenPendingResponseNotifier.notifier);
+          logNotifier.addLog(value);
+        });
+      },
+    );
+
     final item = widget.item;
     final sim1ORsim2 = ref.watch(getSIM1orSIM2Provider(item.number));
     const radius = 30.0;

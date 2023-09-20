@@ -10,6 +10,7 @@ import '../../../../router.dart';
 import '../../../../utils/enum.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
+import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../widgets/async_error_builder.dart';
 import '../../../widgets/circle_index_number.dart';
 import '../../../widgets/custom_appbar.dart';
@@ -150,6 +151,9 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
     final result = await notifier.active(surveyId: widget.item.id);
     result.onActive.when(
       data: (data) {
+        // Invalidate machine
+        ref.invalidate(getAllMachineFutureProvider);
+
         // Load machine by id
         ref.read(machineNotifier.notifier).getById(
               machineId: widget.item.machineId,
