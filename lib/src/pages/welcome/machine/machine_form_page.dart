@@ -8,6 +8,7 @@ import '../../../model/model/helper/form/form_machine_create_update_model.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
+import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/form_row_body.dart';
@@ -111,7 +112,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
           if (data == null) return;
           showSnackbar(
             context: context,
-            message: "Berhasil membuat mesin dengan nomor ${data.number}",
+            message: "Success create machine with number ${data.number}",
             backgroundColor: Colors.green,
           );
 
@@ -145,7 +146,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
             if (data == null) return;
             showSnackbar(
               context: context,
-              message: "Berhasil mengubah mesin dengan nomor ${data.number}",
+              message: "Success update machine with number ${data.number}",
               backgroundColor: Colors.green,
             );
 
@@ -195,7 +196,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     return WillPopScope(
       onWillPop: () {
         if (_needReload) {
-          ref.invalidate(machineNotifier);
+          ref.invalidate(getAllMachineFutureProvider);
         }
         return Future.value(true);
       },

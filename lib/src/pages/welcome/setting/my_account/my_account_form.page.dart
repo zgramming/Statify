@@ -1,11 +1,14 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../injection.dart';
 import '../../../../model/model/helper/form/form_user_update_model.dart';
+import '../../../../utils/enum.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../widgets/async_error_builder.dart';
 import '../../../widgets/form_row_body.dart';
 
@@ -27,6 +30,9 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
   late final TextEditingController _countryCodeController;
   late final TextEditingController _sim1Controller;
   late final TextEditingController _sim2Controller;
+
+  String oldSim1 = "";
+  String oldSim2 = "";
 
   @override
   void initState() {
@@ -57,18 +63,58 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
     final validate = _formKey.currentState?.validate() ?? false;
     if (!validate) return;
     final notifier = ref.read(userNotifier.notifier);
-    final form = FormUserUpdateModel(
+    final machines = ref.read(machineNotifier).items;
+    FormUserUpdateModel form = FormUserUpdateModel(
       username: _usernameController.text,
       name: _nameController.text,
       countryCode: _countryCodeController.text,
       sim1: _sim1Controller.text,
       sim2: _sim2Controller.text,
+      machineIds: const [],
+      machineSimSlot: WhatSIMHasBeenChanged.none,
     );
 
-    await notifier.update(
-      widget.id,
-      form,
-    );
+    try {
+      // Check if sim1 or sim2 has been changed
+      if (oldSim1 != form.sim1 && oldSim2 != form.sim2) {
+        form = form.copyWith(
+          machineSimSlot: WhatSIMHasBeenChanged.both,
+          machineIds: machines.map((e) => e.id).toList(),
+        );
+      } else if (oldSim1 != form.sim1) {
+        final machine = machines.firstWhereOrNull(
+          (element) => element.number == oldSim1,
+        );
+        form = form.copyWith(
+          machineSimSlot: WhatSIMHasBeenChanged.sim1,
+          machineIds: [machine?.id ?? ""],
+        );
+      } else if (oldSim2 != form.sim2) {
+        final machine = machines.firstWhereOrNull(
+          (element) => element.number == oldSim2,
+        );
+        form = form.copyWith(
+          machineSimSlot: WhatSIMHasBeenChanged.sim2,
+          machineIds: [machine?.id ?? ""],
+        );
+      } else {
+        form = form.copyWith(
+          machineSimSlot: WhatSIMHasBeenChanged.none,
+          machineIds: const [],
+        );
+      }
+
+      await notifier.update(
+        id: widget.id,
+        form: form,
+      );
+    } catch (e) {
+      showSnackbar(
+        context: context,
+        message: e.toString(),
+        backgroundColor: Colors.red,
+      );
+    }
   }
 
   @override
@@ -84,6 +130,10 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
 
             // Set User to userNotifier.user
             ref.read(userNotifier.notifier).setUser(user);
+
+            // Invalidate machine
+            ref.invalidate(getAllMachineFutureProvider);
+
             showSnackbar(
               context: context,
               message: "Success update profile",
@@ -115,6 +165,9 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
           _countryCodeController.text = value.countryCode ?? "";
           _sim1Controller.text = value.sim1 ?? "";
           _sim2Controller.text = value.sim2 ?? "";
+
+          oldSim1 = value.sim1 ?? "";
+          oldSim2 = value.sim2 ?? "";
         });
       },
     );

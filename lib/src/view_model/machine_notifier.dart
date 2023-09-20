@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +10,7 @@ import '../model/model/machine/machine_update_response_model.dart';
 import '../model/repository/machine_repository.dart';
 
 class MachineState extends Equatable {
+  final List<MachineModel> items;
   final AsyncValue<List<MachineModel>> onGetAll;
   final AsyncValue<MachineModel?> onGetById;
   final AsyncValue<MachineModel?> onGetByNumber;
@@ -17,6 +19,7 @@ class MachineState extends Equatable {
   final AsyncValue<MachineDeleteResponseModel?> onDelete;
 
   const MachineState({
+    this.items = const [],
     this.onGetAll = const AsyncLoading(),
     this.onGetById = const AsyncData(null),
     this.onGetByNumber = const AsyncData(null),
@@ -28,6 +31,7 @@ class MachineState extends Equatable {
   @override
   List<Object> get props {
     return [
+      items,
       onGetAll,
       onGetById,
       onGetByNumber,
@@ -41,6 +45,7 @@ class MachineState extends Equatable {
   bool get stringify => true;
 
   MachineState copyWith({
+    List<MachineModel>? items,
     AsyncValue<List<MachineModel>>? onGetAll,
     AsyncValue<MachineModel?>? onGetById,
     AsyncValue<MachineModel?>? onGetByNumber,
@@ -49,6 +54,7 @@ class MachineState extends Equatable {
     AsyncValue<MachineDeleteResponseModel?>? onDelete,
   }) {
     return MachineState(
+      items: items ?? this.items,
       onGetAll: onGetAll ?? this.onGetAll,
       onGetById: onGetById ?? this.onGetById,
       onGetByNumber: onGetByNumber ?? this.onGetByNumber,
@@ -69,16 +75,17 @@ class MachineNotifier extends StateNotifier<MachineState> {
     getAll();
   }
 
-  Future<void> getAll() async {
+  Future<MachineState> getAll() async {
     final result = await repository.getAll(userId);
 
-    if (mounted) {
-      result.fold(
-        (failure) => state = state.copyWith(
-            onGetAll: AsyncError(failure.message, StackTrace.current)),
-        (data) => state = state.copyWith(onGetAll: AsyncData(data)),
-      );
-    }
+    return result.fold(
+      (failure) => state = state.copyWith(
+          onGetAll: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(
+        onGetAll: AsyncData(data),
+        items: [...data],
+      ),
+    );
   }
 
   Future<void> getById({
@@ -134,7 +141,21 @@ class MachineNotifier extends StateNotifier<MachineState> {
     result.fold(
       (failure) => state = state.copyWith(
           onUpdate: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onUpdate: AsyncData(data)),
+      (data) => state = state.copyWith(onUpdate: AsyncData(data), items: [
+        ...state.items.map((element) {
+          if (element.id == machineId) {
+            return element.copyWith(
+              license: data.license,
+              name: data.name,
+              number: data.number,
+              activeSurveyId: data.activeSurveyId,
+              serialNumber: data.serialNumber,
+              userId: data.userId,
+            );
+          }
+          return element;
+        }),
+      ]),
     );
   }
 
@@ -149,7 +170,12 @@ class MachineNotifier extends StateNotifier<MachineState> {
     return result.fold(
       (failure) => state = state.copyWith(
           onDelete: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onDelete: AsyncData(data)),
+      (data) => state = state.copyWith(
+        onDelete: AsyncData(data),
+        items: [
+          ...state.items.where((element) => element.id != machineId),
+        ],
+      ),
     );
   }
 }

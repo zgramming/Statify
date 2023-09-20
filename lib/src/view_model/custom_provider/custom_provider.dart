@@ -8,7 +8,7 @@ import '../../model/model/machine/machine_model.dart';
 import '../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 
 final getActiveSurveyIdByMachineId = ProviderFamily((ref, machineId) {
-  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
+  final machines = ref.watch(machineNotifier).items;
   final machine =
       machines.firstWhereOrNull((element) => element.id == machineId);
   final activeSurveyId = machine?.activeSurveyId;
@@ -17,7 +17,7 @@ final getActiveSurveyIdByMachineId = ProviderFamily((ref, machineId) {
 
 final userChooseSIMMachineProvider =
     ProviderFamily<int, String>((ref, machineId) {
-  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
+  final machines = ref.watch(machineNotifier).items;
 
   final machine = machines.firstWhere(
     (element) => element.id == machineId,
@@ -74,7 +74,7 @@ final getAvailableSIM = Provider((ref) {
 });
 
 final getOnlyWhatsAppMachine = Provider((ref) {
-  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
+  final machines = ref.watch(machineNotifier).items;
   final result = machines.map((e) => e.whatsapps).toList();
   final flatten = result.expand((element) => element).toList();
   return flatten;
@@ -82,9 +82,7 @@ final getOnlyWhatsAppMachine = Provider((ref) {
 
 final getMachineWhatsApp =
     Provider.family<List<MachineWhatsappModel>, String>((ref, machineId) {
-  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull;
-
-  if (machines == null) return [];
+  final machines = ref.watch(machineNotifier).items;
 
   final result =
       machines.firstWhereOrNull((element) => element.id == machineId);
@@ -94,8 +92,7 @@ final getMachineWhatsApp =
 
 final getMachineByIdProvider =
     Provider.family<MachineModel?, String>((ref, id) {
-  final machines = ref.watch(machineNotifier).onGetAll.valueOrNull;
-  if (machines == null) return null;
+  final machines = ref.watch(machineNotifier).items;
   final result = machines.firstWhereOrNull((element) => element.id == id);
   return result;
 });

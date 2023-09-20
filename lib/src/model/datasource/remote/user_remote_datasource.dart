@@ -6,17 +6,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
+import '../../../utils/enum.dart';
 import '../../../utils/failure.dart';
 import '../../../utils/flutter_secure_storage.dart';
+import '../../model/helper/form/form_machine_create_update_model.dart';
 import '../../model/helper/form/form_user_update_model.dart';
 import '../../model/user/user_model.dart';
 import '../../model/user/user_update.model.dart';
+import 'machine_remote_datasource.dart';
 
 class UserRemoteDatasource {
-  final http.Client client;
   const UserRemoteDatasource({
     required this.client,
+    required this.machineRemoteDatasource,
   });
+
+  final http.Client client;
+  final MachineRemoteDatasource machineRemoteDatasource;
 
   Future<UserModel?> getById(String id) async {
     final uri = Uri.parse("$kBaseApiUrl/users/$id");
@@ -56,10 +62,10 @@ class UserRemoteDatasource {
     }
   }
 
-  Future<(UserUpdateResponseModel, UserModel)> update(
-    String userId,
-    FormUserUpdateModel form,
-  ) async {
+  Future<(UserUpdateResponseModel, UserModel)> update({
+    required String userId,
+    required FormUserUpdateModel form,
+  }) async {
     final uri = Uri.parse("$kBaseApiUrl/users/$userId");
 
     final response = await client.patch(
@@ -85,6 +91,14 @@ class UserRemoteDatasource {
       final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
       final result = UserUpdateResponseModel.fromJson(data);
 
+      await _updateMachineDependSIM(
+        machineIds: form.machineIds,
+        machineSimSlot: form.machineSimSlot,
+        userId: userId,
+        sim1Number: result.sim1 ?? "",
+        sim2Number: result.sim2 ?? "",
+      );
+
       return (
         result,
         user.copyWith(
@@ -96,6 +110,64 @@ class UserRemoteDatasource {
           ? decoded['message']
           : 'Failed to update user';
       throw Exception(message);
+    }
+  }
+
+  Future<void> _updateMachineDependSIM({
+    required List<String> machineIds,
+    required WhatSIMHasBeenChanged machineSimSlot,
+    required String userId,
+    required String sim1Number,
+    required String sim2Number,
+  }) async {
+    switch (machineSimSlot) {
+      case WhatSIMHasBeenChanged.sim1:
+      case WhatSIMHasBeenChanged.sim2:
+        final machineId = machineIds.first;
+        final machine = await machineRemoteDatasource.getById(
+          userId: userId,
+          machineId: machineId,
+        );
+
+        await machineRemoteDatasource.update(
+          form: FormMachineCreateUpdateModel(
+            name: "${machine?.name}",
+            number: machineSimSlot == WhatSIMHasBeenChanged.sim1
+                ? sim1Number
+                : sim2Number,
+            serialNumber: "${machine?.serialNumber}",
+            license: "${machine?.license}",
+          ),
+          machineId: machineId,
+          userId: userId,
+        );
+
+        break;
+
+      case WhatSIMHasBeenChanged.both:
+        int index = 0;
+
+        for (final machineId in machineIds) {
+          final machine = await machineRemoteDatasource.getById(
+            userId: userId,
+            machineId: machineId,
+          );
+
+          await machineRemoteDatasource.update(
+            form: FormMachineCreateUpdateModel(
+              name: "${machine?.name}",
+              number: index == 0 ? sim1Number : sim2Number,
+              serialNumber: "${machine?.serialNumber}",
+              license: "${machine?.license}",
+            ),
+            machineId: machineId,
+            userId: userId,
+          );
+          index++;
+        }
+        break;
+
+      default:
     }
   }
 }
@@ -115,12 +187,15 @@ class UserRepository {
     }
   }
 
-  Future<Either<Failure, (UserUpdateResponseModel, UserModel)>> update(
-    String userId,
-    FormUserUpdateModel form,
-  ) async {
+  Future<Either<Failure, (UserUpdateResponseModel, UserModel)>> update({
+    required String userId,
+    required FormUserUpdateModel form,
+  }) async {
     try {
-      final result = await remoteDatasource.update(userId, form);
+      final result = await remoteDatasource.update(
+        userId: userId,
+        form: form,
+      );
       final (_, user) = result;
       // Save user to local storage
       await FlutterSecureStorageUtils.setUserAuth(user);
@@ -186,11 +261,17 @@ class UserNotifier extends StateNotifier<UserState> {
     );
   }
 
-  Future<UserState> update(String id, FormUserUpdateModel form) async {
+  Future<UserState> update({
+    required String id,
+    required FormUserUpdateModel form,
+  }) async {
     state = state.copyWith(
       onUpdate: const AsyncLoading(),
     );
-    final result = await repository.update(id, form);
+    final result = await repository.update(
+      userId: id,
+      form: form,
+    );
     return result.fold(
       (failure) => state = state.copyWith(
         onUpdate: AsyncError(

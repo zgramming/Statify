@@ -1,4 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
+
+import '../../../../utils/enum.dart';
 
 class FormUserUpdateModel extends Equatable {
   final String username;
@@ -6,6 +9,8 @@ class FormUserUpdateModel extends Equatable {
   final String countryCode;
   final String sim1;
   final String sim2;
+  final List<String> machineIds;
+  final WhatSIMHasBeenChanged machineSimSlot;
 
   const FormUserUpdateModel({
     required this.username,
@@ -13,6 +18,8 @@ class FormUserUpdateModel extends Equatable {
     required this.countryCode,
     required this.sim1,
     required this.sim2,
+    required this.machineIds,
+    required this.machineSimSlot,
   });
 
   @override
@@ -23,6 +30,8 @@ class FormUserUpdateModel extends Equatable {
       countryCode,
       sim1,
       sim2,
+      machineIds,
+      machineSimSlot,
     ];
   }
 
@@ -35,6 +44,8 @@ class FormUserUpdateModel extends Equatable {
     String? countryCode,
     String? sim1,
     String? sim2,
+    List<String>? machineIds,
+    WhatSIMHasBeenChanged? machineSimSlot,
   }) {
     return FormUserUpdateModel(
       username: username ?? this.username,
@@ -42,6 +53,8 @@ class FormUserUpdateModel extends Equatable {
       countryCode: countryCode ?? this.countryCode,
       sim1: sim1 ?? this.sim1,
       sim2: sim2 ?? this.sim2,
+      machineIds: machineIds ?? this.machineIds,
+      machineSimSlot: machineSimSlot ?? this.machineSimSlot,
     );
   }
 }

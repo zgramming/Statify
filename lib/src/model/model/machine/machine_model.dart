@@ -58,4 +58,30 @@ class MachineModel extends Equatable {
 
   @override
   bool get stringify => true;
+
+  MachineModel copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    String? number,
+    String? serialNumber,
+    String? license,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? activeSurveyId,
+    List<MachineWhatsappModel>? whatsapps,
+  }) {
+    return MachineModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      number: number ?? this.number,
+      serialNumber: serialNumber ?? this.serialNumber,
+      license: license ?? this.license,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      activeSurveyId: activeSurveyId ?? this.activeSurveyId,
+      whatsapps: whatsapps ?? this.whatsapps,
+    );
+  }
 }

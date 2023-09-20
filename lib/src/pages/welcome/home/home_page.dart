@@ -179,7 +179,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-    // TODO: Nanti di aktifkan lagi
     Future.microtask(() {
       listenIncomingCallV2();
       listenIncomingMessage();
@@ -200,7 +199,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
+    final machines = ref.watch(machineNotifier).items;
 
     if (machines.isEmpty) {
       return Center(

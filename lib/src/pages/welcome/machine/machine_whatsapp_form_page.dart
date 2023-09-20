@@ -95,7 +95,7 @@ class _MachineWhatsAppFormPageState
       );
     });
 
-    final machines = ref.watch(machineNotifier).onGetAll.valueOrNull ?? [];
+    final machines = ref.watch(machineNotifier).items;
 
     return Scaffold(
       appBar: AppBar(

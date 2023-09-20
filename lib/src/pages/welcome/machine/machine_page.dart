@@ -72,6 +72,7 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
             showSnackbar(
               context: context,
               message: "Success delete machine ${item.name}",
+              backgroundColor: Colors.green,
             );
           },
           error: (error, stackTrace) {
@@ -218,7 +219,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
 
   @override
   Widget build(BuildContext context) {
-    final machine = ref.watch(machineNotifier).onGetAll;
+    final machines = ref.watch(machineNotifier).items;
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -230,31 +231,21 @@ class _MachinePageState extends ConsumerState<MachinePage> {
           Expanded(
             child: Builder(
               builder: (context) {
-                return machine.when(
-                  data: (items) {
-                    if (items.isEmpty) {
-                      return const Center(
-                        child: Text("Empty Machine"),
-                      );
-                    }
+                if (machines.isEmpty) {
+                  return const Center(
+                    child: Text("Empty Machine"),
+                  );
+                }
 
-                    return ListView.separated(
-                      separatorBuilder: (context, index) => const Divider(),
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-                        return _MachinePageItem(
-                          item: item,
-                          index: index + 1,
-                        );
-                      },
+                return ListView.separated(
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemCount: machines.length,
+                  itemBuilder: (context, index) {
+                    final item = machines[index];
+                    return _MachinePageItem(
+                      item: item,
+                      index: index + 1,
                     );
-                  },
-                  error: (error, stackTrace) {
-                    return Text(error.toString());
-                  },
-                  loading: () {
-                    return const Center(child: CircularProgressIndicator());
                   },
                 );
               },

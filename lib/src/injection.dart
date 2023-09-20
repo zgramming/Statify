@@ -253,6 +253,7 @@ final _authenticationRemoteDatasource = Provider(
 final _userRemoteDatasource = Provider(
   (ref) => UserRemoteDatasource(
     client: ref.watch(_httpClient),
+    machineRemoteDatasource: ref.watch(_machineRemoteDatasource),
   ),
 );
 

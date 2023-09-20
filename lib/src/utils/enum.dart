@@ -55,6 +55,13 @@ enum SurveyTemplateEnum {
   canditate
 }
 
+enum WhatSIMHasBeenChanged {
+  sim1,
+  sim2,
+  both,
+  none,
+}
+
 extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
   String get valueString {
     switch (this) {
@@ -219,6 +226,21 @@ extension SurveyTemplateEnumEXT on SurveyTemplateEnum {
     switch (this) {
       case SurveyTemplateEnum.canditate:
         return 'Candidate';
+    }
+  }
+}
+
+extension WhatSIMHasBeenChangedEXT on WhatSIMHasBeenChanged {
+  String get valueString {
+    switch (this) {
+      case WhatSIMHasBeenChanged.sim1:
+        return 'sim1';
+      case WhatSIMHasBeenChanged.sim2:
+        return 'sim2';
+      case WhatSIMHasBeenChanged.both:
+        return 'both';
+      case WhatSIMHasBeenChanged.none:
+        return 'none';
     }
   }
 }
