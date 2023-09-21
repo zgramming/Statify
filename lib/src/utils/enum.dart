@@ -1,14 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 
 enum MachineSMSSettingEnum {
-  @JsonValue('sim_1')
   sim_1,
-  @JsonValue('sim_2')
   sim_2,
-  @JsonValue('sim_1_priority')
   // ignore: constant_identifier_names
   sim_1_priority,
-  @JsonValue('sim_2_priority')
   // ignore: constant_identifier_names
   sim_2_priority,
   both,
@@ -17,10 +13,8 @@ enum MachineSMSSettingEnum {
 enum MachineActionEnum {
   sms,
   whatsapp,
-  @JsonValue('whatsapp_priority')
   // ignore: constant_identifier_names
   whatsapp_priority,
-  @JsonValue('whatsapp_sms')
   // ignore: constant_identifier_names
   whatsapp_sms
 }
@@ -29,8 +23,11 @@ enum MachineResponseTypeEnum {
   welcome,
   regular,
   banned,
-  @JsonValue('wrong_password')
-  wrongPassword,
+  // ignore: constant_identifier_names
+  wrong_reply,
+  // ignore: constant_identifier_names
+  wrong_password,
+  timeout,
   finish
 }
 
@@ -131,8 +128,12 @@ extension MachineResponseTypeEnumEXT on MachineResponseTypeEnum {
         return 'regular';
       case MachineResponseTypeEnum.banned:
         return 'banned';
-      case MachineResponseTypeEnum.wrongPassword:
+      case MachineResponseTypeEnum.wrong_password:
         return 'wrong_password';
+      case MachineResponseTypeEnum.wrong_reply:
+        return 'wrong_reply';
+      case MachineResponseTypeEnum.timeout:
+        return 'timeout';
       case MachineResponseTypeEnum.finish:
         return 'finish';
     }
@@ -146,8 +147,12 @@ extension MachineResponseTypeEnumEXT on MachineResponseTypeEnum {
         return 'Regular';
       case MachineResponseTypeEnum.banned:
         return 'Banned';
-      case MachineResponseTypeEnum.wrongPassword:
+      case MachineResponseTypeEnum.wrong_password:
         return 'Wrong Password';
+      case MachineResponseTypeEnum.wrong_reply:
+        return 'Wrong Reply';
+      case MachineResponseTypeEnum.timeout:
+        return 'Timeout';
       case MachineResponseTypeEnum.finish:
         return 'Finish';
     }

@@ -14,7 +14,7 @@ SurveyResponseModel _$SurveyResponseModelFromJson(Map<String, dynamic> json) =>
           $enumDecode(_$MachineResponsePlatformEnumEnumMap, json['platform']),
       key: json['key'] as String,
       value: json['value'] as String,
-      type: json['type'] as String,
+      type: $enumDecode(_$MachineResponseTypeEnumEnumMap, json['type']),
       voting: json['voting'] as bool,
       finish: json['finish'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -29,7 +29,7 @@ Map<String, dynamic> _$SurveyResponseModelToJson(
       'platform': _$MachineResponsePlatformEnumEnumMap[instance.platform]!,
       'key': instance.key,
       'value': instance.value,
-      'type': instance.type,
+      'type': _$MachineResponseTypeEnumEnumMap[instance.type]!,
       'voting': instance.voting,
       'finish': instance.finish,
       'created_at': instance.createdAt.toIso8601String(),
@@ -39,4 +39,14 @@ Map<String, dynamic> _$SurveyResponseModelToJson(
 const _$MachineResponsePlatformEnumEnumMap = {
   MachineResponsePlatformEnum.whatsapp: 'whatsapp',
   MachineResponsePlatformEnum.sms: 'sms',
+};
+
+const _$MachineResponseTypeEnumEnumMap = {
+  MachineResponseTypeEnum.welcome: 'welcome',
+  MachineResponseTypeEnum.regular: 'regular',
+  MachineResponseTypeEnum.banned: 'banned',
+  MachineResponseTypeEnum.wrong_reply: 'wrong_reply',
+  MachineResponseTypeEnum.wrong_password: 'wrong_password',
+  MachineResponseTypeEnum.timeout: 'timeout',
+  MachineResponseTypeEnum.finish: 'finish',
 };

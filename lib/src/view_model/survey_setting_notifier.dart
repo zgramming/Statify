@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,27 +7,31 @@ import '../model/model/survey_setting/survey_setting_model.dart';
 import '../model/repository/survey_setting_repository.dart';
 
 class SurveySettingState extends Equatable {
+  final List<SurveySettingModel> items;
   final AsyncValue<List<SurveySettingModel>> onGetAll;
   final AsyncValue<SurveySettingModel?> onGetById;
   final AsyncValue<SurveySettingModel?> onUpdate;
   const SurveySettingState({
+    this.items = const [],
     this.onGetAll = const AsyncValue.data([]),
     this.onGetById = const AsyncValue.data(null),
     this.onUpdate = const AsyncValue.data(null),
   });
 
   @override
-  List<Object> get props => [onGetAll, onGetById, onUpdate];
+  List<Object> get props => [items, onGetAll, onGetById, onUpdate];
 
   @override
   bool get stringify => true;
 
   SurveySettingState copyWith({
+    List<SurveySettingModel>? items,
     AsyncValue<List<SurveySettingModel>>? onGetAll,
-    AsyncValue<SurveySettingModel>? onGetById,
-    AsyncValue<SurveySettingModel>? onUpdate,
+    AsyncValue<SurveySettingModel?>? onGetById,
+    AsyncValue<SurveySettingModel?>? onUpdate,
   }) {
     return SurveySettingState(
+      items: items ?? this.items,
       onGetAll: onGetAll ?? this.onGetAll,
       onGetById: onGetById ?? this.onGetById,
       onUpdate: onUpdate ?? this.onUpdate,
@@ -50,7 +55,10 @@ class SurveySettingNotifier extends StateNotifier<SurveySettingState> {
     result.fold(
       (failure) => state = state.copyWith(
           onGetAll: AsyncValue.error(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onGetAll: AsyncValue.data(data)),
+      (data) => state = state.copyWith(
+        onGetAll: AsyncValue.data(data),
+        items: data,
+      ),
     );
   }
 

@@ -5,7 +5,7 @@ import '../../../../../injection.dart';
 import '../../../../../utils/enum.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../widgets/async_error_builder.dart';
-import 'survey_tabbarview_smsbotorwhatsapp.dart';
+import 'survey_tabbarview_category.dart';
 
 class SurveyTabBarConfiguration extends ConsumerStatefulWidget {
   const SurveyTabBarConfiguration({
@@ -23,29 +23,44 @@ class SurveyTabBarConfigurationState
     extends ConsumerState<SurveyTabBarConfiguration>
     with SingleTickerProviderStateMixin {
   int selectedIndex = 0;
+
+  Future<void> init() async {
+    await Future.wait([
+      ref.read(surveyResponseNotifier(widget.surveyId).notifier).getAll(),
+      ref.read(surveySettingNotifier(widget.surveyId).notifier).getAll(),
+    ]);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => init());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final settingsAsync = ref
-        .watch(surveySettingNotifier(widget.surveyId))
-        .onGetAll
-        .unwrapPrevious();
+    final responseAsync =
+        ref.watch(surveyResponseNotifier(widget.surveyId)).onGetAll;
+    final settingsAsync =
+        ref.watch(surveySettingNotifier(widget.surveyId)).onGetAll;
 
-    return settingsAsync.when(
-      data: (settings) {
-        return DefaultTabController(
-          length: settings.length,
-          initialIndex: selectedIndex,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: TabBar(
+    return responseAsync.when(
+      data: (_) => settingsAsync.when(
+        data: (settings) {
+          return DefaultTabController(
+            length: settings.length,
+            initialIndex: selectedIndex,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: TabBar(
                       onTap: (value) => setState(() => selectedIndex = value),
                       labelStyle: bodyFont.copyWith(
                         fontSize: 12.0,
@@ -59,41 +74,49 @@ class SurveyTabBarConfigurationState
                       ),
                       tabs: settings
                           .map((e) => Tab(text: e.platform.valueStringReadable))
-                          .toList()),
-                ),
-                IndexedStack(
-                  index: selectedIndex,
-                  children: settings
-                      .map(
-                        (e) => Builder(
-                          builder: (context) {
-                            if (e.platform == MachineResponsePlatformEnum.sms) {
-                              return SurveyTabBarViewSMSBotOrWhatsapp(
-                                surveyId: widget.surveyId,
-                                idSetting: e.id,
-                                isSMSBot: true,
-                              );
-                            } else {
-                              return SurveyTabBarViewSMSBotOrWhatsapp(
-                                surveyId: widget.surveyId,
-                                idSetting: e.id,
-                                isSMSBot: false,
-                              );
-                            }
-                          },
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: 100),
-              ],
+                          .toList(),
+                    ),
+                  ),
+                  IndexedStack(
+                    index: selectedIndex,
+                    children: settings
+                        .map(
+                          (e) => Builder(
+                            builder: (context) {
+                              if (e.platform ==
+                                  MachineResponsePlatformEnum.sms) {
+                                return SurveyTabBarViewCategory(
+                                  surveyId: widget.surveyId,
+                                  idSetting: e.id,
+                                  isSMSBot: true,
+                                );
+                              } else {
+                                return SurveyTabBarViewCategory(
+                                  surveyId: widget.surveyId,
+                                  idSetting: e.id,
+                                  isSMSBot: false,
+                                );
+                              }
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 100),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+        error: (error, stackTrace) => AsyncErrorBuilder(
+          error: error.toString(),
+          onRetry: () => ref.invalidate(surveySettingNotifier),
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+      ),
       error: (error, stackTrace) => AsyncErrorBuilder(
         error: error.toString(),
-        onRetry: () => ref.invalidate(surveySettingNotifier),
+        onRetry: () => ref.invalidate(surveyResponseNotifier(widget.surveyId)),
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
     );

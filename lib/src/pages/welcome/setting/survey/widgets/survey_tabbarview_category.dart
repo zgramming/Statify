@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../../injection.dart';
 import '../../../../../model/model/helper/form/form_survey_create_update.model.dart';
 import '../../../../../model/model/helper/form/form_survey_setting_create_update_model.dart';
 import '../../../../../model/model/helper/props/props_get_survey_setting_detail.model.dart';
-import '../../../../../model/model/survey_response/survey_response_model.dart';
-import '../../../../../router.dart';
 import '../../../../../utils/enum.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/functions.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_notifier/get_machine_setting_detail.notifier.dart';
 import '../../../../../view_model/custom_provider/custom_form_provider.dart';
-import '../../../../widgets/async_error_builder.dart';
 import '../../../../widgets/form_row_body.dart';
+import 'survey_tabbarview_response.dart';
 
-class SurveyTabBarViewSMSBotOrWhatsapp extends ConsumerStatefulWidget {
-  const SurveyTabBarViewSMSBotOrWhatsapp({
+class SurveyTabBarViewCategory extends ConsumerStatefulWidget {
+  const SurveyTabBarViewCategory({
     Key? key,
     required this.surveyId,
     required this.idSetting,
@@ -30,12 +27,12 @@ class SurveyTabBarViewSMSBotOrWhatsapp extends ConsumerStatefulWidget {
   final bool isSMSBot;
 
   @override
-  ConsumerState<SurveyTabBarViewSMSBotOrWhatsapp> createState() =>
-      SurveyTabBarViewSMSBotOrWhatsappState();
+  ConsumerState<SurveyTabBarViewCategory> createState() =>
+      SurveyTabBarViewCategoryState();
 }
 
-class SurveyTabBarViewSMSBotOrWhatsappState
-    extends ConsumerState<SurveyTabBarViewSMSBotOrWhatsapp> {
+class SurveyTabBarViewCategoryState
+    extends ConsumerState<SurveyTabBarViewCategory> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _timeoutController;
@@ -44,24 +41,6 @@ class SurveyTabBarViewSMSBotOrWhatsappState
 
   MachineSettingToolsOptionEnum selectedToolsOption =
       MachineSettingToolsOptionEnum.allNumber;
-
-  Future<void> init() async {
-    final notifier = ref.read(surveyResponseNotifier(widget.surveyId).notifier);
-    await notifier.getAll();
-  }
-
-  Future<void> onAdd() async {
-    context.pushNamed(
-      routeSurveyResponseForm,
-      pathParameters: {
-        "id": "-1",
-        "idSurvey": widget.surveyId,
-      },
-      extra: {
-        "isSMSBot": widget.isSMSBot,
-      },
-    );
-  }
 
   void onChangeTries(String? value) {
     if (value == null) return;
@@ -223,8 +202,6 @@ class SurveyTabBarViewSMSBotOrWhatsappState
     _timeoutController = TextEditingController();
     _backoffController = TextEditingController();
     _triesController = TextEditingController();
-
-    Future.microtask(() => init());
   }
 
   @override
@@ -254,40 +231,41 @@ class SurveyTabBarViewSMSBotOrWhatsappState
               : MachineSettingToolsOptionEnum.allNumber;
 
           // setup form provider
-          ref.read(CustomFormProvider.surveyForm.notifier).update((state) {
-            if (widget.isSMSBot) {
-              final result = state.copyWith(
-                sms: FormSurveyCreateOrUpdateWAorSMSBotModel(
-                  usePassword: value.usePassword,
-                  timeout: value.timeout,
-                  backoff: value.backoff,
-                  tries: value.tries,
-                  settingId: value.id,
-                ),
-              );
+          ref.read(CustomFormProvider.surveyForm.notifier).update(
+            (state) {
+              if (widget.isSMSBot) {
+                final result = state.copyWith(
+                  sms: FormSurveyCreateOrUpdateWAorSMSBotModel(
+                    usePassword: value.usePassword,
+                    timeout: value.timeout,
+                    backoff: value.backoff,
+                    tries: value.tries,
+                    settingId: value.id,
+                  ),
+                );
 
-              return state = result;
-            } else {
-              final result = state.copyWith(
-                wa: FormSurveyCreateOrUpdateWAorSMSBotModel(
-                  usePassword: value.usePassword,
-                  timeout: value.timeout,
-                  backoff: value.backoff,
-                  tries: value.tries,
-                  settingId: value.id,
-                ),
-              );
+                return state = result;
+              } else {
+                final result = state.copyWith(
+                  wa: FormSurveyCreateOrUpdateWAorSMSBotModel(
+                    usePassword: value.usePassword,
+                    timeout: value.timeout,
+                    backoff: value.backoff,
+                    tries: value.tries,
+                    settingId: value.id,
+                  ),
+                );
 
-              return state = result;
-            }
-          });
+                return state = result;
+              }
+            },
+          );
         });
       },
     );
 
     final settingDetailAsync = ref.watch(getSurveySettingDetailNotifier(props));
-    final responseAsync =
-        ref.watch(surveyResponseNotifier(widget.surveyId)).onGetAll;
+
     return settingDetailAsync.when(
       data: (_) {
         return SingleChildScrollView(
@@ -377,53 +355,9 @@ class SurveyTabBarViewSMSBotOrWhatsappState
                   ),
                   const SizedBox(height: 20),
                 ],
-                Builder(
-                  builder: (context) {
-                    return responseAsync.when(
-                      data: (responses) {
-                        final responseSMS = responses.where((element) {
-                          return element.platform ==
-                              MachineResponsePlatformEnum.sms;
-                        }).toList();
-                        final responseWhatsapp = responses.where((element) {
-                          return element.platform ==
-                              MachineResponsePlatformEnum.whatsapp;
-                        }).toList();
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children:
-                              ListTile.divideTiles(context: context, tiles: [
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: ElevatedButton.icon(
-                                onPressed: onAdd,
-                                icon: const Icon(Icons.add),
-                                label: const Text("Add Response"),
-                              ),
-                            ),
-                            if (widget.isSMSBot) ...[
-                              ...responseSMS.map((e) {
-                                return _ResponseItem(item: e);
-                              }).toList()
-                            ],
-                            if (!widget.isSMSBot) ...[
-                              ...responseWhatsapp.map((e) {
-                                return _ResponseItem(item: e);
-                              }).toList()
-                            ],
-                          ]).toList(),
-                        );
-                      },
-                      error: (error, stackTrace) => AsyncErrorBuilder(
-                        error: error.toString(),
-                        onRetry: () => ref.invalidate(surveyResponseNotifier),
-                      ),
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(color: Colors.blue),
-                      ),
-                    );
-                  },
+                SurveyTabbarViewResponse(
+                  surveyId: widget.surveyId,
+                  isSMSBot: widget.isSMSBot,
                 ),
                 const SizedBox(height: 20),
               ],
@@ -441,97 +375,6 @@ class SurveyTabBarViewSMSBotOrWhatsappState
       },
       loading: () => const Center(
         child: CircularProgressIndicator(color: Colors.blue),
-      ),
-    );
-  }
-}
-
-class _ResponseItem extends ConsumerStatefulWidget {
-  const _ResponseItem({
-    Key? key,
-    required this.item,
-  }) : super(key: key);
-
-  final SurveyResponseModel item;
-
-  @override
-  ConsumerState<_ResponseItem> createState() => _ResponseItemState();
-}
-
-class _ResponseItemState extends ConsumerState<_ResponseItem> {
-  Future<void> onEdit() async {
-    context.pushNamed(routeSurveyResponseForm, pathParameters: {
-      "id": widget.item.id,
-      "idSurvey": widget.item.surveyId,
-    });
-  }
-
-  Future<void> onDelete() async {
-    final result = await ref
-        .read(surveyResponseNotifier(widget.item.surveyId).notifier)
-        .delete(responseId: widget.item.id);
-    result.onDelete.when(
-      data: (data) => ref.invalidate(surveyResponseNotifier),
-      error: (error, stackTrace) => showSnackbar(
-        context: context,
-        message: error.toString(),
-        backgroundColor: Colors.red,
-      ),
-      loading: () => showSnackbar(
-        context: context,
-        message: "Deleting...",
-        backgroundColor: Colors.blue,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              widget.item.key,
-              style: bodyFontBold.copyWith(fontSize: 12.0),
-            ),
-          ),
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: 8.0,
-            children: [
-              InkWell(
-                onTap: onEdit,
-                child: const Icon(
-                  Icons.edit,
-                  color: Colors.blue,
-                  size: 16.0,
-                ),
-              ),
-              InkWell(
-                onTap: onDelete,
-                child: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                  size: 16.0,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 10.0),
-          Text(
-            widget.item.value,
-            style: bodyFont.copyWith(fontSize: 10.0),
-          ),
-          const SizedBox(height: 10.0),
-        ],
       ),
     );
   }

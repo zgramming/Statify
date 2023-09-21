@@ -14,7 +14,7 @@ class SurveyResponseModel extends Equatable {
   final MachineResponsePlatformEnum platform;
   final String key;
   final String value;
-  final String type;
+  final MachineResponseTypeEnum type;
   final bool voting;
   final bool finish;
   final DateTime createdAt;

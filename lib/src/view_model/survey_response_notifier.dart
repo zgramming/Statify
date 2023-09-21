@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,22 +8,25 @@ import '../model/model/survey_response/survey_response_model.dart';
 import '../model/repository/survey_response_repository.dart';
 
 class SurveyResponseState extends Equatable {
+  final List<SurveyResponseModel> items;
   final AsyncValue<List<SurveyResponseModel>> onGetAll;
   final AsyncValue<SurveyResponseModel?> onGetById;
   final AsyncValue<SurveyResponseCreateModel?> onCreate;
   final AsyncValue<SurveyResponseModel?> onUpdate;
   final AsyncValue<SurveyResponseModel?> onDelete;
   const SurveyResponseState({
+    this.items = const [],
     this.onGetAll = const AsyncValue.data([]),
     this.onGetById = const AsyncValue.data(null),
     this.onCreate = const AsyncValue.data(null),
-    this.onDelete = const AsyncValue.data(null),
     this.onUpdate = const AsyncValue.data(null),
+    this.onDelete = const AsyncValue.data(null),
   });
 
   @override
   List<Object> get props {
     return [
+      items,
       onGetAll,
       onGetById,
       onCreate,
@@ -35,6 +39,7 @@ class SurveyResponseState extends Equatable {
   bool get stringify => true;
 
   SurveyResponseState copyWith({
+    List<SurveyResponseModel>? items,
     AsyncValue<List<SurveyResponseModel>>? onGetAll,
     AsyncValue<SurveyResponseModel?>? onGetById,
     AsyncValue<SurveyResponseCreateModel?>? onCreate,
@@ -42,6 +47,7 @@ class SurveyResponseState extends Equatable {
     AsyncValue<SurveyResponseModel?>? onDelete,
   }) {
     return SurveyResponseState(
+      items: items ?? this.items,
       onGetAll: onGetAll ?? this.onGetAll,
       onGetById: onGetById ?? this.onGetById,
       onCreate: onCreate ?? this.onCreate,
@@ -68,7 +74,10 @@ class SurveyResponseNotifier extends StateNotifier<SurveyResponseState> {
     result.fold(
       (failure) => state = state.copyWith(
           onGetAll: AsyncValue.error(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onGetAll: AsyncValue.data(data)),
+      (data) => state = state.copyWith(
+        onGetAll: AsyncValue.data(data),
+        items: data,
+      ),
     );
   }
 

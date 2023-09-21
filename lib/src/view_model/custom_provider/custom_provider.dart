@@ -4,9 +4,41 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../injection.dart';
 import '../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
+import '../../model/model/helper/props/props_get_survey_response_grouping.model.dart';
 import '../../model/model/machine/machine_model.dart';
+import '../../model/model/survey_response/survey_response_model.dart';
+import '../../utils/enum.dart';
 
 class CustomProvider {
+  static final getSurveyResponseGroupingSMS = Provider.family<
+      Map<String, List<SurveyResponseModel>>,
+      PropsSurveyResponseGrouping>((ref, props) {
+    final items = ref
+        .watch(surveyResponseNotifier(props.surveyId))
+        .items
+        .where((element) => element.platform == props.platform)
+        .toList();
+    final Map<String, List<SurveyResponseModel>> map = {};
+
+    for (final item in items) {
+      if (item.type == MachineResponseTypeEnum.regular) {
+        map.update(
+          "Your Auto Responder",
+          (value) => value..add(item),
+          ifAbsent: () => [item],
+        );
+      } else {
+        map.update(
+          "System Auto Responder",
+          (value) => value..add(item),
+          ifAbsent: () => [item],
+        );
+      }
+    }
+
+    return map;
+  });
+
   static final getOnlyWhatsAppMachine = Provider((ref) {
     final machines = ref.watch(machineNotifier).items;
     final result = machines.map((e) => e.whatsapps).toList();

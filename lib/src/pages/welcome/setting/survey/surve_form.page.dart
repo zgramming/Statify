@@ -158,85 +158,46 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
       ),
       body: Stack(
         children: [
-          Builder(
-            builder: (context) {
-              return surveyAsync.when(
-                data: (surveyDetail) {
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Card(
-                        margin: EdgeInsets.zero,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const SizedBox(height: 20),
-                              FormBodyRow(
-                                title: "Name",
-                                child: TextFormField(
-                                  controller: _nameController,
-                                  style: bodyFont.copyWith(fontSize: 14.0),
-                                  decoration: inputDecorationRounded().copyWith(
-                                    border: const UnderlineInputBorder(),
-                                    fillColor: Colors.transparent,
-                                    contentPadding: EdgeInsets.zero,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              FormBodyRow(
-                                title: "Action",
-                                child:
-                                    DropdownButtonFormField<MachineActionEnum>(
-                                  value: selectedAction,
-                                  onChanged: (value) {
-                                    if (value == null) return;
-                                    setState(() {
-                                      selectedAction = value;
-                                    });
-                                  },
-                                  decoration: inputDecorationRounded().copyWith(
-                                    hintText: "Choose Template",
-                                    contentPadding: EdgeInsets.zero,
-                                    fillColor: Colors.transparent,
-                                    border: const UnderlineInputBorder(),
-                                  ),
-                                  items: MachineActionEnum.values
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e,
-                                          child: Text(
-                                            e.valueStringReadable,
-                                            style: bodyFont.copyWith(
-                                              fontSize: 14.0,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                  validator: (value) {
-                                    if (value == null) {
-                                      return "Action Should not be empty";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              //  Only show template if create
-                              if (!isEdit) ...[
+          Positioned.fill(
+            child: Builder(
+              builder: (context) {
+                return surveyAsync.when(
+                  data: (surveyDetail) {
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
                                 const SizedBox(height: 20),
                                 FormBodyRow(
-                                  title: "Template",
+                                  title: "Name",
+                                  child: TextFormField(
+                                    controller: _nameController,
+                                    style: bodyFont.copyWith(fontSize: 14.0),
+                                    decoration:
+                                        inputDecorationRounded().copyWith(
+                                      border: const UnderlineInputBorder(),
+                                      fillColor: Colors.transparent,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                FormBodyRow(
+                                  title: "Action",
                                   child: DropdownButtonFormField<
-                                      SurveyTemplateEnum>(
-                                    value: selectedTemplate,
+                                      MachineActionEnum>(
+                                    value: selectedAction,
                                     onChanged: (value) {
                                       if (value == null) return;
                                       setState(() {
-                                        selectedTemplate = value;
+                                        selectedAction = value;
                                       });
                                     },
                                     decoration:
@@ -246,7 +207,7 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                                       fillColor: Colors.transparent,
                                       border: const UnderlineInputBorder(),
                                     ),
-                                    items: SurveyTemplateEnum.values
+                                    items: MachineActionEnum.values
                                         .map(
                                           (e) => DropdownMenuItem(
                                             value: e,
@@ -261,32 +222,76 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                                         .toList(),
                                     validator: (value) {
                                       if (value == null) {
-                                        return "Template Should not be empty";
+                                        return "Action Should not be empty";
                                       }
                                       return null;
                                     },
                                   ),
                                 ),
-                              ],
+                                //  Only show template if create
+                                if (!isEdit) ...[
+                                  const SizedBox(height: 20),
+                                  FormBodyRow(
+                                    title: "Template",
+                                    child: DropdownButtonFormField<
+                                        SurveyTemplateEnum>(
+                                      value: selectedTemplate,
+                                      onChanged: (value) {
+                                        if (value == null) return;
+                                        setState(() {
+                                          selectedTemplate = value;
+                                        });
+                                      },
+                                      decoration:
+                                          inputDecorationRounded().copyWith(
+                                        hintText: "Choose Template",
+                                        contentPadding: EdgeInsets.zero,
+                                        fillColor: Colors.transparent,
+                                        border: const UnderlineInputBorder(),
+                                      ),
+                                      items: SurveyTemplateEnum.values
+                                          .map(
+                                            (e) => DropdownMenuItem(
+                                              value: e,
+                                              child: Text(
+                                                e.valueStringReadable,
+                                                style: bodyFont.copyWith(
+                                                  fontSize: 14.0,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return "Template Should not be empty";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                ],
 
-                              if (isEdit) ...[
-                                const SizedBox(height: 20),
-                                SurveyTabBarConfiguration(surveyId: widget.id)
+                                if (isEdit) ...[
+                                  const SizedBox(height: 20),
+                                  SurveyTabBarConfiguration(surveyId: widget.id)
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
-                error: (error, stackTrace) => AsyncErrorBuilder(
-                  error: error.toString(),
-                  onRetry: () => ref.invalidate(surveyNotifier),
-                ),
-                loading: () => const Center(child: CircularProgressIndicator()),
-              );
-            },
+                    );
+                  },
+                  error: (error, stackTrace) => AsyncErrorBuilder(
+                    error: error.toString(),
+                    onRetry: () => ref.invalidate(surveyNotifier),
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                );
+              },
+            ),
           ),
           Positioned(
             bottom: 0,
