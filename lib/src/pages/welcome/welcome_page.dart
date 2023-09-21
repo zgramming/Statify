@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../injection.dart';
-import '../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../view_model/custom_notifier/request_permission_notifier.dart';
 import '../widgets/async_error_builder.dart';
 import 'home/home_page.dart';
