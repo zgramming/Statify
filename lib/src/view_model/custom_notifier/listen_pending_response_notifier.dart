@@ -14,7 +14,7 @@ final listenPendingResponseNotifier =
 
   if (activeSurveyId == null) {
     return throw Exception(
-      'Active survey id is null when listen pending response',
+      'Machine ${machine.name} does not have active survey, please activate survey first to listen pending response',
     );
   }
 

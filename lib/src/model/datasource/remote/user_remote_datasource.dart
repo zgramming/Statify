@@ -1,4 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -11,6 +13,8 @@ import '../../../utils/failure.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../model/helper/form/form_machine_create_update_model.dart';
 import '../../model/helper/form/form_user_update_model.dart';
+import '../../model/machine_whatsapp/machine_whatsapp_model.dart';
+import '../../model/survey/survey.model.dart';
 import '../../model/user/user_model.dart';
 import '../../model/user/user_update.model.dart';
 import 'machine_remote_datasource.dart';
@@ -59,6 +63,36 @@ class UserRemoteDatasource {
       return userModel.copyWith(token: token);
     } else {
       throw Exception('Failed to get user');
+    }
+  }
+
+  Future<List<SurveyModel>> getAllSurvey(String userId) async {
+    final uri = Uri.parse("$kBaseApiUrl/users/$userId/surveys");
+    final response = await client.get(uri);
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    if (response.statusCode == 200) {
+      final data = decoded['data'] as List<dynamic>;
+      final surveys = data.map<SurveyModel>((e) => SurveyModel.fromJson(e));
+      return surveys.toList();
+    } else {
+      throw Exception('Failed to get survey');
+    }
+  }
+
+  Future<List<MachineWhatsappModel>> getAllWhatsApps(String userId) async {
+    final uri = Uri.parse("$kBaseApiUrl/users/$userId/machine-whatsapps");
+    final response = await client.get(uri);
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    log("whatsApps: $decoded");
+    if (response.statusCode == 200) {
+      final data = decoded['data'] as List<dynamic>;
+      final whatsApps = data
+          .map<MachineWhatsappModel>((e) => MachineWhatsappModel.fromJson(e));
+      return whatsApps.toList();
+    } else {
+      throw Exception('Failed to get whatsapp');
     }
   }
 
@@ -187,6 +221,25 @@ class UserRepository {
     }
   }
 
+  Future<Either<Failure, List<SurveyModel>>> getAllSurvey(String userId) async {
+    try {
+      final surveys = await remoteDatasource.getAllSurvey(userId);
+      return Right(surveys);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, List<MachineWhatsappModel>>> getAllWhatsApps(
+      String userId) async {
+    try {
+      final whatsApps = await remoteDatasource.getAllWhatsApps(userId);
+      return Right(whatsApps);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
   Future<Either<Failure, (UserUpdateResponseModel, UserModel)>> update({
     required String userId,
     required FormUserUpdateModel form,
@@ -210,14 +263,26 @@ class UserState extends Equatable {
   final UserModel? user;
   final AsyncValue<UserModel?> onGetById;
   final AsyncValue<(UserUpdateResponseModel, UserModel)?> onUpdate;
+  final AsyncValue<List<SurveyModel>> onGetAllSurvey;
+  final AsyncValue<List<MachineWhatsappModel>> onGetAllWhatsApps;
   const UserState({
     this.user,
     this.onGetById = const AsyncData(null),
     this.onUpdate = const AsyncData(null),
+    this.onGetAllSurvey = const AsyncData([]),
+    this.onGetAllWhatsApps = const AsyncData([]),
   });
 
   @override
-  List<Object?> get props => [user, onGetById, onUpdate];
+  List<Object?> get props {
+    return [
+      user,
+      onGetById,
+      onUpdate,
+      onGetAllSurvey,
+      onGetAllWhatsApps,
+    ];
+  }
 
   @override
   bool get stringify => true;
@@ -226,11 +291,15 @@ class UserState extends Equatable {
     UserModel? user,
     AsyncValue<UserModel?>? onGetById,
     AsyncValue<(UserUpdateResponseModel, UserModel)?>? onUpdate,
+    AsyncValue<List<SurveyModel>>? onGetAllSurvey,
+    AsyncValue<List<MachineWhatsappModel>>? onGetAllWhatsApps,
   }) {
     return UserState(
       user: user ?? this.user,
       onGetById: onGetById ?? this.onGetById,
       onUpdate: onUpdate ?? this.onUpdate,
+      onGetAllSurvey: onGetAllSurvey ?? this.onGetAllSurvey,
+      onGetAllWhatsApps: onGetAllWhatsApps ?? this.onGetAllWhatsApps,
     );
   }
 }
@@ -257,6 +326,37 @@ class UserNotifier extends StateNotifier<UserState> {
       (user) => state = state.copyWith(
         user: user,
         onGetById: AsyncData(user),
+      ),
+    );
+  }
+
+  Future<UserState> getAllSurvey(String userId) async {
+    final result = await repository.getAllSurvey(userId);
+
+    return result.fold(
+      (failure) => state = state.copyWith(
+        onGetAllSurvey: AsyncError(
+          failure.message,
+          StackTrace.current,
+        ),
+      ),
+      (surveys) => state = state.copyWith(
+        onGetAllSurvey: AsyncData(surveys),
+      ),
+    );
+  }
+
+  Future<UserState> getAllWhatsApps(String userId) async {
+    final result = await repository.getAllWhatsApps(userId);
+    return result.fold(
+      (failure) => state = state.copyWith(
+        onGetAllWhatsApps: AsyncError(
+          failure.message,
+          StackTrace.current,
+        ),
+      ),
+      (whatsApps) => state = state.copyWith(
+        onGetAllWhatsApps: AsyncData(whatsApps),
       ),
     );
   }

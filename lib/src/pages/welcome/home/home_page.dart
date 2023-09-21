@@ -200,66 +200,78 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final machines = ref.watch(machineNotifier).items;
+    final machinesAsync = ref.watch(getAllMachineFutureProvider);
 
-    if (machines.isEmpty) {
-      return Center(
-        child: Text(
-          "No Machine",
-          style: headerFont.copyWith(
-            color: Colors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        const CustomAppbar(title: "Home"),
-        // ElevatedButton(
-        //   onPressed: () async {
-        //     // Get file from folder asset
-        //     // final file = await rootBundle.load(kURLLogoHitech);
-        //     // final fileBytes = file.buffer.asUint8List();
-
-        //     final methodChannel = MethodChannelUtils();
-        //     const number = "085159412440";
-        //     // const number = "089517229249";
-        //     // const message =
-        //     //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
-        //     // const message =
-        //     //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
-        //     const message = "ok";
-        //     const model = SendSMSModel(
-        //       phoneNumber: number,
-        //       message: message,
-        //       simSlot: 0,
-        //       surveyResponseId: "",
-        //     );
-        //     await methodChannel.sendSMS(model);
-        //   },
-        //   child: const Text("Send SMS"),
-        // ),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(getAllMachineFutureProvider);
-            },
-            child: ListView.separated(
-              itemCount: machines.length,
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(16.0),
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final item = machines[index];
-                return _MachineItem(item: item, index: index);
-              },
+    return machinesAsync.when(
+      data: (data) {
+        final machines = data.items;
+        if (machines.isEmpty) {
+          return Center(
+            child: Text(
+              "No Machine",
+              style: headerFont.copyWith(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ),
-      ],
+          );
+        }
+
+        return Column(
+          children: [
+            const CustomAppbar(title: "Home"),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     // Get file from folder asset
+            //     // final file = await rootBundle.load(kURLLogoHitech);
+            //     // final fileBytes = file.buffer.asUint8List();
+
+            //     final methodChannel = MethodChannelUtils();
+            //     const number = "085159412440";
+            //     // const number = "089517229249";
+            //     // const message =
+            //     //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
+            //     // const message =
+            //     //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
+            //     const message = "ok";
+            //     const model = SendSMSModel(
+            //       phoneNumber: number,
+            //       message: message,
+            //       simSlot: 0,
+            //       surveyResponseId: "",
+            //     );
+            //     await methodChannel.sendSMS(model);
+            //   },
+            //   child: const Text("Send SMS"),
+            // ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(getAllMachineFutureProvider);
+                },
+                child: ListView.separated(
+                  itemCount: machines.length,
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(16.0),
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final item = machines[index];
+                    return _MachineItem(item: item, index: index);
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      error: (error, stackTrace) => AsyncErrorBuilder(
+        error: error.toString(),
+        onRetry: () {
+          ref.invalidate(getAllMachineFutureProvider);
+        },
+      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }

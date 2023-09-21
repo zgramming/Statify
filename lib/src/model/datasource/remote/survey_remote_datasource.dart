@@ -61,7 +61,7 @@ class SurveyRemoteDatasource {
     required String machineId,
     required String surveyId,
   }) async {
-    if (surveyId == "-1") return null;
+    if (surveyId == "-1" || machineId == "-1") return null;
 
     final uri = Uri.parse(
       "$kBaseApiUrl/machines/$machineId/surveys/$surveyId",
@@ -164,7 +164,7 @@ class SurveyRemoteDatasource {
     final body = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
     final data = decodedData['data'];
-
+    log("data $data");
     if (response.statusCode == 200) {
       final result = SurveyModel.fromJson(data);
       return result;
@@ -587,10 +587,9 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
   Future<SurveyState> getAll() async {
     state = state.copyWith(
       onGetAll: const AsyncLoading(),
+      items: [],
     );
-    final result = await repository.getAll(
-      machineId: machineId,
-    );
+    final result = await repository.getAll(machineId: machineId);
 
     return result.fold(
       (failure) {
@@ -598,12 +597,10 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
           onGetAll: AsyncError(failure.message, StackTrace.current),
         );
       },
-      (data) {
-        return state = state.copyWith(
-          items: data,
-          onGetAll: AsyncData(data),
-        );
-      },
+      (data) => state = state.copyWith(
+        items: data,
+        onGetAll: AsyncData(data),
+      ),
     );
   }
 

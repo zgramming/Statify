@@ -13,6 +13,7 @@ class CustomFormProvider {
         tries: 0,
       );
       return const FormSurveyCreateOrUpdateModel(
+        idMachine: "",
         name: "",
         action: "",
         template: "",

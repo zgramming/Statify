@@ -1,12 +1,19 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../injection.dart';
+import '../../../../model/model/helper/dropdown/machine_dropdown_model.dart';
+import '../../../../model/model/helper/form/form_survey_create_update.model.dart';
 import '../../../../utils/enum.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/async_error_builder.dart';
 import '../../../widgets/form_row_body.dart';
 import 'widgets/survey_tabbar_configuration.dart';
@@ -29,37 +36,60 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
   final _nameController = TextEditingController();
   MachineActionEnum selectedAction = MachineActionEnum.sms;
   SurveyTemplateEnum selectedTemplate = SurveyTemplateEnum.canditate;
+  MachineDropdownModel? _selectedMachine;
 
   bool isEdit = false;
 
   Future<void> onSubmit() async {
     final validate = _formKey.currentState?.validate() ?? false;
     if (!validate) return;
-    final name = _nameController.text;
 
-    final notifier = ref.read(surveyNotifier(widget.idMachine).notifier);
-    final isEdit = widget.id != "-1";
+    try {
+      final name = _nameController.text;
 
-    final formState =
-        ref.read(CustomFormProvider.surveyForm.notifier).state.copyWith(
-              name: name,
-              action: selectedAction.valueString,
-              template: selectedTemplate.valueString,
-            );
+      final isEdit = widget.id != "-1";
 
-    if (isEdit) {
-      final id = widget.id;
-      await notifier.update(
-        surveyId: id,
-        form: formState,
+      final defaultForm = FormSurveyCreateOrUpdateModel(
+        idMachine: _selectedMachine?.id ?? "-1",
+        name: name,
+        action: selectedAction.valueString,
+        template: selectedTemplate.valueString,
       );
-    } else {
-      await notifier.create(form: formState);
+
+      final formState =
+          ref.read(CustomFormProvider.surveyForm.notifier).state.copyWith(
+                action: defaultForm.action,
+                idMachine: defaultForm.idMachine,
+                name: defaultForm.name,
+                template: defaultForm.template,
+              );
+
+      if (isEdit) {
+        final id = widget.id;
+        final notifier = ref.read(surveyNotifier(widget.idMachine).notifier);
+        await notifier.update(
+          surveyId: id,
+          form: formState,
+        );
+      } else {
+        final notifier = ref.read(
+          surveyNotifier(_selectedMachine!.id).notifier,
+        );
+
+        await notifier.create(form: formState);
+      }
+    } catch (e) {
+      showSnackbar(
+        context: context,
+        message: e.toString(),
+        backgroundColor: Colors.red,
+      );
     }
   }
 
   Future<void> init() async {
     isEdit = widget.id != "-1";
+    if (!isEdit) return;
 
     final notifier = ref.read(surveyNotifier(widget.idMachine).notifier);
     await notifier.getById(surveyId: widget.id);
@@ -80,7 +110,9 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final notifierListen = surveyNotifier(widget.idMachine);
+    final notifierListen = surveyNotifier(
+      isEdit ? widget.idMachine : _selectedMachine?.id ?? "-1",
+    );
 
     // Listen Update
     ref.listen(notifierListen.select((value) => value.onUpdate),
@@ -112,30 +144,36 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
     });
 
     // Listen Create
-    ref.listen(notifierListen.select((value) => value.onCreate),
-        (previous, next) {
-      next.when(
-        data: (data) {
-          if (data == null) return;
+    ref.listen(
+      notifierListen.select((value) => value.onCreate),
+      (previous, next) {
+        log("trigger when create");
+        next.when(
+          data: (data) {
+            if (data == null) return;
 
-          showSnackbar(
+            showSnackbar(
+              context: context,
+              message: "Success Create Survey ${data.name}",
+              backgroundColor: Colors.green,
+            );
+
+            // Invalidate Machine
+            ref.invalidate(getAllMachineFutureProvider);
+          },
+          error: (error, stackTrace) => showSnackbar(
             context: context,
-            message: "Success Create Survey ${data.name}",
-            backgroundColor: Colors.green,
-          );
-
-          // Invalidate Machine
-          ref.invalidate(surveyNotifier);
-        },
-        error: (error, stackTrace) => showSnackbar(
-          context: context,
-          message: error.toString(),
-          backgroundColor: Colors.red,
-        ),
-        loading: () => showSnackbar(
-            context: context, message: "Loading", backgroundColor: Colors.blue),
-      );
-    });
+            message: error.toString(),
+            backgroundColor: Colors.red,
+          ),
+          loading: () => showSnackbar(
+            context: context,
+            message: "Loading",
+            backgroundColor: Colors.blue,
+          ),
+        );
+      },
+    );
 
     // Listen Get By Id
     ref.listen(
@@ -143,8 +181,15 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
       (previous, next) {
         next.whenData((value) {
           if (value == null) return;
+          final machine =
+              ref.read(CustomProvider.getMachineByIdProvider(value.machineId));
           _nameController.text = value.name;
           selectedAction = value.action;
+          _selectedMachine = MachineDropdownModel(
+            id: machine?.id ?? "-1",
+            name: machine?.name ?? "Unknown",
+          );
+
           setState(() {});
         });
       },
@@ -152,6 +197,8 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
 
     final surveyAsync =
         ref.watch(surveyNotifier(widget.idMachine)).onGetById.unwrapPrevious();
+    final machines = ref.watch(machineNotifier).items;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Survey Form"),
@@ -176,6 +223,42 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                               children: [
                                 const SizedBox(height: 20),
                                 FormBodyRow(
+                                  title: "Choose Machine",
+                                  child: DropdownButtonFormField<
+                                      MachineDropdownModel>(
+                                    value: _selectedMachine,
+                                    onChanged: (value) {
+                                      if (value == null) return;
+                                      setState(() {
+                                        _selectedMachine = value;
+                                      });
+                                    },
+                                    decoration:
+                                        inputDecorationRounded().copyWith(
+                                      contentPadding: EdgeInsets.zero,
+                                      fillColor: Colors.transparent,
+                                      border: const UnderlineInputBorder(),
+                                    ),
+                                    items: machines
+                                        .map((e) => MachineDropdownModel(
+                                            id: e.id, name: e.name))
+                                        .map(
+                                          (e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(e.name),
+                                          ),
+                                        )
+                                        .toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Please select machine";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                FormBodyRow(
                                   title: "Name",
                                   child: TextFormField(
                                     controller: _nameController,
@@ -186,6 +269,12 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                                       fillColor: Colors.transparent,
                                       contentPadding: EdgeInsets.zero,
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Name Should not be empty";
+                                      }
+                                      return null;
+                                    },
                                   ),
                                 ),
                                 const SizedBox(height: 20),

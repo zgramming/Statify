@@ -79,10 +79,14 @@ class MachineNotifier extends StateNotifier<MachineState> {
 
     return result.fold(
       (failure) => state = state.copyWith(
-          onGetAll: AsyncError(failure.message, StackTrace.current)),
+        onGetAll: AsyncError(
+          failure.message,
+          StackTrace.current,
+        ),
+      ),
       (data) => state = state.copyWith(
         onGetAll: AsyncData(data),
-        items: [...data],
+        items: data,
       ),
     );
   }

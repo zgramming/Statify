@@ -10,20 +10,22 @@ import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
+import '../../../view_model/custom_notifier/get_all_whatsapp_by_user.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
+import '../../widgets/async_error_builder.dart';
 import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/dialog_view_qrcode.dart';
 import '../../widgets/row_body.dart';
 
-class WhatsAppPage extends ConsumerStatefulWidget {
-  const WhatsAppPage({super.key});
+class MainWhatsAppPage extends ConsumerStatefulWidget {
+  const MainWhatsAppPage({super.key});
 
   @override
-  ConsumerState<WhatsAppPage> createState() => _WhatsAppPageState();
+  ConsumerState<MainWhatsAppPage> createState() => _MainWhatsAppPageState();
 }
 
-class _WhatsAppPageState extends ConsumerState<WhatsAppPage> {
+class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
   Future<void> onAddWhatsapp() async {
     context.pushNamed(
       routeMachineWhatsAppForm,
@@ -35,48 +37,80 @@ class _WhatsAppPageState extends ConsumerState<WhatsAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    final machineWhatsApps = ref.watch(CustomProvider.getOnlyWhatsAppMachine);
+    final whatsappsAsync = ref.watch(getAllWhatsAppByUserFutureProvider);
     return Stack(
       children: [
         Column(
           children: [
             const CustomAppbar(title: 'WhatsApp'),
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  // Reload data
-                  ref.invalidate(getAllMachineFutureProvider);
-                },
-                child: Builder(
-                  builder: (context) {
-                    if (machineWhatsApps.isEmpty) {
-                      return Center(
-                        child: Text(
-                          "No WhatsApp",
-                          style: headerFont.copyWith(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
-                    }
+              child: Builder(
+                builder: (context) {
+                  return whatsappsAsync.when(
+                    data: (map) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: map.entries.map((e) {
+                          final machine = e.key;
+                          final whatsapps = e.value;
 
-                    return ListView.separated(
-                      itemCount: machineWhatsApps.length,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(16.0),
-                      separatorBuilder: (context, index) => const Divider(),
-                      itemBuilder: (context, index) {
-                        final item = machineWhatsApps[index];
-                        return _WhatsappItem(
-                          item: item,
-                          index: index,
-                        );
-                      },
-                    );
-                  },
-                ),
+                          if (whatsapps.isEmpty) {
+                            return const SizedBox();
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                ),
+                                child: Text(
+                                  machine.name,
+                                  style: headerFont.copyWith(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16.0),
+                              ListView.separated(
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: whatsapps.length,
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                ),
+                                separatorBuilder: (context, index) =>
+                                    const Divider(),
+                                itemBuilder: (context, index) {
+                                  final item = whatsapps[index];
+                                  return _WhatsappItem(
+                                    item: item,
+                                    index: index,
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 16.0),
+                            ],
+                          );
+                        }).toList(),
+                      );
+                    },
+                    error: (error, stack) {
+                      return AsyncErrorBuilder(
+                        error: error.toString(),
+                        onRetry: () {
+                          ref.invalidate(getAllWhatsAppByUserFutureProvider);
+                        },
+                      );
+                    },
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                },
               ),
             ),
           ],

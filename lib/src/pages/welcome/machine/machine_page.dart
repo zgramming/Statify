@@ -27,14 +27,6 @@ class _MachinePageItem extends ConsumerStatefulWidget {
 class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
   Future<void> onSelected(String value) async {
     final item = widget.item;
-    if (value == "survey") {
-      context.pushNamed(
-        routeSurveyPage,
-        pathParameters: {
-          "idMachine": item.id,
-        },
-      );
-    }
 
     if (value == "delete") {
       final isDelete = await showDialog<bool>(
@@ -164,12 +156,12 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
             child: PopupMenuButton(
               itemBuilder: (context) {
                 return [
-                  const PopupMenuItem(
-                    value: 'survey',
-                    child: Text(
-                      "Survey",
-                    ),
-                  ),
+                  // const PopupMenuItem(
+                  //   value: 'survey',
+                  //   child: Text(
+                  //     "Survey",
+                  //   ),
+                  // ),
                   PopupMenuItem(
                     value: "delete",
                     child: Text(

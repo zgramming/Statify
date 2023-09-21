@@ -9,7 +9,6 @@ import 'pages/welcome/setting/my_account/change_logo_form.page.dart';
 import 'pages/welcome/setting/my_account/my_account.page.dart';
 import 'pages/welcome/setting/my_account/my_account_form.page.dart';
 import 'pages/welcome/setting/survey/surve_form.page.dart';
-import 'pages/welcome/setting/survey/survey.page.dart';
 import 'pages/welcome/welcome_page.dart';
 import 'pages/introduction/introduction_page.dart';
 import 'pages/login/login_page.dart';
@@ -27,7 +26,6 @@ const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
 
 const routeLogPage = "log";
 
-const routeSurveyPage = "survey";
 const routeSurveyFormPage = "survey/form/:id";
 
 const routeSurveyResponseForm = "survey/:idSurvey/response/form/:id";
@@ -137,25 +135,14 @@ final _routes = <RouteBase>[
   ),
 
   GoRoute(
-    path: "/machine/:idMachine/survey",
-    name: routeSurveyPage,
-    builder: (context, state) {
-      final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return SurveyPage(
-        idMachine: idMachine,
-      );
-    },
-  ),
-
-  GoRoute(
     path: "/machine/:idMachine/survey/form/:id",
     name: routeSurveyFormPage,
     builder: (context, state) {
       final id = state.pathParameters['id'] ?? "-1";
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
       return SurveyFormPage(
-        idMachine: idMachine,
         id: id,
+        idMachine: idMachine,
       );
     },
   ),

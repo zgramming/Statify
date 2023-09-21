@@ -98,11 +98,10 @@ final machineWhatsappNotifier =
 );
 final machineNotifier = StateNotifierProvider<MachineNotifier, MachineState>(
   (ref) {
-    final userId = ref.watch(userNotifier).user?.id;
-    if (userId == null) throw UnimplementedError('User Id is null');
+    final user = ref.watch(userNotifier.select((value) => value.user));
     return MachineNotifier(
       repository: ref.watch(_machineRepository),
-      userId: userId,
+      userId: user?.id ?? '',
     );
   },
 );

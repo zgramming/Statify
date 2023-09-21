@@ -8,8 +8,8 @@ import '../widgets/async_error_builder.dart';
 import 'home/home_page.dart';
 import 'long_distance_access/long_distance_access_page.dart';
 import 'setting/setting_page.dart';
-import 'statistic/statistic_page.dart';
-import 'whatsapp/whatsapp_page.dart';
+import 'main_survey/main_survey.page.dart';
+import 'whatsapp/main_whatsapp.page.dart';
 
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
@@ -33,9 +33,10 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
       label: "Whatsapp",
     ),
     NavigationDestination(
-      icon: Icon(Icons.bar_chart_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.bar_chart, color: Colors.white),
-      label: "Statistic",
+      icon: Icon(Icons.assignment_ind_outlined,
+          color: Colors.grey.withOpacity(.5)),
+      selectedIcon: const Icon(Icons.assignment_ind, color: Colors.white),
+      label: "Survey",
     ),
     NavigationDestination(
       icon: Icon(
@@ -57,8 +58,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
 
   final _pages = [
     const HomePage(),
-    const WhatsAppPage(),
-    const StatisticPage(),
+    const MainWhatsAppPage(),
+    const MainSurveyPage(),
     const LongDistanceAccessPage(),
     const SettingPage(),
   ];
@@ -67,23 +68,12 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(builder: (_) {
-        final machineAsync =
-            ref.watch(getAllMachineFutureProvider).unwrapPrevious();
         final permissionFuture = ref.watch(checkPermissionNotifier);
         return permissionFuture.when(
-          data: (_) {
-            return machineAsync.when(
-              data: (_) => IndexedStack(
-                index: _selectedIndex,
-                children: _pages,
-              ),
-              error: (error, stackTrace) => AsyncErrorBuilder(
-                error: error.toString(),
-                onRetry: () => ref.invalidate(machineNotifier),
-              ),
-              loading: () => const Center(child: CircularProgressIndicator()),
-            );
-          },
+          data: (_) => IndexedStack(
+            index: _selectedIndex,
+            children: _pages,
+          ),
           error: (error, stackTrace) => AsyncErrorBuilder(
             error: error.toString(),
             onRetry: () => ref.invalidate(checkPermissionNotifier),
