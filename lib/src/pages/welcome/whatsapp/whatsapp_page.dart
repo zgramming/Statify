@@ -35,7 +35,7 @@ class _WhatsAppPageState extends ConsumerState<WhatsAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    final machineWhatsApps = ref.watch(getOnlyWhatsAppMachine);
+    final machineWhatsApps = ref.watch(CustomProvider.getOnlyWhatsAppMachine);
     return Stack(
       children: [
         Column(
@@ -153,7 +153,9 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
 
   @override
   Widget build(BuildContext context) {
-    final machine = ref.watch(getMachineByIdProvider(widget.item.machineId));
+    final machine = ref.watch(
+      CustomProvider.getMachineByIdProvider(widget.item.machineId),
+    );
 
     return Stack(
       children: [

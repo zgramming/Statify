@@ -42,7 +42,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     super.initState();
     final id = widget.id;
 
-    final resultAvailableSim = ref.read(getAvailableSIM);
+    final resultAvailableSim = ref.read(CustomProvider.getAvailableSIM);
     availableSim = resultAvailableSim;
 
     // Load Machine detail if id is not -1

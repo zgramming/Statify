@@ -187,9 +187,9 @@ extension MachineResponsePlatformEXT on MachineResponsePlatformEnum {
   String get valueStringReadable {
     switch (this) {
       case MachineResponsePlatformEnum.whatsapp:
-        return 'Whatsapp';
+        return 'Whatsapp Bot';
       case MachineResponsePlatformEnum.sms:
-        return 'SMS';
+        return 'SMS Bot';
     }
   }
 }

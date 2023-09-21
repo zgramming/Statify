@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../injection.dart';
-import '../../../../model/model/helper/form/form_survey_create_update.model.dart';
 import '../../../../utils/enum.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../widgets/async_error_builder.dart';
 import '../../../widgets/form_row_body.dart';
 import 'widgets/survey_tabbar_configuration.dart';
@@ -39,19 +39,22 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
 
     final notifier = ref.read(surveyNotifier(widget.idMachine).notifier);
     final isEdit = widget.id != "-1";
-    final form = FormSurveyCreateOrUpdateModel(
-      name: name,
-      action: selectedAction.valueString,
-      template: selectedTemplate.valueString,
-    );
+
+    final formState =
+        ref.read(CustomFormProvider.surveyForm.notifier).state.copyWith(
+              name: name,
+              action: selectedAction.valueString,
+              template: selectedTemplate.valueString,
+            );
+
     if (isEdit) {
       final id = widget.id;
       await notifier.update(
         surveyId: id,
-        form: form,
+        form: formState,
       );
     } else {
-      await notifier.create(form: form);
+      await notifier.create(form: formState);
     }
   }
 
@@ -153,139 +156,152 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
       appBar: AppBar(
         title: const Text("Survey Form"),
       ),
-      body: Builder(
-        builder: (context) {
-          return surveyAsync.when(
-            data: (surveyDetail) {
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Card(
-                    margin: EdgeInsets.zero,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 20),
-                          FormBodyRow(
-                            title: "Name",
-                            child: TextFormField(
-                              controller: _nameController,
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                              decoration: inputDecorationRounded().copyWith(
-                                border: const UnderlineInputBorder(),
-                                fillColor: Colors.transparent,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          FormBodyRow(
-                            title: "Action",
-                            child: DropdownButtonFormField<MachineActionEnum>(
-                              value: selectedAction,
-                              onChanged: (value) {
-                                if (value == null) return;
-                                setState(() {
-                                  selectedAction = value;
-                                });
-                              },
-                              decoration: inputDecorationRounded().copyWith(
-                                hintText: "Choose Template",
-                                contentPadding: EdgeInsets.zero,
-                                fillColor: Colors.transparent,
-                                border: const UnderlineInputBorder(),
-                              ),
-                              items: MachineActionEnum.values
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(
-                                        e.valueStringReadable,
-                                        style: bodyFont.copyWith(
-                                          fontSize: 14.0,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              validator: (value) {
-                                if (value == null) {
-                                  return "Action Should not be empty";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          //  Only show template if create
-                          if (!isEdit) ...[
-                            const SizedBox(height: 20),
-                            FormBodyRow(
-                              title: "Template",
-                              child:
-                                  DropdownButtonFormField<SurveyTemplateEnum>(
-                                value: selectedTemplate,
-                                onChanged: (value) {
-                                  if (value == null) return;
-                                  setState(() {
-                                    selectedTemplate = value;
-                                  });
-                                },
-                                decoration: inputDecorationRounded().copyWith(
-                                  hintText: "Choose Template",
-                                  contentPadding: EdgeInsets.zero,
-                                  fillColor: Colors.transparent,
-                                  border: const UnderlineInputBorder(),
+      body: Stack(
+        children: [
+          Builder(
+            builder: (context) {
+              return surveyAsync.when(
+                data: (surveyDetail) {
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 20),
+                              FormBodyRow(
+                                title: "Name",
+                                child: TextFormField(
+                                  controller: _nameController,
+                                  style: bodyFont.copyWith(fontSize: 14.0),
+                                  decoration: inputDecorationRounded().copyWith(
+                                    border: const UnderlineInputBorder(),
+                                    fillColor: Colors.transparent,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
                                 ),
-                                items: SurveyTemplateEnum.values
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(
-                                          e.valueStringReadable,
-                                          style: bodyFont.copyWith(
-                                            fontSize: 14.0,
+                              ),
+                              const SizedBox(height: 20),
+                              FormBodyRow(
+                                title: "Action",
+                                child:
+                                    DropdownButtonFormField<MachineActionEnum>(
+                                  value: selectedAction,
+                                  onChanged: (value) {
+                                    if (value == null) return;
+                                    setState(() {
+                                      selectedAction = value;
+                                    });
+                                  },
+                                  decoration: inputDecorationRounded().copyWith(
+                                    hintText: "Choose Template",
+                                    contentPadding: EdgeInsets.zero,
+                                    fillColor: Colors.transparent,
+                                    border: const UnderlineInputBorder(),
+                                  ),
+                                  items: MachineActionEnum.values
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e.valueStringReadable,
+                                            style: bodyFont.copyWith(
+                                              fontSize: 14.0,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                    .toList(),
-                                validator: (value) {
-                                  if (value == null) {
-                                    return "Template Should not be empty";
-                                  }
-                                  return null;
-                                },
+                                      )
+                                      .toList(),
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return "Action Should not be empty";
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: onSubmit,
-                            style: elevatedButtonStyle(),
-                            child: const Text("Submit"),
-                          ),
-                          const SizedBox(height: 20),
+                              //  Only show template if create
+                              if (!isEdit) ...[
+                                const SizedBox(height: 20),
+                                FormBodyRow(
+                                  title: "Template",
+                                  child: DropdownButtonFormField<
+                                      SurveyTemplateEnum>(
+                                    value: selectedTemplate,
+                                    onChanged: (value) {
+                                      if (value == null) return;
+                                      setState(() {
+                                        selectedTemplate = value;
+                                      });
+                                    },
+                                    decoration:
+                                        inputDecorationRounded().copyWith(
+                                      hintText: "Choose Template",
+                                      contentPadding: EdgeInsets.zero,
+                                      fillColor: Colors.transparent,
+                                      border: const UnderlineInputBorder(),
+                                    ),
+                                    items: SurveyTemplateEnum.values
+                                        .map(
+                                          (e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(
+                                              e.valueStringReadable,
+                                              style: bodyFont.copyWith(
+                                                fontSize: 14.0,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Template Should not be empty";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
 
-                          if (isEdit) ...[
-                            SurveyTabBarConfiguration(surveyId: widget.id)
-                          ],
-                        ],
+                              if (isEdit) ...[
+                                const SizedBox(height: 20),
+                                SurveyTabBarConfiguration(surveyId: widget.id)
+                              ],
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  );
+                },
+                error: (error, stackTrace) => AsyncErrorBuilder(
+                  error: error.toString(),
+                  onRetry: () => ref.invalidate(surveyNotifier),
                 ),
+                loading: () => const Center(child: CircularProgressIndicator()),
               );
             },
-            error: (error, stackTrace) => AsyncErrorBuilder(
-              error: error.toString(),
-              onRetry: () => ref.invalidate(surveyNotifier),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: onSubmit,
+                style: elevatedButtonStyle(),
+                child: const Text("Save"),
+              ),
             ),
-            loading: () => const Center(child: CircularProgressIndicator()),
-          );
-        },
+          )
+        ],
       ),
     );
   }

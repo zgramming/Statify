@@ -103,7 +103,8 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
       color: Colors.grey[700],
       fontSize: 10.0,
     );
-    final sim1ORsim2 = ref.watch(getSIM1orSIM2Provider(item.number));
+    final sim1ORsim2 =
+        ref.watch(CustomProvider.getSIM1orSIM2Provider(item.number));
     const radius = 30.0;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -200,7 +201,7 @@ class MachinePage extends ConsumerStatefulWidget {
 
 class _MachinePageState extends ConsumerState<MachinePage> {
   Future<void> onAddMachine() async {
-    final isEmpty = ref.read(isEmptyAvailableSIM);
+    final isEmpty = ref.read(CustomProvider.isEmptyAvailableSIM);
 
     if (isEmpty) {
       showSnackbar(

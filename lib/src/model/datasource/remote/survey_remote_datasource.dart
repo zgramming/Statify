@@ -12,21 +12,25 @@ import '../../../utils/failure.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../../utils/method_channel.dart';
 import '../../model/helper/form/form_survey_create_update.model.dart';
+import '../../model/helper/form/form_survey_setting_create_update_model.dart';
 import '../../model/helper/form/form_temporary_pending_response_create.model.dart';
 import '../../model/send_sms_model.dart';
 import '../../model/survey/survey.model.dart';
 import '../../model/survey/survey_pending.model.dart';
 import '../local/temporary_pending_response_local_datasource.dart';
+import 'survey_setting_remote_datasource.dart';
 
 class SurveyRemoteDatasource {
   const SurveyRemoteDatasource({
     required this.client,
+    required this.surveySettingRemoteDatasource,
     required this.temporaryPendingResponseLocalDatasource,
   });
 
   final http.Client client;
   final TemporaryPendingResponseLocalDatasource
       temporaryPendingResponseLocalDatasource;
+  final SurveySettingRemoteDatasource surveySettingRemoteDatasource;
 
   Future<List<SurveyModel>> getAll({
     required String machineId,
@@ -194,6 +198,37 @@ class SurveyRemoteDatasource {
     final data = decodedData['data'];
 
     if (response.statusCode == 200) {
+      // When success update survey, update survey setting for each platform
+
+      // WA Setting
+      final formWA = FormSurveySettingCreateUpdateModel(
+        usePassword: form.wa?.usePassword ?? false,
+        timeout: form.wa?.timeout ?? 0,
+        tries: form.wa?.tries ?? 0,
+        backoff: form.wa?.backoff ?? 0,
+      );
+      final formSMS = FormSurveySettingCreateUpdateModel(
+        usePassword: form.sms?.usePassword ?? false,
+        timeout: form.sms?.timeout ?? 0,
+        tries: form.sms?.tries ?? 0,
+        backoff: form.sms?.backoff ?? 0,
+      );
+
+      await Future.wait(
+        [
+          surveySettingRemoteDatasource.update(
+            form: formSMS,
+            settingId: form.sms?.settingId ?? "",
+            surveyId: surveyId,
+          ),
+          surveySettingRemoteDatasource.update(
+            form: formWA,
+            settingId: form.wa?.settingId ?? "",
+            surveyId: surveyId,
+          ),
+        ],
+      );
+
       final result = SurveyModel.fromJson(data);
       return result;
     } else {

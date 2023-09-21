@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../injection.dart';
+import '../../../../../model/model/helper/form/form_survey_create_update.model.dart';
 import '../../../../../model/model/helper/form/form_survey_setting_create_update_model.dart';
 import '../../../../../model/model/helper/props/props_get_survey_setting_detail.model.dart';
 import '../../../../../model/model/survey_response/survey_response_model.dart';
@@ -12,6 +13,7 @@ import '../../../../../utils/fonts.dart';
 import '../../../../../utils/functions.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_notifier/get_machine_setting_detail.notifier.dart';
+import '../../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../widgets/async_error_builder.dart';
 import '../../../../widgets/form_row_body.dart';
 
@@ -43,6 +45,11 @@ class SurveyTabBarViewSMSBotOrWhatsappState
   MachineSettingToolsOptionEnum selectedToolsOption =
       MachineSettingToolsOptionEnum.allNumber;
 
+  Future<void> init() async {
+    final notifier = ref.read(surveyResponseNotifier(widget.surveyId).notifier);
+    await notifier.getAll();
+  }
+
   Future<void> onAdd() async {
     context.pushNamed(
       routeSurveyResponseForm,
@@ -56,29 +63,101 @@ class SurveyTabBarViewSMSBotOrWhatsappState
     );
   }
 
-  Future<void> init() async {
-    final notifier = ref.read(surveyResponseNotifier(widget.surveyId).notifier);
-    await notifier.getAll();
+  void onChangeTries(String? value) {
+    if (value == null) return;
+
+    final form = ref.read(CustomFormProvider.surveyForm.notifier);
+    if (widget.isSMSBot) {
+      form.update(
+        (state) => state.copyWith(
+          sms: state.sms?.copyWith(
+            tries: int.tryParse(value) ?? 0,
+          ),
+        ),
+      );
+    } else {
+      form.update(
+        (state) => state.copyWith(
+          wa: state.wa?.copyWith(
+            tries: int.tryParse(value) ?? 0,
+          ),
+        ),
+      );
+    }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _timeoutController = TextEditingController();
-    _backoffController = TextEditingController();
-    _triesController = TextEditingController();
+  void onChangeBackoff(String? value) {
+    if (value == null) return;
 
-    Future.microtask(() {
-      init();
-    });
+    final form = ref.read(CustomFormProvider.surveyForm.notifier);
+    if (widget.isSMSBot) {
+      form.update(
+        (state) => state.copyWith(
+          sms: state.sms?.copyWith(
+            backoff: int.tryParse(value) ?? 0,
+          ),
+        ),
+      );
+    } else {
+      form.update(
+        (state) => state.copyWith(
+          wa: state.wa?.copyWith(
+            backoff: int.tryParse(value) ?? 0,
+          ),
+        ),
+      );
+    }
   }
 
-  @override
-  void dispose() {
-    _timeoutController.dispose();
-    _backoffController.dispose();
-    _triesController.dispose();
-    super.dispose();
+  void onChangeTimeout(String? value) {
+    if (value == null) return;
+
+    final form = ref.read(CustomFormProvider.surveyForm.notifier);
+    if (widget.isSMSBot) {
+      form.update(
+        (state) => state.copyWith(
+          sms: state.sms?.copyWith(
+            timeout: int.tryParse(value) ?? 0,
+          ),
+        ),
+      );
+    } else {
+      form.update(
+        (state) => state.copyWith(
+          wa: state.wa?.copyWith(
+            timeout: int.tryParse(value) ?? 0,
+          ),
+        ),
+      );
+    }
+  }
+
+  void onChangeSurveyToolOption(
+    MachineSettingToolsOptionEnum? value,
+  ) async {
+    if (value == null) return;
+
+    final form = ref.read(CustomFormProvider.surveyForm.notifier);
+    if (widget.isSMSBot) {
+      form.update(
+        (state) => state.copyWith(
+          sms: state.sms?.copyWith(
+            usePassword: value == MachineSettingToolsOptionEnum.specificNumber,
+          ),
+        ),
+      );
+    } else {
+      form.update(
+        (state) => state.copyWith(
+          wa: state.wa?.copyWith(
+            usePassword: value == MachineSettingToolsOptionEnum.specificNumber,
+          ),
+        ),
+      );
+    }
+
+    // Update state
+    setState(() => selectedToolsOption = value);
   }
 
   Future<void> onSaveSetting() async {
@@ -139,6 +218,24 @@ class SurveyTabBarViewSMSBotOrWhatsappState
   }
 
   @override
+  void initState() {
+    super.initState();
+    _timeoutController = TextEditingController();
+    _backoffController = TextEditingController();
+    _triesController = TextEditingController();
+
+    Future.microtask(() => init());
+  }
+
+  @override
+  void dispose() {
+    _timeoutController.dispose();
+    _backoffController.dispose();
+    _triesController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final props = PropsGetSurveySettingDetail(
       surveyId: widget.surveyId,
@@ -155,6 +252,35 @@ class SurveyTabBarViewSMSBotOrWhatsappState
           selectedToolsOption = value.usePassword
               ? MachineSettingToolsOptionEnum.specificNumber
               : MachineSettingToolsOptionEnum.allNumber;
+
+          // setup form provider
+          ref.read(CustomFormProvider.surveyForm.notifier).update((state) {
+            if (widget.isSMSBot) {
+              final result = state.copyWith(
+                sms: FormSurveyCreateOrUpdateWAorSMSBotModel(
+                  usePassword: value.usePassword,
+                  timeout: value.timeout,
+                  backoff: value.backoff,
+                  tries: value.tries,
+                  settingId: value.id,
+                ),
+              );
+
+              return state = result;
+            } else {
+              final result = state.copyWith(
+                wa: FormSurveyCreateOrUpdateWAorSMSBotModel(
+                  usePassword: value.usePassword,
+                  timeout: value.timeout,
+                  backoff: value.backoff,
+                  tries: value.tries,
+                  settingId: value.id,
+                ),
+              );
+
+              return state = result;
+            }
+          });
         });
       },
     );
@@ -167,6 +293,7 @@ class SurveyTabBarViewSMSBotOrWhatsappState
         return SingleChildScrollView(
           child: Form(
             key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -178,12 +305,7 @@ class SurveyTabBarViewSMSBotOrWhatsappState
                     isExpanded: true,
                     style:
                         bodyFont.copyWith(fontSize: 12.0, color: Colors.grey),
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setState(() {
-                        selectedToolsOption = value;
-                      });
-                    },
+                    onChanged: onChangeSurveyToolOption,
                     decoration: inputDecorationRounded().copyWith(
                       contentPadding: EdgeInsets.zero,
                       fillColor: Colors.transparent,
@@ -220,6 +342,7 @@ class SurveyTabBarViewSMSBotOrWhatsappState
                         fillColor: Colors.transparent,
                         contentPadding: EdgeInsets.zero,
                       ),
+                      onChanged: onChangeTimeout,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -234,6 +357,7 @@ class SurveyTabBarViewSMSBotOrWhatsappState
                         fillColor: Colors.transparent,
                         contentPadding: EdgeInsets.zero,
                       ),
+                      onChanged: onChangeBackoff,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -248,16 +372,11 @@ class SurveyTabBarViewSMSBotOrWhatsappState
                         fillColor: Colors.transparent,
                         contentPadding: EdgeInsets.zero,
                       ),
+                      onChanged: onChangeTries,
                     ),
                   ),
                   const SizedBox(height: 20),
                 ],
-                ElevatedButton(
-                  onPressed: onSaveSetting,
-                  style: elevatedButtonStyle(),
-                  child: const Text("Save Setting"),
-                ),
-                const SizedBox(height: 20),
                 Builder(
                   builder: (context) {
                     return responseAsync.when(

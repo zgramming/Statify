@@ -317,7 +317,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     );
 
     final item = widget.item;
-    final sim1ORsim2 = ref.watch(getSIM1orSIM2Provider(item.number));
+    final sim1ORsim2 =
+        ref.watch(CustomProvider.getSIM1orSIM2Provider(item.number));
     const radius = 30.0;
     final streamAsync = ref.watch(listenPendingResponseNotifier(item.id));
 

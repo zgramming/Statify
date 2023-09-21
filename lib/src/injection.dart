@@ -225,6 +225,7 @@ final _surveySettingRemoteDatasource = Provider(
 final _surveyRemoteDatasource = Provider(
   (ref) => SurveyRemoteDatasource(
     client: ref.watch(_httpClient),
+    surveySettingRemoteDatasource: ref.watch(_surveySettingRemoteDatasource),
     temporaryPendingResponseLocalDatasource:
         ref.watch(_temporaryPendingResponseLocalDatasource),
   ),

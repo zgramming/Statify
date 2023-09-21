@@ -55,7 +55,8 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
   @override
   Widget build(BuildContext context) {
     final surveyAsync = ref.watch(surveyNotifier(widget.idMachine)).onGetAll;
-    final machine = ref.watch(getMachineByIdProvider(widget.idMachine));
+    final machine =
+        ref.watch(CustomProvider.getMachineByIdProvider(widget.idMachine));
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
