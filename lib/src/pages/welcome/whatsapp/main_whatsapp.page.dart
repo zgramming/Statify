@@ -44,73 +44,75 @@ class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
           children: [
             const CustomAppbar(title: 'WhatsApp'),
             Expanded(
-              child: Builder(
-                builder: (context) {
-                  return whatsappsAsync.when(
-                    data: (map) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: map.entries.map((e) {
-                          final machine = e.key;
-                          final whatsapps = e.value;
+              child: SingleChildScrollView(
+                child: Builder(
+                  builder: (context) {
+                    return whatsappsAsync.when(
+                      data: (map) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: map.entries.map((e) {
+                            final machine = e.key;
+                            final whatsapps = e.value;
 
-                          if (whatsapps.isEmpty) {
-                            return const SizedBox();
-                          }
+                            if (whatsapps.isEmpty) {
+                              return const SizedBox();
+                            }
 
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                ),
-                                child: Text(
-                                  machine.name,
-                                  style: headerFont.copyWith(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                  ),
+                                  child: Text(
+                                    machine.name,
+                                    style: headerFont.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 16.0),
-                              ListView.separated(
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: whatsapps.length,
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
+                                const SizedBox(height: 16.0),
+                                ListView.separated(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: whatsapps.length,
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                  ),
+                                  separatorBuilder: (context, index) =>
+                                      const Divider(),
+                                  itemBuilder: (context, index) {
+                                    final item = whatsapps[index];
+                                    return _WhatsappItem(
+                                      item: item,
+                                      index: index,
+                                    );
+                                  },
                                 ),
-                                separatorBuilder: (context, index) =>
-                                    const Divider(),
-                                itemBuilder: (context, index) {
-                                  final item = whatsapps[index];
-                                  return _WhatsappItem(
-                                    item: item,
-                                    index: index,
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 16.0),
-                            ],
-                          );
-                        }).toList(),
-                      );
-                    },
-                    error: (error, stack) {
-                      return AsyncErrorBuilder(
-                        error: error.toString(),
-                        onRetry: () {
-                          ref.invalidate(getAllWhatsAppByUserFutureProvider);
-                        },
-                      );
-                    },
-                    loading: () => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                },
+                                const SizedBox(height: 16.0),
+                              ],
+                            );
+                          }).toList(),
+                        );
+                      },
+                      error: (error, stack) {
+                        return AsyncErrorBuilder(
+                          error: error.toString(),
+                          onRetry: () {
+                            ref.invalidate(getAllWhatsAppByUserFutureProvider);
+                          },
+                        );
+                      },
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
