@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -16,7 +15,7 @@ class MachineWhatsappCreateResponseModel extends Equatable {
   final String license;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String activeSurveyId;
+  final String? activeSurveyId;
 
   const MachineWhatsappCreateResponseModel({
     required this.id,
@@ -39,7 +38,7 @@ class MachineWhatsappCreateResponseModel extends Equatable {
       _$MachineWhatsappCreateResponseModelToJson(this);
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       id,
       userId,

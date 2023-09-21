@@ -17,7 +17,7 @@ MachineWhatsappCreateResponseModel _$MachineWhatsappCreateResponseModelFromJson(
       license: json['license'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      activeSurveyId: json['active_survey_id'] as String,
+      activeSurveyId: json['active_survey_id'] as String?,
     );
 
 Map<String, dynamic> _$MachineWhatsappCreateResponseModelToJson(

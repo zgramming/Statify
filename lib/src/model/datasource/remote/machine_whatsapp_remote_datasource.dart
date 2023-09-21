@@ -49,8 +49,9 @@ class MachineWhatsappRemoteDatasource {
 
     final body = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decodedData['data'];
+
     if (response.statusCode == 200) {
-      final data = decodedData['data'];
       return MachineWhatsappDeleteResponseModel.fromJson(data);
     } else {
       final message = decodedData.containsKey('message')

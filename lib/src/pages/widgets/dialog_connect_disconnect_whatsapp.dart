@@ -6,6 +6,7 @@ import '../../injection.dart';
 import '../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../../utils/enum.dart';
 import '../../utils/functions.dart';
+import '../../view_model/custom_notifier/get_all_machine.notifier.dart';
 
 class DialogConnectDisconnectWhatsapp extends ConsumerWidget {
   const DialogConnectDisconnectWhatsapp({
@@ -39,7 +40,7 @@ class DialogConnectDisconnectWhatsapp extends ConsumerWidget {
             void reload() {
               if (context.mounted) {
                 // reload data
-                ref.invalidate(machineNotifier);
+                ref.invalidate(getAllMachineFutureProvider);
                 context.pop(context);
               }
             }

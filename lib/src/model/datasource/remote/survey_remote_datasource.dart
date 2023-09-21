@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'dart:developer';
 
@@ -12,29 +11,12 @@ import '../../../utils/enum.dart';
 import '../../../utils/failure.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../../utils/method_channel.dart';
+import '../../model/helper/form/form_survey_create_update.model.dart';
 import '../../model/helper/form/form_temporary_pending_response_create.model.dart';
 import '../../model/send_sms_model.dart';
 import '../../model/survey/survey.model.dart';
 import '../../model/survey/survey_pending.model.dart';
 import '../local/temporary_pending_response_local_datasource.dart';
-
-class FormSurveyCreateOrUpdateModel extends Equatable {
-  final String name;
-  final String action;
-  final String? template;
-
-  const FormSurveyCreateOrUpdateModel({
-    required this.name,
-    required this.action,
-    required this.template,
-  });
-
-  @override
-  List<Object?> get props => [name, action, template];
-
-  @override
-  bool get stringify => true;
-}
 
 class SurveyRemoteDatasource {
   const SurveyRemoteDatasource({
@@ -270,6 +252,28 @@ class SurveyRemoteDatasource {
     }
   }
 
+  Future<SurveyModel> reset({
+    required String surveyId,
+  }) async {
+    final uri = Uri.parse(
+      "$kBaseApiUrl/surveys/$surveyId/reset",
+    );
+    final response = await client.delete(uri);
+    final body = response.body;
+    final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decodedData['data'];
+
+    if (response.statusCode == 200) {
+      final result = SurveyModel.fromJson(data);
+      return result;
+    } else {
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to reset survey';
+      throw Exception(message);
+    }
+  }
+
   Stream<String?> listenPendingResponse({
     required int simSlot,
     required String surveyId,
@@ -445,6 +449,17 @@ class SurveyRepository {
     }
   }
 
+  Future<Either<Failure, SurveyModel>> reset({
+    required String surveyId,
+  }) async {
+    try {
+      final result = await remoteDatasource.reset(surveyId: surveyId);
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
   Stream<String?> listenPendingResponse({
     required int simSlot,
     required String surveyId,
@@ -467,6 +482,7 @@ class SurveyState extends Equatable {
   final AsyncValue<SurveyModel?> onUpdate;
   final AsyncValue<SurveyModel?> onActive;
   final AsyncValue<SurveyModel?> onDelete;
+  final AsyncValue<SurveyModel?> onReset;
 
   const SurveyState({
     this.items = const [],
@@ -477,6 +493,7 @@ class SurveyState extends Equatable {
     this.onUpdate = const AsyncData(null),
     this.onActive = const AsyncData(null),
     this.onDelete = const AsyncData(null),
+    this.onReset = const AsyncData(null),
   });
 
   @override
@@ -490,6 +507,7 @@ class SurveyState extends Equatable {
       onUpdate,
       onActive,
       onDelete,
+      onReset,
     ];
   }
 
@@ -505,6 +523,7 @@ class SurveyState extends Equatable {
     AsyncValue<SurveyModel?>? onUpdate,
     AsyncValue<SurveyModel?>? onActive,
     AsyncValue<SurveyModel?>? onDelete,
+    AsyncValue<SurveyModel?>? onReset,
   }) {
     return SurveyState(
       items: items ?? this.items,
@@ -515,6 +534,7 @@ class SurveyState extends Equatable {
       onUpdate: onUpdate ?? this.onUpdate,
       onActive: onActive ?? this.onActive,
       onDelete: onDelete ?? this.onDelete,
+      onReset: onReset ?? this.onReset,
     );
   }
 }
@@ -709,6 +729,32 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
         return state = state.copyWith(
           onDelete: AsyncData(data),
           items: result,
+        );
+      },
+    );
+  }
+
+  Future<SurveyState> reset({
+    required String surveyId,
+  }) async {
+    state = state.copyWith(
+      onReset: const AsyncLoading(),
+    );
+    final result = await repository.reset(surveyId: surveyId);
+
+    return result.fold(
+      (failure) {
+        return state = state.copyWith(
+          onReset: AsyncError(failure.message, StackTrace.current),
+        );
+      },
+      (data) {
+        return state = state.copyWith(
+          onReset: AsyncData(data),
+          items: [
+            for (final item in state.items)
+              if (item.id == data.id) data else item,
+          ],
         );
       },
     );

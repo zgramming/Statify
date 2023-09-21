@@ -6,6 +6,7 @@ import '../../../model/model/helper/dropdown/machine_dropdown_model.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
+import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../widgets/form_row_body.dart';
 
 class MachineWhatsAppFormPage extends ConsumerStatefulWidget {
@@ -75,7 +76,7 @@ class _MachineWhatsAppFormPageState
           _numberController.clear();
 
           // Refresh data
-          ref.invalidate(machineNotifier);
+          ref.invalidate(getAllMachineFutureProvider);
         },
         error: (error, stackTrace) {
           showSnackbar(

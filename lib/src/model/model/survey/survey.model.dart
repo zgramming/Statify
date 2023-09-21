@@ -53,4 +53,28 @@ class SurveyModel extends Equatable {
 
   @override
   bool get stringify => true;
+
+  SurveyModel copyWith({
+    String? id,
+    String? machineId,
+    String? name,
+    String? slug,
+    MachineActionEnum? action,
+    int? send,
+    int? replied,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return SurveyModel(
+      id: id ?? this.id,
+      machineId: machineId ?? this.machineId,
+      name: name ?? this.name,
+      slug: slug ?? this.slug,
+      action: action ?? this.action,
+      send: send ?? this.send,
+      replied: replied ?? this.replied,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }

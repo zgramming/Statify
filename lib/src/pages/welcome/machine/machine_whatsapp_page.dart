@@ -11,6 +11,7 @@ import '../../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../../../router.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/functions.dart';
+import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/dialog_view_qrcode.dart';
@@ -87,7 +88,7 @@ class _DialogUploadQRCodeState extends ConsumerState<DialogUploadQRCode> {
             );
 
             // Refresh data
-            ref.invalidate(machineNotifier);
+            ref.invalidate(getAllMachineFutureProvider);
           },
           error: (error, stackTrace) => showSnackbar(
             context: context,
@@ -241,7 +242,7 @@ class _MachineWhatsAppPageState extends ConsumerState<MachineWhatsAppPage> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
-                ref.invalidate(machineNotifier);
+                ref.invalidate(getAllMachineFutureProvider);
               },
               child: ListView.separated(
                 padding: const EdgeInsets.all(16.0),

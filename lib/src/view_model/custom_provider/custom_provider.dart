@@ -90,10 +90,11 @@ final getMachineWhatsApp =
   return whatsapps;
 });
 
-final getMachineByIdProvider =
-    Provider.family<MachineModel?, String>((ref, id) {
-  final machines = ref.watch(machineNotifier).items;
-  final result = machines.firstWhereOrNull((element) => element.id == id);
-  return result;
-});
+final getMachineByIdProvider = Provider.family<MachineModel?, String>(
+  (ref, id) {
+    final machines = ref.watch(machineNotifier).items;
+    final result = machines.firstWhereOrNull((element) => element.id == id);
+    return result;
+  },
+);
 // End Custom Provider

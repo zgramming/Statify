@@ -16,6 +16,7 @@ import '../../../router.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
+import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../../view_model/custom_notifier/log_listen_pending_response.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
@@ -244,7 +245,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(machineNotifier);
+              ref.invalidate(getAllMachineFutureProvider);
             },
             child: ListView.separated(
               itemCount: machines.length,
