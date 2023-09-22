@@ -53,66 +53,79 @@ class _MainSurveyPageState extends ConsumerState<MainSurveyPage> {
               title: "Survey List",
             ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Builder(
-                  builder: (context) {
-                    return surveyAsync.when(
-                      data: (map) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: map.entries.map((e) {
-                            final machine = e.key;
-                            final surveys = e.value;
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(
+                      getAllSurveyByUserGroupByMachineFutureProvider);
+                  showSnackbar(
+                    context: context,
+                    message: "Refreshing...",
+                    backgroundColor: Colors.blue,
+                  );
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  child: Builder(
+                    builder: (context) {
+                      return surveyAsync.when(
+                        data: (map) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: map.entries.map((e) {
+                              final machine = e.key;
+                              final surveys = e.value;
 
-                            if (surveys.isEmpty) {
-                              return const SizedBox();
-                            }
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  "Machine: ${e.key.name}",
-                                  style: headerFont.copyWith(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                              if (surveys.isEmpty) {
+                                return const SizedBox();
+                              }
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    "Machine: ${e.key.name}",
+                                    style: headerFont.copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 16),
-                                ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: surveys.length,
-                                  padding: EdgeInsets.zero,
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(height: 8),
-                                  itemBuilder: (context, index) {
-                                    final item = surveys[index];
-                                    return _SurveyItem(
-                                      index: index,
-                                      item: item,
-                                      activeSurveyId: machine.activeSurveyId,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-                            );
-                          }).toList(),
-                        );
-                      },
-                      error: (error, stackTrace) => AsyncErrorBuilder(
-                        error: error.toString(),
-                        onRetry: () {
-                          ref.invalidate(
-                              getAllSurveyByUserGroupByMachineFutureProvider);
+                                  const SizedBox(height: 16),
+                                  ListView.separated(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: surveys.length,
+                                    padding: EdgeInsets.zero,
+                                    separatorBuilder: (context, index) =>
+                                        const SizedBox(height: 8),
+                                    itemBuilder: (context, index) {
+                                      final item = surveys[index];
+                                      return _SurveyItem(
+                                        index: index,
+                                        item: item,
+                                        activeSurveyId: machine.activeSurveyId,
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
+                              );
+                            }).toList(),
+                          );
                         },
-                      ),
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  },
+                        error: (error, stackTrace) => AsyncErrorBuilder(
+                          error: error.toString(),
+                          onRetry: () {
+                            ref.invalidate(
+                                getAllSurveyByUserGroupByMachineFutureProvider);
+                          },
+                        ),
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -170,19 +183,8 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
       data: (data) {
         if (data == null) return;
 
-        // invalidate survey & machine
+        // invalidate machine
         ref.invalidate(getAllMachineFutureProvider);
-        ref.invalidate(surveyNotifier(widget.item.machineId));
-
-        // ref.invalidate(surveyNotifier(widget.item.machineId));
-
-        // Invalidate machine
-        // ref.invalidate(getAllMachineFutureProvider);
-
-        // Load machine by id
-        // ref.read(machineNotifier.notifier).getById(
-        //       machineId: widget.item.machineId,
-        //     );
       },
       error: (error, stackTrace) => showSnackbar(
         context: context,
