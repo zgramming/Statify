@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -10,24 +11,29 @@ part 'survey.model.g.dart';
 )
 class SurveyModel extends Equatable {
   final String id;
-  final String machineId;
+  final int totalReplied;
+  final int totalFinished;
+  final int totalVoted;
+  final int totalSent;
   final String name;
   final String slug;
   final MachineActionEnum action;
-  final int send;
-  final int replied;
-  final DateTime createdAt;
+  final String machineId;
   final DateTime updatedAt;
+  final DateTime createdAt;
+
   const SurveyModel({
     required this.id,
-    required this.machineId,
+    required this.totalReplied,
+    required this.totalFinished,
+    required this.totalVoted,
+    required this.totalSent,
     required this.name,
     required this.slug,
     required this.action,
-    required this.send,
-    required this.replied,
-    required this.createdAt,
+    required this.machineId,
     required this.updatedAt,
+    required this.createdAt,
   });
 
   factory SurveyModel.fromJson(Map<String, dynamic> json) =>
@@ -40,41 +46,19 @@ class SurveyModel extends Equatable {
   List<Object> get props {
     return [
       id,
-      machineId,
+      totalReplied,
+      totalFinished,
+      totalVoted,
+      totalSent,
       name,
       slug,
       action,
-      send,
-      replied,
-      createdAt,
+      machineId,
       updatedAt,
+      createdAt,
     ];
   }
 
   @override
   bool get stringify => true;
-
-  SurveyModel copyWith({
-    String? id,
-    String? machineId,
-    String? name,
-    String? slug,
-    MachineActionEnum? action,
-    int? send,
-    int? replied,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return SurveyModel(
-      id: id ?? this.id,
-      machineId: machineId ?? this.machineId,
-      name: name ?? this.name,
-      slug: slug ?? this.slug,
-      action: action ?? this.action,
-      send: send ?? this.send,
-      replied: replied ?? this.replied,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 }

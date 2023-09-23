@@ -164,7 +164,6 @@ class SurveyRemoteDatasource {
     final body = response.body;
     final decodedData = Map<String, dynamic>.from(jsonDecode(body));
     final data = decodedData['data'];
-    log("data $data");
     if (response.statusCode == 200) {
       final result = SurveyModel.fromJson(data);
       return result;

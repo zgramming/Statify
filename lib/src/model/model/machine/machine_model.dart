@@ -1,7 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import '../machine_whatsapp/machine_whatsapp_model.dart';
 
 part 'machine_model.g.dart';
 
@@ -18,7 +17,6 @@ class MachineModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? activeSurveyId;
-  final List<MachineWhatsappModel> whatsapps;
 
   const MachineModel({
     required this.id,
@@ -30,7 +28,6 @@ class MachineModel extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.activeSurveyId,
-    required this.whatsapps,
   });
 
   factory MachineModel.fromJson(Map<String, dynamic> json) =>
@@ -51,7 +48,6 @@ class MachineModel extends Equatable {
       createdAt,
       updatedAt,
       activeSurveyId,
-      whatsapps,
     ];
   }
 
@@ -68,7 +64,6 @@ class MachineModel extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? activeSurveyId,
-    List<MachineWhatsappModel>? whatsapps,
   }) {
     return MachineModel(
       id: id ?? this.id,
@@ -80,7 +75,6 @@ class MachineModel extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       activeSurveyId: activeSurveyId ?? this.activeSurveyId,
-      whatsapps: whatsapps ?? this.whatsapps,
     );
   }
 }

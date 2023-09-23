@@ -8,27 +8,31 @@ part of 'survey.model.dart';
 
 SurveyModel _$SurveyModelFromJson(Map<String, dynamic> json) => SurveyModel(
       id: json['id'] as String,
-      machineId: json['machine_id'] as String,
+      totalReplied: json['total_replied'] as int,
+      totalFinished: json['total_finished'] as int,
+      totalVoted: json['total_voted'] as int,
+      totalSent: json['total_sent'] as int,
       name: json['name'] as String,
       slug: json['slug'] as String,
       action: $enumDecode(_$MachineActionEnumEnumMap, json['action']),
-      send: json['send'] as int,
-      replied: json['replied'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      machineId: json['machine_id'] as String,
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$SurveyModelToJson(SurveyModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'machine_id': instance.machineId,
+      'total_replied': instance.totalReplied,
+      'total_finished': instance.totalFinished,
+      'total_voted': instance.totalVoted,
+      'total_sent': instance.totalSent,
       'name': instance.name,
       'slug': instance.slug,
       'action': _$MachineActionEnumEnumMap[instance.action]!,
-      'send': instance.send,
-      'replied': instance.replied,
-      'created_at': instance.createdAt.toIso8601String(),
+      'machine_id': instance.machineId,
       'updated_at': instance.updatedAt.toIso8601String(),
+      'created_at': instance.createdAt.toIso8601String(),
     };
 
 const _$MachineActionEnumEnumMap = {

@@ -14,6 +14,10 @@ class MachineWhatsappModel extends Equatable {
   final String number;
   final String? qrCode;
   final MachineWhatsappStatusEnum status;
+  final int totalReplied;
+  final int totalFinished;
+  final int totalVoted;
+  final int totalSent;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -23,6 +27,10 @@ class MachineWhatsappModel extends Equatable {
     required this.number,
     required this.qrCode,
     required this.status,
+    required this.totalReplied,
+    required this.totalFinished,
+    required this.totalVoted,
+    required this.totalSent,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -41,6 +49,10 @@ class MachineWhatsappModel extends Equatable {
       number,
       qrCode,
       status,
+      totalReplied,
+      totalFinished,
+      totalVoted,
+      totalSent,
       createdAt,
       updatedAt,
     ];

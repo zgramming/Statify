@@ -205,8 +205,10 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
 
   @override
   Widget build(BuildContext context) {
+    final item = widget.item;
+
     final machine = ref.watch(
-      CustomProvider.getMachineByIdProvider(widget.item.machineId),
+      CustomProvider.getMachineByIdProvider(item.machineId),
     );
 
     return Stack(
@@ -227,7 +229,7 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                 const SizedBox(height: 8.0),
                 RowBody(
                   title: "WhatsApp Number",
-                  content: widget.item.number,
+                  content: item.number,
                   titleFlex: 1,
                   contentFlex: 1,
                 ),
@@ -242,7 +244,7 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                           CircleIndexNumber(radius: 30.0, index: widget.index),
                           const SizedBox(height: 8.0),
                           ElevatedButton(
-                            onPressed: () => onClickQRCode(widget.item.qrCode!),
+                            onPressed: () => onClickQRCode(item.qrCode!),
                             style: elevatedButtonStyle(
                               padding: const EdgeInsets.all(
                                 8.0,
@@ -251,7 +253,7 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                             child: const Text("QR CODE"),
                           ),
                           Text(
-                            widget.item.status.valueStringReadable,
+                            item.status.valueStringReadable,
                             style: bodyFont.copyWith(
                               fontSize: 12.0,
                               fontWeight: FontWeight.bold,
@@ -260,54 +262,54 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                         ],
                       ),
                     ),
-                    const Expanded(
+                    Expanded(
                       flex: 8,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           RowBody(
                             title: "Total WA Sent",
-                            content: '-',
+                            content: "${item.totalSent}",
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           RowBody(
                             title: "Total Replied",
-                            content: '-',
+                            content: "${item.totalReplied}",
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           RowBody(
                             title: "Total Finished",
-                            content: '-',
+                            content: "${item.totalFinished}",
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           RowBody(
                             title: "Total Voted",
-                            content: '-',
+                            content: "${item.totalVoted}",
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
-                          RowBody(
+                          const SizedBox(height: 8.0),
+                          const RowBody(
                             title: "Total Choose 1",
                             content: '-',
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
-                          RowBody(
+                          const SizedBox(height: 8.0),
+                          const RowBody(
                             title: "Total Choose 2",
                             content: '-',
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
-                          RowBody(
+                          const SizedBox(height: 8.0),
+                          const RowBody(
                             title: "Total Choose 3",
                             content: '-',
                             titleFlex: 1,
