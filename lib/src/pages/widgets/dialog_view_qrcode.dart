@@ -1,18 +1,18 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../utils/functions.dart';
 import '../../view_model/custom_notifier/get_all_whatsapp_by_user.notifier.dart';
+import '../../view_model/custom_provider/custom_provider.dart';
 
 class DialogViewQRCode extends ConsumerStatefulWidget {
   const DialogViewQRCode({
     Key? key,
-    required this.imageUrl,
+    required this.id,
   }) : super(key: key);
-  final String imageUrl;
+  final String id;
 
   @override
   ConsumerState<DialogViewQRCode> createState() => _DialogViewQRCodeState();
@@ -21,24 +21,23 @@ class DialogViewQRCode extends ConsumerStatefulWidget {
 class _DialogViewQRCodeState extends ConsumerState<DialogViewQRCode> {
   Timer? _timer;
   int _counter = 10;
+  int now = DateTime.now().millisecondsSinceEpoch;
 
   Future<void> onRefresh() async {
     ref.invalidate(getAllWhatsAppByUserFutureProvider);
-    setState(() {
-      _counter = 10;
-    });
+    now = DateTime.now().millisecondsSinceEpoch;
+    _counter = 10;
+    setState(() {});
   }
 
   Future<void> init() async {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (!mounted) return;
-      log("timer tick ${timer.tick}");
       _counter--;
 
 // If counter is less than 0, invalidate the getAllWhatsAppByUserFutureProvider
       if (_counter < 0) {
-        _counter = 10;
-        ref.invalidate(getAllWhatsAppByUserFutureProvider);
+        onRefresh();
       }
       setState(() {});
     });
@@ -58,6 +57,8 @@ class _DialogViewQRCodeState extends ConsumerState<DialogViewQRCode> {
 
   @override
   Widget build(BuildContext context) {
+    final whatsapps =
+        ref.watch(CustomProvider.getMachineWhatsappById(widget.id));
     return AlertDialog(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,7 +83,7 @@ class _DialogViewQRCodeState extends ConsumerState<DialogViewQRCode> {
           AspectRatio(
             aspectRatio: 1.0,
             child: Image.network(
-              widget.imageUrl,
+              "${whatsapps?.qrCode}?t=$now",
               fit: BoxFit.cover,
               loadingBuilder: imageNetworkLoadingBuilder(),
               errorBuilder: (context, error, stackTrace) {

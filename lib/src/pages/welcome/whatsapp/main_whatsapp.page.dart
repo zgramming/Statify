@@ -161,7 +161,9 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
   void onClickQRCode(String imageUrl) {
     showDialog(
       context: context,
-      builder: (context) => DialogViewQRCode(imageUrl: imageUrl),
+      builder: (context) => DialogViewQRCode(
+        id: widget.item.id,
+      ),
     );
   }
 

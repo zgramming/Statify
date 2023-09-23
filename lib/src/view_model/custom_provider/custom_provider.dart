@@ -6,8 +6,10 @@ import '../../injection.dart';
 import '../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
 import '../../model/model/helper/props/props_get_survey_response_grouping.model.dart';
 import '../../model/model/machine/machine_model.dart';
+import '../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../../model/model/survey_response/survey_response_model.dart';
 import '../../utils/enum.dart';
+import '../custom_notifier/get_all_whatsapp_by_user.notifier.dart';
 
 class CustomProvider {
   static final getSurveyResponseGroupingSMS = Provider.family<
@@ -39,11 +41,13 @@ class CustomProvider {
     return map;
   });
 
-  static final getOnlyWhatsAppMachine = Provider((ref) {
-    final machines = ref.watch(machineNotifier).items;
-    final result = machines.map((e) => e.whatsapps).toList();
-    final flatten = result.expand((element) => element).toList();
-    return flatten;
+  static final getMachineWhatsappById =
+      Provider.autoDispose.family<MachineWhatsappModel?, String>((ref, id) {
+    final items = ref.watch(getAllWhatsAppByUserFutureProvider).valueOrNull;
+    // Get only list of MachineWhatsappModel
+    final whatsapps = items?.values.expand((element) => element).toList();
+    final result = whatsapps?.firstWhereOrNull((element) => element.id == id);
+    return result;
   });
 
   static final getMachineByIdProvider = Provider.family<MachineModel?, String>(
@@ -53,14 +57,6 @@ class CustomProvider {
       return result;
     },
   );
-
-  static final getActiveSurveyIdByMachineId = ProviderFamily((ref, machineId) {
-    final machines = ref.watch(machineNotifier).items;
-    final machine =
-        machines.firstWhereOrNull((element) => element.id == machineId);
-    final activeSurveyId = machine?.activeSurveyId;
-    return activeSurveyId;
-  });
 
   static final userChooseSIMMachineProvider =
       ProviderFamily<int, String>((ref, machineId) {
@@ -84,15 +80,6 @@ class CustomProvider {
     }
 
     return simSlot;
-  });
-
-  static final isUserAlreadySetupSIMProvider = Provider((ref) {
-    final user = ref.watch(userNotifier.select((value) => value.user));
-    final isExistsSIM1 =
-        user?.sim1 != null && (user?.sim1?.isNotEmpty ?? false);
-    final isExistsSIM2 =
-        user?.sim2 != null && (user?.sim2?.isNotEmpty ?? false);
-    return isExistsSIM1 || isExistsSIM2;
   });
 
   static final isEmptyAvailableSIM = Provider((ref) {

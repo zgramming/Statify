@@ -8,10 +8,12 @@ import '../model/model/machine_whatsapp/machine_whatsapp_connected_response_mode
 import '../model/model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
+import '../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
 import '../model/repository/machine_whatsapp_repository.dart';
 
 class MachineWhatsappState extends Equatable {
+  final List<MachineWhatsappModel> items;
   final AsyncValue<MachineWhatsappCreateResponseModel?> onCreate;
   final AsyncValue<MachineWhatsappDeleteResponseModel?> onDelete;
   final AsyncValue<MachineWhatsappSendQRCodeResponseModel?> onSendQRCode;
@@ -19,6 +21,7 @@ class MachineWhatsappState extends Equatable {
   final AsyncValue<MachineWhatsappConnectedResponseModel?> onConnect;
 
   const MachineWhatsappState({
+    this.items = const [],
     this.onCreate = const AsyncData(null),
     this.onDelete = const AsyncLoading(),
     this.onSendQRCode = const AsyncData(null),
@@ -29,6 +32,7 @@ class MachineWhatsappState extends Equatable {
   @override
   List<Object> get props {
     return [
+      items,
       onCreate,
       onDelete,
       onSendQRCode,
@@ -41,6 +45,7 @@ class MachineWhatsappState extends Equatable {
   bool get stringify => true;
 
   MachineWhatsappState copyWith({
+    List<MachineWhatsappModel>? items,
     AsyncValue<MachineWhatsappCreateResponseModel?>? onCreate,
     AsyncValue<MachineWhatsappDeleteResponseModel?>? onDelete,
     AsyncValue<MachineWhatsappSendQRCodeResponseModel?>? onSendQRCode,
@@ -48,6 +53,7 @@ class MachineWhatsappState extends Equatable {
     AsyncValue<MachineWhatsappConnectedResponseModel?>? onConnect,
   }) {
     return MachineWhatsappState(
+      items: items ?? this.items,
       onCreate: onCreate ?? this.onCreate,
       onDelete: onDelete ?? this.onDelete,
       onSendQRCode: onSendQRCode ?? this.onSendQRCode,
@@ -168,6 +174,19 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
         onSuccess(data);
         return state = MachineWhatsappState(onConnect: AsyncData(data));
       },
+    );
+  }
+
+  void resetItems() {
+    state = state.copyWith(items: []);
+  }
+
+  void setItems(List<MachineWhatsappModel> items) {
+    state = state.copyWith(
+      items: [
+        ...state.items,
+        ...items,
+      ],
     );
   }
 }
