@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -127,8 +126,8 @@ class UserRemoteDatasource {
         machineIds: form.machineIds,
         machineSimSlot: form.machineSimSlot,
         userId: userId,
-        sim1Number: result.sim1 ?? "",
-        sim2Number: result.sim2 ?? "",
+        sim1Number: result.sim1,
+        sim2Number: result.sim2,
       );
 
       return (result, user.copyWith(token: currentToken));
