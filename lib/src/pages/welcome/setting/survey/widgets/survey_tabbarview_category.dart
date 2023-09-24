@@ -285,9 +285,13 @@ class SurveyTabBarViewCategoryState
                         bodyFont.copyWith(fontSize: 12.0, color: Colors.grey),
                     onChanged: onChangeSurveyToolOption,
                     decoration: inputDecorationRounded().copyWith(
-                      contentPadding: EdgeInsets.zero,
+                      hintText: "Select Option",
+                      border: const OutlineInputBorder(),
                       fillColor: Colors.transparent,
-                      border: const UnderlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 4.0,
+                        horizontal: 8.0,
+                      ),
                     ),
                     items: MachineSettingToolsOptionEnum.values
                         .map(
@@ -316,9 +320,10 @@ class SurveyTabBarViewCategoryState
                       keyboardType: TextInputType.number,
                       style: bodyFont.copyWith(fontSize: 14.0),
                       decoration: inputDecorationRounded().copyWith(
-                        border: const UnderlineInputBorder(),
+                        hintText: "Input timeout",
+                        border: const OutlineInputBorder(),
                         fillColor: Colors.transparent,
-                        contentPadding: EdgeInsets.zero,
+                        contentPadding: const EdgeInsets.all(8),
                       ),
                       onChanged: onChangeTimeout,
                     ),
@@ -331,9 +336,10 @@ class SurveyTabBarViewCategoryState
                       keyboardType: TextInputType.number,
                       style: bodyFont.copyWith(fontSize: 14.0),
                       decoration: inputDecorationRounded().copyWith(
-                        border: const UnderlineInputBorder(),
+                        hintText: "Input backoff",
+                        border: const OutlineInputBorder(),
                         fillColor: Colors.transparent,
-                        contentPadding: EdgeInsets.zero,
+                        contentPadding: const EdgeInsets.all(8),
                       ),
                       onChanged: onChangeBackoff,
                     ),
@@ -346,9 +352,10 @@ class SurveyTabBarViewCategoryState
                       keyboardType: TextInputType.number,
                       style: bodyFont.copyWith(fontSize: 14.0),
                       decoration: inputDecorationRounded().copyWith(
-                        border: const UnderlineInputBorder(),
+                        hintText: "Input tries",
+                        border: const OutlineInputBorder(),
                         fillColor: Colors.transparent,
-                        contentPadding: EdgeInsets.zero,
+                        contentPadding: const EdgeInsets.all(8),
                       ),
                       onChanged: onChangeTries,
                     ),

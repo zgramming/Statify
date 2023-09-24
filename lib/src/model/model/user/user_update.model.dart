@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -11,11 +12,10 @@ class UserUpdateResponseModel extends Equatable {
   final String? email;
   final String? username;
   final String? name;
-  final String? countryCode;
-  @JsonKey(name: "sim_1")
-  final String? sim1;
-  @JsonKey(name: "sim_2")
-  final String? sim2;
+  @JsonValue("sim_1")
+  final String sim1;
+  @JsonValue("sim_2")
+  final String sim2;
   final DateTime createdAt;
   final DateTime updatedAt;
   const UserUpdateResponseModel({
@@ -23,7 +23,6 @@ class UserUpdateResponseModel extends Equatable {
     required this.email,
     required this.username,
     required this.name,
-    required this.countryCode,
     required this.sim1,
     required this.sim2,
     required this.createdAt,
@@ -43,7 +42,6 @@ class UserUpdateResponseModel extends Equatable {
       email,
       username,
       name,
-      countryCode,
       sim1,
       sim2,
       createdAt,
@@ -59,7 +57,6 @@ class UserUpdateResponseModel extends Equatable {
     String? email,
     String? username,
     String? name,
-    String? countryCode,
     String? sim1,
     String? sim2,
     DateTime? createdAt,
@@ -70,7 +67,6 @@ class UserUpdateResponseModel extends Equatable {
       email: email ?? this.email,
       username: username ?? this.username,
       name: name ?? this.name,
-      countryCode: countryCode ?? this.countryCode,
       sim1: sim1 ?? this.sim1,
       sim2: sim2 ?? this.sim2,
       createdAt: createdAt ?? this.createdAt,

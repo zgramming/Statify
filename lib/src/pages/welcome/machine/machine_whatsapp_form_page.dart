@@ -59,6 +59,9 @@ class _MachineWhatsAppFormPageState
 
   @override
   Widget build(BuildContext context) {
+    // Listen get by id machine whatsapp notifier
+
+    // Listen create machine whatsapp notifier
     ref.listen(machineWhatsappNotifier.select((value) => value.onCreate),
         (previous, next) {
       next.when(
@@ -110,15 +113,16 @@ class _MachineWhatsAppFormPageState
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               FormBodyRow(
-                title: "Number",
+                title: "Name / Number Whatsapp Business",
                 child: TextFormField(
                   controller: _numberController,
                   style: bodyFont.copyWith(fontSize: 14.0),
                   keyboardType: TextInputType.number,
                   decoration: inputDecorationRounded().copyWith(
-                    border: const UnderlineInputBorder(),
+                    hintText: "Enter name / number ",
+                    border: const OutlineInputBorder(),
                     fillColor: Colors.transparent,
-                    contentPadding: EdgeInsets.zero,
+                    contentPadding: const EdgeInsets.all(8),
                   ),
                 ),
               ),
@@ -134,9 +138,13 @@ class _MachineWhatsAppFormPageState
                     });
                   },
                   decoration: inputDecorationRounded().copyWith(
-                    contentPadding: EdgeInsets.zero,
+                    hintText: "Choose machine",
+                    border: const OutlineInputBorder(),
                     fillColor: Colors.transparent,
-                    border: const UnderlineInputBorder(),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                   ),
                   items: machines
                       .map((e) => MachineDropdownModel(id: e.id, name: e.name))

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 import '../../utils/fonts.dart';
@@ -6,6 +7,7 @@ class RowBody extends StatelessWidget {
   const RowBody({
     Key? key,
     required this.title,
+    this.titleTrailing,
     required this.content,
     this.titleFlex,
     this.contentFlex,
@@ -15,6 +17,7 @@ class RowBody extends StatelessWidget {
   }) : super(key: key);
 
   final String title;
+  final List<Widget>? titleTrailing;
   final String content;
   final int? titleFlex;
   final int? contentFlex;
@@ -41,9 +44,15 @@ class RowBody extends StatelessWidget {
         SizedBox(width: spacing),
         Expanded(
           flex: contentFlex ?? 2,
-          child: Text(
-            content,
-            style: contentStyle ?? defaultStyle,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                content,
+                style: contentStyle ?? defaultStyle,
+              ),
+              if (titleTrailing != null) ...titleTrailing!,
+            ],
           ),
         ),
       ],

@@ -204,9 +204,12 @@ class _MachinePageState extends ConsumerState<MachinePage> {
       return;
     }
 
-    context.pushNamed(routeMachineForm, pathParameters: {
-      "id": "-1",
-    });
+    context.pushNamed(
+      routeMachineForm,
+      pathParameters: {
+        "id": "-1",
+      },
+    );
   }
 
   @override
@@ -244,11 +247,6 @@ class _MachinePageState extends ConsumerState<MachinePage> {
             ),
           )
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: onAddMachine,
-        icon: const Icon(Icons.add),
-        label: const Text("Add Machine"),
       ),
     );
   }

@@ -9,12 +9,12 @@ import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
-import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_notifier/get_all_whatsapp_by_user.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
+import '../../widgets/dialog_confirmation_delete.dart';
 import '../../widgets/dialog_view_qrcode.dart';
 import '../../widgets/row_body.dart';
 
@@ -26,7 +26,7 @@ class MainWhatsAppPage extends ConsumerStatefulWidget {
 }
 
 class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
-  Future<void> onAddWhatsapp() async {
+  Future<void> onAdd() async {
     context.pushNamed(
       routeMachineWhatsAppForm,
       pathParameters: {
@@ -37,12 +37,13 @@ class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    final whatsappsAsync = ref.watch(getAllWhatsAppByUserFutureProvider);
+    final whatsappsAsync =
+        ref.watch(getAllWhatsAppByUserFutureProvider).unwrapPrevious();
     return Stack(
       children: [
         Column(
           children: [
-            const CustomAppbar(title: 'WhatsApp'),
+            const CustomAppbar(title: 'WhatsApp Business'),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () async {
@@ -60,6 +61,22 @@ class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
                     builder: (context) {
                       return whatsappsAsync.when(
                         data: (map) {
+                          final isEmpty = map.values.every(
+                            (element) => element.isEmpty,
+                          );
+
+                          if (isEmpty) {
+                            return Center(
+                              child: Text(
+                                "No Machine WhatsApp Found",
+                                style: bodyFont.copyWith(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          }
+
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: map.entries.map((e) {
@@ -70,43 +87,58 @@ class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
                                 return const SizedBox();
                               }
 
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0,
-                                    ),
-                                    child: Text(
-                                      machine.name,
-                                      style: headerFont.copyWith(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                              return Card(
+                                margin: const EdgeInsets.only(
+                                    bottom: 16.0, left: 16.0, right: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: const BorderSide(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0,
+                                        ),
+                                        child: Text(
+                                          machine.name,
+                                          style: headerFont.copyWith(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      const SizedBox(height: 16.0),
+                                      ListView.separated(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: whatsapps.length,
+                                        shrinkWrap: true,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0,
+                                        ),
+                                        separatorBuilder: (context, index) =>
+                                            const Divider(),
+                                        itemBuilder: (context, index) {
+                                          final item = whatsapps[index];
+                                          return _WhatsappItem(
+                                            item: item,
+                                            index: index,
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(height: 16.0),
+                                    ],
                                   ),
-                                  const SizedBox(height: 16.0),
-                                  ListView.separated(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: whatsapps.length,
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0,
-                                    ),
-                                    separatorBuilder: (context, index) =>
-                                        const Divider(),
-                                    itemBuilder: (context, index) {
-                                      final item = whatsapps[index];
-                                      return _WhatsappItem(
-                                        item: item,
-                                        index: index,
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                ],
+                                ),
                               );
                             }).toList(),
                           );
@@ -135,7 +167,8 @@ class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
           bottom: 10,
           right: 10,
           child: FloatingActionButton(
-            onPressed: onAddWhatsapp,
+            heroTag: "addWhatsapp",
+            onPressed: onAdd,
             child: const Icon(Icons.add),
           ),
         )
@@ -167,37 +200,54 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
     );
   }
 
+  void onClickEdit() {
+    context.pushNamed(
+      routeMachineWhatsAppForm,
+      pathParameters: {
+        "id": widget.item.id,
+      },
+    );
+  }
+
   Future<void> onSelected(String value, MachineWhatsappModel item) async {
     final notifier = ref.read(machineWhatsappNotifier.notifier);
     switch (value) {
       case "delete":
-        await notifier.delete(
-          item.id,
-          onLoading: () {
-            showSnackbar(
-              context: context,
-              message: "Deleting...",
-              backgroundColor: Colors.blue,
-            );
-          },
-          onError: (message) {
-            showSnackbar(
-              context: context,
-              message: message,
-              backgroundColor: Colors.red,
-            );
-          },
-          onSuccess: (data) {
-            showSnackbar(
-              context: context,
-              message: "Success Deleting WhatsApp Machine",
-              backgroundColor: Colors.green,
-            );
+        await showDialog(
+          context: context,
+          builder: (context) => DialogDeleteConfirmation(
+            onConfirm: () async {
+              final result = await notifier.delete(item.id);
+              result.onDelete.whenOrNull(
+                data: (data) {
+                  if (data == null) return;
 
-            // reload data
-            ref.invalidate(getAllMachineFutureProvider);
-          },
+                  // Close Modal
+                  context.pop();
+
+                  showSnackbar(
+                    context: context,
+                    message:
+                        "Success delete whatsapp with number ${item.number}",
+                    backgroundColor: Colors.green,
+                  );
+
+                  ref.invalidate(getAllWhatsAppByUserFutureProvider);
+                },
+                error: (error, stack) {
+                  showSnackbar(
+                    context: context,
+                    message: error.toString(),
+                    backgroundColor: Colors.red,
+                  );
+                },
+              );
+            },
+          ),
         );
+        break;
+      case "edit":
+        onClickEdit();
         break;
       default:
     }
@@ -215,8 +265,12 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
       children: [
         Card(
           margin: const EdgeInsets.only(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            side: const BorderSide(color: Colors.grey, width: 1.0),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -268,24 +322,31 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           RowBody(
+                            title: "Total Responden",
+                            content: "${item.totalReplied}",
+                            titleFlex: 1,
+                            contentFlex: 1,
+                            titleTrailing: const [
+                              Icon(
+                                Icons.download,
+                                color: Colors.green,
+                                size: 16.0,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8.0),
+                          RowBody(
                             title: "Total WA Sent",
                             content: "${item.totalSent}",
                             titleFlex: 1,
                             contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          RowBody(
-                            title: "Total Replied",
-                            content: "${item.totalReplied}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          RowBody(
-                            title: "Total Finished",
-                            content: "${item.totalFinished}",
-                            titleFlex: 1,
-                            contentFlex: 1,
+                            titleTrailing: const [
+                              Icon(
+                                Icons.download,
+                                color: Colors.green,
+                                size: 16.0,
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8.0),
                           RowBody(
@@ -293,27 +354,27 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                             content: "${item.totalVoted}",
                             titleFlex: 1,
                             contentFlex: 1,
+                            titleTrailing: const [
+                              Icon(
+                                Icons.download,
+                                color: Colors.green,
+                                size: 16.0,
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8.0),
-                          const RowBody(
-                            title: "Total Choose 1",
-                            content: '-',
+                          RowBody(
+                            title: "Total Finished",
+                            content: "${item.totalFinished}",
                             titleFlex: 1,
                             contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          const RowBody(
-                            title: "Total Choose 2",
-                            content: '-',
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          const RowBody(
-                            title: "Total Choose 3",
-                            content: '-',
-                            titleFlex: 1,
-                            contentFlex: 1,
+                            titleTrailing: const [
+                              Icon(
+                                Icons.download,
+                                color: Colors.green,
+                                size: 16.0,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -330,6 +391,16 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
           child: PopupMenuButton<String>(
             onSelected: (value) => onSelected(value, widget.item),
             itemBuilder: (context) => [
+              // PopupMenuItem(
+              //   value: "edit",
+              //   child: Text(
+              //     "Edit",
+              //     style: bodyFont.copyWith(
+              //       color: Colors.blue,
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   ),
+              // ),
               PopupMenuItem(
                 value: "delete",
                 child: Text(

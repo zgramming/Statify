@@ -1,4 +1,6 @@
 // Custom Provider
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,25 +15,25 @@ import '../custom_notifier/get_all_whatsapp_by_user.notifier.dart';
 
 class CustomProvider {
   static final getSurveyResponseGroupingSMS = Provider.family<
-      Map<String, List<SurveyResponseModel>>,
+      Map<SurveyResponseTypeEnum, List<SurveyResponseModel>>,
       PropsSurveyResponseGrouping>((ref, props) {
     final items = ref
         .watch(surveyResponseNotifier(props.surveyId))
         .items
         .where((element) => element.platform == props.platform)
         .toList();
-    final Map<String, List<SurveyResponseModel>> map = {};
+    final Map<SurveyResponseTypeEnum, List<SurveyResponseModel>> map = {};
 
     for (final item in items) {
       if (item.type == MachineResponseTypeEnum.regular) {
         map.update(
-          "Your Auto Responder",
+          SurveyResponseTypeEnum.yourAutoResponder,
           (value) => value..add(item),
           ifAbsent: () => [item],
         );
       } else {
         map.update(
-          "System Auto Responder",
+          SurveyResponseTypeEnum.systemAutoResponder,
           (value) => value..add(item),
           ifAbsent: () => [item],
         );
@@ -76,7 +78,8 @@ class CustomProvider {
     } else if (machine.number == user.sim2) {
       simSlot = 1;
     } else {
-      throw Exception('Machine number is not found in user sim');
+      throw Exception(
+          "Machine ${machine.name} number is not found in user sim. Current user SIM \n SIM 1: ${user.sim1} \n SIM 2: ${user.sim2} \n Machine number is ${machine.number} ");
     }
 
     return simSlot;

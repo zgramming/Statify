@@ -15,6 +15,7 @@ import '../../../view_model/custom_notifier/get_all_survey_by_user.notifier.dart
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
+import '../../widgets/dialog_confirmation_delete.dart';
 import '../../widgets/row_body.dart';
 
 class MainSurveyPage extends ConsumerStatefulWidget {
@@ -42,8 +43,9 @@ class _MainSurveyPageState extends ConsumerState<MainSurveyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final surveyAsync =
-        ref.watch(getAllSurveyByUserGroupByMachineFutureProvider);
+    final surveyAsync = ref
+        .watch(getAllSurveyByUserGroupByMachineFutureProvider)
+        .unwrapPrevious();
     return Stack(
       children: [
         Column(
@@ -70,6 +72,22 @@ class _MainSurveyPageState extends ConsumerState<MainSurveyPage> {
                     builder: (context) {
                       return surveyAsync.when(
                         data: (map) {
+                          final isEmpty = map.values.every((element) {
+                            return element.isEmpty;
+                          });
+
+                          if (isEmpty) {
+                            return Center(
+                              child: Text(
+                                "No Survey Found",
+                                style: bodyFont.copyWith(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          }
+
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: map.entries.map((e) {
@@ -79,36 +97,45 @@ class _MainSurveyPageState extends ConsumerState<MainSurveyPage> {
                               if (surveys.isEmpty) {
                                 return const SizedBox();
                               }
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Text(
-                                    "Machine: ${e.key.name}",
-                                    style: headerFont.copyWith(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                              return Card(
+                                margin: const EdgeInsets.only(bottom: 16.0),
+                                elevation: 5,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text(
+                                        "Machine: ${e.key.name}",
+                                        style: headerFont.copyWith(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      ListView.separated(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: surveys.length,
+                                        padding: EdgeInsets.zero,
+                                        separatorBuilder: (context, index) =>
+                                            const SizedBox(height: 8),
+                                        itemBuilder: (context, index) {
+                                          final item = surveys[index];
+                                          return _SurveyItem(
+                                            index: index,
+                                            item: item,
+                                            activeSurveyId:
+                                                machine.activeSurveyId,
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(height: 16),
+                                    ],
                                   ),
-                                  const SizedBox(height: 16),
-                                  ListView.separated(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: surveys.length,
-                                    padding: EdgeInsets.zero,
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(height: 8),
-                                    itemBuilder: (context, index) {
-                                      final item = surveys[index];
-                                      return _SurveyItem(
-                                        index: index,
-                                        item: item,
-                                        activeSurveyId: machine.activeSurveyId,
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
+                                ),
                               );
                             }).toList(),
                           );
@@ -117,7 +144,8 @@ class _MainSurveyPageState extends ConsumerState<MainSurveyPage> {
                           error: error.toString(),
                           onRetry: () {
                             ref.invalidate(
-                                getAllSurveyByUserGroupByMachineFutureProvider);
+                              getAllSurveyByUserGroupByMachineFutureProvider,
+                            );
                           },
                         ),
                         loading: () => const Center(
@@ -202,6 +230,16 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
     });
   }
 
+  void onTapSummary() {
+    context.pushNamed(
+      routeSurveySummaryPage,
+      pathParameters: {
+        "idMachine": widget.item.machineId,
+        "idSurvey": widget.item.id,
+      },
+    );
+  }
+
   void init() {
     currentValue = widget.item.id == widget.activeSurveyId;
     setState(() {});
@@ -220,59 +258,88 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
           return;
         }
 
-        final result = await notifier.delete(surveyId: item.id);
-        result.onDelete.when(
-          data: (data) {
-            if (data == null) return;
-            showSnackbar(
-              context: context,
-              message: "Success Deleting Survey",
-              backgroundColor: Colors.green,
-            );
+        await showDialog(
+          context: context,
+          builder: (context) => DialogDeleteConfirmation(
+            onConfirm: () async {
+              final result = await notifier.delete(surveyId: item.id);
+              result.onDelete.when(
+                data: (data) {
+                  if (data == null) return;
 
-            // reload data survey & machine
-            ref.invalidate(getAllMachineFutureProvider);
-            ref.invalidate(surveyNotifier(item.machineId));
-          },
-          error: (error, stackTrace) => showSnackbar(
-            context: context,
-            message: error.toString(),
-            backgroundColor: Colors.red,
-          ),
-          loading: () => showSnackbar(
-            context: context,
-            message: "Deleting...",
-            backgroundColor: Colors.blue,
+                  // close modal dialog
+                  context.pop();
+
+                  showSnackbar(
+                    context: context,
+                    message: "Success Deleting Survey",
+                    backgroundColor: Colors.green,
+                  );
+
+                  // reload data survey & machine
+                  ref.invalidate(getAllMachineFutureProvider);
+                  ref.invalidate(surveyNotifier(item.machineId));
+                },
+                error: (error, stackTrace) => showSnackbar(
+                  context: context,
+                  message: error.toString(),
+                  backgroundColor: Colors.red,
+                ),
+                loading: () => showSnackbar(
+                  context: context,
+                  message: "Deleting...",
+                  backgroundColor: Colors.blue,
+                ),
+              );
+            },
           ),
         );
 
         break;
 
       case "reset":
-        final result = await notifier.reset(surveyId: item.id);
-        result.onReset.when(
-          data: (data) {
-            if (data == null) return;
-            showSnackbar(
-              context: context,
-              message: "Success Reset Survey with name ${item.name}",
-              backgroundColor: Colors.green,
-            );
+        await showDialog(
+          context: context,
+          builder: (context) => DialogDeleteConfirmation(
+            title: "Reset Survey",
+            content:
+                "Are you sure want to reset survey with name ${item.name}?",
+            onConfirm: () async {
+              final result = await notifier.reset(surveyId: item.id);
+              result.onReset.when(
+                data: (data) {
+                  if (data == null) return;
+                  showSnackbar(
+                    context: context,
+                    message: "Success Reset Survey with name ${item.name}",
+                    backgroundColor: Colors.green,
+                  );
 
-            // reload data survey only
-            ref.invalidate(surveyNotifier(item.machineId));
-          },
-          error: (error, stackTrace) => showSnackbar(
-            context: context,
-            message: error.toString(),
-            backgroundColor: Colors.red,
-          ),
-          loading: () => showSnackbar(
-            context: context,
-            message: "Resetting...",
-            backgroundColor: Colors.blue,
+                  // reload data survey only
+                  ref.invalidate(surveyNotifier(item.machineId));
+                },
+                error: (error, stackTrace) => showSnackbar(
+                  context: context,
+                  message: error.toString(),
+                  backgroundColor: Colors.red,
+                ),
+                loading: () => showSnackbar(
+                  context: context,
+                  message: "Resetting...",
+                  backgroundColor: Colors.blue,
+                ),
+              );
+            },
           ),
         );
+        break;
+
+      case "edit":
+        onTap();
+        break;
+
+      case "summary":
+        onTapSummary();
         break;
       default:
     }
@@ -289,6 +356,13 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
     final item = widget.item;
     return Card(
       margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        side: BorderSide(
+          color: currentValue ? Colors.green : Colors.grey,
+          width: 1.0,
+        ),
+      ),
       child: Stack(
         children: [
           ListTile(
@@ -338,12 +412,33 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
               itemBuilder: (context) {
                 return [
                   const PopupMenuItem(
+                    key: Key("summary"),
+                    value: "summary",
+                    child: Row(
+                      children: [
+                        Icon(Icons.analytics, color: Colors.blue),
+                        SizedBox(width: 8.0),
+                        Text("Summary", style: TextStyle(color: Colors.blue)),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: "edit",
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit, color: Colors.blue),
+                        SizedBox(width: 8.0),
+                        Text("Edit", style: TextStyle(color: Colors.blue)),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
                     value: "reset",
                     child: Row(
                       children: [
-                        Icon(Icons.refresh, color: Colors.blue),
+                        Icon(Icons.refresh, color: Colors.red),
                         SizedBox(width: 8.0),
-                        Text("Reset", style: TextStyle(color: Colors.blue)),
+                        Text("Reset", style: TextStyle(color: Colors.red)),
                       ],
                     ),
                   ),

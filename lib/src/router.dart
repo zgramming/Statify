@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
+import 'pages/welcome/main_survey/main_survey_summary.page.dart';
 import 'pages/welcome/setting/survey/survey_response_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/setting/log/log_page.dart';
@@ -14,23 +15,34 @@ import 'pages/introduction/introduction_page.dart';
 import 'pages/login/login_page.dart';
 import 'pages/splash/splash_page.dart';
 
+// Route name
+
 const routeWelcome = "welcome";
 const routeSplash = "splash";
 const routeIntroduction = "introduction";
 const routeLogin = "login";
 
+// Machine
 const routeMachine = "machine";
 const routeMachineForm = "machine/form/:id";
 
+// Machine WhatsApp
 const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
 
+// Log
 const routeLogPage = "log";
+
+// Survey
+const routeSurveySummaryPage = "survey/summary/:id";
 
 const routeSurveyFormPage = "survey/form/:id";
 
 const routeSurveyResponseForm = "survey/:idSurvey/response/form/:id";
 
+// My Account
+
 const routeMyAccountPage = "my-account";
+
 const routeMyAccountFormPage = "my-account/form/:id";
 
 const routeChangeLogoPage = "change-logo";
@@ -143,6 +155,19 @@ final _routes = <RouteBase>[
       return SurveyFormPage(
         id: id,
         idMachine: idMachine,
+      );
+    },
+  ),
+
+  GoRoute(
+    path: "/machine/:idMachine/survey/:idSurvey/summary",
+    name: routeSurveySummaryPage,
+    builder: (context, state) {
+      final surveyId = state.pathParameters['idSurvey'] ?? "-1";
+      final machineId = state.pathParameters['idMachine'] ?? "-1";
+      return SurveySummaryPage(
+        surveyId: surveyId,
+        machineId: machineId,
       );
     },
   ),

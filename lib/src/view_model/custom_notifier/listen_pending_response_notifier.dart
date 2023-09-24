@@ -4,26 +4,29 @@ import '../../injection.dart';
 import '../custom_provider/custom_provider.dart';
 
 final listenPendingResponseNotifier =
-    AutoDisposeStreamProviderFamily<String?, String>((ref, machineId) {
-  final machine = ref.watch(CustomProvider.getMachineByIdProvider(machineId));
-  if (machine == null) {
-    return throw Exception('Machine is not found when listen pending response');
-  }
+    AutoDisposeStreamProviderFamily<String?, String>(
+  (ref, machineId) {
+    final machine = ref.watch(CustomProvider.getMachineByIdProvider(machineId));
+    if (machine == null) {
+      return throw Exception(
+          'Machine is not found when listen pending response');
+    }
 
-  final activeSurveyId = machine.activeSurveyId;
+    final activeSurveyId = machine.activeSurveyId;
 
-  if (activeSurveyId == null) {
-    return throw Exception(
-      'Machine ${machine.name} does not have active survey, please activate survey first to listen pending response',
-    );
-  }
+    if (activeSurveyId == null) {
+      return throw Exception(
+        'Machine ${machine.name} does not have active survey, please activate survey first to listen pending response',
+      );
+    }
 
-  final simSlot =
-      ref.watch(CustomProvider.userChooseSIMMachineProvider(machineId));
+    final simSlot =
+        ref.watch(CustomProvider.userChooseSIMMachineProvider(machineId));
 
-  final stream = ref
-      .watch(surveyNotifier(machineId).notifier)
-      .listenPendingResponse(simSlot: simSlot, surveyId: activeSurveyId);
+    final stream = ref
+        .watch(surveyNotifier(machineId).notifier)
+        .listenPendingResponse(simSlot: simSlot, surveyId: activeSurveyId);
 
-  return stream;
-});
+    return stream;
+  },
+);

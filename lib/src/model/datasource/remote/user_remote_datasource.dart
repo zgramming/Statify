@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -104,13 +105,14 @@ class UserRemoteDatasource {
       body: {
         'username': form.username,
         'name': form.name,
-        'country_code': form.countryCode,
-        'sim_1': form.sim1,
-        'sim_2': form.sim2,
+        'sim_1': form.sim1.isEmpty ? "" : form.sim1,
+        'sim_2': form.sim2.isEmpty ? "" : form.sim2,
       },
     );
     final body = response.body;
+
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
+
     if (response.statusCode == 200) {
       final user = await getById(userId);
       if (user == null) {
@@ -121,7 +123,6 @@ class UserRemoteDatasource {
       final data = decoded['data'];
       final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
       final result = UserUpdateResponseModel.fromJson(data);
-
       await _updateMachineDependSIM(
         machineIds: form.machineIds,
         machineSimSlot: form.machineSimSlot,
@@ -130,12 +131,7 @@ class UserRemoteDatasource {
         sim2Number: result.sim2 ?? "",
       );
 
-      return (
-        result,
-        user.copyWith(
-          token: currentToken,
-        )
-      );
+      return (result, user.copyWith(token: currentToken));
     } else {
       final message = decoded.containsKey('message')
           ? decoded['message']
@@ -151,6 +147,10 @@ class UserRemoteDatasource {
     required String sim1Number,
     required String sim2Number,
   }) async {
+    if (machineIds.isEmpty) {
+      return;
+    }
+
     switch (machineSimSlot) {
       case WhatSIMHasBeenChanged.sim1:
       case WhatSIMHasBeenChanged.sim2:
@@ -381,7 +381,6 @@ class UserNotifier extends StateNotifier<UserState> {
         user: state.user?.copyWith(
           username: form.username,
           name: form.name,
-          countryCode: form.countryCode,
           sim1: form.sim1,
           sim2: form.sim2,
         ),

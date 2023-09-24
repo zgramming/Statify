@@ -23,12 +23,25 @@ class MachineRemoteDatasource {
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final list = decoded['data'] as List;
-      final machines = list.map((e) async {
+
+      // final machines = list.map((e) async {
+      //   final result = MachineModel.fromJson(e);
+      //   log("summary: $result");
+      //   final summary = await getSummary(result.id);
+      //   return result.copyWith(summary: summary);
+      // }).toList();
+      // return Future.wait(machines);
+      final machines = list.map((e) {
         final result = MachineModel.fromJson(e);
-        final summary = await getSummary(result.id);
-        return result.copyWith(summary: summary);
+        return result;
       }).toList();
-      return Future.wait(machines);
+
+      for (final machine in machines) {
+        final summary = await getSummary(machine.id);
+        machine.copyWith(summary: summary);
+      }
+
+      return machines;
     } else {
       final message = decoded.containsKey('message')
           ? decoded['message']

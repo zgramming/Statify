@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +29,6 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _usernameController;
   late final TextEditingController _nameController;
-  late final TextEditingController _countryCodeController;
   late final TextEditingController _sim1Controller;
   late final TextEditingController _sim2Controller;
 
@@ -39,7 +40,6 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
     super.initState();
     _usernameController = TextEditingController();
     _nameController = TextEditingController();
-    _countryCodeController = TextEditingController();
     _sim1Controller = TextEditingController();
     _sim2Controller = TextEditingController();
 
@@ -53,7 +53,6 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
   void dispose() {
     _usernameController.dispose();
     _nameController.dispose();
-    _countryCodeController.dispose();
     _sim1Controller.dispose();
     _sim2Controller.dispose();
     super.dispose();
@@ -62,14 +61,26 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
   Future<void> onSubmit() async {
     final validate = _formKey.currentState?.validate() ?? false;
     if (!validate) return;
+    final currentSIM1 = _sim1Controller.text;
+    final currentSIM2 = _sim2Controller.text;
+
+    // Minimum SIM 1 or SIM 2 must be filled
+    if (currentSIM1.isEmpty && currentSIM2.isEmpty) {
+      showSnackbar(
+        context: context,
+        message: "Minimum SIM 1 or SIM 2 must be filled",
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
+
     final notifier = ref.read(userNotifier.notifier);
     final machines = ref.read(machineNotifier).items;
     FormUserUpdateModel form = FormUserUpdateModel(
       username: _usernameController.text,
       name: _nameController.text,
-      countryCode: _countryCodeController.text,
-      sim1: _sim1Controller.text,
-      sim2: _sim2Controller.text,
+      sim1: currentSIM1,
+      sim2: currentSIM2,
       machineIds: const [],
       machineSimSlot: WhatSIMHasBeenChanged.none,
     );
@@ -104,6 +115,8 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
         );
       }
 
+      log("form  $form");
+
       await notifier.update(
         id: widget.id,
         form: form,
@@ -119,7 +132,7 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
 
   @override
   Widget build(BuildContext context) {
-// Listen to userNotifier.onUpdate
+    // Listen to userNotifier.onUpdate
     ref.listen(
       userNotifier.select((value) => value.onUpdate),
       (previous, next) {
@@ -162,7 +175,6 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
           if (value == null) return;
           _usernameController.text = value.username ?? "";
           _nameController.text = value.name ?? "";
-          _countryCodeController.text = value.countryCode ?? "";
           _sim1Controller.text = value.sim1 ?? "";
           _sim2Controller.text = value.sim2 ?? "";
 
@@ -179,6 +191,7 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
         builder: (context) {
           return userAsync.when(
             data: (data) {
+              log("data $data");
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Form(
@@ -197,9 +210,10 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
                               controller: _usernameController,
                               style: bodyFont.copyWith(fontSize: 14.0),
                               decoration: inputDecorationRounded().copyWith(
-                                border: const UnderlineInputBorder(),
+                                hintText: "Enter username",
+                                border: const OutlineInputBorder(),
                                 fillColor: Colors.transparent,
-                                contentPadding: EdgeInsets.zero,
+                                contentPadding: const EdgeInsets.all(8),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -216,32 +230,14 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
                               controller: _nameController,
                               style: bodyFont.copyWith(fontSize: 14.0),
                               decoration: inputDecorationRounded().copyWith(
-                                border: const UnderlineInputBorder(),
+                                hintText: "Enter name",
+                                border: const OutlineInputBorder(),
                                 fillColor: Colors.transparent,
-                                contentPadding: EdgeInsets.zero,
+                                contentPadding: const EdgeInsets.all(8),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "Name is required";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          FormBodyRow(
-                            title: "Country Code",
-                            child: TextFormField(
-                              controller: _countryCodeController,
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                              decoration: inputDecorationRounded().copyWith(
-                                border: const UnderlineInputBorder(),
-                                fillColor: Colors.transparent,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Country Code is required";
                                 }
                                 return null;
                               },
@@ -255,16 +251,11 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
                               keyboardType: TextInputType.number,
                               style: bodyFont.copyWith(fontSize: 14.0),
                               decoration: inputDecorationRounded().copyWith(
-                                border: const UnderlineInputBorder(),
+                                hintText: "Enter SIM 1",
+                                border: const OutlineInputBorder(),
                                 fillColor: Colors.transparent,
-                                contentPadding: EdgeInsets.zero,
+                                contentPadding: const EdgeInsets.all(8),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Sim 1 is required";
-                                }
-                                return null;
-                              },
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -275,16 +266,11 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
                               keyboardType: TextInputType.number,
                               style: bodyFont.copyWith(fontSize: 14.0),
                               decoration: inputDecorationRounded().copyWith(
-                                border: const UnderlineInputBorder(),
+                                hintText: "Enter SIM 2",
+                                border: const OutlineInputBorder(),
                                 fillColor: Colors.transparent,
-                                contentPadding: EdgeInsets.zero,
+                                contentPadding: const EdgeInsets.all(8),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Sim 2 is required";
-                                }
-                                return null;
-                              },
                             ),
                           ),
                           const SizedBox(height: 20),

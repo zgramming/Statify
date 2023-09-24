@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'dart:developer';
 
@@ -17,6 +18,7 @@ import '../../model/helper/form/form_temporary_pending_response_create.model.dar
 import '../../model/send_sms_model.dart';
 import '../../model/survey/survey.model.dart';
 import '../../model/survey/survey_pending.model.dart';
+import '../../model/survey/survey_summary.model.dart';
 import '../local/temporary_pending_response_local_datasource.dart';
 import 'survey_setting_remote_datasource.dart';
 
@@ -104,6 +106,32 @@ class SurveyRemoteDatasource {
       final message = decodedData.containsKey('message')
           ? decodedData['message']
           : 'Failed to get survey';
+      throw Exception(message);
+    }
+  }
+
+  Future<List<SurveySummaryModel>> getVotingSummary({
+    required String surveyId,
+  }) async {
+    final uri = Uri.parse(
+      "$kBaseApiUrl/surveys/$surveyId/voting-summary",
+    );
+    final response = await client.get(uri);
+
+    final body = response.body;
+    final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decodedData['data'];
+
+    if (response.statusCode == 200) {
+      final list = data as List<dynamic>;
+      final result = List<SurveySummaryModel>.from(
+        list.map((x) => SurveySummaryModel.fromJson(x)),
+      );
+      return result;
+    } else {
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to get survey summary';
       throw Exception(message);
     }
   }
@@ -421,6 +449,19 @@ class SurveyRepository {
     }
   }
 
+  Future<Either<Failure, List<SurveySummaryModel>>> getVotingSummary({
+    required String surveyId,
+  }) async {
+    try {
+      final result = await remoteDatasource.getVotingSummary(
+        surveyId: surveyId,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
   Future<Either<Failure, SurveyModel>> create({
     required String machineId,
     required FormSurveyCreateOrUpdateModel form,
@@ -512,6 +553,7 @@ class SurveyState extends Equatable {
   final AsyncValue<List<SurveyModel>?> onGetAll;
   final AsyncValue<SurveyModel?> onGetById;
   final AsyncValue<SurveyModel?> onGetByNumber;
+  final AsyncValue<List<SurveySummaryModel>?> onGetVotingSummary;
   final AsyncValue<SurveyModel?> onCreate;
   final AsyncValue<SurveyModel?> onUpdate;
   final AsyncValue<SurveyModel?> onActive;
@@ -523,6 +565,7 @@ class SurveyState extends Equatable {
     this.onGetAll = const AsyncData(null),
     this.onGetById = const AsyncData(null),
     this.onGetByNumber = const AsyncData(null),
+    this.onGetVotingSummary = const AsyncData(null),
     this.onCreate = const AsyncData(null),
     this.onUpdate = const AsyncData(null),
     this.onActive = const AsyncData(null),
@@ -537,6 +580,7 @@ class SurveyState extends Equatable {
       onGetAll,
       onGetById,
       onGetByNumber,
+      onGetVotingSummary,
       onCreate,
       onUpdate,
       onActive,
@@ -553,6 +597,7 @@ class SurveyState extends Equatable {
     AsyncValue<List<SurveyModel>?>? onGetAll,
     AsyncValue<SurveyModel?>? onGetById,
     AsyncValue<SurveyModel?>? onGetByNumber,
+    AsyncValue<List<SurveySummaryModel>?>? onGetVotingSummary,
     AsyncValue<SurveyModel?>? onCreate,
     AsyncValue<SurveyModel?>? onUpdate,
     AsyncValue<SurveyModel?>? onActive,
@@ -564,6 +609,7 @@ class SurveyState extends Equatable {
       onGetAll: onGetAll ?? this.onGetAll,
       onGetById: onGetById ?? this.onGetById,
       onGetByNumber: onGetByNumber ?? this.onGetByNumber,
+      onGetVotingSummary: onGetVotingSummary ?? this.onGetVotingSummary,
       onCreate: onCreate ?? this.onCreate,
       onUpdate: onUpdate ?? this.onUpdate,
       onActive: onActive ?? this.onActive,
@@ -647,6 +693,30 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
       (data) {
         return state = state.copyWith(
           onGetByNumber: AsyncData(data),
+        );
+      },
+    );
+  }
+
+  Future<SurveyState> getVotingSummary({
+    required String surveyId,
+  }) async {
+    state = state.copyWith(
+      onGetVotingSummary: const AsyncLoading(),
+    );
+    final result = await repository.getVotingSummary(
+      surveyId: surveyId,
+    );
+
+    return result.fold(
+      (failure) {
+        return state = state.copyWith(
+          onGetVotingSummary: AsyncError(failure.message, StackTrace.current),
+        );
+      },
+      (data) {
+        return state = state.copyWith(
+          onGetVotingSummary: AsyncData(data),
         );
       },
     );

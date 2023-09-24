@@ -87,23 +87,15 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
     );
   }
 
-  Future<void> delete(
-    String machineWhatsappId, {
-    required VoidCallback onLoading,
-    required void Function(String message) onError,
-    required void Function(MachineWhatsappDeleteResponseModel data) onSuccess,
-  }) async {
-    onLoading();
+  Future<MachineWhatsappState> delete(String machineWhatsappId) async {
     final result = await repository.delete(machineWhatsappId);
 
-    result.fold(
+    return result.fold(
       (failure) {
-        onError(failure.message);
         return state = MachineWhatsappState(
             onDelete: AsyncError(failure.message, StackTrace.current));
       },
       (data) {
-        onSuccess(data);
         return state = MachineWhatsappState(onDelete: AsyncData(data));
       },
     );

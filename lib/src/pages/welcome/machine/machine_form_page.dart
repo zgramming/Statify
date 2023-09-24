@@ -202,7 +202,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Form Mesin"),
+          title: const Text("Form Machine"),
         ),
         body: Builder(builder: (context) {
           return machine.when(
@@ -226,9 +226,10 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                                 controller: _nameController,
                                 style: bodyFont.copyWith(fontSize: 14.0),
                                 decoration: inputDecorationRounded().copyWith(
-                                  border: const UnderlineInputBorder(),
+                                  hintText: "Machine Name",
+                                  border: const OutlineInputBorder(),
                                   fillColor: Colors.transparent,
-                                  contentPadding: EdgeInsets.zero,
+                                  contentPadding: const EdgeInsets.all(8),
                                 ),
                               ),
                             ),
@@ -245,10 +246,13 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                                   });
                                 },
                                 decoration: inputDecorationRounded().copyWith(
-                                  hintText: "Choose Sim",
-                                  contentPadding: EdgeInsets.zero,
+                                  hintText: "Choose SIM",
+                                  border: const OutlineInputBorder(),
                                   fillColor: Colors.transparent,
-                                  border: const UnderlineInputBorder(),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                 ),
                                 items: availableSim
                                     .map(
@@ -273,9 +277,10 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                                 controller: _serialNumberController,
                                 style: bodyFont.copyWith(fontSize: 14.0),
                                 decoration: inputDecorationRounded().copyWith(
-                                  border: const UnderlineInputBorder(),
+                                  border: const OutlineInputBorder(),
                                   fillColor: Colors.transparent,
-                                  contentPadding: EdgeInsets.zero,
+                                  contentPadding: const EdgeInsets.all(8),
+                                  hintText: "Serial Number",
                                 ),
                               ),
                             ),
@@ -287,9 +292,10 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                                 style: bodyFont.copyWith(fontSize: 14.0),
                                 keyboardType: TextInputType.phone,
                                 decoration: inputDecorationRounded().copyWith(
-                                  border: const UnderlineInputBorder(),
+                                  border: const OutlineInputBorder(),
                                   fillColor: Colors.transparent,
-                                  contentPadding: EdgeInsets.zero,
+                                  contentPadding: const EdgeInsets.all(8),
+                                  hintText: "Activation License",
                                 ),
                               ),
                             ),

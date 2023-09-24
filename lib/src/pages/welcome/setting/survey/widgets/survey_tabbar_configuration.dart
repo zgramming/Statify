@@ -50,60 +50,65 @@ class SurveyTabBarConfigurationState
           return DefaultTabController(
             length: settings.length,
             initialIndex: selectedIndex,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
+            child: Card(
+              elevation: 5,
+              margin: EdgeInsets.zero,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: TabBar(
+                        onTap: (value) => setState(() => selectedIndex = value),
+                        labelStyle: bodyFont.copyWith(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        unselectedLabelColor: Colors.blue,
+                        indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(60.0),
+                          color: Colors.blue,
+                        ),
+                        tabs: settings
+                            .map((e) =>
+                                Tab(text: e.platform.valueStringReadable))
+                            .toList(),
+                      ),
                     ),
-                    child: TabBar(
-                      onTap: (value) => setState(() => selectedIndex = value),
-                      labelStyle: bodyFont.copyWith(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      unselectedLabelColor: Colors.blue,
-                      indicator: BoxDecoration(
-                        borderRadius: BorderRadius.circular(60.0),
-                        color: Colors.blue,
-                      ),
-                      tabs: settings
-                          .map((e) => Tab(text: e.platform.valueStringReadable))
+                    IndexedStack(
+                      index: selectedIndex,
+                      children: settings
+                          .map(
+                            (e) => Builder(
+                              builder: (context) {
+                                if (e.platform ==
+                                    MachineResponsePlatformEnum.sms) {
+                                  return SurveyTabBarViewCategory(
+                                    surveyId: widget.surveyId,
+                                    idSetting: e.id,
+                                    isSMSBot: true,
+                                  );
+                                } else {
+                                  return SurveyTabBarViewCategory(
+                                    surveyId: widget.surveyId,
+                                    idSetting: e.id,
+                                    isSMSBot: false,
+                                  );
+                                }
+                              },
+                            ),
+                          )
                           .toList(),
                     ),
-                  ),
-                  IndexedStack(
-                    index: selectedIndex,
-                    children: settings
-                        .map(
-                          (e) => Builder(
-                            builder: (context) {
-                              if (e.platform ==
-                                  MachineResponsePlatformEnum.sms) {
-                                return SurveyTabBarViewCategory(
-                                  surveyId: widget.surveyId,
-                                  idSetting: e.id,
-                                  isSMSBot: true,
-                                );
-                              } else {
-                                return SurveyTabBarViewCategory(
-                                  surveyId: widget.surveyId,
-                                  idSetting: e.id,
-                                  isSMSBot: false,
-                                );
-                              }
-                            },
-                          ),
-                        )
-                        .toList(),
-                  ),
-                  const SizedBox(height: 100),
-                ],
+                    const SizedBox(height: 100),
+                  ],
+                ),
               ),
             ),
           );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../utils/constant.dart';
 import '../../view_model/custom_notifier/request_permission_notifier.dart';
 import '../widgets/async_error_builder.dart';
 import 'home/home_page.dart';
@@ -21,36 +22,69 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
 
   final _destinations = <NavigationDestination>[
     NavigationDestination(
-      icon: Icon(Icons.home_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.home, color: Colors.white),
-      label: "Home",
+      icon: Image.asset(
+        "$kURLImageAsset/tower_outline.png",
+        width: 24,
+        height: 24,
+      ),
+      selectedIcon: Image.asset(
+        "$kURLImageAsset/tower.png",
+        width: 24,
+        height: 24,
+      ),
+      label: "Machine",
     ),
     NavigationDestination(
-      icon: Icon(Icons.phone_outlined, color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.phone, color: Colors.white),
+      icon: Image.asset(
+        "$kURLImageAsset/wa_business_outline.png",
+        width: 24,
+        height: 24,
+      ),
+      selectedIcon: Image.asset(
+        "$kURLImageAsset/wa_business.png",
+        width: 24,
+        height: 24,
+      ),
       label: "Whatsapp",
     ),
     NavigationDestination(
-      icon: Icon(Icons.assignment_ind_outlined,
-          color: Colors.grey.withOpacity(.5)),
-      selectedIcon: const Icon(Icons.assignment_ind, color: Colors.white),
+      icon: Image.asset(
+        "$kURLImageAsset/survey_outline.png",
+        width: 24,
+        height: 24,
+      ),
+      selectedIcon: Image.asset(
+        "$kURLImageAsset/survey.png",
+        width: 24,
+        height: 24,
+      ),
       label: "Survey",
     ),
     NavigationDestination(
-      icon: Icon(
-        Icons.accessibility_new_outlined,
-        color: Colors.grey.withOpacity(.5),
+      icon: Image.asset(
+        "$kURLImageAsset/distance_outline.png",
+        width: 24,
+        height: 24,
       ),
-      selectedIcon: const Icon(Icons.accessibility_new, color: Colors.white),
+      selectedIcon: Image.asset(
+        "$kURLImageAsset/distance.png",
+        width: 24,
+        height: 24,
+      ),
       label: "L.D.A",
     ),
     NavigationDestination(
-      icon: Icon(
-        Icons.settings_outlined,
-        color: Colors.grey.withOpacity(.5),
+      icon: Image.asset(
+        "$kURLImageAsset/setting_outline.png",
+        width: 24,
+        height: 24,
       ),
-      selectedIcon: const Icon(Icons.settings, color: Colors.white),
-      label: "Setting",
+      selectedIcon: Image.asset(
+        "$kURLImageAsset/setting.png",
+        width: 24,
+        height: 24,
+      ),
+      label: "Admin",
     ),
   ];
 

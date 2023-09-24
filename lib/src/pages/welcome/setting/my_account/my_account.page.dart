@@ -13,7 +13,7 @@ class MyAccountPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userNotifier).user;
+    final userId = ref.watch(userNotifier.select((value) => value.user?.id));
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -33,7 +33,7 @@ class MyAccountPage extends ConsumerWidget {
                       context.pushNamed(
                         routeMyAccountFormPage,
                         pathParameters: {
-                          "id": user?.id ?? "",
+                          "id": "$userId",
                         },
                       );
                     },

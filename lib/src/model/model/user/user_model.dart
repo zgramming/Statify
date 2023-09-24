@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -11,28 +12,24 @@ class UserModel extends Equatable {
   final String? email;
   final String? username;
   final String? name;
-  final String? countryCode;
-  @JsonKey(name: "sim_1")
+  @JsonKey(name: 'sim_1')
   final String? sim1;
-  @JsonKey(name: "sim_2")
+  @JsonKey(name: 'sim_2')
   final String? sim2;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? token;
-  final List<UserRoleModel> roles;
 
   const UserModel({
     required this.id,
     required this.email,
     required this.username,
     required this.name,
-    this.countryCode,
     this.sim1,
     this.sim2,
     required this.createdAt,
     required this.updatedAt,
     this.token,
-    required this.roles,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -48,13 +45,11 @@ class UserModel extends Equatable {
       email,
       username,
       name,
-      countryCode,
       sim1,
       sim2,
       createdAt,
       updatedAt,
       token,
-      roles,
     ];
   }
 
@@ -66,51 +61,22 @@ class UserModel extends Equatable {
     String? email,
     String? username,
     String? name,
-    String? countryCode,
     String? sim1,
     String? sim2,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? token,
-    List<UserRoleModel>? roles,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       username: username ?? this.username,
       name: name ?? this.name,
-      countryCode: countryCode ?? this.countryCode,
       sim1: sim1 ?? this.sim1,
       sim2: sim2 ?? this.sim2,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       token: token ?? this.token,
-      roles: roles ?? this.roles,
     );
   }
-}
-
-@JsonSerializable(
-  fieldRename: FieldRename.snake,
-)
-class UserRoleModel {
-  final String id;
-  final String name;
-  final String label;
-  final String pivotUserId;
-  final String pivotRoleId;
-
-  UserRoleModel({
-    required this.id,
-    required this.name,
-    required this.label,
-    required this.pivotUserId,
-    required this.pivotRoleId,
-  });
-
-  factory UserRoleModel.fromJson(Map<String, dynamic> json) =>
-      _$UserRoleModelFromJson(json);
-
-  /// Connect the generated [_$UserRoleModelToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$UserRoleModelToJson(this);
 }

@@ -16,6 +16,7 @@ import '../../../router.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
+import '../../../utils/styles.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../../view_model/custom_notifier/log_listen_pending_response.notifier.dart';
@@ -23,6 +24,7 @@ import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
+import '../../widgets/dialog_confirmation_delete.dart';
 import '../../widgets/row_body.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -40,6 +42,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       _subscriptionTemporaryPendingResponse;
 
   final eventChannelUtils = EventChannelUtils();
+
+  void onAdd() {
+    context.pushNamed(routeMachineForm, pathParameters: {
+      "id": "-1",
+    });
+  }
 
   Future<void> deleteTemporaryPendingResponse({
     required String surveyRespondenId,
@@ -190,7 +198,6 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   void dispose() {
-    log("DISPOSE AT HOME PAGE");
     _subscriptionSentMessage?.cancel();
     _subscriptionIncomingMessage?.cancel();
     _subscriptionIncomingCall?.cancel();
@@ -200,68 +207,121 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final machinesAsync = ref.watch(getAllMachineFutureProvider);
+    final isEmptyAvailableSIM = ref.watch(CustomProvider.isEmptyAvailableSIM);
+    final userId = ref.watch(userNotifier.select((value) => value.user?.id));
+    if (isEmptyAvailableSIM) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                "No Available SIM, Please Update SIM 1 / SIM 2 in User Profile",
+                style: headerFont.copyWith(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8.0),
+              ElevatedButton(
+                onPressed: () {
+                  context.pushNamed(
+                    routeMyAccountFormPage,
+                    pathParameters: {
+                      "id": "$userId",
+                    },
+                  );
+                },
+                child: const Text("Update SIM 1 / SIM 2"),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
+    final machinesAsync =
+        ref.watch(getAllMachineFutureProvider).unwrapPrevious();
     return machinesAsync.when(
       data: (data) {
         final machines = data.items;
-        if (machines.isEmpty) {
-          return Center(
-            child: Text(
-              "No Machine",
-              style: headerFont.copyWith(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          );
-        }
 
-        return Column(
+        return Stack(
           children: [
-            const CustomAppbar(title: "Home"),
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     // Get file from folder asset
-            //     // final file = await rootBundle.load(kURLLogoHitech);
-            //     // final fileBytes = file.buffer.asUint8List();
+            Column(
+              children: [
+                const CustomAppbar(title: "Machine List"),
+                // ElevatedButton(
+                //   onPressed: () async {
+                //     // Get file from folder asset
+                //     // final file = await rootBundle.load(kURLLogoHitech);
+                //     // final fileBytes = file.buffer.asUint8List();
 
-            //     final methodChannel = MethodChannelUtils();
-            //     const number = "085159412440";
-            //     // const number = "089517229249";
-            //     // const message =
-            //     //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
-            //     // const message =
-            //     //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
-            //     const message = "ok";
-            //     const model = SendSMSModel(
-            //       phoneNumber: number,
-            //       message: message,
-            //       simSlot: 0,
-            //       surveyResponseId: "",
-            //     );
-            //     await methodChannel.sendSMS(model);
-            //   },
-            //   child: const Text("Send SMS"),
-            // ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  ref.invalidate(getAllMachineFutureProvider);
-                },
-                child: ListView.separated(
-                  itemCount: machines.length,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(16.0),
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final item = machines[index];
-                    return _MachineItem(item: item, index: index);
-                  },
+                //     final methodChannel = MethodChannelUtils();
+                //     const number = "085159412440";
+                //     // const number = "089517229249";
+                //     // const message =
+                //     //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
+                //     // const message =
+                //     //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
+                //     const message = "ok";
+                //     const model = SendSMSModel(
+                //       phoneNumber: number,
+                //       message: message,
+                //       simSlot: 0,
+                //       surveyResponseId: "",
+                //     );
+                //     await methodChannel.sendSMS(model);
+                //   },
+                //   child: const Text("Send SMS"),
+                // ),
+                Expanded(
+                  child: Builder(builder: (context) {
+                    if (machines.isEmpty) {
+                      return Center(
+                        child: Text(
+                          "No Machine Found, Please Add Machine",
+                          style: headerFont.copyWith(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }
+
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        ref.invalidate(getAllMachineFutureProvider);
+                      },
+                      child: ListView.separated(
+                        itemCount: machines.length,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(16.0),
+                        separatorBuilder: (context, index) => const Divider(),
+                        itemBuilder: (context, index) {
+                          final item = machines[index];
+                          return _MachineItem(item: item, index: index);
+                        },
+                      ),
+                    );
+                  }),
                 ),
-              ),
+              ],
             ),
+            Positioned(
+              bottom: 10,
+              right: 10,
+              child: FloatingActionButton(
+                onPressed: onAdd,
+                child: const Icon(Icons.add),
+              ),
+            )
           ],
         );
       },
@@ -308,10 +368,48 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     );
   }
 
-  @override
-  void dispose() {
-    log("DISPOSE AT MACHINE ITEM");
-    super.dispose();
+  Future<void> onSelected(String value, MachineModel item) async {
+    final notifier = ref.read(machineNotifier.notifier);
+    switch (value) {
+      case "delete":
+        showDialog(
+          context: context,
+          builder: (context) => DialogDeleteConfirmation(
+            onConfirm: () async {
+              final result = await notifier.delete(machineId: item.id);
+              result.onDelete.whenOrNull(
+                data: (data) {
+                  if (data == null) return;
+
+                  // close modal dialog
+                  context.pop();
+
+                  showSnackbar(
+                    context: context,
+                    message: "Delete Machine ${data.name} Success",
+                    backgroundColor: Colors.green,
+                  );
+
+                  ref.invalidate(getAllMachineFutureProvider);
+                },
+                error: (error, stackTrace) {
+                  showSnackbar(
+                    context: context,
+                    message: error.toString(),
+                    backgroundColor: Colors.red,
+                  );
+                },
+              );
+            },
+          ),
+        );
+        break;
+
+      case "edit":
+        onTapMachine();
+        break;
+      default:
+    }
   }
 
   @override
@@ -336,128 +434,158 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
 
     return streamAsync.when(
       data: (_) {
-        return Card(
-          margin: const EdgeInsets.only(),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RowBody(
-                  title: "Machine",
-                  content: item.name,
-                  titleFlex: 1,
-                  contentFlex: 1,
-                ),
-                const SizedBox(height: 8.0),
-                RowBody(
-                  title: "Machine Phone Number",
-                  content: "$sim1ORsim2 (${item.number})",
-                  titleFlex: 1,
-                  contentFlex: 1,
-                ),
-                const SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        return Stack(
+          children: [
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: const BorderSide(color: Colors.grey, width: 1.0),
+              ),
+              margin: const EdgeInsets.only(),
+              child: InkWell(
+                onTap: onTapMachine,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      RowBody(
+                        title: "Machine",
+                        content: item.name,
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      const SizedBox(height: 8.0),
+                      RowBody(
+                        title: "Machine Phone Number",
+                        content: sim1ORsim2,
+                        titleFlex: 1,
+                        contentFlex: 1,
+                      ),
+                      const SizedBox(height: 16.0),
+                      Row(
                         children: [
-                          CircleIndexNumber(
-                              radius: radius, index: widget.index),
-                          const SizedBox(height: 8.0),
-                          InkWell(
-                            onTap: onTapExport,
-                            child: CircleAvatar(
-                              radius: radius,
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.upload_rounded,
-                                    size: radius,
-                                  ),
-                                  FittedBox(
-                                    child: Text(
-                                      "API Export",
-                                      style: bodyFont.copyWith(
-                                        fontSize: 8.0,
-                                        color: Colors.white,
-                                      ),
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircleIndexNumber(
+                                    radius: radius, index: widget.index),
+                                const SizedBox(height: 8.0),
+                                ElevatedButton(
+                                  onPressed: onTapExport,
+                                  style: elevatedButtonStyle(
+                                    padding: const EdgeInsets.all(
+                                      8.0,
                                     ),
                                   ),
-                                ],
-                              ),
+                                  child: const Text("API Export"),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 8,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RowBody(
+                                  title: "Total Responden",
+                                  content: "${item.summary?.totalReplied ?? 0}",
+                                  titleFlex: 1,
+                                  contentFlex: 1,
+                                  titleTrailing: const [
+                                    Icon(
+                                      Icons.download,
+                                      color: Colors.green,
+                                      size: 16.0,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                                RowBody(
+                                  title: "Total SMS Sent",
+                                  content: "${item.summary?.totalSent ?? 0}",
+                                  titleFlex: 1,
+                                  contentFlex: 1,
+                                  titleTrailing: const [
+                                    Icon(
+                                      Icons.download,
+                                      color: Colors.green,
+                                      size: 16.0,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                                RowBody(
+                                  title: "Total Voted",
+                                  content: "${item.summary?.totalVoted ?? 0}",
+                                  titleFlex: 1,
+                                  contentFlex: 1,
+                                  titleTrailing: const [
+                                    Icon(
+                                      Icons.download,
+                                      color: Colors.green,
+                                      size: 16.0,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                                RowBody(
+                                  title: "Total Finished",
+                                  content:
+                                      "${item.summary?.totalFinished ?? 0}",
+                                  titleFlex: 1,
+                                  contentFlex: 1,
+                                  titleTrailing: const [
+                                    Icon(
+                                      Icons.download,
+                                      color: Colors.green,
+                                      size: 16.0,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           )
                         ],
                       ),
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RowBody(
-                            title: "Total SMS Sent",
-                            content: "${item.summary?.totalSent}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          RowBody(
-                            title: "Total Replied",
-                            content: "${item.summary?.totalReplied}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          RowBody(
-                            title: "Total Finished",
-                            content: "${item.summary?.totalFinished}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          RowBody(
-                            title: "Total Voted",
-                            content: "${item.summary?.totalVoted}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          const RowBody(
-                            title: "Total Choose 1",
-                            content: '-',
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          const RowBody(
-                            title: "Total Choose 2",
-                            content: '-',
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                          const SizedBox(height: 8.0),
-                          const RowBody(
-                            title: "Total Choose 3",
-                            content: '-',
-                            titleFlex: 1,
-                            contentFlex: 1,
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: PopupMenuButton<String>(
+                onSelected: (value) => onSelected(value, widget.item),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: "edit",
+                    child: Text(
+                      "Edit",
+                      style: bodyFont.copyWith(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: "delete",
+                    child: Text(
+                      "Delete",
+                      style: bodyFont.copyWith(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         );
       },
       error: (error, stackTrace) {

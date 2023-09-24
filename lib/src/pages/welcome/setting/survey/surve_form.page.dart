@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -212,160 +210,182 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                       padding: const EdgeInsets.all(16.0),
                       child: Form(
                         key: _formKey,
-                        child: Card(
-                          margin: EdgeInsets.zero,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const SizedBox(height: 20),
-                                FormBodyRow(
-                                  title: "Choose Machine",
-                                  child: DropdownButtonFormField<
-                                      MachineDropdownModel>(
-                                    value: _selectedMachine,
-                                    onChanged: (value) {
-                                      if (value == null) return;
-                                      setState(() {
-                                        _selectedMachine = value;
-                                      });
-                                    },
-                                    decoration:
-                                        inputDecorationRounded().copyWith(
-                                      contentPadding: EdgeInsets.zero,
-                                      fillColor: Colors.transparent,
-                                      border: const UnderlineInputBorder(),
-                                    ),
-                                    items: machines
-                                        .map((e) => MachineDropdownModel(
-                                            id: e.id, name: e.name))
-                                        .map(
-                                          (e) => DropdownMenuItem(
-                                            value: e,
-                                            child: Text(e.name),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Card(
+                              elevation: 5,
+                              margin: EdgeInsets.zero,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    FormBodyRow(
+                                      title: "Choose Machine",
+                                      child: DropdownButtonFormField<
+                                          MachineDropdownModel>(
+                                        value: _selectedMachine,
+                                        onChanged: (value) {
+                                          if (value == null) return;
+                                          setState(() {
+                                            _selectedMachine = value;
+                                          });
+                                        },
+                                        decoration:
+                                            inputDecorationRounded().copyWith(
+                                          hintText: "Choose machine",
+                                          border: const OutlineInputBorder(),
+                                          fillColor: Colors.transparent,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
                                           ),
-                                        )
-                                        .toList(),
-                                    validator: (value) {
-                                      if (value == null) {
-                                        return "Please select machine";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                FormBodyRow(
-                                  title: "Name",
-                                  child: TextFormField(
-                                    controller: _nameController,
-                                    style: bodyFont.copyWith(fontSize: 14.0),
-                                    decoration:
-                                        inputDecorationRounded().copyWith(
-                                      border: const UnderlineInputBorder(),
-                                      fillColor: Colors.transparent,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Name Should not be empty";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                FormBodyRow(
-                                  title: "Action",
-                                  child: DropdownButtonFormField<
-                                      MachineActionEnum>(
-                                    value: selectedAction,
-                                    onChanged: (value) {
-                                      if (value == null) return;
-                                      setState(() {
-                                        selectedAction = value;
-                                      });
-                                    },
-                                    decoration:
-                                        inputDecorationRounded().copyWith(
-                                      hintText: "Choose Template",
-                                      contentPadding: EdgeInsets.zero,
-                                      fillColor: Colors.transparent,
-                                      border: const UnderlineInputBorder(),
-                                    ),
-                                    items: MachineActionEnum.values
-                                        .map(
-                                          (e) => DropdownMenuItem(
-                                            value: e,
-                                            child: Text(
-                                              e.valueStringReadable,
-                                              style: bodyFont.copyWith(
-                                                fontSize: 14.0,
+                                        ),
+                                        items: machines
+                                            .map((e) => MachineDropdownModel(
+                                                id: e.id, name: e.name))
+                                            .map(
+                                              (e) => DropdownMenuItem(
+                                                value: e,
+                                                child: Text(e.name),
                                               ),
-                                            ),
-                                          ),
-                                        )
-                                        .toList(),
-                                    validator: (value) {
-                                      if (value == null) {
-                                        return "Action Should not be empty";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                //  Only show template if create
-                                if (!isEdit) ...[
-                                  const SizedBox(height: 20),
-                                  FormBodyRow(
-                                    title: "Template",
-                                    child: DropdownButtonFormField<
-                                        SurveyTemplateEnum>(
-                                      value: selectedTemplate,
-                                      onChanged: (value) {
-                                        if (value == null) return;
-                                        setState(() {
-                                          selectedTemplate = value;
-                                        });
-                                      },
-                                      decoration:
-                                          inputDecorationRounded().copyWith(
-                                        hintText: "Choose Template",
-                                        contentPadding: EdgeInsets.zero,
-                                        fillColor: Colors.transparent,
-                                        border: const UnderlineInputBorder(),
+                                            )
+                                            .toList(),
+                                        validator: (value) {
+                                          if (value == null) {
+                                            return "Please select machine";
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                      items: SurveyTemplateEnum.values
-                                          .map(
-                                            (e) => DropdownMenuItem(
-                                              value: e,
-                                              child: Text(
-                                                e.valueStringReadable,
-                                                style: bodyFont.copyWith(
-                                                  fontSize: 14.0,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    FormBodyRow(
+                                      title: "Name",
+                                      child: TextFormField(
+                                        controller: _nameController,
+                                        style:
+                                            bodyFont.copyWith(fontSize: 14.0),
+                                        decoration:
+                                            inputDecorationRounded().copyWith(
+                                          hintText: "Enter name",
+                                          border: const OutlineInputBorder(),
+                                          fillColor: Colors.transparent,
+                                          contentPadding:
+                                              const EdgeInsets.all(8),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Name Should not be empty";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    FormBodyRow(
+                                      title: "Action",
+                                      child: DropdownButtonFormField<
+                                          MachineActionEnum>(
+                                        value: selectedAction,
+                                        onChanged: (value) {
+                                          if (value == null) return;
+                                          setState(() {
+                                            selectedAction = value;
+                                          });
+                                        },
+                                        decoration:
+                                            inputDecorationRounded().copyWith(
+                                          hintText: "Choose Action",
+                                          border: const OutlineInputBorder(),
+                                          fillColor: Colors.transparent,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                        ),
+                                        items: MachineActionEnum.values
+                                            .map(
+                                              (e) => DropdownMenuItem(
+                                                value: e,
+                                                child: Text(
+                                                  e.valueStringReadable,
+                                                  style: bodyFont.copyWith(
+                                                    fontSize: 14.0,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          )
-                                          .toList(),
-                                      validator: (value) {
-                                        if (value == null) {
-                                          return "Template Should not be empty";
-                                        }
-                                        return null;
-                                      },
+                                            )
+                                            .toList(),
+                                        validator: (value) {
+                                          if (value == null) {
+                                            return "Action Should not be empty";
+                                          }
+                                          return null;
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
-
-                                if (isEdit) ...[
-                                  const SizedBox(height: 20),
-                                  SurveyTabBarConfiguration(surveyId: widget.id)
-                                ],
-                              ],
+                                    if (!isEdit) ...[
+                                      const SizedBox(height: 20),
+                                      FormBodyRow(
+                                        title: "Template",
+                                        child: DropdownButtonFormField<
+                                            SurveyTemplateEnum>(
+                                          value: selectedTemplate,
+                                          onChanged: (value) {
+                                            if (value == null) return;
+                                            setState(() {
+                                              selectedTemplate = value;
+                                            });
+                                          },
+                                          decoration:
+                                              inputDecorationRounded().copyWith(
+                                            hintText: "Choose Template",
+                                            border: const OutlineInputBorder(),
+                                            fillColor: Colors.transparent,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                          ),
+                                          items: SurveyTemplateEnum.values
+                                              .map(
+                                                (e) => DropdownMenuItem(
+                                                  value: e,
+                                                  child: Text(
+                                                    e.valueStringReadable,
+                                                    style: bodyFont.copyWith(
+                                                      fontSize: 14.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                              .toList(),
+                                          validator: (value) {
+                                            if (value == null) {
+                                              return "Template Should not be empty";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                            //  Only show template if create
+
+                            if (isEdit) ...[
+                              const SizedBox(height: 20),
+                              SurveyTabBarConfiguration(surveyId: widget.id)
+                            ],
+                          ],
                         ),
                       ),
                     );

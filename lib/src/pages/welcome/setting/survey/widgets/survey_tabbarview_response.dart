@@ -65,14 +65,6 @@ class _SurveyTabbarViewResponseState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton.icon(
-              onPressed: onAdd,
-              icon: const Icon(Icons.add),
-              label: const Text("Add Response"),
-            ),
-          ),
           const SizedBox(height: 16.0),
           if (widget.isSMSBot) ...[
             ...groupingSMS.entries.map((e) {
@@ -80,7 +72,7 @@ class _SurveyTabbarViewResponseState
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    e.key,
+                    e.key.valueStringReadable,
                     style: bodyFontBold.copyWith(fontSize: 12.0),
                   ),
                   const SizedBox(height: 10.0),
@@ -94,19 +86,48 @@ class _SurveyTabbarViewResponseState
           ],
           if (!widget.isSMSBot) ...[
             ...groupingWA.entries.map((e) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    e.key,
-                    style: bodyFontBold.copyWith(fontSize: 14.0),
+              return Card(
+                margin: const EdgeInsets.only(bottom: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: const BorderSide(color: Colors.grey, width: 1.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            e.key.valueStringReadable,
+                            style: bodyFontBold.copyWith(fontSize: 14.0),
+                          ),
+                          if (e.key ==
+                              SurveyResponseTypeEnum.yourAutoResponder) ...[
+                            InkWell(
+                              onTap: onAdd,
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.blue,
+                                size: 32.0,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 10.0),
+                      ...e.value.map((e) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: _ResponseItem(item: e),
+                        );
+                      }).toList(),
+                      const SizedBox(height: 10.0),
+                    ],
                   ),
-                  const SizedBox(height: 10.0),
-                  ...e.value.map((e) {
-                    return _ResponseItem(item: e);
-                  }).toList(),
-                  const SizedBox(height: 10.0),
-                ],
+                ),
               );
             }).toList()
           ],
@@ -157,54 +178,103 @@ class _ResponseItemState extends ConsumerState<_ResponseItem> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              widget.item.key,
-              style: bodyFont.copyWith(
-                fontSize: 10.0,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: 8.0,
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        side: const BorderSide(color: Colors.grey, width: 1.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              InkWell(
-                onTap: onEdit,
-                child: const Icon(
-                  Icons.edit,
-                  color: Colors.blue,
-                  size: 16.0,
-                ),
-              ),
-              InkWell(
-                onTap: onDelete,
-                child: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                  size: 16.0,
-                ),
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 8.0,
+                children: [
+                  InkWell(
+                    onTap: onEdit,
+                    child: const Icon(
+                      Icons.edit,
+                      color: Colors.blue,
+                      size: 16.0,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: onDelete,
+                    child: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                      size: 16.0,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 10.0),
-          Text(
-            widget.item.value,
-            style: bodyFont.copyWith(fontSize: 10.0),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            "Received:",
+                            style: bodyFont.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10.0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Text(
+                      widget.item.key,
+                      style: bodyFont.copyWith(fontSize: 10.0),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(color: Colors.grey, thickness: 1.0),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            "Send:",
+                            style: bodyFont.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10.0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Text(
+                      widget.item.value,
+                      style: bodyFont.copyWith(fontSize: 10.0),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          const SizedBox(height: 10.0),
-        ],
+        ),
       ),
     );
   }

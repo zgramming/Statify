@@ -1,5 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
 
+enum ErrorCode {
+  // ignore: constant_identifier_names
+  MC_NEED_ACTIVE_SURVEY,
+}
+
+enum SurveyResponseTypeEnum {
+  systemAutoResponder,
+  yourAutoResponder,
+}
+
 enum MachineSMSSettingEnum {
   sim_1,
   sim_2,
@@ -246,6 +256,35 @@ extension WhatSIMHasBeenChangedEXT on WhatSIMHasBeenChanged {
         return 'both';
       case WhatSIMHasBeenChanged.none:
         return 'none';
+    }
+  }
+}
+
+extension ErrorCodeEXT on ErrorCode {
+  String get valueString {
+    switch (this) {
+      case ErrorCode.MC_NEED_ACTIVE_SURVEY:
+        return 'MC_NEED_ACTIVE_SURVEY';
+    }
+  }
+}
+
+extension SurveyResponseTypeEnumEXT on SurveyResponseTypeEnum {
+  String get valueString {
+    switch (this) {
+      case SurveyResponseTypeEnum.systemAutoResponder:
+        return 'system_auto_responder';
+      case SurveyResponseTypeEnum.yourAutoResponder:
+        return 'your_auto_responder';
+    }
+  }
+
+  String get valueStringReadable {
+    switch (this) {
+      case SurveyResponseTypeEnum.systemAutoResponder:
+        return 'System Auto Responder';
+      case SurveyResponseTypeEnum.yourAutoResponder:
+        return 'Your Auto Responder';
     }
   }
 }
