@@ -146,7 +146,6 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
     ref.listen(
       notifierListen.select((value) => value.onCreate),
       (previous, next) {
-        log("trigger when create");
         next.when(
           data: (data) {
             if (data == null) return;

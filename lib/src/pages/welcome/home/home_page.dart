@@ -335,7 +335,7 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     final streamAsync = ref.watch(listenPendingResponseNotifier(item.id));
 
     return streamAsync.when(
-      data: (data) {
+      data: (_) {
         return Card(
           margin: const EdgeInsets.only(),
           child: Padding(
@@ -397,54 +397,54 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                         ],
                       ),
                     ),
-                    const Expanded(
+                    Expanded(
                       flex: 8,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           RowBody(
                             title: "Total SMS Sent",
-                            content: '-',
+                            content: "${item.summary?.totalSent}",
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           RowBody(
                             title: "Total Replied",
-                            content: '-',
+                            content: "${item.summary?.totalReplied}",
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           RowBody(
                             title: "Total Finished",
-                            content: '-',
+                            content: "${item.summary?.totalFinished}",
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           RowBody(
                             title: "Total Voted",
-                            content: '-',
+                            content: "${item.summary?.totalVoted}",
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
-                          RowBody(
+                          const SizedBox(height: 8.0),
+                          const RowBody(
                             title: "Total Choose 1",
                             content: '-',
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
-                          RowBody(
+                          const SizedBox(height: 8.0),
+                          const RowBody(
                             title: "Total Choose 2",
                             content: '-',
                             titleFlex: 1,
                             contentFlex: 1,
                           ),
-                          SizedBox(height: 8.0),
-                          RowBody(
+                          const SizedBox(height: 8.0),
+                          const RowBody(
                             title: "Total Choose 3",
                             content: '-',
                             titleFlex: 1,

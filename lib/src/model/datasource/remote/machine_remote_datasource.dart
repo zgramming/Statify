@@ -7,6 +7,7 @@ import '../../model/helper/form/form_machine_create_update_model.dart';
 import '../../model/machine/machine_create_response_model.dart';
 import '../../model/machine/machine_delete_response_model.dart';
 import '../../model/machine/machine_model.dart';
+import '../../model/machine/machine_summary.model.dart';
 import '../../model/machine/machine_update_response_model.dart';
 
 class MachineRemoteDatasource {
@@ -22,8 +23,12 @@ class MachineRemoteDatasource {
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final list = decoded['data'] as List;
-      final machines = list.map((e) => MachineModel.fromJson(e)).toList();
-      return machines;
+      final machines = list.map((e) async {
+        final result = MachineModel.fromJson(e);
+        final summary = await getSummary(result.id);
+        return result.copyWith(summary: summary);
+      }).toList();
+      return Future.wait(machines);
     } else {
       final message = decoded.containsKey('message')
           ? decoded['message']
@@ -74,6 +79,23 @@ class MachineRemoteDatasource {
       final message = decoded.containsKey('message')
           ? decoded['message']
           : 'Failed to load machine';
+      throw Exception(message);
+    }
+  }
+
+  Future<MachineSummaryModel> getSummary(String machineId) async {
+    final uri = Uri.parse('$kBaseApiUrl/machines/$machineId/summary');
+    final response = await client.get(uri);
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    if (response.statusCode == 200) {
+      final data = decoded['data'];
+      final result = MachineSummaryModel.fromJson(data);
+      return result;
+    } else {
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to load machine summary';
       throw Exception(message);
     }
   }

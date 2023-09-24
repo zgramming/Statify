@@ -2,6 +2,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'machine_summary.model.dart';
+
 part 'machine_model.g.dart';
 
 @JsonSerializable(
@@ -17,6 +19,7 @@ class MachineModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? activeSurveyId;
+  final MachineSummaryModel? summary;
 
   const MachineModel({
     required this.id,
@@ -28,6 +31,7 @@ class MachineModel extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.activeSurveyId,
+    this.summary,
   });
 
   factory MachineModel.fromJson(Map<String, dynamic> json) =>
@@ -48,6 +52,7 @@ class MachineModel extends Equatable {
       createdAt,
       updatedAt,
       activeSurveyId,
+      summary,
     ];
   }
 
@@ -64,6 +69,7 @@ class MachineModel extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? activeSurveyId,
+    MachineSummaryModel? summary,
   }) {
     return MachineModel(
       id: id ?? this.id,
@@ -75,6 +81,7 @@ class MachineModel extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       activeSurveyId: activeSurveyId ?? this.activeSurveyId,
+      summary: summary ?? this.summary,
     );
   }
 }
