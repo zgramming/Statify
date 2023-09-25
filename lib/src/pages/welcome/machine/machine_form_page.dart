@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
 import '../../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
@@ -116,8 +117,11 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
             backgroundColor: Colors.green,
           );
 
-          // Reset form
-          resetForm();
+          // invalidate getAllMachineFutureProvider
+          ref.invalidate(getAllMachineFutureProvider);
+
+          // Back to previous page
+          context.pop();
         },
         error: (error, stackTrace) {
           showSnackbar(

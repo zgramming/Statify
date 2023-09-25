@@ -383,23 +383,92 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8.0),
-                RowBody(
-                  title: "Action",
-                  content: item.action.valueStringReadable,
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: RowBody(
+                        title: "Action",
+                        content: item.action.valueStringReadable,
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            currentValue ? "ON" : "OFF",
+                            style: bodyFont.copyWith(fontSize: 10.0),
+                            textAlign: TextAlign.start,
+                          ),
+                          Switch.adaptive(
+                            value: currentValue,
+                            onChanged: (value) => onChange(value),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            trailing: Column(
-              children: [
-                Text(
-                  currentValue ? "ON" : "OFF",
-                  style: bodyFont.copyWith(fontSize: 10.0),
-                ),
-                Flexible(
-                  child: Switch.adaptive(
-                    value: currentValue,
-                    onChanged: (value) => onChange(value),
-                  ),
+                const SizedBox(height: 8.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RowBody(
+                      title: "Total Responden",
+                      content: "${item.totalReplied}",
+                      titleFlex: 1,
+                      contentFlex: 1,
+                      titleTrailing: const [
+                        Icon(
+                          Icons.download,
+                          color: Colors.green,
+                          size: 16.0,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                    RowBody(
+                      title: "Total SMS Sent",
+                      content: "${item.totalSent}",
+                      titleFlex: 1,
+                      contentFlex: 1,
+                      titleTrailing: const [
+                        Icon(
+                          Icons.download,
+                          color: Colors.green,
+                          size: 16.0,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                    RowBody(
+                      title: "Total Voted",
+                      content: "${item.totalVoted}",
+                      titleFlex: 1,
+                      contentFlex: 1,
+                      titleTrailing: const [
+                        Icon(
+                          Icons.download,
+                          color: Colors.green,
+                          size: 16.0,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                    RowBody(
+                      title: "Total Finished",
+                      content: "${item.totalFinished}",
+                      titleFlex: 1,
+                      contentFlex: 1,
+                      titleTrailing: const [
+                        Icon(
+                          Icons.download,
+                          color: Colors.green,
+                          size: 16.0,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),

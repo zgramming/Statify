@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
 import '../../../../model/model/helper/dropdown/machine_dropdown_model.dart';
@@ -156,6 +157,9 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
 
             // Invalidate Machine
             ref.invalidate(getAllMachineFutureProvider);
+
+            // Back to previous page
+            context.pop();
           },
           error: (error, stackTrace) => showSnackbar(
             context: context,

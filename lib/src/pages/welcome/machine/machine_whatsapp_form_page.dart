@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
 import '../../../model/model/helper/dropdown/machine_dropdown_model.dart';
@@ -59,8 +60,6 @@ class _MachineWhatsAppFormPageState
 
   @override
   Widget build(BuildContext context) {
-    // Listen get by id machine whatsapp notifier
-
     // Listen create machine whatsapp notifier
     ref.listen(machineWhatsappNotifier.select((value) => value.onCreate),
         (previous, next) {
@@ -74,12 +73,11 @@ class _MachineWhatsAppFormPageState
                 "Success create machine whatsapp with machine id: ${data.id} and number: ${_numberController.text}",
           );
 
-          // Reset form
-          _formKey.currentState?.reset();
-          _numberController.clear();
-
           // Refresh data
           ref.invalidate(getAllMachineFutureProvider);
+
+          // Back to previous page
+          context.pop();
         },
         error: (error, stackTrace) {
           showSnackbar(
@@ -117,7 +115,6 @@ class _MachineWhatsAppFormPageState
                 child: TextFormField(
                   controller: _numberController,
                   style: bodyFont.copyWith(fontSize: 14.0),
-                  keyboardType: TextInputType.number,
                   decoration: inputDecorationRounded().copyWith(
                     hintText: "Enter name / number ",
                     border: const OutlineInputBorder(),
