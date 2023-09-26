@@ -389,25 +389,13 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                                 ),
                               ],
                             ),
-                            // const SizedBox(height: 8.0),
-                            // RowBody(
-                            //   title: "Total SMS Sent",
-                            //   content: "${item.totalSent}",
-                            //   titleFlex: 1,
-                            //   contentFlex: 1,
-                            //   titleTrailing: [
-                            //     const SizedBox(width: 8.0),
-                            //     InkWell(
-                            //       onTap: () =>
-                            //           onExport(ExportTypeEnum.totalSMSSent),
-                            //       child: const Icon(
-                            //         Icons.download,
-                            //         color: Colors.green,
-                            //         size: 20.0,
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
+                            const SizedBox(height: 8.0),
+                            RowBody(
+                              title: "Total SMS Sent",
+                              content: "${item.totalSent}",
+                              titleFlex: 1,
+                              contentFlex: 1,
+                            ),
                             const SizedBox(height: 8.0),
                             RowBody(
                               title: "Total Voted",

@@ -554,25 +554,13 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                     ),
                                   ],
                                 ),
-                                // const SizedBox(height: 8.0),
-                                // RowBody(
-                                //   title: "Total SMS Sent",
-                                //   content: "${item.summary?.totalSent ?? 0}",
-                                //   titleFlex: 1,
-                                //   contentFlex: 1,
-                                //   titleTrailing: [
-                                //     const SizedBox(width: 8.0),
-                                //     InkWell(
-                                //       onTap: () =>
-                                //           onExport(ExportTypeEnum.totalSMSSent),
-                                //       child: const Icon(
-                                //         Icons.download,
-                                //         color: Colors.green,
-                                //         size: 20.0,
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
+                                const SizedBox(height: 8.0),
+                                RowBody(
+                                  title: "Total SMS Sent",
+                                  content: "${item.summary?.totalSent ?? 0}",
+                                  titleFlex: 1,
+                                  contentFlex: 1,
+                                ),
                                 const SizedBox(height: 8.0),
                                 RowBody(
                                   title: "Total Voted",
