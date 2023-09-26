@@ -269,119 +269,123 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
             borderRadius: BorderRadius.circular(8.0),
             side: const BorderSide(color: Colors.grey, width: 1.0),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RowBody(
-                  title: "Machine",
-                  content: machine?.name ?? "",
-                  titleFlex: 1,
-                  contentFlex: 1,
-                ),
-                const SizedBox(height: 8.0),
-                RowBody(
-                  title: "WhatsApp Number",
-                  content: item.number,
-                  titleFlex: 1,
-                  contentFlex: 1,
-                ),
-                const SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleIndexNumber(radius: 30.0, index: widget.index),
-                          const SizedBox(height: 8.0),
-                          ElevatedButton(
-                            onPressed: () => onClickQRCode(item.qrCode!),
-                            style: elevatedButtonStyle(
-                              padding: const EdgeInsets.all(
-                                8.0,
+          child: InkWell(
+            onTap: onClickEdit,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  RowBody(
+                    title: "Machine",
+                    content: machine?.name ?? "",
+                    titleFlex: 1,
+                    contentFlex: 1,
+                  ),
+                  const SizedBox(height: 8.0),
+                  RowBody(
+                    title: "WhatsApp Number",
+                    content: item.number,
+                    titleFlex: 1,
+                    contentFlex: 1,
+                  ),
+                  const SizedBox(height: 16.0),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleIndexNumber(
+                                radius: 30.0, index: widget.index),
+                            const SizedBox(height: 8.0),
+                            ElevatedButton(
+                              onPressed: () => onClickQRCode(item.qrCode!),
+                              style: elevatedButtonStyle(
+                                padding: const EdgeInsets.all(
+                                  8.0,
+                                ),
+                              ),
+                              child: const Text("QR CODE"),
+                            ),
+                            Text(
+                              item.status.valueStringReadable,
+                              style: bodyFont.copyWith(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            child: const Text("QR CODE"),
-                          ),
-                          Text(
-                            item.status.valueStringReadable,
-                            style: bodyFont.copyWith(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.bold,
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 8,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RowBody(
+                              title: "Total Responden",
+                              content: "${item.totalReplied}",
+                              titleFlex: 1,
+                              contentFlex: 1,
+                              titleTrailing: const [
+                                Icon(
+                                  Icons.download,
+                                  color: Colors.green,
+                                  size: 16.0,
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RowBody(
-                            title: "Total Responden",
-                            content: "${item.totalReplied}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                            titleTrailing: const [
-                              Icon(
-                                Icons.download,
-                                color: Colors.green,
-                                size: 16.0,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8.0),
-                          RowBody(
-                            title: "Total WA Sent",
-                            content: "${item.totalSent}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                            titleTrailing: const [
-                              Icon(
-                                Icons.download,
-                                color: Colors.green,
-                                size: 16.0,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8.0),
-                          RowBody(
-                            title: "Total Voted",
-                            content: "${item.totalVoted}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                            titleTrailing: const [
-                              Icon(
-                                Icons.download,
-                                color: Colors.green,
-                                size: 16.0,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8.0),
-                          RowBody(
-                            title: "Total Finished",
-                            content: "${item.totalFinished}",
-                            titleFlex: 1,
-                            contentFlex: 1,
-                            titleTrailing: const [
-                              Icon(
-                                Icons.download,
-                                color: Colors.green,
-                                size: 16.0,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ],
+                            const SizedBox(height: 8.0),
+                            RowBody(
+                              title: "Total WA Sent",
+                              content: "${item.totalSent}",
+                              titleFlex: 1,
+                              contentFlex: 1,
+                              titleTrailing: const [
+                                Icon(
+                                  Icons.download,
+                                  color: Colors.green,
+                                  size: 16.0,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            RowBody(
+                              title: "Total Voted",
+                              content: "${item.totalVoted}",
+                              titleFlex: 1,
+                              contentFlex: 1,
+                              titleTrailing: const [
+                                Icon(
+                                  Icons.download,
+                                  color: Colors.green,
+                                  size: 16.0,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            RowBody(
+                              title: "Total Finished",
+                              content: "${item.totalFinished}",
+                              titleFlex: 1,
+                              contentFlex: 1,
+                              titleTrailing: const [
+                                Icon(
+                                  Icons.download,
+                                  color: Colors.green,
+                                  size: 16.0,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -391,16 +395,16 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
           child: PopupMenuButton<String>(
             onSelected: (value) => onSelected(value, widget.item),
             itemBuilder: (context) => [
-              // PopupMenuItem(
-              //   value: "edit",
-              //   child: Text(
-              //     "Edit",
-              //     style: bodyFont.copyWith(
-              //       color: Colors.blue,
-              //       fontWeight: FontWeight.bold,
-              //     ),
-              //   ),
-              // ),
+              PopupMenuItem(
+                value: "edit",
+                child: Text(
+                  "Edit",
+                  style: bodyFont.copyWith(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
               PopupMenuItem(
                 value: "delete",
                 child: Text(

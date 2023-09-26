@@ -1,20 +1,25 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../model/model/helper/form/form_machine_whatsapp_create_update_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
+import '../model/model/machine_whatsapp/machine_whatsapp_update_response_model.dart';
 import '../model/repository/machine_whatsapp_repository.dart';
 
 class MachineWhatsappState extends Equatable {
   final List<MachineWhatsappModel> items;
+  final AsyncValue<MachineWhatsappModel?> onGetById;
   final AsyncValue<MachineWhatsappCreateResponseModel?> onCreate;
+  final AsyncValue<MachineWhatsappUpdateResponseModel?> onUpdate;
   final AsyncValue<MachineWhatsappDeleteResponseModel?> onDelete;
   final AsyncValue<MachineWhatsappSendQRCodeResponseModel?> onSendQRCode;
   final AsyncValue<MachineWhatsappDisconnectedResponseModel?> onDisconnect;
@@ -22,18 +27,22 @@ class MachineWhatsappState extends Equatable {
 
   const MachineWhatsappState({
     this.items = const [],
+    this.onGetById = const AsyncData(null),
     this.onCreate = const AsyncData(null),
-    this.onDelete = const AsyncLoading(),
+    this.onUpdate = const AsyncData(null),
+    this.onDelete = const AsyncData(null),
     this.onSendQRCode = const AsyncData(null),
-    this.onDisconnect = const AsyncLoading(),
-    this.onConnect = const AsyncLoading(),
+    this.onDisconnect = const AsyncData(null),
+    this.onConnect = const AsyncData(null),
   });
 
   @override
   List<Object> get props {
     return [
       items,
+      onGetById,
       onCreate,
+      onUpdate,
       onDelete,
       onSendQRCode,
       onDisconnect,
@@ -46,7 +55,9 @@ class MachineWhatsappState extends Equatable {
 
   MachineWhatsappState copyWith({
     List<MachineWhatsappModel>? items,
+    AsyncValue<MachineWhatsappModel?>? onGetById,
     AsyncValue<MachineWhatsappCreateResponseModel?>? onCreate,
+    AsyncValue<MachineWhatsappUpdateResponseModel?>? onUpdate,
     AsyncValue<MachineWhatsappDeleteResponseModel?>? onDelete,
     AsyncValue<MachineWhatsappSendQRCodeResponseModel?>? onSendQRCode,
     AsyncValue<MachineWhatsappDisconnectedResponseModel?>? onDisconnect,
@@ -54,7 +65,9 @@ class MachineWhatsappState extends Equatable {
   }) {
     return MachineWhatsappState(
       items: items ?? this.items,
+      onGetById: onGetById ?? this.onGetById,
       onCreate: onCreate ?? this.onCreate,
+      onUpdate: onUpdate ?? this.onUpdate,
       onDelete: onDelete ?? this.onDelete,
       onSendQRCode: onSendQRCode ?? this.onSendQRCode,
       onDisconnect: onDisconnect ?? this.onDisconnect,
@@ -69,21 +82,42 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
     required this.repository,
   }) : super(const MachineWhatsappState());
 
-  Future<void> create({
-    required String number,
-    required String machineId,
-  }) async {
+  Future<MachineWhatsappState> getById(String id) async {
+    state = const MachineWhatsappState(onGetById: AsyncLoading());
+
+    final result = await repository.getById(id);
+
+    return result.fold(
+      (failure) => state = MachineWhatsappState(
+          onGetById: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = MachineWhatsappState(onGetById: AsyncData(data)),
+    );
+  }
+
+  Future<MachineWhatsappState> create(
+      FormMachineWhatsappCreateOrUpdateModel form) async {
     state = const MachineWhatsappState(onCreate: AsyncLoading());
 
-    final result = await repository.create(
-      number: number,
-      machineId: machineId,
-    );
+    final result = await repository.create(form);
 
-    result.fold(
+    return result.fold(
       (failure) => state = MachineWhatsappState(
           onCreate: AsyncError(failure.message, StackTrace.current)),
       (data) => state = MachineWhatsappState(onCreate: AsyncData(data)),
+    );
+  }
+
+  Future<MachineWhatsappState> update(
+    FormMachineWhatsappCreateOrUpdateModel form,
+  ) async {
+    state = const MachineWhatsappState(onUpdate: AsyncLoading());
+
+    final result = await repository.update(form);
+
+    return result.fold(
+      (failure) => state = MachineWhatsappState(
+          onUpdate: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = MachineWhatsappState(onUpdate: AsyncData(data)),
     );
   }
 

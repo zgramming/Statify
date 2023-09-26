@@ -4,11 +4,14 @@ import 'package:dartz/dartz.dart';
 
 import '../../utils/failure.dart';
 import '../datasource/remote/machine_whatsapp_remote_datasource.dart';
+import '../model/helper/form/form_machine_whatsapp_create_update_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
+import '../model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
+import '../model/machine_whatsapp/machine_whatsapp_update_response_model.dart';
 
 class MachineWhatsappRepository {
   final MachineWhatsappRemoteDatasource remoteDatasource;
@@ -16,15 +19,32 @@ class MachineWhatsappRepository {
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, MachineWhatsappCreateResponseModel>> create({
-    required String number,
-    required String machineId,
-  }) async {
+  Future<Either<Failure, MachineWhatsappModel>> getById(String id) async {
     try {
-      final result = await remoteDatasource.create(
-        number: number,
-        machineId: machineId,
-      );
+      final result = await remoteDatasource.getById(id);
+
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MachineWhatsappCreateResponseModel>> create(
+      FormMachineWhatsappCreateOrUpdateModel form) async {
+    try {
+      final result = await remoteDatasource.create(form);
+
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MachineWhatsappUpdateResponseModel>> update(
+    FormMachineWhatsappCreateOrUpdateModel form,
+  ) async {
+    try {
+      final result = await remoteDatasource.update(form);
 
       return Right(result);
     } on Exception catch (e) {

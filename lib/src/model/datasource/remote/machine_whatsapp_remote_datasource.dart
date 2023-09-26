@@ -5,11 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import '../../../utils/constant.dart';
+import '../../model/helper/form/form_machine_whatsapp_create_update_model.dart';
 import '../../model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
 import '../../model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
 import '../../model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
 import '../../model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
+import '../../model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../../model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
+import '../../model/machine_whatsapp/machine_whatsapp_update_response_model.dart';
 
 class MachineWhatsappRemoteDatasource {
   final http.Client client;
@@ -17,15 +20,32 @@ class MachineWhatsappRemoteDatasource {
     required this.client,
   });
 
-  Future<MachineWhatsappCreateResponseModel> create({
-    required String number,
-    required String machineId,
-  }) async {
-    final uri = Uri.parse("$kBaseApiUrl/machines/$machineId/whatsapps");
+  Future<MachineWhatsappModel> getById(String id) async {
+    final uri = Uri.parse("$kBaseApiUrl/machine-whatsapps/$id");
+    final response = await client.get(uri);
+
+    final body = response.body;
+    final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decodedData['data'];
+
+    if (response.statusCode == 200) {
+      return MachineWhatsappModel.fromJson(data);
+    } else {
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to get machine whatsapp';
+      throw Exception(message);
+    }
+  }
+
+  Future<MachineWhatsappCreateResponseModel> create(
+    FormMachineWhatsappCreateOrUpdateModel form,
+  ) async {
+    final uri = Uri.parse("$kBaseApiUrl/machines/${form.machineId}/whatsapps");
     final response = await client.post(
       uri,
       body: {
-        'number': number,
+        'number': form.number,
       },
     );
 
@@ -38,6 +58,33 @@ class MachineWhatsappRemoteDatasource {
       final message = decodedData.containsKey('message')
           ? decodedData['message']
           : 'Failed to create machine whatsapp';
+      throw Exception(message);
+    }
+  }
+
+  Future<MachineWhatsappUpdateResponseModel> update(
+    FormMachineWhatsappCreateOrUpdateModel form,
+  ) async {
+    final uri = Uri.parse(
+        "$kBaseApiUrl/machines/${form.machineId}/whatsapps/${form.whatsappId}");
+    final response = await client.patch(
+      uri,
+      body: {
+        'number': form.number,
+        'machine': form.machineId,
+      },
+    );
+
+    final body = response.body;
+    final decodedData = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decodedData['data'];
+
+    if (response.statusCode == 200) {
+      return MachineWhatsappUpdateResponseModel.fromJson(data);
+    } else {
+      final message = decodedData.containsKey('message')
+          ? decodedData['message']
+          : 'Failed to update machine whatsapp';
       throw Exception(message);
     }
   }
