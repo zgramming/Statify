@@ -1,8 +1,46 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../model/model/survey_setting/survey_setting_model.dart';
 import 'enum.dart';
 import 'package:uuid/uuid.dart';
+
+Future<File> placeFileToDownloadFolder(
+  Uint8List file,
+  String customName,
+) async {
+  try {
+    const ext = "xlsx";
+    final path = await getDownloadPath();
+    final newFile = File("$path/$customName.$ext");
+    await newFile.writeAsBytes(file);
+    return newFile;
+  } catch (e) {
+    throw Exception("error when place file to download folder, $e");
+  }
+}
+
+Future<String> getDownloadPath() async {
+  Directory? dir;
+  if (Platform.isIOS) {
+    dir = await getDownloadsDirectory();
+    return dir!.path;
+  } else {
+    dir = Directory("/storage/emulated/0/Download");
+    if (!dir.existsSync()) {
+      dir = Directory("/storage/emulated/0/Downloads");
+      if (!dir.existsSync()) {
+        dir = await getDownloadsDirectory();
+        return dir!.path;
+      }
+    }
+
+    return dir.path;
+  }
+}
 
 String generateUUID() {
   return const Uuid().v4();

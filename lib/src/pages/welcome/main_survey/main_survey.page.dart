@@ -191,6 +191,70 @@ class _SurveyItem extends ConsumerStatefulWidget {
 class _SurveyItemState extends ConsumerState<_SurveyItem> {
   bool currentValue = false;
 
+  void init() {
+    currentValue = widget.item.id == widget.activeSurveyId;
+    setState(() {});
+  }
+
+  void onTap() {
+    context.pushNamed(routeSurveyFormPage, pathParameters: {
+      "idMachine": widget.item.machineId,
+      "id": widget.item.id,
+    });
+  }
+
+  void onTapSummary() {
+    context.pushNamed(
+      routeSurveySummaryPage,
+      pathParameters: {
+        "idMachine": widget.item.machineId,
+        "idSurvey": widget.item.id,
+      },
+    );
+  }
+
+  Future<void> onExport(ExportTypeEnum type) async {
+    final notifier = ref.read(surveyNotifier(widget.item.machineId).notifier);
+    final result = await notifier.getExport(
+      surveyId: widget.item.id,
+      type: type,
+    );
+    result.onExport.when(
+        data: (data) async {
+          if (data == null) return;
+
+          try {
+            final name = "survey-${widget.item.name}-${type.valueString}";
+            final fileDownload = await placeFileToDownloadFolder(data, name);
+
+            final url = fileDownload.path;
+
+            if (!mounted) return;
+            showSnackbar(
+              context: context,
+              message: "Success Exporting Survey, file saved at $url",
+              backgroundColor: Colors.green,
+            );
+          } catch (e) {
+            showSnackbar(
+              context: context,
+              message: e.toString(),
+              backgroundColor: Colors.red,
+            );
+          }
+        },
+        error: (error, stackTrace) => showSnackbar(
+              context: context,
+              message: error.toString(),
+              backgroundColor: Colors.red,
+            ),
+        loading: () => showSnackbar(
+              context: context,
+              message: "Exporting...",
+              backgroundColor: Colors.blue,
+            ));
+  }
+
   Future<void> onChange(bool value) async {
     // Check if value is false then do nothing
     if (!value) {
@@ -221,28 +285,6 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
       ),
       loading: () => log("loading active survey"),
     );
-  }
-
-  void onTap() {
-    context.pushNamed(routeSurveyFormPage, pathParameters: {
-      "idMachine": widget.item.machineId,
-      "id": widget.item.id,
-    });
-  }
-
-  void onTapSummary() {
-    context.pushNamed(
-      routeSurveySummaryPage,
-      pathParameters: {
-        "idMachine": widget.item.machineId,
-        "idSurvey": widget.item.id,
-      },
-    );
-  }
-
-  void init() {
-    currentValue = widget.item.id == widget.activeSurveyId;
-    setState(() {});
   }
 
   Future<void> onSelected(String value, SurveyModel item) async {
@@ -418,11 +460,17 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
                       content: "${item.totalReplied}",
                       titleFlex: 1,
                       contentFlex: 1,
-                      titleTrailing: const [
-                        Icon(
-                          Icons.download,
-                          color: Colors.green,
-                          size: 16.0,
+                      titleTrailing: [
+                        const SizedBox(width: 8.0),
+                        InkWell(
+                          onTap: () => onExport(
+                            ExportTypeEnum.totalReplied,
+                          ),
+                          child: const Icon(
+                            Icons.download,
+                            color: Colors.green,
+                            size: 20.0,
+                          ),
                         ),
                       ],
                     ),
@@ -432,11 +480,15 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
                       content: "${item.totalSent}",
                       titleFlex: 1,
                       contentFlex: 1,
-                      titleTrailing: const [
-                        Icon(
-                          Icons.download,
-                          color: Colors.green,
-                          size: 16.0,
+                      titleTrailing: [
+                        const SizedBox(width: 8.0),
+                        InkWell(
+                          onTap: () => onExport(ExportTypeEnum.totalSMSSent),
+                          child: const Icon(
+                            Icons.download,
+                            color: Colors.green,
+                            size: 20.0,
+                          ),
                         ),
                       ],
                     ),
@@ -446,11 +498,15 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
                       content: "${item.totalVoted}",
                       titleFlex: 1,
                       contentFlex: 1,
-                      titleTrailing: const [
-                        Icon(
-                          Icons.download,
-                          color: Colors.green,
-                          size: 16.0,
+                      titleTrailing: [
+                        const SizedBox(width: 8.0),
+                        InkWell(
+                          onTap: () => onExport(ExportTypeEnum.totalVoted),
+                          child: const Icon(
+                            Icons.download,
+                            color: Colors.green,
+                            size: 20.0,
+                          ),
                         ),
                       ],
                     ),
@@ -460,11 +516,15 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
                       content: "${item.totalFinished}",
                       titleFlex: 1,
                       contentFlex: 1,
-                      titleTrailing: const [
-                        Icon(
-                          Icons.download,
-                          color: Colors.green,
-                          size: 16.0,
+                      titleTrailing: [
+                        const SizedBox(width: 8.0),
+                        InkWell(
+                          onTap: () => onExport(ExportTypeEnum.totalFinished),
+                          child: const Icon(
+                            Icons.download,
+                            color: Colors.green,
+                            size: 20.0,
+                          ),
                         ),
                       ],
                     ),

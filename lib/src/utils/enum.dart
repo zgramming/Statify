@@ -5,6 +5,13 @@ enum ErrorCode {
   MC_NEED_ACTIVE_SURVEY,
 }
 
+enum ExportTypeEnum {
+  totalReplied,
+  totalFinished,
+  totalVoted,
+  totalSMSSent,
+}
+
 enum SurveyResponseTypeEnum {
   systemAutoResponder,
   yourAutoResponder,
@@ -285,6 +292,34 @@ extension SurveyResponseTypeEnumEXT on SurveyResponseTypeEnum {
         return 'System Auto Responder';
       case SurveyResponseTypeEnum.yourAutoResponder:
         return 'Your Auto Responder';
+    }
+  }
+}
+
+extension ExportTypeEnumEXT on ExportTypeEnum {
+  String get valueString {
+    switch (this) {
+      case ExportTypeEnum.totalReplied:
+        return 'total-replied';
+      case ExportTypeEnum.totalFinished:
+        return 'total-finished';
+      case ExportTypeEnum.totalVoted:
+        return 'total-voted';
+      case ExportTypeEnum.totalSMSSent:
+        return 'total-sms-sent';
+    }
+  }
+
+  String get valueStringReadable {
+    switch (this) {
+      case ExportTypeEnum.totalReplied:
+        return 'Total Replied';
+      case ExportTypeEnum.totalFinished:
+        return 'Total Finished';
+      case ExportTypeEnum.totalVoted:
+        return 'Total Voted';
+      case ExportTypeEnum.totalSMSSent:
+        return 'Total SMS Sent';
     }
   }
 }

@@ -1,6 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -132,6 +132,33 @@ class SurveyRemoteDatasource {
       final message = decodedData.containsKey('message')
           ? decodedData['message']
           : 'Failed to get survey summary';
+      throw Exception(message);
+    }
+  }
+
+  Future<Uint8List> getExport({
+    required String surveyId,
+    required ExportTypeEnum type,
+  }) async {
+    final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
+    final uri = Uri.parse("$kBaseApiUrl/surveys/$surveyId/export");
+    final request = http.Request('GET', uri);
+    request.body = json.encode({
+      "type": type.valueString,
+    });
+    request.headers.addAll({
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $currentToken",
+    });
+
+    final response = await request.send();
+    final body = await response.stream.toBytes();
+
+    if (response.statusCode == 200) {
+      return body;
+    } else {
+      const message = "Failed to export survey";
       throw Exception(message);
     }
   }
@@ -462,6 +489,21 @@ class SurveyRepository {
     }
   }
 
+  Future<Either<Failure, Uint8List>> getExport({
+    required String surveyId,
+    required ExportTypeEnum type,
+  }) async {
+    try {
+      final result = await remoteDatasource.getExport(
+        surveyId: surveyId,
+        type: type,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
   Future<Either<Failure, SurveyModel>> create({
     required String machineId,
     required FormSurveyCreateOrUpdateModel form,
@@ -554,6 +596,7 @@ class SurveyState extends Equatable {
   final AsyncValue<SurveyModel?> onGetById;
   final AsyncValue<SurveyModel?> onGetByNumber;
   final AsyncValue<List<SurveySummaryModel>?> onGetVotingSummary;
+  final AsyncValue<Uint8List?> onExport;
   final AsyncValue<SurveyModel?> onCreate;
   final AsyncValue<SurveyModel?> onUpdate;
   final AsyncValue<SurveyModel?> onActive;
@@ -566,6 +609,7 @@ class SurveyState extends Equatable {
     this.onGetById = const AsyncData(null),
     this.onGetByNumber = const AsyncData(null),
     this.onGetVotingSummary = const AsyncData(null),
+    this.onExport = const AsyncData(null),
     this.onCreate = const AsyncData(null),
     this.onUpdate = const AsyncData(null),
     this.onActive = const AsyncData(null),
@@ -581,6 +625,7 @@ class SurveyState extends Equatable {
       onGetById,
       onGetByNumber,
       onGetVotingSummary,
+      onExport,
       onCreate,
       onUpdate,
       onActive,
@@ -598,6 +643,7 @@ class SurveyState extends Equatable {
     AsyncValue<SurveyModel?>? onGetById,
     AsyncValue<SurveyModel?>? onGetByNumber,
     AsyncValue<List<SurveySummaryModel>?>? onGetVotingSummary,
+    AsyncValue<Uint8List?>? onExport,
     AsyncValue<SurveyModel?>? onCreate,
     AsyncValue<SurveyModel?>? onUpdate,
     AsyncValue<SurveyModel?>? onActive,
@@ -610,6 +656,7 @@ class SurveyState extends Equatable {
       onGetById: onGetById ?? this.onGetById,
       onGetByNumber: onGetByNumber ?? this.onGetByNumber,
       onGetVotingSummary: onGetVotingSummary ?? this.onGetVotingSummary,
+      onExport: onExport ?? this.onExport,
       onCreate: onCreate ?? this.onCreate,
       onUpdate: onUpdate ?? this.onUpdate,
       onActive: onActive ?? this.onActive,
@@ -717,6 +764,32 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
       (data) {
         return state = state.copyWith(
           onGetVotingSummary: AsyncData(data),
+        );
+      },
+    );
+  }
+
+  Future<SurveyState> getExport({
+    required String surveyId,
+    required ExportTypeEnum type,
+  }) async {
+    state = state.copyWith(
+      onExport: const AsyncLoading(),
+    );
+    final result = await repository.getExport(
+      surveyId: surveyId,
+      type: type,
+    );
+
+    return result.fold(
+      (failure) {
+        return state = state.copyWith(
+          onExport: AsyncError(failure.message, StackTrace.current),
+        );
+      },
+      (data) {
+        return state = state.copyWith(
+          onExport: AsyncData(data),
         );
       },
     );

@@ -209,6 +209,8 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
     );
   }
 
+  Future<void> onExport(ExportTypeEnum type) async {}
+
   Future<void> onSelected(String value, MachineWhatsappModel item) async {
     final notifier = ref.read(machineWhatsappNotifier.notifier);
     switch (value) {
@@ -329,25 +331,36 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                               content: "${item.totalReplied}",
                               titleFlex: 1,
                               contentFlex: 1,
-                              titleTrailing: const [
-                                Icon(
-                                  Icons.download,
-                                  color: Colors.green,
-                                  size: 16.0,
+                              titleTrailing: [
+                                const SizedBox(width: 8.0),
+                                InkWell(
+                                  onTap: () => onExport(
+                                    ExportTypeEnum.totalReplied,
+                                  ),
+                                  child: const Icon(
+                                    Icons.download,
+                                    color: Colors.green,
+                                    size: 20.0,
+                                  ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8.0),
                             RowBody(
-                              title: "Total WA Sent",
+                              title: "Total SMS Sent",
                               content: "${item.totalSent}",
                               titleFlex: 1,
                               contentFlex: 1,
-                              titleTrailing: const [
-                                Icon(
-                                  Icons.download,
-                                  color: Colors.green,
-                                  size: 16.0,
+                              titleTrailing: [
+                                const SizedBox(width: 8.0),
+                                InkWell(
+                                  onTap: () =>
+                                      onExport(ExportTypeEnum.totalSMSSent),
+                                  child: const Icon(
+                                    Icons.download,
+                                    color: Colors.green,
+                                    size: 20.0,
+                                  ),
                                 ),
                               ],
                             ),
@@ -357,11 +370,16 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                               content: "${item.totalVoted}",
                               titleFlex: 1,
                               contentFlex: 1,
-                              titleTrailing: const [
-                                Icon(
-                                  Icons.download,
-                                  color: Colors.green,
-                                  size: 16.0,
+                              titleTrailing: [
+                                const SizedBox(width: 8.0),
+                                InkWell(
+                                  onTap: () =>
+                                      onExport(ExportTypeEnum.totalVoted),
+                                  child: const Icon(
+                                    Icons.download,
+                                    color: Colors.green,
+                                    size: 20.0,
+                                  ),
                                 ),
                               ],
                             ),
@@ -371,11 +389,16 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                               content: "${item.totalFinished}",
                               titleFlex: 1,
                               contentFlex: 1,
-                              titleTrailing: const [
-                                Icon(
-                                  Icons.download,
-                                  color: Colors.green,
-                                  size: 16.0,
+                              titleTrailing: [
+                                const SizedBox(width: 8.0),
+                                InkWell(
+                                  onTap: () =>
+                                      onExport(ExportTypeEnum.totalFinished),
+                                  child: const Icon(
+                                    Icons.download,
+                                    color: Colors.green,
+                                    size: 20.0,
+                                  ),
                                 ),
                               ],
                             ),

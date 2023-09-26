@@ -13,6 +13,7 @@ import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
 import '../../../model/model/temporary_pending_response/temporary_pending_response.model.dart';
 import '../../../router.dart';
+import '../../../utils/enum.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
@@ -360,13 +361,15 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     );
   }
 
-  Future<void> onTapExport() async {
+  Future<void> onTapAPIExport() async {
     showSnackbar(
       context: context,
       message: "Coming Soon",
       backgroundColor: Colors.orange,
     );
   }
+
+  Future<void> onExport(ExportTypeEnum type) async {}
 
   Future<void> onSelected(String value, MachineModel item) async {
     final notifier = ref.read(machineNotifier.notifier);
@@ -474,7 +477,7 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                     radius: radius, index: widget.index),
                                 const SizedBox(height: 8.0),
                                 ElevatedButton(
-                                  onPressed: onTapExport,
+                                  onPressed: onTapAPIExport,
                                   style: elevatedButtonStyle(
                                     padding: const EdgeInsets.all(
                                       8.0,
@@ -495,11 +498,17 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                   content: "${item.summary?.totalReplied ?? 0}",
                                   titleFlex: 1,
                                   contentFlex: 1,
-                                  titleTrailing: const [
-                                    Icon(
-                                      Icons.download,
-                                      color: Colors.green,
-                                      size: 16.0,
+                                  titleTrailing: [
+                                    const SizedBox(width: 8.0),
+                                    InkWell(
+                                      onTap: () => onExport(
+                                        ExportTypeEnum.totalReplied,
+                                      ),
+                                      child: const Icon(
+                                        Icons.download,
+                                        color: Colors.green,
+                                        size: 20.0,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -509,11 +518,16 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                   content: "${item.summary?.totalSent ?? 0}",
                                   titleFlex: 1,
                                   contentFlex: 1,
-                                  titleTrailing: const [
-                                    Icon(
-                                      Icons.download,
-                                      color: Colors.green,
-                                      size: 16.0,
+                                  titleTrailing: [
+                                    const SizedBox(width: 8.0),
+                                    InkWell(
+                                      onTap: () =>
+                                          onExport(ExportTypeEnum.totalSMSSent),
+                                      child: const Icon(
+                                        Icons.download,
+                                        color: Colors.green,
+                                        size: 20.0,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -523,11 +537,16 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                   content: "${item.summary?.totalVoted ?? 0}",
                                   titleFlex: 1,
                                   contentFlex: 1,
-                                  titleTrailing: const [
-                                    Icon(
-                                      Icons.download,
-                                      color: Colors.green,
-                                      size: 16.0,
+                                  titleTrailing: [
+                                    const SizedBox(width: 8.0),
+                                    InkWell(
+                                      onTap: () =>
+                                          onExport(ExportTypeEnum.totalVoted),
+                                      child: const Icon(
+                                        Icons.download,
+                                        color: Colors.green,
+                                        size: 20.0,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -538,11 +557,16 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                       "${item.summary?.totalFinished ?? 0}",
                                   titleFlex: 1,
                                   contentFlex: 1,
-                                  titleTrailing: const [
-                                    Icon(
-                                      Icons.download,
-                                      color: Colors.green,
-                                      size: 16.0,
+                                  titleTrailing: [
+                                    const SizedBox(width: 8.0),
+                                    InkWell(
+                                      onTap: () => onExport(
+                                          ExportTypeEnum.totalFinished),
+                                      child: const Icon(
+                                        Icons.download,
+                                        color: Colors.green,
+                                        size: 20.0,
+                                      ),
                                     ),
                                   ],
                                 ),

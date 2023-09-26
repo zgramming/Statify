@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # Read more about iOS versioning at
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.9.8+31
+version: 1.9.9+32
 
 environment:
   sdk: ">=3.0.3 <4.0.0"
@@ -32,6 +32,7 @@ dependencies:
   collection: ^1.17.1
   cupertino_icons: ^1.0.2
   dartz: ^0.10.1
+  device_info_plus: ^9.0.3
   drift: ^2.11.1
   equatable: ^2.0.5
   file_picker: ^5.5.0
