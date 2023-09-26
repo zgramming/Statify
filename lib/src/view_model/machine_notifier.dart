@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,12 +10,14 @@ import '../model/model/machine/machine_delete_response_model.dart';
 import '../model/model/machine/machine_model.dart';
 import '../model/model/machine/machine_update_response_model.dart';
 import '../model/repository/machine_repository.dart';
+import '../utils/enum.dart';
 
 class MachineState extends Equatable {
   final List<MachineModel> items;
   final AsyncValue<List<MachineModel>> onGetAll;
   final AsyncValue<MachineModel?> onGetById;
   final AsyncValue<MachineModel?> onGetByNumber;
+  final AsyncValue<Uint8List?> onGetExport;
   final AsyncValue<MachineCreateResponseModel?> onCreate;
   final AsyncValue<MachineUpdateResponseModel?> onUpdate;
   final AsyncValue<MachineDeleteResponseModel?> onDelete;
@@ -22,6 +27,7 @@ class MachineState extends Equatable {
     this.onGetAll = const AsyncLoading(),
     this.onGetById = const AsyncData(null),
     this.onGetByNumber = const AsyncData(null),
+    this.onGetExport = const AsyncData(null),
     this.onCreate = const AsyncData(null),
     this.onUpdate = const AsyncData(null),
     this.onDelete = const AsyncData(null),
@@ -34,6 +40,7 @@ class MachineState extends Equatable {
       onGetAll,
       onGetById,
       onGetByNumber,
+      onGetExport,
       onCreate,
       onUpdate,
       onDelete,
@@ -48,6 +55,7 @@ class MachineState extends Equatable {
     AsyncValue<List<MachineModel>>? onGetAll,
     AsyncValue<MachineModel?>? onGetById,
     AsyncValue<MachineModel?>? onGetByNumber,
+    AsyncValue<Uint8List?>? onGetExport,
     AsyncValue<MachineCreateResponseModel?>? onCreate,
     AsyncValue<MachineUpdateResponseModel?>? onUpdate,
     AsyncValue<MachineDeleteResponseModel?>? onDelete,
@@ -57,6 +65,7 @@ class MachineState extends Equatable {
       onGetAll: onGetAll ?? this.onGetAll,
       onGetById: onGetById ?? this.onGetById,
       onGetByNumber: onGetByNumber ?? this.onGetByNumber,
+      onGetExport: onGetExport ?? this.onGetExport,
       onCreate: onCreate ?? this.onCreate,
       onUpdate: onUpdate ?? this.onUpdate,
       onDelete: onDelete ?? this.onDelete,
@@ -118,6 +127,22 @@ class MachineNotifier extends StateNotifier<MachineState> {
       (failure) => state = state.copyWith(
           onGetByNumber: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onGetByNumber: AsyncData(data)),
+    );
+  }
+
+  Future<MachineState> getExport({
+    required String machineId,
+    required ExportTypeEnum type,
+  }) async {
+    state = state.copyWith(onGetExport: const AsyncLoading());
+    final result = await repository.getExport(
+      machineId: machineId,
+      type: type,
+    );
+    return result.fold(
+      (failure) => state = state.copyWith(
+          onGetExport: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onGetExport: AsyncData(data)),
     );
   }
 

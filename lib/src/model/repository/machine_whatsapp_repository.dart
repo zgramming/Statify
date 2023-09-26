@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 
+import '../../utils/enum.dart';
 import '../../utils/failure.dart';
 import '../datasource/remote/machine_whatsapp_remote_datasource.dart';
 import '../model/helper/form/form_machine_whatsapp_create_update_model.dart';
@@ -22,6 +24,22 @@ class MachineWhatsappRepository {
   Future<Either<Failure, MachineWhatsappModel>> getById(String id) async {
     try {
       final result = await remoteDatasource.getById(id);
+
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, Uint8List>> getExport({
+    required String whatsappId,
+    required ExportTypeEnum type,
+  }) async {
+    try {
+      final result = await remoteDatasource.getExport(
+        whatsappId: whatsappId,
+        type: type,
+      );
 
       return Right(result);
     } on Exception catch (e) {

@@ -369,7 +369,49 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     );
   }
 
-  Future<void> onExport(ExportTypeEnum type) async {}
+  Future<void> onExport(ExportTypeEnum type) async {
+    final notifier = ref.read(machineNotifier.notifier);
+    final result = await notifier.getExport(
+      machineId: widget.item.id,
+      type: type,
+    );
+
+    result.onGetExport.when(
+      data: (data) async {
+        if (data == null) return;
+
+        try {
+          final name = "machine_${widget.item.name}_${type.valueString}";
+          final fileDownload = await placeFileToDownloadFolder(data, name);
+
+          final url = fileDownload.path;
+
+          if (!mounted) return;
+          showSnackbar(
+            context: context,
+            message: "Success Exporting Machine, file saved at $url",
+            backgroundColor: Colors.green,
+          );
+        } catch (e) {
+          showSnackbar(
+            context: context,
+            message: e.toString(),
+            backgroundColor: Colors.red,
+          );
+        }
+      },
+      error: (error, stackTrace) => showSnackbar(
+        context: context,
+        message: error.toString(),
+        backgroundColor: Colors.red,
+      ),
+      loading: () => showSnackbar(
+        context: context,
+        message: "Exporting...",
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
 
   Future<void> onSelected(String value, MachineModel item) async {
     final notifier = ref.read(machineNotifier.notifier);
@@ -512,25 +554,25 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 8.0),
-                                RowBody(
-                                  title: "Total SMS Sent",
-                                  content: "${item.summary?.totalSent ?? 0}",
-                                  titleFlex: 1,
-                                  contentFlex: 1,
-                                  titleTrailing: [
-                                    const SizedBox(width: 8.0),
-                                    InkWell(
-                                      onTap: () =>
-                                          onExport(ExportTypeEnum.totalSMSSent),
-                                      child: const Icon(
-                                        Icons.download,
-                                        color: Colors.green,
-                                        size: 20.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                // const SizedBox(height: 8.0),
+                                // RowBody(
+                                //   title: "Total SMS Sent",
+                                //   content: "${item.summary?.totalSent ?? 0}",
+                                //   titleFlex: 1,
+                                //   contentFlex: 1,
+                                //   titleTrailing: [
+                                //     const SizedBox(width: 8.0),
+                                //     InkWell(
+                                //       onTap: () =>
+                                //           onExport(ExportTypeEnum.totalSMSSent),
+                                //       child: const Icon(
+                                //         Icons.download,
+                                //         color: Colors.green,
+                                //         size: 20.0,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
                                 const SizedBox(height: 8.0),
                                 RowBody(
                                   title: "Total Voted",

@@ -220,39 +220,40 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
       type: type,
     );
     result.onExport.when(
-        data: (data) async {
-          if (data == null) return;
+      data: (data) async {
+        if (data == null) return;
 
-          try {
-            final name = "survey-${widget.item.name}-${type.valueString}";
-            final fileDownload = await placeFileToDownloadFolder(data, name);
+        try {
+          final name = "survey-${widget.item.name}-${type.valueString}";
+          final fileDownload = await placeFileToDownloadFolder(data, name);
 
-            final url = fileDownload.path;
+          final url = fileDownload.path;
 
-            if (!mounted) return;
-            showSnackbar(
-              context: context,
-              message: "Success Exporting Survey, file saved at $url",
-              backgroundColor: Colors.green,
-            );
-          } catch (e) {
-            showSnackbar(
-              context: context,
-              message: e.toString(),
-              backgroundColor: Colors.red,
-            );
-          }
-        },
-        error: (error, stackTrace) => showSnackbar(
-              context: context,
-              message: error.toString(),
-              backgroundColor: Colors.red,
-            ),
-        loading: () => showSnackbar(
-              context: context,
-              message: "Exporting...",
-              backgroundColor: Colors.blue,
-            ));
+          if (!mounted) return;
+          showSnackbar(
+            context: context,
+            message: "Success Exporting Survey, file saved at $url",
+            backgroundColor: Colors.green,
+          );
+        } catch (e) {
+          showSnackbar(
+            context: context,
+            message: e.toString(),
+            backgroundColor: Colors.red,
+          );
+        }
+      },
+      error: (error, stackTrace) => showSnackbar(
+        context: context,
+        message: error.toString(),
+        backgroundColor: Colors.red,
+      ),
+      loading: () => showSnackbar(
+        context: context,
+        message: "Exporting...",
+        backgroundColor: Colors.blue,
+      ),
+    );
   }
 
   Future<void> onChange(bool value) async {

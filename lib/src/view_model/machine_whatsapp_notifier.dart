@@ -14,10 +14,12 @@ import '../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_update_response_model.dart';
 import '../model/repository/machine_whatsapp_repository.dart';
+import '../utils/enum.dart';
 
 class MachineWhatsappState extends Equatable {
   final List<MachineWhatsappModel> items;
   final AsyncValue<MachineWhatsappModel?> onGetById;
+  final AsyncValue<Uint8List?> onGetExport;
   final AsyncValue<MachineWhatsappCreateResponseModel?> onCreate;
   final AsyncValue<MachineWhatsappUpdateResponseModel?> onUpdate;
   final AsyncValue<MachineWhatsappDeleteResponseModel?> onDelete;
@@ -28,6 +30,7 @@ class MachineWhatsappState extends Equatable {
   const MachineWhatsappState({
     this.items = const [],
     this.onGetById = const AsyncData(null),
+    this.onGetExport = const AsyncData(null),
     this.onCreate = const AsyncData(null),
     this.onUpdate = const AsyncData(null),
     this.onDelete = const AsyncData(null),
@@ -41,6 +44,7 @@ class MachineWhatsappState extends Equatable {
     return [
       items,
       onGetById,
+      onGetExport,
       onCreate,
       onUpdate,
       onDelete,
@@ -56,6 +60,7 @@ class MachineWhatsappState extends Equatable {
   MachineWhatsappState copyWith({
     List<MachineWhatsappModel>? items,
     AsyncValue<MachineWhatsappModel?>? onGetById,
+    AsyncValue<Uint8List?>? onGetExport,
     AsyncValue<MachineWhatsappCreateResponseModel?>? onCreate,
     AsyncValue<MachineWhatsappUpdateResponseModel?>? onUpdate,
     AsyncValue<MachineWhatsappDeleteResponseModel?>? onDelete,
@@ -66,6 +71,7 @@ class MachineWhatsappState extends Equatable {
     return MachineWhatsappState(
       items: items ?? this.items,
       onGetById: onGetById ?? this.onGetById,
+      onGetExport: onGetExport ?? this.onGetExport,
       onCreate: onCreate ?? this.onCreate,
       onUpdate: onUpdate ?? this.onUpdate,
       onDelete: onDelete ?? this.onDelete,
@@ -91,6 +97,24 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
       (failure) => state = MachineWhatsappState(
           onGetById: AsyncError(failure.message, StackTrace.current)),
       (data) => state = MachineWhatsappState(onGetById: AsyncData(data)),
+    );
+  }
+
+  Future<MachineWhatsappState> getExport({
+    required String machineWhatsappId,
+    required ExportTypeEnum type,
+  }) async {
+    state = const MachineWhatsappState(onGetExport: AsyncLoading());
+
+    final result = await repository.getExport(
+      whatsappId: machineWhatsappId,
+      type: type,
+    );
+
+    return result.fold(
+      (failure) => state = MachineWhatsappState(
+          onGetExport: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = MachineWhatsappState(onGetExport: AsyncData(data)),
     );
   }
 

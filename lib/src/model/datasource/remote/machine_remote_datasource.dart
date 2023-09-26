@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
+import '../../../utils/enum.dart';
+import '../../../utils/flutter_secure_storage.dart';
 import '../../model/helper/form/form_machine_create_update_model.dart';
 import '../../model/machine/machine_create_response_model.dart';
 import '../../model/machine/machine_delete_response_model.dart';
@@ -109,6 +112,33 @@ class MachineRemoteDatasource {
       final message = decoded.containsKey('message')
           ? decoded['message']
           : 'Failed to load machine summary';
+      throw Exception(message);
+    }
+  }
+
+  Future<Uint8List> getExport({
+    required String machineId,
+    required ExportTypeEnum type,
+  }) async {
+    final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
+    final uri = Uri.parse("$kBaseApiUrl/machines/$machineId/export");
+    final request = http.Request('GET', uri);
+    request.body = json.encode({
+      "type": type.valueString,
+    });
+    request.headers.addAll({
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $currentToken",
+    });
+
+    final response = await request.send();
+    final body = await response.stream.toBytes();
+
+    if (response.statusCode == 200) {
+      return body;
+    } else {
+      const message = "Failed to export survey";
       throw Exception(message);
     }
   }

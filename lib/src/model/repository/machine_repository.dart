@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 
+import '../../utils/enum.dart';
 import '../../utils/failure.dart';
 import '../datasource/remote/machine_remote_datasource.dart';
 import '../model/helper/form/form_machine_create_update_model.dart';
@@ -46,6 +49,21 @@ class MachineRepository {
       final result = await remoteDatasource.getByNumber(
         userId: userId,
         machineNumber: machineNumber,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, Uint8List>> getExport({
+    required String machineId,
+    required ExportTypeEnum type,
+  }) async {
+    try {
+      final result = await remoteDatasource.getExport(
+        machineId: machineId,
+        type: type,
       );
       return Right(result);
     } catch (e) {
