@@ -301,20 +301,20 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
           return;
         }
 
-        await showDialog(
+        showDialog(
           context: context,
-          builder: (context) => DialogDeleteConfirmation(
+          builder: (ctx) => DialogDeleteConfirmation(
             onConfirm: () async {
               final result = await notifier.delete(surveyId: item.id);
               result.onDelete.when(
                 data: (data) {
                   if (data == null) return;
 
-                  // close modal dialog
-                  context.pop();
+                  // Close dialog
+                  ctx.pop();
 
                   showSnackbar(
-                    context: context,
+                    context: ctx,
                     message: "Success Deleting Survey",
                     backgroundColor: Colors.green,
                   );
@@ -343,7 +343,7 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
       case "reset":
         await showDialog(
           context: context,
-          builder: (context) => DialogDeleteConfirmation(
+          builder: (ctx) => DialogDeleteConfirmation(
             title: "Reset Survey",
             content:
                 "Are you sure want to reset survey with name ${item.name}?",
@@ -352,11 +352,17 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
               result.onReset.when(
                 data: (data) {
                   if (data == null) return;
+                  // Close dialog
+                  ctx.pop();
+
                   showSnackbar(
-                    context: context,
+                    context: ctx,
                     message: "Success Reset Survey with name ${item.name}",
                     backgroundColor: Colors.green,
                   );
+
+                  // reload data machine
+                  ref.invalidate(getAllMachineFutureProvider);
 
                   // reload data survey only
                   ref.invalidate(surveyNotifier(item.machineId));
