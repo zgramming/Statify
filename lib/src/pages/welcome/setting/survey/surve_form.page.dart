@@ -77,6 +77,8 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
         await notifier.create(form: formState);
       }
     } catch (e) {
+      if (!mounted) return;
+
       showSnackbar(
         context: context,
         message: e.toString(),

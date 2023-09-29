@@ -122,6 +122,8 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
         form: form,
       );
     } catch (e) {
+      if (!mounted) return;
+
       showSnackbar(
         context: context,
         message: e.toString(),

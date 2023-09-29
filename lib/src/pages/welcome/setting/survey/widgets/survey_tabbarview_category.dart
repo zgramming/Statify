@@ -188,6 +188,8 @@ class SurveyTabBarViewCategoryState
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+
       showSnackbar(
         context: context,
         message: e.toString(),

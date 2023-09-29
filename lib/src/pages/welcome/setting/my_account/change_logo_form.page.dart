@@ -58,7 +58,8 @@ class ChangeLogoPageState extends ConsumerState<ChangeLogoPage> {
       final notifier = ref.read(logoNotifier.notifier);
       await notifier.upload(pickedFileBytes);
     } catch (e) {
-      log("Error Change Logo : $e");
+      if (!mounted) return;
+
       showSnackbar(
         context: context,
         message: e.toString(),

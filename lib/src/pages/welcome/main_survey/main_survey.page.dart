@@ -33,6 +33,7 @@ class _MainSurveyPageState extends ConsumerState<MainSurveyPage> {
         "idMachine": "-1",
       });
     } catch (e) {
+      if (!mounted) return;
       showSnackbar(
         context: context,
         message: e.toString(),
