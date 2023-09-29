@@ -482,6 +482,7 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
         return Stack(
           children: [
             Card(
+              elevation: 5,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
                 side: const BorderSide(color: Colors.grey, width: 1.0),
@@ -494,18 +495,18 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      RowBody(
-                        title: "Machine",
-                        content: item.name,
-                        titleFlex: 1,
-                        contentFlex: 1,
+                      Text(
+                        "Machine : ${item.name}",
+                        style: bodyFontBold.copyWith(fontSize: 14.0),
                       ),
                       const SizedBox(height: 8.0),
                       RowBody(
                         title: "Machine Phone Number",
                         content: sim1ORsim2,
-                        titleFlex: 1,
+                        titleFlex: 2,
                         contentFlex: 1,
+                        titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                        contentStyle: bodyFont.copyWith(fontSize: 14.0),
                       ),
                       const SizedBox(height: 16.0),
                       Row(
@@ -513,7 +514,7 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                           Expanded(
                             flex: 4,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 CircleIndexNumber(
                                     radius: radius, index: widget.index),
@@ -527,6 +528,24 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                   ),
                                   child: const Text("API Export"),
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const CircleAvatar(
+                                      radius: 6.0,
+                                      backgroundColor: Colors.green,
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                    Text(
+                                      "Offline",
+                                      textAlign: TextAlign.center,
+                                      style: bodyFont.copyWith(
+                                        fontSize: 10.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -538,8 +557,11 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                 RowBody(
                                   title: "Total Responden",
                                   content: "${item.summary?.totalReplied ?? 0}",
-                                  titleFlex: 1,
+                                  titleFlex: 3,
                                   contentFlex: 1,
+                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                  contentStyle:
+                                      bodyFont.copyWith(fontSize: 14.0),
                                   titleTrailing: [
                                     const SizedBox(width: 8.0),
                                     InkWell(
@@ -558,15 +580,21 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                 RowBody(
                                   title: "Total SMS Sent",
                                   content: "${item.summary?.totalSent ?? 0}",
-                                  titleFlex: 1,
+                                  titleFlex: 3,
                                   contentFlex: 1,
+                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                  contentStyle:
+                                      bodyFont.copyWith(fontSize: 14.0),
                                 ),
                                 const SizedBox(height: 8.0),
                                 RowBody(
                                   title: "Total Voted",
                                   content: "${item.summary?.totalVoted ?? 0}",
-                                  titleFlex: 1,
+                                  titleFlex: 3,
                                   contentFlex: 1,
+                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                  contentStyle:
+                                      bodyFont.copyWith(fontSize: 14.0),
                                   titleTrailing: [
                                     const SizedBox(width: 8.0),
                                     InkWell(
@@ -585,8 +613,11 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                   title: "Total Finished",
                                   content:
                                       "${item.summary?.totalFinished ?? 0}",
-                                  titleFlex: 1,
+                                  titleFlex: 3,
                                   contentFlex: 1,
+                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                  contentStyle:
+                                      bodyFont.copyWith(fontSize: 14.0),
                                   titleTrailing: [
                                     const SizedBox(width: 8.0),
                                     InkWell(

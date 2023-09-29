@@ -10,7 +10,6 @@ import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
 import '../../../view_model/custom_notifier/get_all_whatsapp_by_user.notifier.dart';
-import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
@@ -302,79 +301,82 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
-
-    final machine = ref.watch(
-      CustomProvider.getMachineByIdProvider(item.machineId),
-    );
+    final isDisconnected =
+        item.status == MachineWhatsappStatusEnum.disconnected;
 
     return Stack(
       children: [
         Card(
           margin: const EdgeInsets.only(),
+          elevation: 5,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
             side: const BorderSide(color: Colors.grey, width: 1.0),
           ),
-          child: InkWell(
-            onTap: onClickEdit,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  RowBody(
-                    title: "Machine",
-                    content: machine?.name ?? "",
-                    titleFlex: 1,
-                    contentFlex: 1,
-                  ),
-                  const SizedBox(height: 8.0),
-                  RowBody(
-                    title: "WhatsApp Number",
-                    content: item.number,
-                    titleFlex: 1,
-                    contentFlex: 1,
-                  ),
-                  const SizedBox(height: 16.0),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CircleIndexNumber(
-                                radius: 30.0, index: widget.index),
-                            const SizedBox(height: 8.0),
-                            ElevatedButton(
-                              onPressed: () => onClickQRCode(item.qrCode!),
-                              style: elevatedButtonStyle(
-                                padding: const EdgeInsets.all(
-                                  8.0,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  "WA Name / No. : ${item.number}",
+                  style: bodyFontBold.copyWith(fontSize: 14.0),
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleIndexNumber(radius: 30.0, index: widget.index),
+                          const SizedBox(height: 8.0),
+                          ElevatedButton(
+                            onPressed: () => onClickQRCode(item.qrCode!),
+                            style: elevatedButtonStyle(
+                              padding: const EdgeInsets.all(
+                                8.0,
+                              ),
+                            ),
+                            child: const Text("QR CODE"),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 6.0,
+                                backgroundColor:
+                                    isDisconnected ? Colors.grey : Colors.green,
+                              ),
+                              const SizedBox(width: 4.0),
+                              Text(
+                                item.status.valueStringReadable,
+                                style: bodyFont.copyWith(
+                                  fontSize: 10.0,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              child: const Text("QR CODE"),
-                            ),
-                            Text(
-                              item.status.valueStringReadable,
-                              style: bodyFont.copyWith(
-                                fontSize: 12.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        flex: 8,
+                    ),
+                    Expanded(
+                      flex: 8,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             RowBody(
                               title: "Total Responden",
                               content: "${item.totalReplied}",
-                              titleFlex: 1,
+                              titleFlex: 3,
                               contentFlex: 1,
+                              titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                              contentStyle: bodyFont.copyWith(fontSize: 14.0),
                               titleTrailing: [
                                 const SizedBox(width: 8.0),
                                 InkWell(
@@ -393,15 +395,19 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                             RowBody(
                               title: "Total SMS Sent",
                               content: "${item.totalSent}",
-                              titleFlex: 1,
+                              titleFlex: 3,
                               contentFlex: 1,
+                              titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                              contentStyle: bodyFont.copyWith(fontSize: 14.0),
                             ),
                             const SizedBox(height: 8.0),
                             RowBody(
                               title: "Total Voted",
                               content: "${item.totalVoted}",
-                              titleFlex: 1,
+                              titleFlex: 3,
                               contentFlex: 1,
+                              titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                              contentStyle: bodyFont.copyWith(fontSize: 14.0),
                               titleTrailing: [
                                 const SizedBox(width: 8.0),
                                 InkWell(
@@ -419,8 +425,10 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                             RowBody(
                               title: "Total Finished",
                               content: "${item.totalFinished}",
-                              titleFlex: 1,
+                              titleFlex: 3,
                               contentFlex: 1,
+                              titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                              contentStyle: bodyFont.copyWith(fontSize: 14.0),
                               titleTrailing: [
                                 const SizedBox(width: 8.0),
                                 InkWell(
@@ -436,11 +444,11 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                             ),
                           ],
                         ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
             ),
           ),
         ),

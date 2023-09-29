@@ -406,6 +406,7 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
     final item = widget.item;
     return Card(
       margin: EdgeInsets.zero,
+      elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
         side: BorderSide(
@@ -416,7 +417,6 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
       child: Stack(
         children: [
           ListTile(
-            onTap: onTap,
             contentPadding: const EdgeInsets.all(16),
             leading: CircleIndexNumber(
               radius: 30.0,
@@ -432,7 +432,6 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8.0),
                 Row(
                   children: [
                     Expanded(
@@ -440,34 +439,35 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
                       child: RowBody(
                         title: "Action",
                         content: item.action.valueStringReadable,
+                        titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                        contentStyle: bodyFont.copyWith(fontSize: 14.0),
                       ),
                     ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text(
-                            currentValue ? "ON" : "OFF",
-                            style: bodyFont.copyWith(fontSize: 10.0),
-                            textAlign: TextAlign.start,
-                          ),
-                          Switch.adaptive(
-                            value: currentValue,
-                            onChanged: (value) => onChange(value),
-                          ),
-                        ],
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          currentValue ? "ON" : "OFF",
+                          style: bodyFont.copyWith(fontSize: 10.0),
+                          textAlign: TextAlign.start,
+                        ),
+                        Switch.adaptive(
+                          value: currentValue,
+                          onChanged: (value) => onChange(value),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 8.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RowBody(
                       title: "Total Responden",
                       content: "${item.totalReplied}",
-                      titleFlex: 1,
+                      titleFlex: 3,
                       contentFlex: 1,
+                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
                       titleTrailing: [
                         const SizedBox(width: 8.0),
                         InkWell(
@@ -486,8 +486,10 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
                     RowBody(
                       title: "Total SMS Sent",
                       content: "${item.totalSent}",
-                      titleFlex: 1,
+                      titleFlex: 3,
                       contentFlex: 1,
+                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
                       titleTrailing: [
                         const SizedBox(width: 8.0),
                         InkWell(
@@ -504,8 +506,10 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
                     RowBody(
                       title: "Total Voted",
                       content: "${item.totalVoted}",
-                      titleFlex: 1,
+                      titleFlex: 3,
                       contentFlex: 1,
+                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
                       titleTrailing: [
                         const SizedBox(width: 8.0),
                         InkWell(
@@ -522,8 +526,10 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
                     RowBody(
                       title: "Total Finished",
                       content: "${item.totalFinished}",
-                      titleFlex: 1,
+                      titleFlex: 3,
                       contentFlex: 1,
+                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
                       titleTrailing: [
                         const SizedBox(width: 8.0),
                         InkWell(

@@ -47,9 +47,11 @@ class RowBody extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                content,
-                style: contentStyle ?? defaultStyle,
+              Flexible(
+                child: Text(
+                  content,
+                  style: contentStyle ?? defaultStyle,
+                ),
               ),
               if (titleTrailing != null) ...titleTrailing!,
             ],

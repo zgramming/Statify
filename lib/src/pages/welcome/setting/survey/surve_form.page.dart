@@ -9,7 +9,7 @@ import '../../../../utils/enum.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
-import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
+import '../../../../view_model/custom_notifier/get_all_survey_by_user.notifier.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/async_error_builder.dart';
@@ -128,7 +128,10 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
           );
 
           // Invalidate Machine
-          ref.invalidate(surveyNotifier);
+          ref.invalidate(getAllSurveyByUserGroupByMachineFutureProvider);
+
+          // Back to previous page
+          context.pop();
         },
         error: (error, stackTrace) => showSnackbar(
           context: context,
@@ -158,7 +161,7 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
             );
 
             // Invalidate Machine
-            ref.invalidate(getAllMachineFutureProvider);
+            ref.invalidate(getAllSurveyByUserGroupByMachineFutureProvider);
 
             // Back to previous page
             context.pop();
