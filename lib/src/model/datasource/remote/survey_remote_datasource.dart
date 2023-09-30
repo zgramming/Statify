@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
@@ -388,11 +387,12 @@ class SurveyRemoteDatasource {
 
           // If exist, skip this pending response
           if (tempPendingResponse != null) {
-            log(" Pending Response is exist in temporary pending response, skip this pending response");
             yield "Pending Response is exist in temporary pending response, skip this pending response";
           } else {
             final number = pendingResponse.respondent.number;
-            log("Pending Response is not exist in temporary pending response, create temporary pending response and send message to $number");
+
+            yield "Pending Response is not exist in temporary pending response, create temporary pending response and send message to $number";
+
             // create temporary pending response to local database for prevent duplicate
             final form = FormTemporaryPendingResponseCreateModel(
               message: pendingResponse.value,
@@ -420,7 +420,6 @@ class SurveyRemoteDatasource {
           }
         }
       } catch (e) {
-        log("Error When Listen Pending Response: ${e.toString()}");
         yield "Error When Listen Pending Response: ${e.toString()}";
       }
 

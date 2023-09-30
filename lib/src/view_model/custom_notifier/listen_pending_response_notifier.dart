@@ -9,7 +9,8 @@ final listenPendingResponseNotifier =
     final machine = ref.watch(CustomProvider.getMachineByIdProvider(machineId));
     if (machine == null) {
       return throw Exception(
-          'Machine is not found when listen pending response');
+        'Machine is not found when listen pending response',
+      );
     }
 
     final activeSurveyId = machine.activeSurveyId;
@@ -20,8 +21,9 @@ final listenPendingResponseNotifier =
       );
     }
 
-    final simSlot =
-        ref.watch(CustomProvider.userChooseSIMMachineProvider(machineId));
+    final simSlot = ref.watch(
+      CustomProvider.userChooseSIMMachineProvider(machineId),
+    );
 
     final stream = ref
         .watch(surveyNotifier(machineId).notifier)

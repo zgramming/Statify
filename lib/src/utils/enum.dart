@@ -27,6 +27,11 @@ enum MachineSMSSettingEnum {
   both,
 }
 
+enum MachineStatusEnum {
+  offline,
+  online,
+}
+
 enum MachineActionEnum {
   sms,
   whatsapp,
@@ -104,6 +109,26 @@ extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
         return 'Sim 2 Priority';
       case MachineSMSSettingEnum.both:
         return 'Both';
+    }
+  }
+}
+
+extension MachineStatusEnumEXT on MachineStatusEnum {
+  String get valueString {
+    switch (this) {
+      case MachineStatusEnum.offline:
+        return 'offline';
+      case MachineStatusEnum.online:
+        return 'online';
+    }
+  }
+
+  String get valueStringReadable {
+    switch (this) {
+      case MachineStatusEnum.offline:
+        return 'Offline';
+      case MachineStatusEnum.online:
+        return 'Online';
     }
   }
 }

@@ -69,16 +69,16 @@ class _SettingPageState extends ConsumerState<SettingPage> {
                   leadingIcon: Icons.person,
                   leadingBackgroundColor: Colors.blue,
                 ),
-                // const SizedBox(height: 16),
-                // ListTileSettingMenu(
-                //   onTap: () {
-                //     context.pushNamed(routeMachine);
-                //   },
-                //   title: "Machine",
-                //   subtitle: "Manage machine",
-                //   leadingIcon: Icons.devices_rounded,
-                //   leadingBackgroundColor: Colors.green,
-                // ),
+                const SizedBox(height: 16),
+                ListTileSettingMenu(
+                  onTap: () {
+                    context.pushNamed(routeMachineGroup);
+                  },
+                  title: "Machine Group",
+                  subtitle: "Manage machine group",
+                  leadingIcon: Icons.group,
+                  leadingBackgroundColor: Colors.purple,
+                ),
                 const SizedBox(height: 16),
                 ListTileSettingMenu(
                   onTap: () {

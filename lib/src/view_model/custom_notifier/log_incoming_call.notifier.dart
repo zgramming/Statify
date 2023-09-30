@@ -30,7 +30,7 @@ class LogIncomingCallNotifier extends StateNotifier<LogIncomingCallState> {
   void addLog(IncomingCallModel item) {
     if (item.number == null) return;
 
-    final items = [...state.items, item];
+    final items = [item, ...state.items];
     state = state.copyWith(items: items);
   }
 

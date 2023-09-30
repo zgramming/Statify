@@ -8,25 +8,27 @@ part 'machine_create_response_model.g.dart';
 )
 class MachineCreateResponseModel extends Equatable {
   final String id;
-  final String userId;
+  final int totalSmsSent;
+  final bool group;
   final String name;
   final String number;
   final String serialNumber;
   final String license;
-  final DateTime createdAt;
+  final String userId;
   final DateTime updatedAt;
-  final String? activeSurveyId;
+  final DateTime createdAt;
 
   const MachineCreateResponseModel({
     required this.id,
-    required this.userId,
+    required this.totalSmsSent,
+    required this.group,
     required this.name,
     required this.number,
     required this.serialNumber,
     required this.license,
-    required this.createdAt,
+    required this.userId,
     required this.updatedAt,
-    this.activeSurveyId,
+    required this.createdAt,
   });
 
   factory MachineCreateResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -36,17 +38,18 @@ class MachineCreateResponseModel extends Equatable {
   Map<String, dynamic> toJson() => _$MachineCreateResponseModelToJson(this);
 
   @override
-  List<Object?> get props {
+  List<Object> get props {
     return [
       id,
-      userId,
+      totalSmsSent,
+      group,
       name,
       number,
       serialNumber,
       license,
-      createdAt,
+      userId,
       updatedAt,
-      activeSurveyId,
+      createdAt,
     ];
   }
 

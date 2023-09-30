@@ -13,9 +13,11 @@ class MachineUpdateResponseModel extends Equatable {
   final String number;
   final String serialNumber;
   final String license;
+  final int totalSmsSent;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? activeSurveyId;
+  final bool group;
 
   const MachineUpdateResponseModel({
     required this.id,
@@ -24,9 +26,11 @@ class MachineUpdateResponseModel extends Equatable {
     required this.number,
     required this.serialNumber,
     required this.license,
+    required this.totalSmsSent,
     required this.createdAt,
     required this.updatedAt,
     this.activeSurveyId,
+    required this.group,
   });
 
   factory MachineUpdateResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -44,9 +48,11 @@ class MachineUpdateResponseModel extends Equatable {
       number,
       serialNumber,
       license,
+      totalSmsSent,
       createdAt,
       updatedAt,
       activeSurveyId,
+      group,
     ];
   }
 

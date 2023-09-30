@@ -10,23 +10,27 @@ class SurveyRespondenCreateModel extends Equatable {
   final String id;
   final String surveyRespondentId;
   final String platform;
+  final String type;
   final String key;
   final String value;
   final String status;
+  final bool finish;
+  final bool voting;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final bool finish;
 
   const SurveyRespondenCreateModel({
     required this.id,
     required this.surveyRespondentId,
     required this.platform,
+    required this.type,
     required this.key,
     required this.value,
     required this.status,
+    required this.finish,
+    required this.voting,
     required this.createdAt,
     required this.updatedAt,
-    required this.finish,
   });
 
   factory SurveyRespondenCreateModel.fromJson(Map<String, dynamic> json) =>
@@ -41,12 +45,14 @@ class SurveyRespondenCreateModel extends Equatable {
       id,
       surveyRespondentId,
       platform,
+      type,
       key,
       value,
       status,
+      finish,
+      voting,
       createdAt,
       updatedAt,
-      finish,
     ];
   }
 

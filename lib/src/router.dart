@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
 import 'pages/welcome/main_survey/main_survey_summary.page.dart';
+import 'pages/welcome/setting/machine_group/machine_group.page.dart';
+import 'pages/welcome/setting/machine_group/machine_group_form.page.dart';
 import 'pages/welcome/setting/survey/survey_response_form_page.dart';
 import 'pages/welcome/machine/machine_whatsapp_form_page.dart';
 import 'pages/welcome/setting/log/log_page.dart';
@@ -23,6 +25,8 @@ const routeIntroduction = "introduction";
 const routeLogin = "login";
 
 // Machine
+const routeMachineGroup = "machine-group";
+const routeMachineGroupForm = "machine-group/form/:id";
 const routeMachine = "machine";
 const routeMachineForm = "machine/form/:id";
 
@@ -87,6 +91,20 @@ final _routes = <RouteBase>[
     builder: (context, state) {
       final id = state.pathParameters['id'] ?? "-1";
       return MachineFormPage(id: id);
+    },
+  ),
+
+  GoRoute(
+    path: "/machine-group",
+    name: routeMachineGroup,
+    builder: (context, state) => const MachineGroupPage(),
+  ),
+  GoRoute(
+    path: "/machine-group/form/:id",
+    name: routeMachineGroupForm,
+    builder: (context, state) {
+      final id = state.pathParameters['id'] ?? "-1";
+      return MachineGroupFormPage(id: id);
     },
   ),
 

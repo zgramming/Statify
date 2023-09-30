@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
@@ -69,12 +68,17 @@ class MachineGroupRemoteDatasource {
     FormMachineGroupCreateOrUpdateModel form,
   ) async {
     final uri = Uri.parse("$kBaseApiUrl/users/${form.userId}/machine-groups");
+
+// Why is this snippet not working to send list of machine ids?
+    final bodyForm = jsonEncode({
+      'name': form.name,
+      'machines': form.machineIds,
+    });
     final response = await client.post(
       uri,
-      body: {
-        'name': form.name,
-        'master': form.masterMachineId,
-        'machines': form.machineIds
+      body: bodyForm,
+      headers: {
+        'Content-Type': 'application/json',
       },
     );
 
@@ -99,11 +103,7 @@ class MachineGroupRemoteDatasource {
         "$kBaseApiUrl/users/${form.userId}/machine-groups/${form.machineGroupId}");
     final response = await client.put(
       uri,
-      body: {
-        'name': form.name,
-        'master': form.masterMachineId,
-        'machines': form.machineIds
-      },
+      body: {'name': form.name, 'machines': form.machineIds},
     );
 
     final body = response.body;
@@ -271,12 +271,9 @@ class MachineGroupNotifier extends StateNotifier<MachineGroupState> {
   MachineGroupNotifier({
     required this.repository,
     required this.userId,
-  }) : super(const MachineGroupState()) {
-    getAll();
-  }
+  }) : super(const MachineGroupState());
 
   Future<MachineGroupState> getAll() async {
-    state = state.copyWith(onGetAll: const AsyncLoading());
     final result = await repository.getAll(userId);
     return result.fold(
       (failure) => state = state.copyWith(

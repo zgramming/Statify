@@ -117,7 +117,6 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
             backgroundColor: Colors.green,
           );
 
-          // invalidate getAllMachineFutureProvider
           ref.invalidate(getAllMachineFutureProvider);
 
           // Back to previous page

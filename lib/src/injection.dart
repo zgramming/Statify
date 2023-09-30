@@ -106,7 +106,8 @@ final machineNotifier = StateNotifierProvider<MachineNotifier, MachineState>(
     );
   },
 );
-final machineGroupNotifier = StateNotifierProvider(
+final machineGroupNotifier =
+    StateNotifierProvider<MachineGroupNotifier, MachineGroupState>(
   (ref) {
     final userId = ref.watch(userNotifier.select((value) => value.user?.id));
     return MachineGroupNotifier(

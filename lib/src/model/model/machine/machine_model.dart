@@ -1,7 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../../utils/enum.dart';
 import 'machine_summary.model.dart';
 
 part 'machine_model.g.dart';
@@ -19,6 +19,9 @@ class MachineModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? activeSurveyId;
+  final bool group;
+  final MachineStatusEnum status;
+  final DateTime? lastOnline;
   final MachineSummaryModel? summary;
 
   const MachineModel({
@@ -31,6 +34,9 @@ class MachineModel extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.activeSurveyId,
+    required this.group,
+    required this.status,
+    this.lastOnline,
     this.summary,
   });
 
@@ -52,6 +58,9 @@ class MachineModel extends Equatable {
       createdAt,
       updatedAt,
       activeSurveyId,
+      group,
+      status,
+      lastOnline,
       summary,
     ];
   }
@@ -69,6 +78,9 @@ class MachineModel extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? activeSurveyId,
+    bool? group,
+    MachineStatusEnum? status,
+    DateTime? lastOnline,
     MachineSummaryModel? summary,
   }) {
     return MachineModel(
@@ -81,6 +93,9 @@ class MachineModel extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       activeSurveyId: activeSurveyId ?? this.activeSurveyId,
+      group: group ?? this.group,
+      status: status ?? this.status,
+      lastOnline: lastOnline ?? this.lastOnline,
       summary: summary ?? this.summary,
     );
   }

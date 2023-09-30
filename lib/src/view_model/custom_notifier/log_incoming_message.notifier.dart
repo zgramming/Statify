@@ -32,7 +32,7 @@ class LogIncomingMessageNotifier
     required String type,
   }) {
     state = state.copyWith(
-      logs: [...state.logs, (type, message)],
+      logs: [(type, message), ...state.logs],
     );
   }
 

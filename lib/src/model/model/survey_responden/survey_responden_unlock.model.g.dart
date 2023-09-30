@@ -10,15 +10,14 @@ SurveyRespondenUnlockModel _$SurveyRespondenUnlockModelFromJson(
         Map<String, dynamic> json) =>
     SurveyRespondenUnlockModel(
       id: json['id'] as String,
-      surveyId: json['survey_id'] as String,
-      machineWhatsappId: json['machine_whatsapp_id'] as String?,
-      number: json['number'] as String,
-      locked: json['locked'] as bool,
-      attempt: json['attempt'] as int,
-      bannedUntil: json['banned_until'] == null
-          ? null
-          : DateTime.parse(json['banned_until'] as String),
+      surveyRespondentId: json['survey_respondent_id'] as String,
+      platform: json['platform'] as String,
+      type: json['type'] as String,
+      key: json['key'] as String,
+      value: json['value'] as String,
+      status: json['status'] as String,
       finish: json['finish'] as bool,
+      voting: json['voting'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -27,13 +26,14 @@ Map<String, dynamic> _$SurveyRespondenUnlockModelToJson(
         SurveyRespondenUnlockModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'survey_id': instance.surveyId,
-      'machine_whatsapp_id': instance.machineWhatsappId,
-      'number': instance.number,
-      'locked': instance.locked,
-      'attempt': instance.attempt,
-      'banned_until': instance.bannedUntil?.toIso8601String(),
+      'survey_respondent_id': instance.surveyRespondentId,
+      'platform': instance.platform,
+      'type': instance.type,
+      'key': instance.key,
+      'value': instance.value,
+      'status': instance.status,
       'finish': instance.finish,
+      'voting': instance.voting,
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
     };

@@ -30,8 +30,8 @@ class LogListenPendingResponseNotifier
   void addLog(String? message) {
     state = state.copyWith(
       logs: [
-        ...state.logs,
         message,
+        ...state.logs,
       ],
     );
   }

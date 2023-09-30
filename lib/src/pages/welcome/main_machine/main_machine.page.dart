@@ -28,14 +28,14 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/dialog_confirmation_delete.dart';
 import '../../widgets/row_body.dart';
 
-class HomePage extends ConsumerStatefulWidget {
-  const HomePage({super.key});
+class MainMachinePage extends ConsumerStatefulWidget {
+  const MainMachinePage({super.key});
 
   @override
-  ConsumerState<HomePage> createState() => _HomePageState();
+  ConsumerState<MainMachinePage> createState() => _MainMachinePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _MainMachinePageState extends ConsumerState<MainMachinePage> {
   StreamSubscription<IncomingCallModel>? _subscriptionIncomingCall;
   StreamSubscription<IncomingSMSModel?>? _subscriptionIncomingMessage;
   StreamSubscription<ListenOnsentSMSModel>? _subscriptionSentMessage;
@@ -245,8 +245,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       );
     }
 
-    final machinesAsync =
-        ref.watch(getAllMachineFutureProvider).unwrapPrevious();
+    final machinesAsync = ref.watch(getAllMachineFutureProvider);
     return machinesAsync.when(
       data: (data) {
         final machines = data.items;
@@ -297,9 +296,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                     }
 
                     return RefreshIndicator(
-                      onRefresh: () async {
-                        ref.invalidate(getAllMachineFutureProvider);
-                      },
+                      onRefresh: () async =>
+                          ref.invalidate(getAllMachineFutureProvider),
                       child: ListView.separated(
                         itemCount: machines.length,
                         shrinkWrap: true,
@@ -328,9 +326,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       },
       error: (error, stackTrace) => AsyncErrorBuilder(
         error: error.toString(),
-        onRetry: () {
-          ref.invalidate(getAllMachineFutureProvider);
-        },
+        onRetry: () => ref.invalidate(getAllMachineFutureProvider),
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
@@ -477,6 +473,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     const radius = 30.0;
     final streamAsync = ref.watch(listenPendingResponseNotifier(item.id));
 
+    final isOffline = item.status == MachineStatusEnum.offline;
+
     return streamAsync.when(
       data: (_) {
         return Stack(
@@ -531,13 +529,15 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const CircleAvatar(
+                                    CircleAvatar(
                                       radius: 6.0,
-                                      backgroundColor: Colors.green,
+                                      backgroundColor: isOffline
+                                          ? Colors.grey
+                                          : Colors.green,
                                     ),
                                     const SizedBox(width: 4.0),
                                     Text(
-                                      "Offline",
+                                      item.status.valueStringReadable,
                                       textAlign: TextAlign.center,
                                       style: bodyFont.copyWith(
                                         fontSize: 10.0,

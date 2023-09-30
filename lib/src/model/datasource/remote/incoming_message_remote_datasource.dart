@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -35,25 +37,30 @@ class IncomingMessageRemoteDatasource {
       final isSurveyRespondenEmpty = surveyRespondent == null;
       if (isSurveyRespondenEmpty) {
         // We should create new survey
-        await surveyRespondenRemoteDatasource.create(
+        final result = await surveyRespondenRemoteDatasource.create(
           surveyId: surveyId,
           number: number,
           key: message,
         );
-        return ("SE_CNS", "Survey Empty and Create New Survey");
+        return (
+          "SE_CNS",
+          "Survey Empty and Create New Survey. Detail Information : \n\n1.Key: ${result.key} \n\n2.Value: ${result.value} \n\n3.Survey Responden Id: ${result.id} "
+        );
       } else {
         final isLocked = surveyRespondent.locked;
-
         if (isLocked) {
           // We should unlock the survey
-          await surveyRespondenRemoteDatasource.unlock(
+          final result = await surveyRespondenRemoteDatasource.unlock(
             surveyRespondenId: surveyRespondent.id,
             surveyId: surveyRespondent.surveyId,
             key: message,
             platform: MachineResponsePlatformEnum.sms.valueString,
           );
 
-          return ("SNE_US", "Survey Not Empty and Unlock Survey");
+          return (
+            "SNE_US",
+            "Survey Not Empty and Unlock Survey. Detail Information : \n\n1.Key: ${result.key} \n\n2.Value: ${result.value} \n\n3.Survey Responden Id: ${result.id}"
+          );
         } else {
           // We should create new survey response
 
@@ -62,15 +69,18 @@ class IncomingMessageRemoteDatasource {
             platform: MachineResponsePlatformEnum.sms.valueString,
             surveyRespondenId: surveyRespondent.id,
           );
-          await surveyRespondenResponseRemoteDatasource.create(form: form);
+
+          final result =
+              await surveyRespondenResponseRemoteDatasource.create(form: form);
 
           return (
             "SNE_CNSR",
-            "Survey Not Empty and Create New Survey Response"
+            "Survey Not Empty and Create New Survey Response. Detail Information :\n\n1.Key: ${result.key} \n\n2.Value: ${result.value}\n\n3.Survey Responden Id: ${result.id}"
           );
         }
       }
     } catch (e) {
+      log("Error when handling incoming message: $e");
       throw Exception(e.toString());
     }
   }
