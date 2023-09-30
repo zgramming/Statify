@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/model/helper/form/form_survey_setting_create_update_model.dart';
+import '../model/model/helper/form/form_survey_setting_create_update.model.dart';
 import '../model/model/survey_setting/survey_setting_model.dart';
 import '../model/repository/survey_setting_repository.dart';
 

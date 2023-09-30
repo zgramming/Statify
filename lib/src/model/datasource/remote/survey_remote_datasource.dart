@@ -13,7 +13,7 @@ import '../../../utils/failure.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../../utils/method_channel.dart';
 import '../../model/helper/form/form_survey_create_update.model.dart';
-import '../../model/helper/form/form_survey_setting_create_update_model.dart';
+import '../../model/helper/form/form_survey_setting_create_update.model.dart';
 import '../../model/helper/form/form_temporary_pending_response_create.model.dart';
 import '../../model/send_sms_model.dart';
 import '../../model/survey/survey.model.dart';

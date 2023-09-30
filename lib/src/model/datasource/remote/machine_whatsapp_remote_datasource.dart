@@ -8,7 +8,7 @@ import 'package:http_parser/http_parser.dart';
 import '../../../utils/constant.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/flutter_secure_storage.dart';
-import '../../model/helper/form/form_machine_whatsapp_create_update_model.dart';
+import '../../model/helper/form/form_machine_whatsapp_create_update.model.dart';
 import '../../model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
 import '../../model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
 import '../../model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';

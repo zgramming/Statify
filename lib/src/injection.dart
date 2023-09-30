@@ -6,6 +6,7 @@ import 'model/datasource/local/logo_local.datasource.dart';
 import 'model/datasource/local/temporary_pending_response_local_datasource.dart';
 import 'model/datasource/remote/authentication_remote_datasource.dart';
 import 'model/datasource/remote/incoming_message_remote_datasource.dart';
+import 'model/datasource/remote/machine_group_remote_datasource.dart';
 import 'model/datasource/remote/machine_remote_datasource.dart';
 import 'model/datasource/remote/machine_whatsapp_remote_datasource.dart';
 import 'model/datasource/remote/survey_remote_datasource.dart';
@@ -98,10 +99,19 @@ final machineWhatsappNotifier =
 );
 final machineNotifier = StateNotifierProvider<MachineNotifier, MachineState>(
   (ref) {
-    final user = ref.watch(userNotifier.select((value) => value.user));
+    final userId = ref.watch(userNotifier.select((value) => value.user?.id));
     return MachineNotifier(
       repository: ref.watch(_machineRepository),
-      userId: user?.id ?? '',
+      userId: userId ?? '',
+    );
+  },
+);
+final machineGroupNotifier = StateNotifierProvider(
+  (ref) {
+    final userId = ref.watch(userNotifier.select((value) => value.user?.id));
+    return MachineGroupNotifier(
+      repository: ref.watch(_machineGroupRepository),
+      userId: userId ?? '',
     );
   },
 );
@@ -116,7 +126,6 @@ final userNotifier = StateNotifierProvider<UserNotifier, UserState>((ref) {
     repository: ref.watch(_userRepository),
   );
 });
-
 final temporaryPendingResponseNotifier = StateNotifierProvider<
     TemporaryPendingResponseNotifier, TemporaryPendingResponseState>(
   (ref) => TemporaryPendingResponseNotifier(
@@ -164,10 +173,19 @@ final _surveyResponseRepository = Provider(
     remoteDatasource: ref.watch(_surveyResponseRemoteDatasource),
   ),
 );
-final _machineWhatsappRepository = Provider((ref) => MachineWhatsappRepository(
-    remoteDatasource: ref.watch(_machineWhatsappRemoteDatasource)));
-final _machineRepository = Provider((ref) =>
-    MachineRepository(remoteDatasource: ref.watch(_machineRemoteDatasource)));
+final _machineWhatsappRepository = Provider(
+  (ref) => MachineWhatsappRepository(
+      remoteDatasource: ref.watch(_machineWhatsappRemoteDatasource)),
+);
+final _machineRepository = Provider(
+  (ref) =>
+      MachineRepository(remoteDatasource: ref.watch(_machineRemoteDatasource)),
+);
+final _machineGroupRepository = Provider(
+  (ref) => MachineGroupRepository(
+    remoteDatasource: ref.watch(_machineGroupRemoteDatasource),
+  ),
+);
 final _authenticationRepository = Provider(
   (ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource),
@@ -178,7 +196,6 @@ final _userRepository = Provider(
     remoteDatasource: ref.watch(_userRemoteDatasource),
   ),
 );
-
 final _temporaryPendingResponseRepository = Provider(
   (ref) => TemporaryPendingResponseRepository(
     localDatasource: ref.watch(_temporaryPendingResponseLocalDatasource),
@@ -241,6 +258,11 @@ final _machineWhatsappRemoteDatasource = Provider(
 );
 final _machineRemoteDatasource = Provider(
   (ref) => MachineRemoteDatasource(
+    client: ref.watch(_httpClient),
+  ),
+);
+final _machineGroupRemoteDatasource = Provider(
+  (ref) => MachineGroupRemoteDatasource(
     client: ref.watch(_httpClient),
   ),
 );

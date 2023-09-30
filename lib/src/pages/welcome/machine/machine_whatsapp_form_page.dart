@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
 import '../../../model/model/helper/dropdown/machine_dropdown_model.dart';
-import '../../../model/model/helper/form/form_machine_whatsapp_create_update_model.dart';
+import '../../../model/model/helper/form/form_machine_whatsapp_create_update.model.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';

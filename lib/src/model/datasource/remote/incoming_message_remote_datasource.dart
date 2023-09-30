@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/enum.dart';
-import '../../model/helper/form/form_survey_responden_response_create_model.dart';
+import '../../model/helper/form/form_survey_responden_response_create.model.dart';
 import 'survey_responden_remote_datasource.dart';
 import 'survey_responden_response_remote_datasource.dart';
 

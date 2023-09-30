@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/model/helper/form/form_machine_whatsapp_create_update_model.dart';
+import '../model/model/helper/form/form_machine_whatsapp_create_update.model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_connected_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';

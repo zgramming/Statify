@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/constant.dart';
-import '../../model/helper/form/form_survey_setting_create_update_model.dart';
+import '../../model/helper/form/form_survey_setting_create_update.model.dart';
 import '../../model/survey_setting/survey_setting_model.dart';
 
 class SurveySettingRemoteDatasource {

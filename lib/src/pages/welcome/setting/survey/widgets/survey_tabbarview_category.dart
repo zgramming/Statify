@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../injection.dart';
 import '../../../../../model/model/helper/form/form_survey_create_update.model.dart';
-import '../../../../../model/model/helper/form/form_survey_setting_create_update_model.dart';
+import '../../../../../model/model/helper/form/form_survey_setting_create_update.model.dart';
 import '../../../../../model/model/helper/props/props_get_survey_setting_detail.model.dart';
 import '../../../../../utils/enum.dart';
 import '../../../../../utils/fonts.dart';
