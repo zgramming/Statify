@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../router.dart';
 import '../../../../utils/fonts.dart';
-import '../../../../view_model/custom_provider/custom_provider.dart';
 
 class ModalAddMachineGroupOrMachine extends ConsumerWidget {
   const ModalAddMachineGroupOrMachine({
@@ -13,9 +12,6 @@ class ModalAddMachineGroupOrMachine extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isHaveMachineGroup = ref.watch(
-      CustomProvider.isAlreadyHaveMachineGroupProvider,
-    );
     return Container(
       margin: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
@@ -47,14 +43,12 @@ class ModalAddMachineGroupOrMachine extends ConsumerWidget {
           ),
           const SizedBox(height: 8.0),
           ElevatedButton(
-            onPressed: !isHaveMachineGroup
-                ? null
-                : () {
-                    context.pop();
-                    context.pushNamed(routeMachineForm, pathParameters: {
-                      "id": "-1",
-                    });
-                  },
+            onPressed: () {
+              context.pop();
+              context.pushNamed(routeMachineForm, pathParameters: {
+                "id": "-1",
+              });
+            },
             child: const Text("Machine"),
           ),
         ],

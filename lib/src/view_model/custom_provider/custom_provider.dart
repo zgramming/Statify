@@ -148,11 +148,6 @@ class CustomProvider {
       return machinesNotHaveGroupModel;
     },
   );
-
-  static final isAlreadyHaveMachineGroupProvider = Provider.autoDispose((ref) {
-    final items = ref.watch(machineGroupNotifier).items;
-    return items.isNotEmpty;
-  });
 }
 
 // End Custom Provider
