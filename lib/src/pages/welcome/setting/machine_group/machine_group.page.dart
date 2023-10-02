@@ -146,29 +146,46 @@ class _MachineGroupItemState extends ConsumerState<_MachineGroupItem> {
   @override
   Widget build(BuildContext context) {
     final machines = widget.item.machines ?? <MachineModel>[];
-    return ListTile(
-      onTap: onEdit,
-      leading: CircleAvatar(
-        radius: 15.0,
-        child: Text("${widget.index + 1}"),
-      ),
-      title: Text(widget.item.name),
-      subtitle: Wrap(
-        spacing: 8,
-        children: [
-          ...machines.map(
-            (e) => Chip(
-              label: Text(
-                e.name,
-                style: bodyFont.copyWith(fontSize: 10.0),
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ListTile(
+        onTap: onEdit,
+        leading: CircleAvatar(
+          radius: 15.0,
+          child: Text("${widget.index + 1}"),
+        ),
+        title: Text(widget.item.name),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8.0),
+            for (final machine in machines) ...[
+              Text(
+                machine.name,
+                style: bodyFont.copyWith(
+                  fontSize: 12.0,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 8.0),
+            ],
+          ],
+        ),
+        trailing: Wrap(
+          children: [
+            IconButton(
+              onPressed: onDelete,
+              icon: const Icon(Icons.delete, color: Colors.red),
+            ),
+            IconButton(
+              onPressed: onEdit,
+              icon: const Icon(
+                Icons.edit,
+                color: Colors.blue,
               ),
             ),
-          ),
-        ],
-      ),
-      trailing: IconButton(
-        onPressed: onDelete,
-        icon: const Icon(Icons.delete, color: Colors.red),
+          ],
+        ),
       ),
     );
   }
