@@ -7,6 +7,7 @@ ButtonStyle elevatedButtonStyle({
   Color? backgroundColor,
   EdgeInsetsGeometry? padding,
   BorderRadiusGeometry? radius,
+  Size? minimumSize,
 }) =>
     ElevatedButton.styleFrom(
       padding: padding ?? const EdgeInsets.all(16.0),
@@ -14,6 +15,7 @@ ButtonStyle elevatedButtonStyle({
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(10.0),
       ),
+      minimumSize: minimumSize ?? const Size(0, 48),
     );
 
 ButtonStyle outlineButtonStyle({

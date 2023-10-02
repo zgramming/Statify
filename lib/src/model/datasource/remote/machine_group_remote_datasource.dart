@@ -69,7 +69,6 @@ class MachineGroupRemoteDatasource {
   ) async {
     final uri = Uri.parse("$kBaseApiUrl/users/${form.userId}/machine-groups");
 
-// Why is this snippet not working to send list of machine ids?
     final bodyForm = jsonEncode({
       'name': form.name,
       'machines': form.machineIds,
@@ -101,9 +100,20 @@ class MachineGroupRemoteDatasource {
   ) async {
     final uri = Uri.parse(
         "$kBaseApiUrl/users/${form.userId}/machine-groups/${form.machineGroupId}");
-    final response = await client.put(
+
+    final bodyForm = jsonEncode(
+      {
+        'name': form.name,
+        'machines': form.machineIds,
+      },
+    );
+
+    final response = await client.patch(
       uri,
-      body: {'name': form.name, 'machines': form.machineIds},
+      body: bodyForm,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
 
     final body = response.body;
@@ -281,7 +291,9 @@ class MachineGroupNotifier extends StateNotifier<MachineGroupState> {
       ),
       (data) => state = state.copyWith(
         onGetAll: AsyncData(data),
-        items: data,
+        items: [
+          ...data,
+        ],
       ),
     );
   }

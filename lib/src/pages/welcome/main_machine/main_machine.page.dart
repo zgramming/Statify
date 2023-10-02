@@ -11,6 +11,7 @@ import '../../../model/model/incoming_call_model.dart';
 import '../../../model/model/incoming_sms/incoming_sms.model.dart';
 import '../../../model/model/listen_onsent_sms.model.dart';
 import '../../../model/model/machine/machine_model.dart';
+import '../../../model/model/machine_group/machine_group.model.dart';
 import '../../../model/model/temporary_pending_response/temporary_pending_response.model.dart';
 import '../../../router.dart';
 import '../../../utils/enum.dart';
@@ -19,6 +20,7 @@ import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
+import '../../../view_model/custom_notifier/get_alll_machine_group.notifier.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../../view_model/custom_notifier/log_listen_pending_response.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
@@ -27,15 +29,17 @@ import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/dialog_confirmation_delete.dart';
 import '../../widgets/row_body.dart';
+import 'widgets/modal_add_machine_group_or_machine.dart';
 
-class MainMachinePage extends ConsumerStatefulWidget {
-  const MainMachinePage({super.key});
+class MainMachineGroupPage extends ConsumerStatefulWidget {
+  const MainMachineGroupPage({super.key});
 
   @override
-  ConsumerState<MainMachinePage> createState() => _MainMachinePageState();
+  ConsumerState<MainMachineGroupPage> createState() =>
+      _MainMachineGroupPageState();
 }
 
-class _MainMachinePageState extends ConsumerState<MainMachinePage> {
+class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
   StreamSubscription<IncomingCallModel>? _subscriptionIncomingCall;
   StreamSubscription<IncomingSMSModel?>? _subscriptionIncomingMessage;
   StreamSubscription<ListenOnsentSMSModel>? _subscriptionSentMessage;
@@ -45,9 +49,65 @@ class _MainMachinePageState extends ConsumerState<MainMachinePage> {
   final eventChannelUtils = EventChannelUtils();
 
   void onAdd() {
-    context.pushNamed(routeMachineForm, pathParameters: {
-      "id": "-1",
-    });
+    // Show Modal Bottom Sheet to add new machine or machine group
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const ModalAddMachineGroupOrMachine(),
+    );
+  }
+
+  void onEdit(MachineGroupModel item) {
+    context.pushNamed(
+      routeMachineGroupForm,
+      pathParameters: {
+        "id": item.id,
+      },
+    );
+  }
+
+  Future<void> onSelected(String value, MachineGroupModel item) async {
+    final notifier = ref.read(machineGroupNotifier.notifier);
+    switch (value) {
+      case "edit":
+        onEdit(item);
+        break;
+      case "delete":
+        showDialog(
+          context: context,
+          builder: (context) => DialogDeleteConfirmation(
+            onConfirm: () async {
+              final result = await notifier.delete(machineGroupId: item.id);
+              result.onDelete.whenOrNull(
+                data: (data) {
+                  if (data == null) return;
+
+                  // close modal dialog
+                  context.pop();
+
+                  showSnackbar(
+                    context: context,
+                    message: "Delete Machine Group ${data.name} Success",
+                    backgroundColor: Colors.green,
+                  );
+
+                  ref.invalidate(getAllMachineGroupFutureProvider);
+                },
+                error: (error, stackTrace) {
+                  showSnackbar(
+                    context: context,
+                    message: error.toString(),
+                    backgroundColor: Colors.red,
+                  );
+                },
+              );
+            },
+          ),
+        );
+        break;
+      default:
+        break;
+    }
   }
 
   Future<void> deleteTemporaryPendingResponse({
@@ -208,127 +268,199 @@ class _MainMachinePageState extends ConsumerState<MainMachinePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isEmptyAvailableSIM = ref.watch(CustomProvider.isEmptyAvailableSIM);
-    final userId = ref.watch(userNotifier.select((value) => value.user?.id));
-    if (isEmptyAvailableSIM) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                "No Available SIM, Please Update SIM 1 / SIM 2 in User Profile",
-                style: headerFont.copyWith(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+    final machineNotHaveGroup =
+        ref.watch(CustomProvider.getMachinesNotHaveGroup);
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const CustomAppbar(title: "Machine Group List"),
+            if (machineNotHaveGroup.isNotEmpty) ...[
+              Card(
+                color: Colors.red[100],
+                margin: const EdgeInsets.all(16.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Some Machine Not Have Group, Please Add Group First to Machine ${machineNotHaveGroup.map((e) => e.name).join(", ")}",
+                    style: bodyFont.copyWith(
+                      color: Colors.red[900],
+                      fontSize: 12.0,
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8.0),
-              ElevatedButton(
-                onPressed: () {
-                  context.pushNamed(
-                    routeMyAccountFormPage,
-                    pathParameters: {
-                      "id": "$userId",
-                    },
-                  );
-                },
-                child: const Text("Update SIM 1 / SIM 2"),
               ),
             ],
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  final groupsAsync = ref
+                      .watch(getAllMachineGroupFutureProvider)
+                      .unwrapPrevious();
+
+                  return groupsAsync.when(
+                    data: (data) {
+                      final groups = data.items;
+
+                      if (groups.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "No Machine Group Found, Please Add Machine Group First",
+                            style: headerFont.copyWith(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      }
+
+                      return RefreshIndicator(
+                        onRefresh: () async =>
+                            ref.invalidate(getAllMachineGroupFutureProvider),
+                        child: ListView.separated(
+                          itemCount: groups.length,
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                            left: 16.0,
+                            right: 16.0,
+                            bottom: 80.0,
+                          ),
+                          separatorBuilder: (context, index) => const Divider(),
+                          itemBuilder: (context, index) {
+                            final item = groups[index];
+                            final machines = item.machines ?? [];
+                            return Card(
+                              margin: const EdgeInsets.only(),
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                side: const BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Group : ${item.name}",
+                                            style: bodyFontBold.copyWith(
+                                              fontSize: 14.0,
+                                            ),
+                                          ),
+                                        ),
+                                        PopupMenuButton<String>(
+                                          onSelected: (value) =>
+                                              onSelected(value, item),
+                                          icon: const Icon(Icons.more_vert),
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              value: "edit",
+                                              child: Text(
+                                                "Edit",
+                                                style: bodyFont.copyWith(
+                                                  color: Colors.blue,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            PopupMenuItem(
+                                              value: "delete",
+                                              child: Text(
+                                                "Delete",
+                                                style: bodyFont.copyWith(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    _MachineGroupMachines(machines: machines),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    error: (error, stackTrace) => AsyncErrorBuilder(
+                      error: error.toString(),
+                      onRetry: () =>
+                          ref.invalidate(getAllMachineGroupFutureProvider),
+                    ),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: FloatingActionButton(
+              onPressed: onAdd,
+              child: const Icon(Icons.add),
+            ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MachineGroupMachines extends StatelessWidget {
+  const _MachineGroupMachines({
+    Key? key,
+    required this.machines,
+  }) : super(key: key);
+  final List<MachineModel> machines;
+
+  @override
+  Widget build(BuildContext context) {
+    final isEmpty = machines.isEmpty;
+
+    if (isEmpty) {
+      return Center(
+        child: Text(
+          "No Machine Found, Please Add Machine",
+          style: headerFont.copyWith(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
         ),
       );
     }
 
-    final machinesAsync = ref.watch(getAllMachineFutureProvider);
-    return machinesAsync.when(
-      data: (data) {
-        final machines = data.items;
-
-        return Stack(
-          children: [
-            Column(
-              children: [
-                const CustomAppbar(title: "Machine List"),
-                // ElevatedButton(
-                //   onPressed: () async {
-                //     // Get file from folder asset
-                //     // final file = await rootBundle.load(kURLLogoHitech);
-                //     // final fileBytes = file.buffer.asUint8List();
-
-                //     final methodChannel = MethodChannelUtils();
-                //     const number = "085159412440";
-                //     // const number = "089517229249";
-                //     // const message =
-                //     //     "Pentingnya menjaga keseimbangan dalam kehidupan tidak dapat diabaikan. Kita harus mengatur waktu dengan bijak antara pekerjaan, keluarga";
-                //     // const message =
-                //     //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas ipsa nemo aspernatur asperiores! Error ipsa sunt voluptatibus ex iusto et perferendis aspernatur corrupti, enim unde. Delectus voluptate quisquam quas possimus?";
-                //     const message = "ok";
-                //     const model = SendSMSModel(
-                //       phoneNumber: number,
-                //       message: message,
-                //       simSlot: 0,
-                //       surveyResponseId: "",
-                //     );
-                //     await methodChannel.sendSMS(model);
-                //   },
-                //   child: const Text("Send SMS"),
-                // ),
-                Expanded(
-                  child: Builder(builder: (context) {
-                    if (machines.isEmpty) {
-                      return Center(
-                        child: Text(
-                          "No Machine Found, Please Add Machine",
-                          style: headerFont.copyWith(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    }
-
-                    return RefreshIndicator(
-                      onRefresh: () async =>
-                          ref.invalidate(getAllMachineFutureProvider),
-                      child: ListView.separated(
-                        itemCount: machines.length,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(16.0),
-                        separatorBuilder: (context, index) => const Divider(),
-                        itemBuilder: (context, index) {
-                          final item = machines[index];
-                          return _MachineItem(item: item, index: index);
-                        },
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-            Positioned(
-              bottom: 10,
-              right: 10,
-              child: FloatingActionButton(
-                onPressed: onAdd,
-                child: const Icon(Icons.add),
-              ),
-            )
-          ],
-        );
+    return ListView.separated(
+      itemCount: machines.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      separatorBuilder: (context, index) => const Divider(),
+      itemBuilder: (context, index) {
+        final item = machines[index];
+        return _MachineItem(item: item, index: index);
       },
-      error: (error, stackTrace) => AsyncErrorBuilder(
-        error: error.toString(),
-        onRetry: () => ref.invalidate(getAllMachineFutureProvider),
-      ),
-      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }
@@ -470,7 +602,6 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
     final item = widget.item;
     final sim1ORsim2 =
         ref.watch(CustomProvider.getSIM1orSIM2Provider(item.number));
-    const radius = 30.0;
     final streamAsync = ref.watch(listenPendingResponseNotifier(item.id));
 
     final isOffline = item.status == MachineStatusEnum.offline;
@@ -486,158 +617,158 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                 side: const BorderSide(color: Colors.grey, width: 1.0),
               ),
               margin: const EdgeInsets.only(),
-              child: InkWell(
-                onTap: onTapMachine,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        "Machine : ${item.name}",
-                        style: bodyFontBold.copyWith(fontSize: 14.0),
-                      ),
-                      const SizedBox(height: 8.0),
-                      RowBody(
-                        title: "Machine Phone Number",
-                        content: sim1ORsim2,
-                        titleFlex: 2,
-                        contentFlex: 1,
-                        titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                        contentStyle: bodyFont.copyWith(fontSize: 14.0),
-                      ),
-                      const SizedBox(height: 16.0),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CircleIndexNumber(
-                                    radius: radius, index: widget.index),
-                                const SizedBox(height: 8.0),
-                                ElevatedButton(
-                                  onPressed: onTapAPIExport,
-                                  style: elevatedButtonStyle(
-                                    padding: const EdgeInsets.all(
-                                      8.0,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      "Machine : ${item.name}",
+                      style: bodyFontBold.copyWith(fontSize: 12.0),
+                    ),
+                    const SizedBox(height: 8.0),
+                    RowBody(
+                      title: "Machine Phone Number",
+                      content: sim1ORsim2,
+                      titleFlex: 2,
+                      contentFlex: 1,
+                      titleStyle: bodyFont.copyWith(fontSize: 12.0),
+                      contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircleIndexNumber(
+                                radius: 24.0,
+                                index: widget.index,
+                              ),
+                              const SizedBox(height: 8.0),
+                              ElevatedButton(
+                                onPressed: onTapAPIExport,
+                                style: elevatedButtonStyle(
+                                  padding: const EdgeInsets.all(8),
+                                  minimumSize: const Size(0, 32.0),
+                                ),
+                                child: Text(
+                                  "API Export",
+                                  style: bodyFont.copyWith(
+                                    fontSize: 10.0,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 6.0,
+                                    backgroundColor:
+                                        isOffline ? Colors.grey : Colors.green,
+                                  ),
+                                  const SizedBox(width: 4.0),
+                                  Text(
+                                    item.status.valueStringReadable,
+                                    textAlign: TextAlign.center,
+                                    style: bodyFont.copyWith(
+                                      fontSize: 10.0,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  child: const Text("API Export"),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 6.0,
-                                      backgroundColor: isOffline
-                                          ? Colors.grey
-                                          : Colors.green,
-                                    ),
-                                    const SizedBox(width: 4.0),
-                                    Text(
-                                      item.status.valueStringReadable,
-                                      textAlign: TextAlign.center,
-                                      style: bodyFont.copyWith(
-                                        fontSize: 10.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            flex: 8,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RowBody(
-                                  title: "Total Responden",
-                                  content: "${item.summary?.totalReplied ?? 0}",
-                                  titleFlex: 3,
-                                  contentFlex: 1,
-                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                                  contentStyle:
-                                      bodyFont.copyWith(fontSize: 14.0),
-                                  titleTrailing: [
-                                    const SizedBox(width: 8.0),
-                                    InkWell(
-                                      onTap: () => onExport(
-                                        ExportTypeEnum.totalReplied,
-                                      ),
-                                      child: const Icon(
-                                        Icons.download,
-                                        color: Colors.green,
-                                        size: 20.0,
-                                      ),
+                        ),
+                        const SizedBox(width: 8.0),
+                        Expanded(
+                          flex: 8,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RowBody(
+                                title: "Total Responden",
+                                content: "${item.summary?.totalReplied ?? 0}",
+                                titleFlex: 3,
+                                contentFlex: 1,
+                                titleStyle: bodyFont.copyWith(fontSize: 12.0),
+                                contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                                titleTrailing: [
+                                  const SizedBox(width: 8.0),
+                                  InkWell(
+                                    onTap: () => onExport(
+                                      ExportTypeEnum.totalReplied,
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8.0),
-                                RowBody(
-                                  title: "Total SMS Sent",
-                                  content: "${item.summary?.totalSent ?? 0}",
-                                  titleFlex: 3,
-                                  contentFlex: 1,
-                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                                  contentStyle:
-                                      bodyFont.copyWith(fontSize: 14.0),
-                                ),
-                                const SizedBox(height: 8.0),
-                                RowBody(
-                                  title: "Total Voted",
-                                  content: "${item.summary?.totalVoted ?? 0}",
-                                  titleFlex: 3,
-                                  contentFlex: 1,
-                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                                  contentStyle:
-                                      bodyFont.copyWith(fontSize: 14.0),
-                                  titleTrailing: [
-                                    const SizedBox(width: 8.0),
-                                    InkWell(
-                                      onTap: () =>
-                                          onExport(ExportTypeEnum.totalVoted),
-                                      child: const Icon(
-                                        Icons.download,
-                                        color: Colors.green,
-                                        size: 20.0,
-                                      ),
+                                    child: const Icon(
+                                      Icons.download,
+                                      color: Colors.green,
+                                      size: 16.0,
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8.0),
-                                RowBody(
-                                  title: "Total Finished",
-                                  content:
-                                      "${item.summary?.totalFinished ?? 0}",
-                                  titleFlex: 3,
-                                  contentFlex: 1,
-                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                                  contentStyle:
-                                      bodyFont.copyWith(fontSize: 14.0),
-                                  titleTrailing: [
-                                    const SizedBox(width: 8.0),
-                                    InkWell(
-                                      onTap: () => onExport(
-                                          ExportTypeEnum.totalFinished),
-                                      child: const Icon(
-                                        Icons.download,
-                                        color: Colors.green,
-                                        size: 20.0,
-                                      ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              RowBody(
+                                title: "Total SMS Sent",
+                                content: "${item.summary?.totalSent ?? 0}",
+                                titleFlex: 3,
+                                contentFlex: 1,
+                                titleStyle: bodyFont.copyWith(fontSize: 12.0),
+                                contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                              ),
+                              const SizedBox(height: 8.0),
+                              RowBody(
+                                title: "Total Voted",
+                                content: "${item.summary?.totalVoted ?? 0}",
+                                titleFlex: 3,
+                                contentFlex: 1,
+                                titleStyle: bodyFont.copyWith(fontSize: 12.0),
+                                contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                                titleTrailing: [
+                                  const SizedBox(width: 8.0),
+                                  InkWell(
+                                    onTap: () =>
+                                        onExport(ExportTypeEnum.totalVoted),
+                                    child: const Icon(
+                                      Icons.download,
+                                      color: Colors.green,
+                                      size: 16.0,
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              RowBody(
+                                title: "Total Finished",
+                                content: "${item.summary?.totalFinished ?? 0}",
+                                titleFlex: 3,
+                                contentFlex: 1,
+                                titleStyle: bodyFont.copyWith(fontSize: 12.0),
+                                contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                                titleTrailing: [
+                                  const SizedBox(width: 8.0),
+                                  InkWell(
+                                    onTap: () =>
+                                        onExport(ExportTypeEnum.totalFinished),
+                                    child: const Icon(
+                                      Icons.download,
+                                      color: Colors.green,
+                                      size: 16.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),

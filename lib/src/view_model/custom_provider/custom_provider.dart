@@ -114,8 +114,45 @@ class CustomProvider {
       return items;
     },
   );
+
+  // Machine Group Provider
+
+  static final getMachinesNotHaveGroup = Provider.autoDispose(
+    (ref) {
+      final items = ref.watch(machineGroupNotifier).items;
+      // Only get machine that has group
+      final machinesHaveGroup = items
+          .map((e) => e.machines)
+          .expand((element) => element ?? <MachineModel>[])
+          .toList();
+      final allMachines = ref.watch(machineNotifier).items;
+
+      final machinesHaveGroupIds = machinesHaveGroup.map((e) => e.id).toList();
+      final allMachinesIds = allMachines.map((e) => e.id).toList();
+
+      final setMachinesHaveGroup = Set.from(machinesHaveGroupIds);
+      final setAllMachines = Set.from(allMachinesIds);
+      // Intersection of all machines and machines have group
+      // This will return machines that not have group
+      // Because we want to get machines that not have group
+      // So we need to get the difference of all machines and machines have group
+
+      final machinesNotHaveGroup =
+          setAllMachines.difference(setMachinesHaveGroup).toList();
+
+      // Get Machines by List of Id
+      final machinesNotHaveGroupModel = machinesNotHaveGroup
+          .map((e) => allMachines.firstWhere((element) => element.id == e))
+          .toList();
+
+      return machinesNotHaveGroupModel;
+    },
+  );
+
+  static final isAlreadyHaveMachineGroupProvider = Provider.autoDispose((ref) {
+    final items = ref.watch(machineGroupNotifier).items;
+    return items.isNotEmpty;
+  });
 }
-
-
 
 // End Custom Provider

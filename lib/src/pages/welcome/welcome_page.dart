@@ -89,7 +89,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   ];
 
   final _pages = [
-    const MainMachinePage(),
+    const MainMachineGroupPage(),
     const MainWhatsAppPage(),
     const MainSurveyPage(),
     const LongDistanceAccessPage(),
