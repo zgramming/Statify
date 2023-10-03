@@ -316,7 +316,7 @@ class SurveyTabBarViewCategoryState
                     MachineSettingToolsOptionEnum.specificNumber) ...[
                   const SizedBox(height: 20),
                   FormBodyRow(
-                    title: "Timeout (hours)",
+                    title: "Invitation Timeout (hours)",
                     child: TextFormField(
                       controller: _timeoutController,
                       keyboardType: TextInputType.number,
@@ -332,7 +332,7 @@ class SurveyTabBarViewCategoryState
                   ),
                   const SizedBox(height: 20),
                   FormBodyRow(
-                    title: "Backoff (hours)",
+                    title: "Banned time (hours)",
                     child: TextFormField(
                       controller: _backoffController,
                       keyboardType: TextInputType.number,
@@ -348,7 +348,7 @@ class SurveyTabBarViewCategoryState
                   ),
                   const SizedBox(height: 20),
                   FormBodyRow(
-                    title: "Tries",
+                    title: "Banned after attempts ",
                     child: TextFormField(
                       controller: _triesController,
                       keyboardType: TextInputType.number,

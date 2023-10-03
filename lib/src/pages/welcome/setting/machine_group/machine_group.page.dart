@@ -45,7 +45,7 @@ class _MachineGroupPageState extends ConsumerState<MachineGroupPage> {
               builder: (context) {
                 return machineGroupAsync.when(
                   data: (data) {
-                    final items = data.items;
+                    final items = data.$1;
                     if (items.isEmpty) {
                       return Center(
                         child: Text(
@@ -59,8 +59,8 @@ class _MachineGroupPageState extends ConsumerState<MachineGroupPage> {
                     }
 
                     return ListView.separated(
-                      separatorBuilder: (context, index) => const Divider(),
                       shrinkWrap: true,
+                      separatorBuilder: (context, index) => const Divider(),
                       physics: const BouncingScrollPhysics(),
                       itemCount: items.length,
                       itemBuilder: (context, index) {

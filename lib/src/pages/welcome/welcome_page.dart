@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../utils/constant.dart';
 import '../../view_model/custom_notifier/request_permission_notifier.dart';
 import '../widgets/async_error_builder.dart';
-import 'main_machine/main_machine.page.dart';
+import 'main_machine_group/main_machine_group.page.dart';
 import 'long_distance_access/long_distance_access_page.dart';
 import 'setting/setting_page.dart';
 import 'main_survey/main_survey.page.dart';

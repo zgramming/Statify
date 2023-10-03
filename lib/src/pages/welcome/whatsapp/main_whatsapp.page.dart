@@ -69,7 +69,7 @@ class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
                               child: Text(
                                 "No Machine WhatsApp Found",
                                 style: bodyFont.copyWith(
-                                  fontSize: 18.0,
+                                  fontSize: 16.0,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -88,55 +88,48 @@ class _MainWhatsAppPageState extends ConsumerState<MainWhatsAppPage> {
 
                               return Card(
                                 margin: const EdgeInsets.only(
-                                    bottom: 16.0, left: 16.0, right: 16.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  side: const BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
+                                  bottom: 16.0,
+                                  left: 16.0,
+                                  right: 16.0,
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0,
-                                        ),
-                                        child: Text(
-                                          machine.name,
-                                          style: headerFont.copyWith(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                      ),
+                                      child: Text(
+                                        machine.name,
+                                        style: headerFont.copyWith(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(height: 16.0),
-                                      ListView.separated(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: whatsapps.length,
-                                        shrinkWrap: true,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0,
-                                        ),
-                                        separatorBuilder: (context, index) =>
-                                            const Divider(),
-                                        itemBuilder: (context, index) {
-                                          final item = whatsapps[index];
-                                          return _WhatsappItem(
-                                            item: item,
-                                            index: index,
-                                          );
-                                        },
+                                    ),
+                                    const SizedBox(height: 16.0),
+                                    ListView.separated(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: whatsapps.length,
+                                      shrinkWrap: true,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
                                       ),
-                                      const SizedBox(height: 16.0),
-                                    ],
-                                  ),
+                                      separatorBuilder: (context, index) =>
+                                          const Divider(),
+                                      itemBuilder: (context, index) {
+                                        final item = whatsapps[index];
+                                        return _WhatsappItem(
+                                          item: item,
+                                          index: index,
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(height: 16.0),
+                                  ],
                                 ),
                               );
                             }).toList(),
@@ -342,6 +335,7 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                             ),
                             child: const Text("QR CODE"),
                           ),
+                          const SizedBox(height: 8.0),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -393,7 +387,7 @@ class _WhatsappItemState extends ConsumerState<_WhatsappItem> {
                             ),
                             const SizedBox(height: 8.0),
                             RowBody(
-                              title: "Total SMS Sent",
+                              title: "Total WA Replied",
                               content: "${item.totalSent}",
                               titleFlex: 3,
                               contentFlex: 1,

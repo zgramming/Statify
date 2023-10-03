@@ -10,6 +10,7 @@ import '../../../router.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
+import '../../../utils/styles.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_notifier/get_all_survey_by_user.notifier.dart';
 import '../../widgets/async_error_builder.dart';
@@ -82,7 +83,7 @@ class _MainSurveyPageState extends ConsumerState<MainSurveyPage> {
                               child: Text(
                                 "No Survey Found",
                                 style: bodyFont.copyWith(
-                                  fontSize: 18.0,
+                                  fontSize: 16.0,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -416,135 +417,186 @@ class _SurveyItemState extends ConsumerState<_SurveyItem> {
       ),
       child: Stack(
         children: [
-          ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            leading: CircleIndexNumber(
-              radius: 30.0,
-              index: widget.index,
-            ),
-            title: Text(
-              item.name,
-              style: headerFont.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
+          Card(
+            margin: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              side: BorderSide(
+                color: currentValue ? Colors.green : Colors.grey,
+                width: 1.0,
               ),
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: RowBody(
-                        title: "Action",
-                        content: item.action.valueStringReadable,
-                        titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                        contentStyle: bodyFont.copyWith(fontSize: 14.0),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 8.0),
+                            CircleIndexNumber(
+                              radius: 30.0,
+                              index: widget.index,
+                            ),
+                            const SizedBox(height: 8.0),
+                            ElevatedButton(
+                              onPressed: onTapSummary,
+                              style: elevatedButtonStyle(
+                                padding: const EdgeInsets.all(8.0),
+                              ),
+                              child: const Text("Summary"),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  currentValue ? "ON" : "OFF",
+                                  style: bodyFont.copyWith(fontSize: 10.0),
+                                  textAlign: TextAlign.start,
+                                ),
+                                Switch.adaptive(
+                                  value: currentValue,
+                                  onChanged: (value) => onChange(value),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          currentValue ? "ON" : "OFF",
-                          style: bodyFont.copyWith(fontSize: 10.0),
-                          textAlign: TextAlign.start,
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8.0),
+                            Text(
+                              item.name,
+                              style: headerFont.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            const SizedBox(height: 8.0),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 4,
+                                  child: RowBody(
+                                    title: "Action",
+                                    content: item.action.valueStringReadable,
+                                    titleStyle:
+                                        bodyFont.copyWith(fontSize: 14.0),
+                                    contentStyle:
+                                        bodyFont.copyWith(fontSize: 14.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RowBody(
+                                  title: "Total Responden",
+                                  content: "${item.totalReplied}",
+                                  titleFlex: 3,
+                                  contentFlex: 1,
+                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                  contentStyle:
+                                      bodyFont.copyWith(fontSize: 14.0),
+                                  titleTrailing: [
+                                    const SizedBox(width: 8.0),
+                                    InkWell(
+                                      onTap: () => onExport(
+                                        ExportTypeEnum.totalReplied,
+                                      ),
+                                      child: const Icon(
+                                        Icons.download,
+                                        color: Colors.green,
+                                        size: 20.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                                RowBody(
+                                  title: "Total SMS Sent",
+                                  content: "${item.totalSent}",
+                                  titleFlex: 3,
+                                  contentFlex: 1,
+                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                  contentStyle:
+                                      bodyFont.copyWith(fontSize: 14.0),
+                                  titleTrailing: [
+                                    const SizedBox(width: 8.0),
+                                    InkWell(
+                                      onTap: () =>
+                                          onExport(ExportTypeEnum.totalSMSSent),
+                                      child: const Icon(
+                                        Icons.download,
+                                        color: Colors.green,
+                                        size: 20.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                                RowBody(
+                                  title: "Total Voted",
+                                  content: "${item.totalVoted}",
+                                  titleFlex: 3,
+                                  contentFlex: 1,
+                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                  contentStyle:
+                                      bodyFont.copyWith(fontSize: 14.0),
+                                  titleTrailing: [
+                                    const SizedBox(width: 8.0),
+                                    InkWell(
+                                      onTap: () =>
+                                          onExport(ExportTypeEnum.totalVoted),
+                                      child: const Icon(
+                                        Icons.download,
+                                        color: Colors.green,
+                                        size: 20.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                                RowBody(
+                                  title: "Total Finished",
+                                  content: "${item.totalFinished}",
+                                  titleFlex: 3,
+                                  contentFlex: 1,
+                                  titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                  contentStyle:
+                                      bodyFont.copyWith(fontSize: 14.0),
+                                  titleTrailing: [
+                                    const SizedBox(width: 8.0),
+                                    InkWell(
+                                      onTap: () => onExport(
+                                          ExportTypeEnum.totalFinished),
+                                      child: const Icon(
+                                        Icons.download,
+                                        color: Colors.green,
+                                        size: 20.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        Switch.adaptive(
-                          value: currentValue,
-                          onChanged: (value) => onChange(value),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RowBody(
-                      title: "Total Responden",
-                      content: "${item.totalReplied}",
-                      titleFlex: 3,
-                      contentFlex: 1,
-                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
-                      titleTrailing: [
-                        const SizedBox(width: 8.0),
-                        InkWell(
-                          onTap: () => onExport(
-                            ExportTypeEnum.totalReplied,
-                          ),
-                          child: const Icon(
-                            Icons.download,
-                            color: Colors.green,
-                            size: 20.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-                    RowBody(
-                      title: "Total SMS Sent",
-                      content: "${item.totalSent}",
-                      titleFlex: 3,
-                      contentFlex: 1,
-                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
-                      titleTrailing: [
-                        const SizedBox(width: 8.0),
-                        InkWell(
-                          onTap: () => onExport(ExportTypeEnum.totalSMSSent),
-                          child: const Icon(
-                            Icons.download,
-                            color: Colors.green,
-                            size: 20.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-                    RowBody(
-                      title: "Total Voted",
-                      content: "${item.totalVoted}",
-                      titleFlex: 3,
-                      contentFlex: 1,
-                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
-                      titleTrailing: [
-                        const SizedBox(width: 8.0),
-                        InkWell(
-                          onTap: () => onExport(ExportTypeEnum.totalVoted),
-                          child: const Icon(
-                            Icons.download,
-                            color: Colors.green,
-                            size: 20.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-                    RowBody(
-                      title: "Total Finished",
-                      content: "${item.totalFinished}",
-                      titleFlex: 3,
-                      contentFlex: 1,
-                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
-                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
-                      titleTrailing: [
-                        const SizedBox(width: 8.0),
-                        InkWell(
-                          onTap: () => onExport(ExportTypeEnum.totalFinished),
-                          child: const Icon(
-                            Icons.download,
-                            color: Colors.green,
-                            size: 20.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           Positioned(

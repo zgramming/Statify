@@ -22,6 +22,7 @@ ButtonStyle outlineButtonStyle({
   Color? backgroundColor,
   EdgeInsetsGeometry? padding,
   BorderRadiusGeometry? radius,
+  Size? minimumSize,
 }) =>
     OutlinedButton.styleFrom(
       padding: padding ?? const EdgeInsets.all(16.0),
@@ -29,6 +30,7 @@ ButtonStyle outlineButtonStyle({
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(10.0),
       ),
+      minimumSize: minimumSize ?? const Size(0, 48),
     );
 
 InputDecoration inputDecorationRounded({double? radius}) => InputDecoration(

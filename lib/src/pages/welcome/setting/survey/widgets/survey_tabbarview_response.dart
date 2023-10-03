@@ -253,7 +253,7 @@ class _ResponseItemState extends ConsumerState<_ResponseItem> {
                       children: [
                         Flexible(
                           child: Text(
-                            "Send:",
+                            "Reply:",
                             style: bodyFont.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 10.0,

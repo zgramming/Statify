@@ -29,6 +29,7 @@ import '../../widgets/circle_index_number.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/dialog_confirmation_delete.dart';
 import '../../widgets/row_body.dart';
+import 'widgets/alert_machine_not_have_group.dart';
 import 'widgets/modal_add_machine_group_or_machine.dart';
 
 class MainMachineGroupPage extends ConsumerStatefulWidget {
@@ -268,7 +269,7 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final machineNotHaveGroup =
+    final machinesNotHaveGroup =
         ref.watch(CustomProvider.getMachinesNotHaveGroup);
 
     return Stack(
@@ -278,22 +279,9 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const CustomAppbar(title: "Machine Group List"),
-            if (machineNotHaveGroup.isNotEmpty) ...[
-              Card(
-                color: Colors.red[100],
-                margin: const EdgeInsets.all(16.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Some Machine Not Have Group, Please Add Group First to Machine ${machineNotHaveGroup.map((e) => e.name).join(", ")}",
-                    style: bodyFont.copyWith(
-                      color: Colors.red[900],
-                      fontSize: 12.0,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            AlertMachinesNotHaveGroup(
+              machinesNotHaveGroup: machinesNotHaveGroup,
+            ),
             Expanded(
               child: Builder(
                 builder: (context) {
@@ -303,98 +291,102 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
 
                   return groupsAsync.when(
                     data: (data) {
-                      final groups = data.items;
-
-                      if (groups.isEmpty) {
-                        return Center(
-                          child: Text(
-                            "No Machine Group Found, Please Add Machine Group First",
-                            style: headerFont.copyWith(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
+                      final groups = data.$1;
+                      final machinesNotHaveGroup = data.$2;
 
                       return RefreshIndicator(
                         onRefresh: () async =>
                             ref.invalidate(getAllMachineGroupFutureProvider),
-                        child: ListView.separated(
-                          itemCount: groups.length,
-                          shrinkWrap: true,
+                        child: SingleChildScrollView(
                           padding: const EdgeInsets.only(
                             left: 16.0,
                             right: 16.0,
                             bottom: 80.0,
                           ),
-                          separatorBuilder: (context, index) => const Divider(),
-                          itemBuilder: (context, index) {
-                            final item = groups[index];
-                            final machines = item.machines ?? [];
-                            return Card(
-                              margin: const EdgeInsets.only(),
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                                side: const BorderSide(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "Group : ${item.name}",
-                                            style: bodyFontBold.copyWith(
-                                              fontSize: 14.0,
-                                            ),
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ListView.separated(
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: groups.length,
+                                shrinkWrap: true,
+                                separatorBuilder: (context, index) =>
+                                    const Divider(),
+                                itemBuilder: (context, index) {
+                                  final item = groups[index];
+                                  final machines = item.machines ?? [];
+                                  return Card(
+                                    margin: const EdgeInsets.only(),
+                                    elevation: 5,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  "Group : ${item.name}",
+                                                  style: bodyFontBold.copyWith(
+                                                    fontSize: 16.0,
+                                                  ),
+                                                ),
+                                              ),
+                                              // PopupMenuButton<String>(
+                                              //   onSelected: (value) =>
+                                              //       onSelected(value, item),
+                                              //   icon: const Icon(Icons.more_vert),
+                                              //   itemBuilder: (context) => [
+                                              //     PopupMenuItem(
+                                              //       value: "edit",
+                                              //       child: Text(
+                                              //         "Edit",
+                                              //         style: bodyFont.copyWith(
+                                              //           color: Colors.blue,
+                                              //           fontWeight: FontWeight.bold,
+                                              //         ),
+                                              //       ),
+                                              //     ),
+                                              //     PopupMenuItem(
+                                              //       value: "delete",
+                                              //       child: Text(
+                                              //         "Delete",
+                                              //         style: bodyFont.copyWith(
+                                              //           color: Colors.red,
+                                              //           fontWeight: FontWeight.bold,
+                                              //         ),
+                                              //       ),
+                                              //     ),
+                                              //   ],
+                                              // ),
+                                            ],
                                           ),
-                                        ),
-                                        PopupMenuButton<String>(
-                                          onSelected: (value) =>
-                                              onSelected(value, item),
-                                          icon: const Icon(Icons.more_vert),
-                                          itemBuilder: (context) => [
-                                            PopupMenuItem(
-                                              value: "edit",
-                                              child: Text(
-                                                "Edit",
-                                                style: bodyFont.copyWith(
-                                                  color: Colors.blue,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            PopupMenuItem(
-                                              value: "delete",
-                                              child: Text(
-                                                "Delete",
-                                                style: bodyFont.copyWith(
-                                                  color: Colors.red,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                          const SizedBox(height: 8.0),
+                                          _MachineGroupMachines(
+                                            machines: machines,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    _MachineGroupMachines(machines: machines),
-                                  ],
-                                ),
+                                  );
+                                },
                               ),
-                            );
-                          },
+                              ListView.separated(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: machinesNotHaveGroup.length,
+                                separatorBuilder: (context, index) =>
+                                    const Divider(),
+                                itemBuilder: (context, index) {
+                                  final item = machinesNotHaveGroup[index];
+                                  return _MachineItem(item: item, index: index);
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -624,7 +616,7 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                   children: [
                     Text(
                       "Machine : ${item.name}",
-                      style: bodyFontBold.copyWith(fontSize: 12.0),
+                      style: bodyFontBold.copyWith(fontSize: 14.0),
                     ),
                     const SizedBox(height: 8.0),
                     RowBody(
@@ -632,8 +624,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                       content: sim1ORsim2,
                       titleFlex: 2,
                       contentFlex: 1,
-                      titleStyle: bodyFont.copyWith(fontSize: 12.0),
-                      contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                      titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                      contentStyle: bodyFont.copyWith(fontSize: 14.0),
                     ),
                     const SizedBox(height: 16.0),
                     Row(
@@ -696,8 +688,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                 content: "${item.summary?.totalReplied ?? 0}",
                                 titleFlex: 3,
                                 contentFlex: 1,
-                                titleStyle: bodyFont.copyWith(fontSize: 12.0),
-                                contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                                titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                contentStyle: bodyFont.copyWith(fontSize: 14.0),
                                 titleTrailing: [
                                   const SizedBox(width: 8.0),
                                   InkWell(
@@ -714,12 +706,12 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                               ),
                               const SizedBox(height: 8.0),
                               RowBody(
-                                title: "Total SMS Sent",
+                                title: "Total SMS Replied",
                                 content: "${item.summary?.totalSent ?? 0}",
                                 titleFlex: 3,
                                 contentFlex: 1,
-                                titleStyle: bodyFont.copyWith(fontSize: 12.0),
-                                contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                                titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                contentStyle: bodyFont.copyWith(fontSize: 14.0),
                               ),
                               const SizedBox(height: 8.0),
                               RowBody(
@@ -727,8 +719,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                 content: "${item.summary?.totalVoted ?? 0}",
                                 titleFlex: 3,
                                 contentFlex: 1,
-                                titleStyle: bodyFont.copyWith(fontSize: 12.0),
-                                contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                                titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                contentStyle: bodyFont.copyWith(fontSize: 14.0),
                                 titleTrailing: [
                                   const SizedBox(width: 8.0),
                                   InkWell(
@@ -748,8 +740,8 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                                 content: "${item.summary?.totalFinished ?? 0}",
                                 titleFlex: 3,
                                 contentFlex: 1,
-                                titleStyle: bodyFont.copyWith(fontSize: 12.0),
-                                contentStyle: bodyFont.copyWith(fontSize: 12.0),
+                                titleStyle: bodyFont.copyWith(fontSize: 14.0),
+                                contentStyle: bodyFont.copyWith(fontSize: 14.0),
                                 titleTrailing: [
                                   const SizedBox(width: 8.0),
                                   InkWell(
