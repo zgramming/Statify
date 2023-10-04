@@ -235,12 +235,16 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                                       title: "Choose Machine",
                                       child: DropdownButtonFormField<
                                           MachineDropdownModel>(
+                                        isExpanded: true,
                                         value: _selectedMachine,
+                                        style: bodyFont.copyWith(
+                                          color: Colors.black,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                         onChanged: (value) {
                                           if (value == null) return;
-                                          setState(() {
-                                            _selectedMachine = value;
-                                          });
+                                          setState(
+                                              () => _selectedMachine = value);
                                         },
                                         decoration:
                                             inputDecorationRounded().copyWith(
@@ -254,8 +258,12 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                                           ),
                                         ),
                                         items: machines
-                                            .map((e) => MachineDropdownModel(
-                                                id: e.id, name: e.name))
+                                            .map(
+                                              (e) => MachineDropdownModel(
+                                                id: e.id,
+                                                name: e.name,
+                                              ),
+                                            )
                                             .map(
                                               (e) => DropdownMenuItem(
                                                 value: e,
@@ -300,6 +308,11 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                                       child: DropdownButtonFormField<
                                           MachineActionEnum>(
                                         value: selectedAction,
+                                        isExpanded: true,
+                                        style: bodyFont.copyWith(
+                                          color: Colors.black,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                         onChanged: (value) {
                                           if (value == null) return;
                                           setState(() {
@@ -345,6 +358,11 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
                                         child: DropdownButtonFormField<
                                             SurveyTemplateEnum>(
                                           value: selectedTemplate,
+                                          isExpanded: true,
+                                          style: bodyFont.copyWith(
+                                            color: Colors.black,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                           onChanged: (value) {
                                             if (value == null) return;
                                             setState(() {

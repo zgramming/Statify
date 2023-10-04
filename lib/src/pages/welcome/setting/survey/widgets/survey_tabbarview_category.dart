@@ -283,8 +283,10 @@ class SurveyTabBarViewCategoryState
                   child: DropdownButtonFormField<MachineSettingToolsOptionEnum>(
                     value: selectedToolsOption,
                     isExpanded: true,
-                    style:
-                        bodyFont.copyWith(fontSize: 12.0, color: Colors.grey),
+                    style: bodyFont.copyWith(
+                      fontSize: 12.0,
+                      color: Colors.grey,
+                    ),
                     onChanged: onChangeSurveyToolOption,
                     decoration: inputDecorationRounded().copyWith(
                       hintText: "Select Option",
@@ -299,7 +301,9 @@ class SurveyTabBarViewCategoryState
                         .map(
                           (e) => DropdownMenuItem(
                             value: e,
-                            child: Text(e.valueStringReadable),
+                            child: Text(
+                              e.valueStringReadable,
+                            ),
                           ),
                         )
                         .toList(),

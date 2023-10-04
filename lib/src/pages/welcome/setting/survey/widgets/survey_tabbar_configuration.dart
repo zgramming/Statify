@@ -119,10 +119,13 @@ class SurveyTabBarConfigurationState
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
-      error: (error, stackTrace) => AsyncErrorBuilder(
-        error: error.toString(),
-        onRetry: () => ref.invalidate(surveyResponseNotifier(widget.surveyId)),
-      ),
+      error: (error, stackTrace) {
+        return AsyncErrorBuilder(
+          error: error.toString(),
+          onRetry: () =>
+              ref.invalidate(surveyResponseNotifier(widget.surveyId)),
+        );
+      },
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }

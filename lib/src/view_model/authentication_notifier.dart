@@ -55,10 +55,10 @@ class AuthenticationNotifier extends StateNotifier<AuthenticationState> {
     );
   }
 
-  Future<void> logout() async {
+  Future<AuthenticationState> logout() async {
     // state = state.copyWith(onLogout: const AsyncLoading());
     final result = await repository.logout();
-    result.fold(
+    return result.fold(
       (failure) => state = state.copyWith(
           onLogout: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onLogout: AsyncData(data)),

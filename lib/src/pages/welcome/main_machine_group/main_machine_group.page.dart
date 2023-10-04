@@ -278,7 +278,7 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const CustomAppbar(title: "Machine Group List"),
+            const CustomAppbar(title: "Machine List"),
             AlertMachinesNotHaveGroup(
               machinesNotHaveGroup: machinesNotHaveGroup,
             ),
@@ -307,84 +307,63 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              ListView.separated(
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: groups.length,
-                                shrinkWrap: true,
-                                separatorBuilder: (context, index) =>
-                                    const Divider(),
-                                itemBuilder: (context, index) {
-                                  final item = groups[index];
-                                  final machines = item.machines ?? [];
-                                  return Card(
-                                    margin: const EdgeInsets.only(),
-                                    elevation: 5,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  "Group : ${item.name}",
-                                                  style: bodyFontBold.copyWith(
-                                                    fontSize: 16.0,
+                              if (groups.isNotEmpty) ...[
+                                ListView.separated(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: groups.length,
+                                  shrinkWrap: true,
+                                  separatorBuilder: (context, index) =>
+                                      const Divider(),
+                                  itemBuilder: (context, index) {
+                                    final item = groups[index];
+                                    final machines = item.machines ?? [];
+                                    return Card(
+                                      margin: const EdgeInsets.only(),
+                                      elevation: 5,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    "Group : ${item.name}",
+                                                    style:
+                                                        bodyFontBold.copyWith(
+                                                      fontSize: 16.0,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              // PopupMenuButton<String>(
-                                              //   onSelected: (value) =>
-                                              //       onSelected(value, item),
-                                              //   icon: const Icon(Icons.more_vert),
-                                              //   itemBuilder: (context) => [
-                                              //     PopupMenuItem(
-                                              //       value: "edit",
-                                              //       child: Text(
-                                              //         "Edit",
-                                              //         style: bodyFont.copyWith(
-                                              //           color: Colors.blue,
-                                              //           fontWeight: FontWeight.bold,
-                                              //         ),
-                                              //       ),
-                                              //     ),
-                                              //     PopupMenuItem(
-                                              //       value: "delete",
-                                              //       child: Text(
-                                              //         "Delete",
-                                              //         style: bodyFont.copyWith(
-                                              //           color: Colors.red,
-                                              //           fontWeight: FontWeight.bold,
-                                              //         ),
-                                              //       ),
-                                              //     ),
-                                              //   ],
-                                              // ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8.0),
-                                          _MachineGroupMachines(
-                                            machines: machines,
-                                          ),
-                                        ],
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8.0),
+                                            _MachineGroupMachines(
+                                              machines: machines,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              ListView.separated(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: machinesNotHaveGroup.length,
-                                separatorBuilder: (context, index) =>
-                                    const Divider(),
-                                itemBuilder: (context, index) {
-                                  final item = machinesNotHaveGroup[index];
-                                  return _MachineItem(item: item, index: index);
-                                },
-                              ),
+                                    );
+                                  },
+                                ),
+                              ],
+                              if (machinesNotHaveGroup.isNotEmpty) ...[
+                                ListView.separated(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: machinesNotHaveGroup.length,
+                                  separatorBuilder: (context, index) =>
+                                      const Divider(),
+                                  itemBuilder: (context, index) {
+                                    final item = machinesNotHaveGroup[index];
+                                    return _MachineItem(
+                                        item: item, index: index);
+                                  },
+                                ),
+                              ],
                             ],
                           ),
                         ),

@@ -47,6 +47,7 @@ const _$MachineResponseTypeEnumEnumMap = {
   MachineResponseTypeEnum.banned: 'banned',
   MachineResponseTypeEnum.wrong_reply: 'wrong_reply',
   MachineResponseTypeEnum.wrong_password: 'wrong_password',
+  MachineResponseTypeEnum.incoming_call: 'incoming_call',
   MachineResponseTypeEnum.timeout: 'timeout',
   MachineResponseTypeEnum.finish: 'finish',
 };

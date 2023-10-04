@@ -49,6 +49,8 @@ enum MachineResponseTypeEnum {
   wrong_reply,
   // ignore: constant_identifier_names
   wrong_password,
+  // ignore: constant_identifier_names
+  incoming_call,
   timeout,
   finish
 }
@@ -71,7 +73,16 @@ enum MachineSettingToolsOptionEnum {
 
 enum SurveyTemplateEnum {
   @JsonValue('candidate')
-  canditate
+  canditate,
+  @JsonValue('product_sales')
+  // ignore: constant_identifier_names
+  product_sales,
+  @JsonValue('customer_satisfaction')
+  // ignore: constant_identifier_names
+  customer_satisfaction,
+  @JsonValue('employee_satisfaction')
+  // ignore: constant_identifier_names
+  ready_to_edit,
 }
 
 enum WhatSIMHasBeenChanged {
@@ -178,6 +189,8 @@ extension MachineResponseTypeEnumEXT on MachineResponseTypeEnum {
         return 'timeout';
       case MachineResponseTypeEnum.finish:
         return 'finish';
+      case MachineResponseTypeEnum.incoming_call:
+        return 'incoming_call';
     }
   }
 
@@ -197,6 +210,8 @@ extension MachineResponseTypeEnumEXT on MachineResponseTypeEnum {
         return 'Timeout';
       case MachineResponseTypeEnum.finish:
         return 'Finish';
+      case MachineResponseTypeEnum.incoming_call:
+        return 'Incoming Call';
     }
   }
 }
@@ -266,6 +281,12 @@ extension SurveyTemplateEnumEXT on SurveyTemplateEnum {
     switch (this) {
       case SurveyTemplateEnum.canditate:
         return 'candidate';
+      case SurveyTemplateEnum.product_sales:
+        return 'product_sales';
+      case SurveyTemplateEnum.customer_satisfaction:
+        return 'customer_satisfaction';
+      case SurveyTemplateEnum.ready_to_edit:
+        return 'ready_to_edit';
     }
   }
 
@@ -273,6 +294,12 @@ extension SurveyTemplateEnumEXT on SurveyTemplateEnum {
     switch (this) {
       case SurveyTemplateEnum.canditate:
         return 'Candidate';
+      case SurveyTemplateEnum.product_sales:
+        return 'Product Sales';
+      case SurveyTemplateEnum.customer_satisfaction:
+        return 'Customer Satisfaction';
+      case SurveyTemplateEnum.ready_to_edit:
+        return 'Ready To Edit';
     }
   }
 }

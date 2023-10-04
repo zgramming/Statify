@@ -18,38 +18,33 @@ class SettingPage extends ConsumerStatefulWidget {
 class _SettingPageState extends ConsumerState<SettingPage> {
   Future<void> onLogout() async {
     final notifier = ref.read(authenticationNotifier.notifier);
-    await notifier.logout();
+    final result = await notifier.logout();
+    result.onLogout.when(
+      data: (data) {
+        if (data == null) return;
+        showSnackbar(
+          context: context,
+          message: "Logout Success",
+          backgroundColor: Colors.green,
+        );
+
+        context.goNamed(routeLogin);
+      },
+      error: (error, stackTrace) => showSnackbar(
+        context: context,
+        message: error.toString(),
+        backgroundColor: Colors.red,
+      ),
+      loading: () => showSnackbar(
+        context: context,
+        message: "Loading...",
+        backgroundColor: Colors.blue,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(
-      authenticationNotifier.select((value) => value.onLogout),
-      (previous, next) {
-        next.when(
-          data: (data) {
-            if (data == null) return;
-            showSnackbar(
-              context: context,
-              message: "Logout Success",
-              backgroundColor: Colors.green,
-            );
-
-            context.goNamed(routeLogin);
-          },
-          error: (error, stackTrace) => showSnackbar(
-            context: context,
-            message: error.toString(),
-            backgroundColor: Colors.red,
-          ),
-          loading: () => showSnackbar(
-            context: context,
-            message: "Loading...",
-            backgroundColor: Colors.blue,
-          ),
-        );
-      },
-    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
