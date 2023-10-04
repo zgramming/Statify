@@ -80,7 +80,7 @@ enum SurveyTemplateEnum {
   @JsonValue('customer_satisfaction')
   // ignore: constant_identifier_names
   customer_satisfaction,
-  @JsonValue('employee_satisfaction')
+  @JsonValue('ready_to_edit')
   // ignore: constant_identifier_names
   ready_to_edit,
 }
