@@ -121,7 +121,7 @@ class SurveyTabBarViewCategoryState
       form.update(
         (state) => state.copyWith(
           sms: state.sms?.copyWith(
-            usePassword: value == MachineSettingToolsOptionEnum.specificNumber,
+            usePassword: value == MachineSettingToolsOptionEnum.specific_number,
           ),
         ),
       );
@@ -129,7 +129,7 @@ class SurveyTabBarViewCategoryState
       form.update(
         (state) => state.copyWith(
           wa: state.wa?.copyWith(
-            usePassword: value == MachineSettingToolsOptionEnum.specificNumber,
+            usePassword: value == MachineSettingToolsOptionEnum.specific_number,
           ),
         ),
       );
@@ -149,7 +149,7 @@ class SurveyTabBarViewCategoryState
     final backoff = _backoffController.text;
     final tries = _triesController.text;
     final usePassword =
-        selectedToolsOption == MachineSettingToolsOptionEnum.specificNumber
+        selectedToolsOption == MachineSettingToolsOptionEnum.specific_number
             ? true
             : false;
 
@@ -229,7 +229,7 @@ class SurveyTabBarViewCategoryState
           _backoffController.text = value.backoff.toString();
           _triesController.text = value.tries.toString();
           selectedToolsOption = value.usePassword
-              ? MachineSettingToolsOptionEnum.specificNumber
+              ? MachineSettingToolsOptionEnum.specific_number
               : MachineSettingToolsOptionEnum.allNumber;
 
           // setup form provider
@@ -317,7 +317,7 @@ class SurveyTabBarViewCategoryState
                 ),
                 const SizedBox(height: 20),
                 if (selectedToolsOption ==
-                    MachineSettingToolsOptionEnum.specificNumber) ...[
+                    MachineSettingToolsOptionEnum.specific_number) ...[
                   const SizedBox(height: 20),
                   FormBodyRow(
                     title: "Invitation Timeout (hours)",

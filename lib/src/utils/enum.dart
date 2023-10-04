@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 enum ErrorCode {
   // ignore: constant_identifier_names
   MC_NEED_ACTIVE_SURVEY,
@@ -67,20 +65,16 @@ enum MachineResponsePlatformEnum {
 
 enum MachineSettingToolsOptionEnum {
   allNumber,
-  @JsonValue('specific_number')
-  specificNumber,
+  // ignore: constant_identifier_names
+  specific_number,
 }
 
 enum SurveyTemplateEnum {
-  @JsonValue('candidate')
   canditate,
-  @JsonValue('product_sales')
   // ignore: constant_identifier_names
   product_sales,
-  @JsonValue('customer_satisfaction')
   // ignore: constant_identifier_names
   customer_satisfaction,
-  @JsonValue('ready_to_edit')
   // ignore: constant_identifier_names
   ready_to_edit,
 }
@@ -261,7 +255,7 @@ extension MachineSettingToolsOptionEXT on MachineSettingToolsOptionEnum {
     switch (this) {
       case MachineSettingToolsOptionEnum.allNumber:
         return true;
-      case MachineSettingToolsOptionEnum.specificNumber:
+      case MachineSettingToolsOptionEnum.specific_number:
         return false;
     }
   }
@@ -270,7 +264,7 @@ extension MachineSettingToolsOptionEXT on MachineSettingToolsOptionEnum {
     switch (this) {
       case MachineSettingToolsOptionEnum.allNumber:
         return 'All Numbers Can Join Survey';
-      case MachineSettingToolsOptionEnum.specificNumber:
+      case MachineSettingToolsOptionEnum.specific_number:
         return 'Only Invited Numbers Can Join Survey';
     }
   }
