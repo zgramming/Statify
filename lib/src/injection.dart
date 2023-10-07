@@ -17,24 +17,32 @@ import 'model/datasource/remote/survey_setting_remote_datasource.dart';
 import 'model/datasource/remote/user_remote_datasource.dart';
 import 'model/repository/application_config.repository.dart';
 import 'model/repository/authentication_repository.dart';
+import 'model/repository/incoming_message.repository.dart';
+import 'model/repository/machine_group.repository.dart';
 import 'model/repository/machine_repository.dart';
 import 'model/repository/machine_whatsapp_repository.dart';
+import 'model/repository/survey.repository.dart';
 import 'model/repository/survey_responden.repository.dart';
 import 'model/repository/survey_responden_response.repository.dart';
 import 'model/repository/survey_response_repository.dart';
 import 'model/repository/survey_setting_repository.dart';
+import 'model/repository/user.repository.dart';
 import 'utils/http_client.dart';
 import 'view_model/application_config.notifier.dart';
 import 'view_model/authentication_notifier.dart';
 import 'view_model/custom_notifier/log_incoming_call.notifier.dart';
 import 'view_model/custom_notifier/log_incoming_message.notifier.dart';
 import 'view_model/custom_notifier/log_listen_pending_response.notifier.dart';
+import 'view_model/incoming_message.notifier.dart';
+import 'view_model/machine_group.notifier.dart';
 import 'view_model/machine_notifier.dart';
+import 'view_model/survey.notifier.dart';
 import 'view_model/survey_response_notifier.dart';
 import 'view_model/machine_whatsapp_notifier.dart';
 import 'view_model/survey_responden.notifier.dart';
 import 'view_model/survey_responden_response.notifier.dart';
 import 'view_model/survey_setting_notifier.dart';
+import 'view_model/user.notifier.dart';
 
 final logIncomingCallNotifier =
     StateNotifierProvider<LogIncomingCallNotifier, LogIncomingCallState>(

@@ -1,7 +1,5 @@
 import 'dart:developer';
 
-import 'package:dartz/dartz.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../utils/enum.dart';
@@ -83,66 +81,5 @@ class IncomingMessageRemoteDatasource {
       log("Error when handling incoming message: $e");
       throw Exception(e.toString());
     }
-  }
-}
-
-class IncomingMessageRepository {
-  final IncomingMessageRemoteDatasource remoteDatasource;
-
-  const IncomingMessageRepository({
-    required this.remoteDatasource,
-  });
-
-  Future<Either<(String, String), (String, String)>> handlingIncomingMessage({
-    required String surveyId,
-    required String number,
-    required String message,
-  }) async {
-    try {
-      final result = await remoteDatasource.handlingIncomingMessage(
-        surveyId: surveyId,
-        number: number,
-        message: message,
-      );
-      return Right(result);
-    } catch (e) {
-      final message = e.toString();
-      return Left(("ERROR", message));
-    }
-  }
-}
-
-class IncomingMessageState {
-  final AsyncValue<(String, String)> onHandlingIncomingMessage;
-
-  IncomingMessageState({
-    this.onHandlingIncomingMessage = const AsyncValue.loading(),
-  });
-}
-
-class IncomingMessageNotifier extends StateNotifier<IncomingMessageState> {
-  final IncomingMessageRepository repository;
-
-  IncomingMessageNotifier({
-    required this.repository,
-  }) : super(IncomingMessageState());
-
-  Future<(String, String)> handlingIncomingMessage({
-    required String surveyId,
-    required String number,
-    required String message,
-  }) async {
-    final result = await repository.handlingIncomingMessage(
-      surveyId: surveyId,
-      number: number,
-      message: message,
-    );
-
-    final fold = result.fold(
-      (failure) => failure,
-      (data) => data,
-    );
-
-    return fold;
   }
 }
