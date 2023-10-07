@@ -115,10 +115,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         return logoAsync.when(
                           data: (image) {
                             if (image == null) {
-                              return Image.asset(
-                                kURLLogoHitech,
-                                // width: 100,
-                              );
+                              return Image.asset(kURLLogoHitech
+                                  // width: 100,
+                                  );
                             }
 
                             return Image.memory(
