@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../injection.dart';
-import '../../../utils/colors.dart';
-import '../../../utils/constant.dart';
-import '../../../utils/fonts.dart';
-import '../../../utils/styles.dart';
-import '../../widgets/async_error_builder.dart';
+import '../../../../injection.dart';
+import '../../../../utils/colors.dart';
+import '../../../../utils/constant.dart';
+import '../../../../utils/fonts.dart';
+import '../../../../utils/styles.dart';
+import '../../../widgets/async_error_builder.dart';
 
-class MainLongDistanceAccessPage extends StatelessWidget {
-  const MainLongDistanceAccessPage({super.key});
-
-  get kColorWhite => null;
+class LongDistanceAccessHomePage extends StatelessWidget {
+  const LongDistanceAccessHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

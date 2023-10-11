@@ -552,6 +552,15 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
       case "edit":
         onTapMachine();
         break;
+
+      case "long_distance_access":
+        context.pushNamed(
+          routeMachineLongDistanceAccess,
+          pathParameters: {
+            "idMachine": item.id,
+          },
+        );
+        break;
       default:
     }
   }
@@ -753,6 +762,16 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                     value: "edit",
                     child: Text(
                       "Edit",
+                      style: bodyFont.copyWith(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: "long_distance_access",
+                    child: Text(
+                      "Long Distance Access",
                       style: bodyFont.copyWith(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,

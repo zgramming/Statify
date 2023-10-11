@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../utils/constant.dart';
 import '../../view_model/custom_notifier/request_permission_notifier.dart';
 import '../widgets/async_error_builder.dart';
-import 'main_long_distance_access/main_long_distance_access.page.dart';
+import '../widgets/navigation_destination_item.dart';
 import 'main_machine_group/main_machine_group.page.dart';
 import 'setting/setting_page.dart';
 import 'main_survey/main_survey.page.dart';
@@ -20,70 +19,25 @@ class WelcomePage extends ConsumerStatefulWidget {
 class _WelcomePageState extends ConsumerState<WelcomePage> {
   int _selectedIndex = 0;
 
-  final _destinations = <NavigationDestination>[
-    NavigationDestination(
-      icon: Image.asset(
-        "$kURLImageAsset/tower_outline.png",
-        width: 24,
-        height: 24,
-      ),
-      selectedIcon: Image.asset(
-        "$kURLImageAsset/tower.png",
-        width: 24,
-        height: 24,
-      ),
+  final _destinations = <NavigationDestinationItem>[
+    const NavigationDestinationItem(
+      prefixAsset: "tower_outline.png",
+      selectedPrefixAsset: "tower.png",
       label: "Machine",
     ),
-    NavigationDestination(
-      icon: Image.asset(
-        "$kURLImageAsset/wa_business_outline.png",
-        width: 24,
-        height: 24,
-      ),
-      selectedIcon: Image.asset(
-        "$kURLImageAsset/wa_business.png",
-        width: 24,
-        height: 24,
-      ),
+    const NavigationDestinationItem(
+      prefixAsset: "wa_business_outline.png",
+      selectedPrefixAsset: "wa_business.png",
       label: "Whatsapp",
     ),
-    NavigationDestination(
-      icon: Image.asset(
-        "$kURLImageAsset/survey_outline.png",
-        width: 24,
-        height: 24,
-      ),
-      selectedIcon: Image.asset(
-        "$kURLImageAsset/survey.png",
-        width: 24,
-        height: 24,
-      ),
+    const NavigationDestinationItem(
+      prefixAsset: "survey_outline.png",
+      selectedPrefixAsset: "survey.png",
       label: "Survey",
     ),
-    NavigationDestination(
-      icon: Image.asset(
-        "$kURLImageAsset/distance_outline.png",
-        width: 24,
-        height: 24,
-      ),
-      selectedIcon: Image.asset(
-        "$kURLImageAsset/distance.png",
-        width: 24,
-        height: 24,
-      ),
-      label: "L.D.A",
-    ),
-    NavigationDestination(
-      icon: Image.asset(
-        "$kURLImageAsset/setting_outline.png",
-        width: 24,
-        height: 24,
-      ),
-      selectedIcon: Image.asset(
-        "$kURLImageAsset/setting.png",
-        width: 24,
-        height: 24,
-      ),
+    const NavigationDestinationItem(
+      prefixAsset: "setting_outline.png",
+      selectedPrefixAsset: "setting.png",
       label: "Admin",
     ),
   ];
@@ -92,7 +46,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
     const MainMachineGroupPage(),
     const MainWhatsAppPage(),
     const MainSurveyPage(),
-    const MainLongDistanceAccessPage(),
+    // const MainLongDistanceAccessPage(),
     const SettingPage(),
   ];
 

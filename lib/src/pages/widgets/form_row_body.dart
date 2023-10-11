@@ -5,17 +5,22 @@ class FormBodyRow extends StatelessWidget {
     Key? key,
     required this.title,
     required this.child,
+    this.titleFlex = 5,
+    this.childFlex = 7,
   }) : super(key: key);
   final String title;
   final Widget child;
+
+  final int titleFlex;
+  final int childFlex;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(flex: 5, child: Text(title)),
-        Expanded(flex: 7, child: child),
+        Expanded(flex: titleFlex, child: Text(title)),
+        Expanded(flex: childFlex, child: child),
       ],
     );
   }
