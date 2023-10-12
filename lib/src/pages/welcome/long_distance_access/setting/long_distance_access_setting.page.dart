@@ -224,14 +224,16 @@ class _LongDistanceAccessSettingPageState
                           ),
                           Align(
                             alignment: Alignment.centerRight,
-                            child: ElevatedButton(
+                            child: ElevatedButton.icon(
                               onPressed: () {},
                               style: elevatedButtonStyle(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                ),
                                 backgroundColor: Colors.blueGrey,
                               ).copyWith(),
-                              child: Text(
-                                "Syncronize",
-                              ),
+                              icon: const Icon(Icons.sync),
+                              label: const Text("Syncronize"),
                             ),
                           )
                         ],
