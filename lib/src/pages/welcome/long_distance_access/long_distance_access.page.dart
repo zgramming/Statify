@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/navigation_destination_item.dart';
 import 'home/long_distance_access_home.page.dart';
+import 'report/long_distance_access_report.page.dart';
+import 'setting/long_distance_access_setting.page.dart';
 import 'sms/long_distance_access_sms.page.dart';
 
 class LongDistanceAccessPage extends StatefulWidget {
@@ -42,8 +44,8 @@ class _LongDistanceAccessPageState extends State<LongDistanceAccessPage> {
   final _pages = <Widget>[
     const LongDistanceAccessHomePage(),
     const LongDistanceAccessSMSPage(),
-    Container(),
-    Container(),
+    const LongDistanceAccessReportPage(),
+    const LongDistanceAccessSettingPage(),
   ];
 
   int _selectedIndex = 0;
