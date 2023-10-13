@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../model/model/helper/form/form_survey_create_update.model.dart';
 
 class CustomFormProvider {
@@ -21,5 +22,14 @@ class CustomFormProvider {
         wa: formSetting,
       );
     },
+  );
+
+  static final ldaSMSForm = StateProvider<FormMachineUpdateConfigModel>(
+    (ref) => const FormMachineUpdateConfigModel(
+      machineId: "",
+      count: 0,
+      taskCount: 0,
+      isReboot: false,
+    ),
   );
 }

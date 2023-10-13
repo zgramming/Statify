@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,6 +9,7 @@ import '../../../../utils/colors.dart';
 import '../../../../utils/constant.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_provider/custom_injection_provider.dart';
 import '../../../widgets/async_error_builder.dart';
 
 class LongDistanceAccessHomePage extends StatelessWidget {
@@ -20,11 +24,17 @@ class LongDistanceAccessHomePage extends StatelessWidget {
   }
 }
 
-class _Content extends StatelessWidget {
+class _Content extends ConsumerWidget {
   const _Content();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final machine = ref.watch(CustomInjectionProvider.machineById);
+
+    if (machine == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
@@ -44,29 +54,40 @@ class _Content extends StatelessWidget {
                     children: [
                       const _ContentStatus(),
                       const SizedBox(height: 20),
-                      ListView.separated(
+                      ListView(
                         padding: const EdgeInsets.only(),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        separatorBuilder: (context, index) => const Divider(),
-                        itemCount: 10,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                              "Device ${index + 1}",
-                              style: bodyFont.copyWith(
-                                fontSize: 14.0,
-                              ),
-                            ),
-                            subtitle: Text(
-                              "Device ${index + 1}",
-                              style: bodyFont.copyWith(
-                                fontSize: 12.0,
-                              ),
-                            ),
-                            trailing: const Icon(Icons.arrow_forward_ios),
-                          );
-                        },
+                        children: [
+                          _ContentListItem(
+                            index: 1,
+                            sender: "${machine.config?.sender1}",
+                            sms: "${machine.config?.sms1}",
+                            onTap: () {
+                              log("onTap");
+                            },
+                          ),
+                          _ContentListItem(
+                            index: 2,
+                            sender: "${machine.config?.sender2}",
+                            sms: "${machine.config?.sms2}",
+                          ),
+                          _ContentListItem(
+                            index: 3,
+                            sender: "${machine.config?.sender3}",
+                            sms: "${machine.config?.sms3}",
+                          ),
+                          _ContentListItem(
+                            index: 4,
+                            sender: "${machine.config?.sender4}",
+                            sms: "${machine.config?.sms4}",
+                          ),
+                          _ContentListItem(
+                            index: 5,
+                            sender: "${machine.config?.sender5}",
+                            sms: "${machine.config?.sms5}",
+                          ),
+                        ],
                       ),
                       SizedBox(height: height * 0.5),
                     ],
@@ -77,6 +98,48 @@ class _Content extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _ContentListItem extends StatelessWidget {
+  const _ContentListItem({
+    Key? key,
+    required this.index,
+    this.sender,
+    this.sms,
+    // ignore: unused_element
+    this.onTap,
+  }) : super(key: key);
+
+  final int index;
+  final String? sender;
+  final String? sms;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (sender == null || sms == null) {
+      return const SizedBox();
+    }
+
+    return ListTile(
+      onTap: onTap,
+      leading: CircleAvatar(
+        child: Text("$index"),
+      ),
+      title: Text(
+        "$sender",
+        style: bodyFont.copyWith(
+          fontSize: 14.0,
+        ),
+      ),
+      subtitle: Text(
+        "$sms",
+        style: bodyFontBold.copyWith(
+          fontSize: 14.0,
+        ),
+      ),
     );
   }
 }

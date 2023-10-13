@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../utils/enum.dart';
+import 'machine_config.model.dart';
 import 'machine_summary.model.dart';
 
 part 'machine_model.g.dart';
@@ -16,12 +17,15 @@ class MachineModel extends Equatable {
   final String number;
   final String serialNumber;
   final String license;
+  final int totalSmsSent;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? activeSurveyId;
   final bool group;
   final MachineStatusEnum status;
+  final MachineConfigModel? config;
   final DateTime? lastOnline;
+  final bool isUpdating;
   final MachineSummaryModel? summary;
 
   const MachineModel({
@@ -31,12 +35,15 @@ class MachineModel extends Equatable {
     required this.number,
     required this.serialNumber,
     required this.license,
+    required this.totalSmsSent,
     required this.createdAt,
     required this.updatedAt,
     this.activeSurveyId,
     required this.group,
     required this.status,
+    this.config,
     this.lastOnline,
+    required this.isUpdating,
     this.summary,
   });
 
@@ -55,12 +62,15 @@ class MachineModel extends Equatable {
       number,
       serialNumber,
       license,
+      totalSmsSent,
       createdAt,
       updatedAt,
       activeSurveyId,
       group,
       status,
+      config,
       lastOnline,
+      isUpdating,
       summary,
     ];
   }
@@ -75,12 +85,15 @@ class MachineModel extends Equatable {
     String? number,
     String? serialNumber,
     String? license,
+    int? totalSmsSent,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? activeSurveyId,
     bool? group,
     MachineStatusEnum? status,
+    MachineConfigModel? config,
     DateTime? lastOnline,
+    bool? isUpdating,
     MachineSummaryModel? summary,
   }) {
     return MachineModel(
@@ -90,12 +103,15 @@ class MachineModel extends Equatable {
       number: number ?? this.number,
       serialNumber: serialNumber ?? this.serialNumber,
       license: license ?? this.license,
+      totalSmsSent: totalSmsSent ?? this.totalSmsSent,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       activeSurveyId: activeSurveyId ?? this.activeSurveyId,
       group: group ?? this.group,
       status: status ?? this.status,
+      config: config ?? this.config,
       lastOnline: lastOnline ?? this.lastOnline,
+      isUpdating: isUpdating ?? this.isUpdating,
       summary: summary ?? this.summary,
     );
   }

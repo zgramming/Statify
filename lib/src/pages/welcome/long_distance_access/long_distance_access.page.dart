@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../view_model/custom_provider/custom_injection_provider.dart';
+import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/navigation_destination_item.dart';
 import 'home/long_distance_access_home.page.dart';
 import 'report/long_distance_access_report.page.dart';
 import 'setting/long_distance_access_setting.page.dart';
 import 'sms/long_distance_access_sms.page.dart';
 
-class LongDistanceAccessPage extends StatefulWidget {
+class LongDistanceAccessPage extends ConsumerStatefulWidget {
   const LongDistanceAccessPage({
     Key? key,
     required this.idMachine,
@@ -14,10 +17,12 @@ class LongDistanceAccessPage extends StatefulWidget {
   final String idMachine;
 
   @override
-  State<LongDistanceAccessPage> createState() => _LongDistanceAccessPageState();
+  ConsumerState<LongDistanceAccessPage> createState() =>
+      _LongDistanceAccessPageState();
 }
 
-class _LongDistanceAccessPageState extends State<LongDistanceAccessPage> {
+class _LongDistanceAccessPageState
+    extends ConsumerState<LongDistanceAccessPage> {
   final _destinations = <NavigationDestinationItem>[
     const NavigationDestinationItem(
       prefixAsset: "home_outline.png",
@@ -49,6 +54,20 @@ class _LongDistanceAccessPageState extends State<LongDistanceAccessPage> {
   ];
 
   int _selectedIndex = 0;
+
+  void init() {
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    ref
+        .read(CustomInjectionProvider.machineById.notifier)
+        .update((state) => machine);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => init());
+  }
 
   @override
   Widget build(BuildContext context) {

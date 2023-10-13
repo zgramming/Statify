@@ -7,6 +7,7 @@ import '../../../utils/constant.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../model/helper/form/form_machine_create_update.model.dart';
+import '../../model/helper/form/form_machine_update_config.model.dart';
 import '../../model/machine/machine_create_response_model.dart';
 import '../../model/machine/machine_delete_response_model.dart';
 import '../../model/machine/machine_model.dart';
@@ -27,13 +28,6 @@ class MachineRemoteDatasource {
     if (response.statusCode == 200) {
       final list = decoded['data'] as List;
 
-      // final machines = list.map((e) async {
-      //   final result = MachineModel.fromJson(e);
-      //   log("summary: $result");
-      //   final summary = await getSummary(result.id);
-      //   return result.copyWith(summary: summary);
-      // }).toList();
-      // return Future.wait(machines);
       final machines = list.map((e) {
         final result = MachineModel.fromJson(e);
         return result;
@@ -199,6 +193,47 @@ class MachineRemoteDatasource {
       final message = decoded.containsKey('message')
           ? decoded['message']
           : 'Failed to update machine';
+      throw Exception(message);
+    }
+  }
+
+  Future<MachineModel> updateConfig(FormMachineUpdateConfigModel form) async {
+    final uri = Uri.parse(
+      '$kBaseApiUrl/machines/${form.machineId}/update-config',
+    );
+
+    final Map<String, dynamic> formBody = {
+      'count': form.count.toString(),
+      'taskCount': form.taskCount.toString(),
+      'reboot': form.isReboot ? '1' : '0',
+
+      // Include Sender or sms if not null
+      if (form.sender1 != null) 'sender1': form.sender1!,
+      if (form.sender2 != null) 'sender2': form.sender2!,
+      if (form.sender3 != null) 'sender3': form.sender3!,
+      if (form.sender4 != null) 'sender4': form.sender4!,
+      if (form.sender5 != null) 'sender5': form.sender5!,
+
+      if (form.sms1 != null) 'sms1': form.sms1!,
+      if (form.sms2 != null) 'sms2': form.sms2!,
+      if (form.sms3 != null) 'sms3': form.sms3!,
+      if (form.sms4 != null) 'sms4': form.sms4!,
+      if (form.sms5 != null) 'sms5': form.sms5!,
+    };
+
+    final response = await client.patch(uri, body: formBody);
+
+    final body = response.body;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+    final data = decoded['data'];
+
+    if (response.statusCode == 200) {
+      final machine = MachineModel.fromJson(data);
+      return machine;
+    } else {
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to update machine config';
       throw Exception(message);
     }
   }

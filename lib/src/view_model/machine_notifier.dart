@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/model/helper/form/form_machine_create_update.model.dart';
+import '../model/model/helper/form/form_machine_update_config.model.dart';
 import '../model/model/machine/machine_create_response_model.dart';
 import '../model/model/machine/machine_delete_response_model.dart';
 import '../model/model/machine/machine_model.dart';
@@ -19,6 +20,7 @@ class MachineState extends Equatable {
   final AsyncValue<Uint8List?> onGetExport;
   final AsyncValue<MachineCreateResponseModel?> onCreate;
   final AsyncValue<MachineUpdateResponseModel?> onUpdate;
+  final AsyncValue<MachineModel?> onUpdateConfig;
   final AsyncValue<MachineDeleteResponseModel?> onDelete;
 
   const MachineState({
@@ -29,6 +31,7 @@ class MachineState extends Equatable {
     this.onGetExport = const AsyncData(null),
     this.onCreate = const AsyncData(null),
     this.onUpdate = const AsyncData(null),
+    this.onUpdateConfig = const AsyncData(null),
     this.onDelete = const AsyncData(null),
   });
 
@@ -42,6 +45,7 @@ class MachineState extends Equatable {
       onGetExport,
       onCreate,
       onUpdate,
+      onUpdateConfig,
       onDelete,
     ];
   }
@@ -57,6 +61,7 @@ class MachineState extends Equatable {
     AsyncValue<Uint8List?>? onGetExport,
     AsyncValue<MachineCreateResponseModel?>? onCreate,
     AsyncValue<MachineUpdateResponseModel?>? onUpdate,
+    AsyncValue<MachineModel?>? onUpdateConfig,
     AsyncValue<MachineDeleteResponseModel?>? onDelete,
   }) {
     return MachineState(
@@ -67,6 +72,7 @@ class MachineState extends Equatable {
       onGetExport: onGetExport ?? this.onGetExport,
       onCreate: onCreate ?? this.onCreate,
       onUpdate: onUpdate ?? this.onUpdate,
+      onUpdateConfig: onUpdateConfig ?? this.onUpdateConfig,
       onDelete: onDelete ?? this.onDelete,
     );
   }
@@ -184,6 +190,18 @@ class MachineNotifier extends StateNotifier<MachineState> {
         }),
       ]),
     );
+  }
+
+  Future<MachineState> updateConfig(FormMachineUpdateConfigModel form) async {
+    state = state.copyWith(onUpdateConfig: const AsyncLoading());
+    final result = await repository.updateConfig(form);
+    final fold = result.fold(
+      (failure) => state = state.copyWith(
+          onUpdateConfig: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onUpdateConfig: AsyncData(data)),
+    );
+
+    return fold;
   }
 
   Future<MachineState> delete({

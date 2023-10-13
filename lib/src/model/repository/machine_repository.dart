@@ -6,6 +6,7 @@ import '../../utils/enum.dart';
 import '../../utils/failure.dart';
 import '../datasource/remote/machine_remote_datasource.dart';
 import '../model/helper/form/form_machine_create_update.model.dart';
+import '../model/helper/form/form_machine_update_config.model.dart';
 import '../model/machine/machine_create_response_model.dart';
 import '../model/machine/machine_delete_response_model.dart';
 import '../model/machine/machine_model.dart';
@@ -97,6 +98,17 @@ class MachineRepository {
         userId: userId,
         machineId: machineId,
       );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MachineModel>> updateConfig(
+    FormMachineUpdateConfigModel form,
+  ) async {
+    try {
+      final result = await remoteDatasource.updateConfig(form);
       return Right(result);
     } catch (e) {
       return Left(CommonFailure(e.toString()));
