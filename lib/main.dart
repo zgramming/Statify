@@ -4,7 +4,6 @@ import 'src/injection.dart';
 import 'src/model/database/database.dart';
 
 import 'src/app.dart';
-import 'src/utils/flutter_local_notification.dart';
 
 // factory AuthenticationResponseModel.fromJson(Map<String, dynamic> json) =>
 //     _$AuthenticationResponseModelFromJson(json);
@@ -16,7 +15,6 @@ import 'src/utils/flutter_local_notification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterLocalNotificationUtils().initialize();
 
   runApp(
     ProviderScope(
