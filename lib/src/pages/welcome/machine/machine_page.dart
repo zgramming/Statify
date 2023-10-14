@@ -214,7 +214,7 @@ class _MachinePageState extends ConsumerState<MachinePage> {
 
   @override
   Widget build(BuildContext context) {
-    final machines = ref.watch(machineNotifier).items;
+    final machines = ref.watch(machineNotifier.select((value) => value.items));
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

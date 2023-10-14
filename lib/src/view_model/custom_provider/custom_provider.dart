@@ -53,7 +53,8 @@ class CustomProvider {
 
   static final getMachineByIdProvider = Provider.family<MachineModel?, String>(
     (ref, id) {
-      final machines = ref.watch(machineNotifier).items;
+      final machines =
+          ref.watch(machineNotifier.select((value) => value.items));
       final result = machines.firstWhereOrNull((element) => element.id == id);
       return result;
     },
@@ -61,7 +62,7 @@ class CustomProvider {
 
   static final userChooseSIMMachineProvider =
       ProviderFamily<int, String>((ref, machineId) {
-    final machines = ref.watch(machineNotifier).items;
+    final machines = ref.watch(machineNotifier.select((value) => value.items));
 
     final machine = machines.firstWhere(
       (element) => element.id == machineId,
@@ -125,7 +126,8 @@ class CustomProvider {
           .map((e) => e.machines)
           .expand((element) => element ?? <MachineModel>[])
           .toList();
-      final allMachines = ref.watch(machineNotifier).items;
+      final allMachines =
+          ref.watch(machineNotifier.select((value) => value.items));
 
       final machinesHaveGroupIds = machinesHaveGroup.map((e) => e.id).toList();
       final allMachinesIds = allMachines.map((e) => e.id).toList();

@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import 'pages/welcome/long_distance_access/home/long_distance_access_home_form.page.dart';
 import 'pages/welcome/long_distance_access/long_distance_access.page.dart';
 import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
@@ -34,6 +35,8 @@ const routeMachineForm = "machine/form/:id";
 // Machine Long Distance Access
 const routeMachineLongDistanceAccess =
     "machine/:idMachine/long-distance-access";
+const routeMachineLongDistanceAccessHomeForm =
+    "machine/:idMachine/long-distance-access/home/form";
 
 // Machine WhatsApp
 const routeMachineWhatsAppForm = "machine/:idMachine/whatsapp/form/:id";
@@ -105,6 +108,19 @@ final _routes = <RouteBase>[
     builder: (context, state) {
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
       return LongDistanceAccessPage(idMachine: idMachine);
+    },
+  ),
+
+  GoRoute(
+    path: "/machine/:idMachine/long-distance-access/home/form/:index",
+    name: routeMachineLongDistanceAccessHomeForm,
+    builder: (context, state) {
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      final index = int.tryParse(state.pathParameters['index'] ?? "-1") ?? -1;
+      return LongDistanceAccessHomeFormPage(
+        idMachine: idMachine,
+        index: index,
+      );
     },
   ),
 

@@ -181,7 +181,7 @@ class _MachineWhatsAppFormPageState
       );
     });
 
-    final machines = ref.watch(machineNotifier).items;
+    final machines = ref.watch(machineNotifier.select((value) => value.items));
     final whatsappAsync =
         ref.watch(machineWhatsappNotifier).onGetById.unwrapPrevious();
     return Scaffold(

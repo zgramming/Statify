@@ -1,17 +1,22 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../injection.dart';
 import '../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../utils/fonts.dart';
+import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
-import '../../../../view_model/custom_provider/custom_injection_provider.dart';
+import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/form_row_body.dart';
 
 class LongDistanceAccessSMSPage extends ConsumerStatefulWidget {
-  const LongDistanceAccessSMSPage({super.key});
+  const LongDistanceAccessSMSPage({
+    super.key,
+    required this.idMachine,
+  });
+  final String idMachine;
 
   @override
   ConsumerState<LongDistanceAccessSMSPage> createState() =>
@@ -27,32 +32,75 @@ class _LongDistanceAccessSMSPageState
   int? _selectedTaskCount;
   bool _isFlashSMS = false;
 
+  Future<void> onSubmit(bool isReboot) async {
+    final form = ref.read(CustomFormProvider.ldaSMSForm.notifier);
+    if (isReboot) {
+      form.update((state) => state.copyWith(isReboot: true));
+    }
+
+    final formState = form.state;
+    final notifier = ref.read(machineNotifier.notifier);
+    await notifier.updateConfig(formState);
+  }
+
   void onChangeTaskCount(int? value) {
     if (value == null) return;
+
+    // Set Form SMS LDA Provider
+    final form = ref.read(CustomFormProvider.ldaSMSForm.notifier);
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    form.update(
+      (state) => FormMachineUpdateConfigModel(
+        machineId: machine?.id ?? "",
+        count: value,
+        taskCount: value,
+        isReboot: false,
+      ),
+    );
+
     setState(
       () {
         _selectedTaskCount = value;
-        taskCounts = [];
-        taskCounts = [
-          for (int i = 1; i <= value; i++) _TaskItem(index: i),
-        ];
-
-        // Set Form SMS LDA Provider
-        final machineId = ref.read(CustomInjectionProvider.machineById)?.id;
-        ref.read(CustomFormProvider.ldaSMSForm.notifier).update(
-              (state) => FormMachineUpdateConfigModel(
-                machineId: machineId ?? "",
-                count: value,
-                taskCount: value,
-                isReboot: false,
-              ),
-            );
+        taskCounts.clear();
+        for (int i = 1; i <= value; i++) {
+          taskCounts.add(_TaskItem(key: UniqueKey(), index: i));
+        }
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(
+      machineNotifier.select((value) => value.onUpdateConfig),
+      (previous, next) {
+        next.when(
+          data: (data) {
+            if (data == null) return;
+            showSnackbar(
+              context: context,
+              message: "Update config success",
+              backgroundColor: Colors.green,
+            );
+
+            // Reload Machine Data
+            ref.invalidate(getAllMachineFutureProvider);
+          },
+          error: (error, stackTrace) => showSnackbar(
+            context: context,
+            message: error.toString(),
+            backgroundColor: Colors.red,
+          ),
+          loading: () => showSnackbar(
+            context: context,
+            message: "Loading...",
+            backgroundColor: Colors.blue,
+          ),
+        );
+      },
+    );
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
@@ -139,11 +187,7 @@ class _LongDistanceAccessSMSPageState
                     child: ElevatedButton(
                       onPressed: _selectedTaskCount == null
                           ? null
-                          : () {
-                              final form =
-                                  ref.read(CustomFormProvider.ldaSMSForm);
-                              log("form save : $form");
-                            },
+                          : () => onSubmit(false),
                       style: elevatedButtonStyle(),
                       child: const Text("Save"),
                     ),
@@ -153,13 +197,7 @@ class _LongDistanceAccessSMSPageState
                     child: ElevatedButton(
                       onPressed: _selectedTaskCount == null
                           ? null
-                          : () {
-                              final form = ref
-                                  .read(CustomFormProvider.ldaSMSForm.notifier)
-                                ..update(
-                                    (state) => state.copyWith(isReboot: true));
-                              log("form save & reboot : ${form.state}");
-                            },
+                          : () => onSubmit(true),
                       style: elevatedButtonStyle(),
                       child: const FittedBox(child: Text("Save & Reboot")),
                     ),
@@ -169,13 +207,7 @@ class _LongDistanceAccessSMSPageState
                     child: ElevatedButton(
                       onPressed: _selectedTaskCount == null
                           ? null
-                          : () {
-                              final form = ref
-                                  .read(CustomFormProvider.ldaSMSForm.notifier)
-                                ..update(
-                                    (state) => state.copyWith(isReboot: true));
-                              log("form reboot : ${form.state}");
-                            },
+                          : () => onSubmit(true),
                       style: elevatedButtonStyle(),
                       child: const Text("Reboot"),
                     ),
@@ -265,19 +297,21 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
 
   void onChangeSender(String? value) {
     if (value == null) return;
-    log("sender : $value | index : ${widget.index}");
     updateForm(true, sender: value);
   }
 
   void onChangeMessage(String? value) {
     if (value == null) return;
-    log("message : $value | index : ${widget.index}");
     updateForm(false, message: value);
   }
 
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      updateForm(true, sender: senderController.text);
+      updateForm(false, message: messageController.text);
+    });
   }
 
   @override

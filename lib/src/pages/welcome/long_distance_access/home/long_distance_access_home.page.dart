@@ -1,40 +1,57 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
+import '../../../../model/model/machine/machine_model.dart';
+import '../../../../router.dart';
 import '../../../../utils/colors.dart';
 import '../../../../utils/constant.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/styles.dart';
-import '../../../../view_model/custom_provider/custom_injection_provider.dart';
+import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/async_error_builder.dart';
 
-class LongDistanceAccessHomePage extends StatelessWidget {
-  const LongDistanceAccessHomePage({super.key});
+class LongDistanceAccessHomePage extends ConsumerWidget {
+  const LongDistanceAccessHomePage({
+    Key? key,
+    required this.idMachine,
+  }) : super(key: key);
+  final String idMachine;
 
   @override
-  Widget build(BuildContext context) {
-    return const Stack(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final machine = ref.watch(CustomProvider.getMachineByIdProvider(idMachine));
+    if (machine == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Stack(
       fit: StackFit.expand,
-      children: [_Content(), _ButtonActions()],
+      children: [_Content(machine: machine), const _ButtonActions()],
     );
   }
 }
 
 class _Content extends ConsumerWidget {
-  const _Content();
+  final MachineModel machine;
+  const _Content({
+    required this.machine,
+  });
+
+  static void _onTap({
+    required BuildContext context,
+    required MachineModel machine,
+    required int index,
+  }) {
+    context.pushNamed(routeMachineLongDistanceAccessHomeForm, pathParameters: {
+      "idMachine": machine.id,
+      "index": "$index",
+    });
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final machine = ref.watch(CustomInjectionProvider.machineById);
-
-    if (machine == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
@@ -61,31 +78,53 @@ class _Content extends ConsumerWidget {
                         children: [
                           _ContentListItem(
                             index: 1,
-                            sender: "${machine.config?.sender1}",
-                            sms: "${machine.config?.sms1}",
-                            onTap: () {
-                              log("onTap");
-                            },
+                            sender: machine.config?.sender1,
+                            sms: machine.config?.sms1,
+                            onTap: () => _onTap(
+                              context: context,
+                              machine: machine,
+                              index: 1,
+                            ),
                           ),
                           _ContentListItem(
                             index: 2,
-                            sender: "${machine.config?.sender2}",
-                            sms: "${machine.config?.sms2}",
+                            sender: machine.config?.sender2,
+                            sms: machine.config?.sms2,
+                            onTap: () => _onTap(
+                              context: context,
+                              machine: machine,
+                              index: 2,
+                            ),
                           ),
                           _ContentListItem(
                             index: 3,
-                            sender: "${machine.config?.sender3}",
-                            sms: "${machine.config?.sms3}",
+                            sender: machine.config?.sender3,
+                            sms: machine.config?.sms3,
+                            onTap: () => _onTap(
+                              context: context,
+                              machine: machine,
+                              index: 3,
+                            ),
                           ),
                           _ContentListItem(
                             index: 4,
-                            sender: "${machine.config?.sender4}",
-                            sms: "${machine.config?.sms4}",
+                            sender: machine.config?.sender4,
+                            sms: machine.config?.sms4,
+                            onTap: () => _onTap(
+                              context: context,
+                              machine: machine,
+                              index: 4,
+                            ),
                           ),
                           _ContentListItem(
                             index: 5,
-                            sender: "${machine.config?.sender5}",
-                            sms: "${machine.config?.sms5}",
+                            sender: machine.config?.sender5,
+                            sms: machine.config?.sms5,
+                            onTap: () => _onTap(
+                              context: context,
+                              machine: machine,
+                              index: 5,
+                            ),
                           ),
                         ],
                       ),

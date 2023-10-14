@@ -202,7 +202,7 @@ class _SurveyFormPageState extends ConsumerState<SurveyFormPage> {
 
     final surveyAsync =
         ref.watch(surveyNotifier(widget.idMachine)).onGetById.unwrapPrevious();
-    final machines = ref.watch(machineNotifier).items;
+    final machines = ref.watch(machineNotifier.select((value) => value.items));
 
     return Scaffold(
       appBar: AppBar(

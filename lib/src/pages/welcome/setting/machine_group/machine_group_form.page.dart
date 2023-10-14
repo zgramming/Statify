@@ -171,7 +171,7 @@ class _MachineGroupFormPageState extends ConsumerState<MachineGroupFormPage> {
 
     final machineGroupByIdAsync =
         ref.watch(machineGroupNotifier).onGetById.unwrapPrevious();
-    final machines = ref.watch(machineNotifier).items;
+    final machines = ref.watch(machineNotifier.select((value) => value.items));
     return Scaffold(
       appBar: AppBar(
         title: const Text("Machine Group Form"),

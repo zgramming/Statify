@@ -43,6 +43,7 @@ class MachineRemoteDatasource {
       final message = decoded.containsKey('message')
           ? decoded['message']
           : 'Failed to load machine';
+
       throw Exception(message);
     }
   }
@@ -202,7 +203,7 @@ class MachineRemoteDatasource {
       '$kBaseApiUrl/machines/${form.machineId}/update-config',
     );
 
-    final Map<String, dynamic> formBody = {
+    final formBody = {
       'count': form.count.toString(),
       'taskCount': form.taskCount.toString(),
       'reboot': form.isReboot ? '1' : '0',
@@ -221,7 +222,17 @@ class MachineRemoteDatasource {
       if (form.sms5 != null) 'sms5': form.sms5!,
     };
 
-    final response = await client.patch(uri, body: formBody);
+    final mappingFormBody = {
+      "config": {...formBody}
+    };
+
+    final response = await client.patch(
+      uri,
+      body: jsonEncode(mappingFormBody),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
 
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));

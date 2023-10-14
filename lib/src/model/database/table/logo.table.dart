@@ -6,8 +6,5 @@ class LogoTable extends Table {
   BlobColumn get logo => blob()();
 
   @override
-  Set<Column<Object>>? get primaryKey => {id};
-
-  @override
   String? get tableName => "logo";
 }
