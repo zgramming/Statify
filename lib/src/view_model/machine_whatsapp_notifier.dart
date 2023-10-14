@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +8,6 @@ import '../model/model/machine_whatsapp/machine_whatsapp_create_response_model.d
 import '../model/model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_model.dart';
-import '../model/model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
 import '../model/model/machine_whatsapp/machine_whatsapp_update_response_model.dart';
 import '../model/repository/machine_whatsapp_repository.dart';
 import '../utils/enum.dart';
@@ -22,7 +19,6 @@ class MachineWhatsappState extends Equatable {
   final AsyncValue<MachineWhatsappCreateResponseModel?> onCreate;
   final AsyncValue<MachineWhatsappUpdateResponseModel?> onUpdate;
   final AsyncValue<MachineWhatsappDeleteResponseModel?> onDelete;
-  final AsyncValue<MachineWhatsappSendQRCodeResponseModel?> onSendQRCode;
   final AsyncValue<MachineWhatsappDisconnectedResponseModel?> onDisconnect;
   final AsyncValue<MachineWhatsappConnectedResponseModel?> onConnect;
 
@@ -33,7 +29,6 @@ class MachineWhatsappState extends Equatable {
     this.onCreate = const AsyncData(null),
     this.onUpdate = const AsyncData(null),
     this.onDelete = const AsyncData(null),
-    this.onSendQRCode = const AsyncData(null),
     this.onDisconnect = const AsyncData(null),
     this.onConnect = const AsyncData(null),
   });
@@ -47,7 +42,6 @@ class MachineWhatsappState extends Equatable {
       onCreate,
       onUpdate,
       onDelete,
-      onSendQRCode,
       onDisconnect,
       onConnect,
     ];
@@ -63,7 +57,6 @@ class MachineWhatsappState extends Equatable {
     AsyncValue<MachineWhatsappCreateResponseModel?>? onCreate,
     AsyncValue<MachineWhatsappUpdateResponseModel?>? onUpdate,
     AsyncValue<MachineWhatsappDeleteResponseModel?>? onDelete,
-    AsyncValue<MachineWhatsappSendQRCodeResponseModel?>? onSendQRCode,
     AsyncValue<MachineWhatsappDisconnectedResponseModel?>? onDisconnect,
     AsyncValue<MachineWhatsappConnectedResponseModel?>? onConnect,
   }) {
@@ -74,7 +67,6 @@ class MachineWhatsappState extends Equatable {
       onCreate: onCreate ?? this.onCreate,
       onUpdate: onUpdate ?? this.onUpdate,
       onDelete: onDelete ?? this.onDelete,
-      onSendQRCode: onSendQRCode ?? this.onSendQRCode,
       onDisconnect: onDisconnect ?? this.onDisconnect,
       onConnect: onConnect ?? this.onConnect,
     );
@@ -155,24 +147,6 @@ class MachineWhatsappNotifier extends StateNotifier<MachineWhatsappState> {
       (data) {
         return state = MachineWhatsappState(onDelete: AsyncData(data));
       },
-    );
-  }
-
-  Future<void> sendQRCode({
-    required String number,
-    required File file,
-  }) async {
-    state = const MachineWhatsappState(onSendQRCode: AsyncLoading());
-
-    final result = await repository.sendQRCode(
-      number: number,
-      file: file,
-    );
-
-    result.fold(
-      (failure) => state = MachineWhatsappState(
-          onSendQRCode: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = MachineWhatsappState(onSendQRCode: AsyncData(data)),
     );
   }
 

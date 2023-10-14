@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
@@ -12,7 +11,6 @@ import '../model/machine_whatsapp/machine_whatsapp_create_response_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_delete_response_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_disconnected_response_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_model.dart';
-import '../model/machine_whatsapp/machine_whatsapp_send_qrcode_response_model.dart';
 import '../model/machine_whatsapp/machine_whatsapp_update_response_model.dart';
 
 class MachineWhatsappRepository {
@@ -75,22 +73,6 @@ class MachineWhatsappRepository {
   ) async {
     try {
       final result = await remoteDatasource.delete(machineWhatsappId);
-
-      return Right(result);
-    } on Exception catch (e) {
-      return Left(CommonFailure(e.toString()));
-    }
-  }
-
-  Future<Either<Failure, MachineWhatsappSendQRCodeResponseModel>> sendQRCode({
-    required String number,
-    required File file,
-  }) async {
-    try {
-      final result = await remoteDatasource.sendQRCode(
-        number: number,
-        file: file,
-      );
 
       return Right(result);
     } on Exception catch (e) {
