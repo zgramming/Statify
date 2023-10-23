@@ -16,7 +16,9 @@ MachineConfigModel _$MachineConfigModelFromJson(Map<String, dynamic> json) =>
       wifiName: json['wifiName'] as String?,
       autoArfcn: json['autoArfcn'] as String?,
       autoReset: json['autoReset'] as String?,
-      operators: json['operators'] as String?,
+      operators: json['operators'] == null
+          ? const []
+          : MachineConfigModel._fromJsonOperators(json['operators'] as String?),
       taskCount: json['taskCount'] as String?,
       wifiHidden: json['wifiHidden'] as String?,
       powerConfig: json['powerConfig'] as String?,
@@ -44,7 +46,7 @@ Map<String, dynamic> _$MachineConfigModelToJson(MachineConfigModel instance) =>
       'wifiName': instance.wifiName,
       'autoArfcn': instance.autoArfcn,
       'autoReset': instance.autoReset,
-      'operators': instance.operators,
+      'operators': MachineConfigModel._toJsonOperators(instance.operators),
       'taskCount': instance.taskCount,
       'wifiHidden': instance.wifiHidden,
       'powerConfig': instance.powerConfig,

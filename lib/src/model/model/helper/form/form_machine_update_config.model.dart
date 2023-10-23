@@ -1,6 +1,8 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 import '../../machine/machine_config.model.dart';
+import '../../machine/machine_config_operator.model.dart';
 
 class FormMachineUpdateConfigModel extends Equatable {
   final String machineId;
@@ -17,7 +19,7 @@ class FormMachineUpdateConfigModel extends Equatable {
   final String? powerConfig; // "1_3_5_8_10"
   final int? saveSentList;
   final String? wifiPassword;
-  final FormMachineUpdateConfigOperator? operator;
+  final List<MachineConfigOperatorsModel> operators;
 
   final bool? isReboot;
   final String? sender1;
@@ -45,7 +47,7 @@ class FormMachineUpdateConfigModel extends Equatable {
     this.powerConfig,
     this.saveSentList,
     this.wifiPassword,
-    this.operator,
+    this.operators = const [],
     required this.isReboot,
     this.sender1,
     this.sender2,
@@ -60,7 +62,9 @@ class FormMachineUpdateConfigModel extends Equatable {
   });
 
   factory FormMachineUpdateConfigModel.fromMachineConfigModel(
-      String machineId, MachineConfigModel config) {
+    String machineId,
+    MachineConfigModel config,
+  ) {
     return FormMachineUpdateConfigModel(
       machineId: machineId,
       count: int.tryParse(config.count ?? "0"),
@@ -86,6 +90,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       wifiHidden: int.tryParse(config.wifiHidden ?? "0"),
       wifiName: config.wifiName,
       wifiPassword: config.wifiPassword,
+      operators: config.operators,
     );
   }
 
@@ -105,7 +110,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       powerConfig,
       saveSentList,
       wifiPassword,
-      operator,
+      operators,
       isReboot,
       sender1,
       sender2,
@@ -137,7 +142,7 @@ class FormMachineUpdateConfigModel extends Equatable {
     String? powerConfig,
     int? saveSentList,
     String? wifiPassword,
-    FormMachineUpdateConfigOperator? operator,
+    List<MachineConfigOperatorsModel>? operators,
     bool? isReboot,
     String? sender1,
     String? sender2,
@@ -164,7 +169,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       powerConfig: powerConfig ?? this.powerConfig,
       saveSentList: saveSentList ?? this.saveSentList,
       wifiPassword: wifiPassword ?? this.wifiPassword,
-      operator: operator ?? this.operator,
+      operators: operators ?? this.operators,
       isReboot: isReboot ?? this.isReboot,
       sender1: sender1 ?? this.sender1,
       sender2: sender2 ?? this.sender2,
@@ -176,126 +181,6 @@ class FormMachineUpdateConfigModel extends Equatable {
       sms3: sms3 ?? this.sms3,
       sms4: sms4 ?? this.sms4,
       sms5: sms5 ?? this.sms5,
-    );
-  }
-}
-
-class FormMachineUpdateConfigOperator extends Equatable {
-  final int status;
-  final String label;
-  final String mcc;
-  final String mnc;
-  final String name;
-  final String arfcn;
-  final String timeout;
-  final String country;
-  final int isPlay;
-  final int curr;
-  final String lteArfcn;
-  final String ltePci;
-  final String lteTac;
-  final String lteCellId;
-  final String lteDowngrade;
-  final String lteRotationTime;
-  final String ltePlmn;
-  final String kDefault;
-  final String threeGArfcn;
-  final String fiveGArfcn;
-  const FormMachineUpdateConfigOperator({
-    required this.status,
-    required this.label,
-    required this.mcc,
-    required this.mnc,
-    required this.name,
-    required this.arfcn,
-    required this.timeout,
-    required this.country,
-    required this.isPlay,
-    required this.curr,
-    required this.lteArfcn,
-    required this.ltePci,
-    required this.lteTac,
-    required this.lteCellId,
-    required this.lteDowngrade,
-    required this.lteRotationTime,
-    required this.ltePlmn,
-    required this.kDefault,
-    required this.threeGArfcn,
-    required this.fiveGArfcn,
-  });
-
-  @override
-  List<Object> get props {
-    return [
-      status,
-      label,
-      mcc,
-      mnc,
-      name,
-      arfcn,
-      timeout,
-      country,
-      isPlay,
-      curr,
-      lteArfcn,
-      ltePci,
-      lteTac,
-      lteCellId,
-      lteDowngrade,
-      lteRotationTime,
-      ltePlmn,
-      kDefault,
-      threeGArfcn,
-      fiveGArfcn,
-    ];
-  }
-
-  @override
-  bool get stringify => true;
-
-  FormMachineUpdateConfigOperator copyWith({
-    int? status,
-    String? label,
-    String? mcc,
-    String? mnc,
-    String? name,
-    String? arfcn,
-    String? timeout,
-    String? country,
-    int? isPlay,
-    int? curr,
-    String? lteArfcn,
-    String? ltePci,
-    String? lteTac,
-    String? lteCellId,
-    String? lteDowngrade,
-    String? lteRotationTime,
-    String? ltePlmn,
-    String? kDefault,
-    String? threeGArfcn,
-    String? fiveGArfcn,
-  }) {
-    return FormMachineUpdateConfigOperator(
-      status: status ?? this.status,
-      label: label ?? this.label,
-      mcc: mcc ?? this.mcc,
-      mnc: mnc ?? this.mnc,
-      name: name ?? this.name,
-      arfcn: arfcn ?? this.arfcn,
-      timeout: timeout ?? this.timeout,
-      country: country ?? this.country,
-      isPlay: isPlay ?? this.isPlay,
-      curr: curr ?? this.curr,
-      lteArfcn: lteArfcn ?? this.lteArfcn,
-      ltePci: ltePci ?? this.ltePci,
-      lteTac: lteTac ?? this.lteTac,
-      lteCellId: lteCellId ?? this.lteCellId,
-      lteDowngrade: lteDowngrade ?? this.lteDowngrade,
-      lteRotationTime: lteRotationTime ?? this.lteRotationTime,
-      ltePlmn: ltePlmn ?? this.ltePlmn,
-      kDefault: kDefault ?? this.kDefault,
-      threeGArfcn: threeGArfcn ?? this.threeGArfcn,
-      fiveGArfcn: fiveGArfcn ?? this.fiveGArfcn,
     );
   }
 }

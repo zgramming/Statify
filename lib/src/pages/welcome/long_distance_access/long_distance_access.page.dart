@@ -8,6 +8,7 @@ import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_provider/custom_state_provider.dart';
 
+import '../../widgets/async_error_builder.dart';
 import 'admin/long_distance_access_admin.page.dart';
 import 'home/long_distance_access_home.page.dart';
 import 'manager/long_distance_access_manager.page.dart';
@@ -91,8 +92,24 @@ class _LongDistanceAccessPageState
     );
 
     final menu = ref.watch(CustomStateProvider.currentMenuLDA);
+    final machineAsync =
+        ref.watch(getAllMachineFutureProvider).unwrapPrevious();
+
     return Scaffold(
-      body: choosenMenu(menu),
+      body: Builder(
+        builder: (context) {
+          return machineAsync.when(
+            data: (data) => choosenMenu(menu),
+            error: (error, stackTrace) => AsyncErrorBuilder(
+              error: error.toString(),
+              onRetry: () {
+                ref.invalidate(getAllMachineFutureProvider);
+              },
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+          );
+        },
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,

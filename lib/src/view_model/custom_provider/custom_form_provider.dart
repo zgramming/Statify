@@ -14,6 +14,7 @@ class CustomFormProvider {
         backoff: 0,
         tries: 0,
       );
+
       return const FormSurveyCreateOrUpdateModel(
         idMachine: "",
         name: "",
@@ -31,6 +32,7 @@ class CustomFormProvider {
       final machine =
           ref.watch(CustomProvider.getMachineByIdProvider(idMachine));
       final config = machine?.config;
+
       if (config == null) {
         return const FormMachineUpdateConfigModel(
           machineId: "",
@@ -52,6 +54,7 @@ class CustomFormProvider {
           (ref, idMachine) {
     final machine = ref.watch(CustomProvider.getMachineByIdProvider(idMachine));
     final config = machine?.config;
+
     if (config == null) {
       return const FormMachineUpdateConfigModel(
         machineId: "",

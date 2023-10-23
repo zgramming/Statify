@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'machine_config_operator.model.dart';
 
 part 'machine_config.model.g.dart';
 
@@ -15,7 +19,12 @@ class MachineConfigModel extends Equatable {
   final String? wifiName;
   final String? autoArfcn;
   final String? autoReset;
-  final String? operators;
+
+  @JsonKey(
+    fromJson: _fromJsonOperators,
+    toJson: _toJsonOperators,
+  )
+  final List<MachineConfigOperatorsModel> operators;
   final String? taskCount;
   final String? wifiHidden;
   final String? powerConfig;
@@ -42,7 +51,7 @@ class MachineConfigModel extends Equatable {
     this.wifiName,
     this.autoArfcn,
     this.autoReset,
-    this.operators,
+    this.operators = const [],
     this.taskCount,
     this.wifiHidden,
     this.powerConfig,
@@ -59,6 +68,23 @@ class MachineConfigModel extends Equatable {
     this.sender4,
     this.sender5,
   });
+
+  static List<MachineConfigOperatorsModel> _fromJsonOperators(String? json) {
+    if (json == null) return [];
+    final decoded = jsonDecode(json);
+    final operators = decoded as List<dynamic>;
+
+    final list = operators.map((e) {
+      final map = Map<String, dynamic>.from(e);
+      return MachineConfigOperatorsModel.fromJson(map);
+    }).toList();
+    return list;
+  }
+
+  static String _toJsonOperators(List<MachineConfigOperatorsModel> list) {
+    final json = jsonEncode(list);
+    return json;
+  }
 
   factory MachineConfigModel.fromJson(Map<String, dynamic> json) =>
       _$MachineConfigModelFromJson(json);

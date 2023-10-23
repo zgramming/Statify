@@ -1,15 +1,16 @@
-import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../injection.dart';
+import '../../../../model/model/machine/machine_config.model.dart';
+import '../../../../model/model/machine/machine_config_operator.model.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/styles.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/form_row_body.dart';
+import 'widgets/modal_operator_item.dart';
 
 class _PowerDropdownItem {
   const _PowerDropdownItem({
@@ -47,6 +48,7 @@ class _LongDistanceAccessSettingPageState
     const _PowerDropdownItem(value: "5", label: "VERY HIGH"),
   ];
 
+  MachineConfigModel? machineConfig;
   bool wifiHidden = false;
   bool flashSms = false;
   bool saveSentList = false;
@@ -85,7 +87,6 @@ class _LongDistanceAccessSettingPageState
     final machine =
         ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
     final config = machine?.config;
-    log("machine: $config \n wifiName: ${config?.wifiName} \n wifiPassword: ${config?.wifiPassword}");
     nameController.text = config?.wifiName ?? "";
     passwordController.text = config?.wifiPassword ?? "";
 
@@ -96,6 +97,7 @@ class _LongDistanceAccessSettingPageState
       autoArfcn = config?.autoArfcn == "1";
       autoReset = config?.autoReset == "1";
       selectedPower = config?.power;
+      machineConfig = config;
     });
   }
 
@@ -326,33 +328,6 @@ class _LongDistanceAccessSettingPageState
                             ),
                           ),
                           const SizedBox(height: 10),
-                          CheckboxListTile.adaptive(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              "GSM",
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                            ),
-                            value: false,
-                            onChanged: (value) {},
-                          ),
-                          CheckboxListTile.adaptive(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              "WCDMA",
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                            ),
-                            value: false,
-                            onChanged: (value) {},
-                          ),
-                          CheckboxListTile.adaptive(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              "LTE",
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                            ),
-                            value: false,
-                            onChanged: (value) {},
-                          ),
                           Align(
                             alignment: Alignment.centerRight,
                             child: ElevatedButton.icon(
@@ -366,7 +341,52 @@ class _LongDistanceAccessSettingPageState
                               icon: const Icon(Icons.sync),
                               label: const Text("Syncronize"),
                             ),
-                          )
+                          ),
+                          const SizedBox(height: 10.0),
+                          CheckboxListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              "GSM",
+                              style: bodyFont.copyWith(fontSize: 14.0),
+                            ),
+                            value: true,
+                            onChanged: (value) {},
+                          ),
+                          CheckboxListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              "WCDMA",
+                              style: bodyFont.copyWith(fontSize: 14.0),
+                            ),
+                            value: true,
+                            onChanged: (value) {},
+                          ),
+                          CheckboxListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              "LTE",
+                              style: bodyFont.copyWith(fontSize: 14.0),
+                            ),
+                            value: true,
+                            onChanged: (value) {},
+                          ),
+                          Text(
+                            "Operators",
+                            style: headerFontBold.copyWith(
+                              fontSize: 16.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          ...machineConfig?.operators
+                                  .map(
+                                    (e) => _ConfigOperatorItem(
+                                      e: e,
+                                      idMachine: widget.idMachine,
+                                    ),
+                                  )
+                                  .toList() ??
+                              [],
                         ],
                       ),
                     ),
@@ -408,6 +428,205 @@ class _LongDistanceAccessSettingPageState
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ConfigOperatorItem extends ConsumerStatefulWidget {
+  const _ConfigOperatorItem({
+    Key? key,
+    required this.idMachine,
+    required this.e,
+  }) : super(key: key);
+
+  final String idMachine;
+  final MachineConfigOperatorsModel e;
+
+  @override
+  ConsumerState<_ConfigOperatorItem> createState() =>
+      _ConfigOperatorItemState();
+}
+
+class _ConfigOperatorItemState extends ConsumerState<_ConfigOperatorItem> {
+  final autoSwitchController = TextEditingController();
+  final arfcn2gController = TextEditingController();
+  final arfcn3gController = TextEditingController();
+  final arfcn4gController = TextEditingController();
+
+  void onTap4g() async {
+    final result = await showModalBottomSheet(
+      isScrollControlled: true,
+      useSafeArea: true,
+      context: context,
+      builder: (context) => ModalOperatorItem(
+        item: widget.e,
+        idMachine: widget.idMachine,
+      ),
+    );
+
+    if (result == null) return;
+  }
+
+  void onChangeAutoSwitch(String value) {
+    final form =
+        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    form.update(
+      (state) {
+        final prevOperators = state.operators.map((e) {
+          if (e.mcc == widget.e.mcc && e.mnc == widget.e.mnc) {
+            return e.copyWith(timeout: value);
+          }
+          return e;
+        }).toList();
+        return state.copyWith(operators: prevOperators);
+      },
+    );
+  }
+
+  void onChange2gArfcn(String value) {
+    final form =
+        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    form.update(
+      (state) {
+        final prevOperators = state.operators.map((e) {
+          if (e.mcc == widget.e.mcc && e.mnc == widget.e.mnc) {
+            return e.copyWith(arfcn: value);
+          }
+          return e;
+        }).toList();
+        return state.copyWith(operators: prevOperators);
+      },
+    );
+  }
+
+  void onChange3gArfcn(String value) {
+    final form =
+        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    form.update(
+      (state) {
+        final prevOperators = state.operators.map((e) {
+          if (e.mcc == widget.e.mcc && e.mnc == widget.e.mnc) {
+            return e.copyWith(threeGArfcn: value);
+          }
+          return e;
+        }).toList();
+        return state.copyWith(operators: prevOperators);
+      },
+    );
+  }
+
+  void onChange4gArfcn(String value) {
+    final form =
+        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    form.update(
+      (state) {
+        final prevOperators = state.operators.map((e) {
+          if (e.mcc == widget.e.mcc && e.mnc == widget.e.mnc) {
+            return e.copyWith(lteArfcn: value);
+          }
+          return e;
+        }).toList();
+        return state.copyWith(operators: prevOperators);
+      },
+    );
+  }
+
+  void init() {
+    autoSwitchController.text = widget.e.timeout ?? "";
+    arfcn2gController.text = widget.e.arfcn ?? "";
+    arfcn3gController.text = widget.e.threeGArfcn ?? "";
+    arfcn4gController.text = widget.e.lteArfcn ?? "";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => init());
+  }
+
+  @override
+  void dispose() {
+    autoSwitchController.dispose();
+    arfcn2gController.dispose();
+    arfcn3gController.dispose();
+    arfcn4gController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      tilePadding: EdgeInsets.zero,
+      title: Text(
+        "${widget.e.name} - ${widget.e.ltePlmn} ",
+        style: bodyFont.copyWith(
+          fontSize: 14.0,
+        ),
+      ),
+      children: [
+        FormBodyRow(
+          title: "Auto Switch",
+          child: TextFormField(
+            controller: autoSwitchController,
+            style: bodyFont.copyWith(fontSize: 14.0),
+            decoration: inputDecorationRounded().copyWith(
+              hintText: "Enter auto switch",
+              border: const OutlineInputBorder(),
+              fillColor: Colors.transparent,
+              contentPadding: const EdgeInsets.all(8),
+            ),
+            onChanged: onChangeAutoSwitch,
+          ),
+        ),
+        const SizedBox(height: 10),
+        FormBodyRow(
+          title: "2G ARFCN",
+          child: TextFormField(
+            controller: arfcn2gController,
+            style: bodyFont.copyWith(fontSize: 14.0),
+            decoration: inputDecorationRounded().copyWith(
+              hintText: "Enter 2G ARFCN",
+              border: const OutlineInputBorder(),
+              fillColor: Colors.transparent,
+              contentPadding: const EdgeInsets.all(8),
+            ),
+            onChanged: onChange2gArfcn,
+          ),
+        ),
+        const SizedBox(height: 10),
+        FormBodyRow(
+          title: "3G ARFCN",
+          child: TextFormField(
+            controller: arfcn3gController,
+            style: bodyFont.copyWith(fontSize: 14.0),
+            decoration: inputDecorationRounded().copyWith(
+              hintText: "Enter 3G ARFCN",
+              border: const OutlineInputBorder(),
+              fillColor: Colors.transparent,
+              contentPadding: const EdgeInsets.all(8),
+            ),
+            onChanged: onChange3gArfcn,
+          ),
+        ),
+        const SizedBox(height: 10),
+        FormBodyRow(
+          title: "4G ARFCN",
+          child: TextFormField(
+            onTap: onTap4g,
+            readOnly: true,
+            controller: arfcn4gController,
+            style: bodyFont.copyWith(fontSize: 14.0),
+            decoration: inputDecorationRounded().copyWith(
+              hintText: "Enter 4G ARFCN",
+              border: const OutlineInputBorder(),
+              fillColor: Colors.transparent,
+              contentPadding: const EdgeInsets.all(8),
+            ),
+            onChanged: onChange4gArfcn,
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 }

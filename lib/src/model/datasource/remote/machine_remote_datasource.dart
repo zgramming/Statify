@@ -203,6 +203,8 @@ class MachineRemoteDatasource {
       '$kBaseApiUrl/machines/${form.machineId}/update-config',
     );
 
+    final encodedOperators = form.operators.map((e) => e.toJson()).toList();
+
     final formBody = {
       'count': "${form.count}",
       'power': "${form.power}",
@@ -212,7 +214,7 @@ class MachineRemoteDatasource {
       'wifiName': "${form.wifiName}",
       'autoArfcn': "${form.autoArfcn}",
       'autoReset': "${form.autoReset}",
-      'operators': kRawJsonConfigOperators,
+      'operators': jsonEncode(encodedOperators),
 
       'taskCount': "${form.taskCount}",
       'wifiHidden': "${form.wifiHidden}",

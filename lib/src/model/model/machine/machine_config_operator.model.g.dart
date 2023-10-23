@@ -6,9 +6,9 @@ part of 'machine_config_operator.model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MachineConfigOperatorModel _$MachineConfigOperatorModelFromJson(
+MachineConfigOperatorsModel _$MachineConfigOperatorsModelFromJson(
         Map<String, dynamic> json) =>
-    MachineConfigOperatorModel(
+    MachineConfigOperatorsModel(
       status: json['status'] as int?,
       label: json['label'] as String?,
       mcc: json['mcc'] as String?,
@@ -19,20 +19,21 @@ MachineConfigOperatorModel _$MachineConfigOperatorModelFromJson(
       country: json['country'] as String?,
       isPlay: json['is_play'] as int?,
       curr: json['curr'] as int?,
-      lteArfcn: json['lte_arfcn'] as int?,
-      ltePci: json['lte_pci'] as int?,
-      lteTac: json['lte_tac'] as int?,
-      lteCellId: json['lte_cell_id'] as int?,
-      lteDowngrade: json['lte_downgrade'] as int?,
-      lteRotationTime: json['lte_rotation_time'] as int?,
+      lteArfcn: json['lte_arfcn'] as String?,
+      ltePci: json['lte_pci'] as String?,
+      lteTac: json['lte_tac'] as String?,
+      lteCellId: json['lte_cell_id'] as String?,
+      lteDowngrade: json['lte_downgrade'] as String?,
+      lteRotationTime: json['lte_rotation_time'] as String?,
       ltePlmn: json['lte_plmn'] as String?,
-      isDefault: json['is_default'] as bool?,
-      threeGArfcn: json['three_g_arfcn'] as int?,
-      fiveGArfcn: json['five_g_arfcn'] as int?,
+      isDefault: MachineConfigOperatorsModel._fromJsonDefault(
+          json['default'] as String?),
+      threeGArfcn: json['three_g_arfcn'] as String?,
+      fiveGArfcn: json['five_g_arfcn'] as String?,
     );
 
-Map<String, dynamic> _$MachineConfigOperatorModelToJson(
-        MachineConfigOperatorModel instance) =>
+Map<String, dynamic> _$MachineConfigOperatorsModelToJson(
+        MachineConfigOperatorsModel instance) =>
     <String, dynamic>{
       'status': instance.status,
       'label': instance.label,
@@ -51,7 +52,7 @@ Map<String, dynamic> _$MachineConfigOperatorModelToJson(
       'lte_downgrade': instance.lteDowngrade,
       'lte_rotation_time': instance.lteRotationTime,
       'lte_plmn': instance.ltePlmn,
-      'is_default': instance.isDefault,
+      'default': MachineConfigOperatorsModel._toJsonDefault(instance.isDefault),
       'three_g_arfcn': instance.threeGArfcn,
       'five_g_arfcn': instance.fiveGArfcn,
     };

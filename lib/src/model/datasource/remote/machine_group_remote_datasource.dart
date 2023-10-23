@@ -14,6 +14,7 @@ class MachineGroupRemoteDatasource {
 
   Future<List<MachineGroupModel>> getAll(String userId) async {
     final uri = Uri.parse('$kBaseApiUrl/users/$userId/machine-groups');
+
     final response = await client.get(uri);
     final body = response.body;
     final decoded = Map<String, dynamic>.from(jsonDecode(body));

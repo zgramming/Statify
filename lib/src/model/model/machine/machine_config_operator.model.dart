@@ -1,14 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'machine_config_operator.model.g.dart';
 
-@immutable
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
-class MachineConfigOperatorModel extends Equatable {
+class MachineConfigOperatorsModel extends Equatable {
   final int? status;
   final String? label;
   final String? mcc;
@@ -19,17 +18,23 @@ class MachineConfigOperatorModel extends Equatable {
   final String? country;
   final int? isPlay;
   final int? curr;
-  final int? lteArfcn;
-  final int? ltePci;
-  final int? lteTac;
-  final int? lteCellId;
-  final int? lteDowngrade;
-  final int? lteRotationTime;
+  final String? lteArfcn;
+  final String? ltePci;
+  final String? lteTac;
+  final String? lteCellId;
+  final String? lteDowngrade;
+  final String? lteRotationTime;
   final String? ltePlmn;
+  @JsonKey(
+    name: 'default',
+    fromJson: _fromJsonDefault,
+    toJson: _toJsonDefault,
+  )
   final bool? isDefault;
-  final int? threeGArfcn;
-  final int? fiveGArfcn;
-  const MachineConfigOperatorModel({
+  final String? threeGArfcn;
+  final String? fiveGArfcn;
+
+  const MachineConfigOperatorsModel({
     required this.status,
     required this.label,
     required this.mcc,
@@ -52,11 +57,19 @@ class MachineConfigOperatorModel extends Equatable {
     required this.fiveGArfcn,
   });
 
-  factory MachineConfigOperatorModel.fromJson(Map<String, dynamic> json) =>
-      _$MachineConfigOperatorModelFromJson(json);
+  static bool? _fromJsonDefault(String? value) {
+    return value == 'true';
+  }
 
-  /// Connect the generated [_$MachineConfigOperatorModelToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$MachineConfigOperatorModelToJson(this);
+  static String? _toJsonDefault(bool? value) {
+    return value == true ? 'true' : 'false';
+  }
+
+  factory MachineConfigOperatorsModel.fromJson(Map<String, dynamic> json) =>
+      _$MachineConfigOperatorsModelFromJson(json);
+
+  /// Connect the generated [_$MachineConfigOperatorsModelToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$MachineConfigOperatorsModelToJson(this);
 
   @override
   List<Object?> get props {
@@ -86,4 +99,50 @@ class MachineConfigOperatorModel extends Equatable {
 
   @override
   bool get stringify => true;
+
+  MachineConfigOperatorsModel copyWith({
+    int? status,
+    String? label,
+    String? mcc,
+    String? mnc,
+    String? name,
+    String? arfcn,
+    String? timeout,
+    String? country,
+    int? isPlay,
+    int? curr,
+    String? lteArfcn,
+    String? ltePci,
+    String? lteTac,
+    String? lteCellId,
+    String? lteDowngrade,
+    String? lteRotationTime,
+    String? ltePlmn,
+    bool? isDefault,
+    String? threeGArfcn,
+    String? fiveGArfcn,
+  }) {
+    return MachineConfigOperatorsModel(
+      status: status ?? this.status,
+      label: label ?? this.label,
+      mcc: mcc ?? this.mcc,
+      mnc: mnc ?? this.mnc,
+      name: name ?? this.name,
+      arfcn: arfcn ?? this.arfcn,
+      timeout: timeout ?? this.timeout,
+      country: country ?? this.country,
+      isPlay: isPlay ?? this.isPlay,
+      curr: curr ?? this.curr,
+      lteArfcn: lteArfcn ?? this.lteArfcn,
+      ltePci: ltePci ?? this.ltePci,
+      lteTac: lteTac ?? this.lteTac,
+      lteCellId: lteCellId ?? this.lteCellId,
+      lteDowngrade: lteDowngrade ?? this.lteDowngrade,
+      lteRotationTime: lteRotationTime ?? this.lteRotationTime,
+      ltePlmn: ltePlmn ?? this.ltePlmn,
+      isDefault: isDefault ?? this.isDefault,
+      threeGArfcn: threeGArfcn ?? this.threeGArfcn,
+      fiveGArfcn: fiveGArfcn ?? this.fiveGArfcn,
+    );
+  }
 }
