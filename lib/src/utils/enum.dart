@@ -79,12 +79,14 @@ enum SurveyTemplateEnum {
   ready_to_edit,
 }
 
-enum WhatSIMHasBeenChanged {
+enum WhatSIMHasBeenChangedEnum {
   sim1,
   sim2,
   both,
   none,
 }
+
+enum MenuLDAEnum { home, sms, report, setting, admin, manager }
 
 extension MachineSMSSettingEnumEXT on MachineSMSSettingEnum {
   String get valueString {
@@ -298,16 +300,16 @@ extension SurveyTemplateEnumEXT on SurveyTemplateEnum {
   }
 }
 
-extension WhatSIMHasBeenChangedEXT on WhatSIMHasBeenChanged {
+extension WhatSIMHasBeenChangedEnumEXT on WhatSIMHasBeenChangedEnum {
   String get valueString {
     switch (this) {
-      case WhatSIMHasBeenChanged.sim1:
+      case WhatSIMHasBeenChangedEnum.sim1:
         return 'sim1';
-      case WhatSIMHasBeenChanged.sim2:
+      case WhatSIMHasBeenChangedEnum.sim2:
         return 'sim2';
-      case WhatSIMHasBeenChanged.both:
+      case WhatSIMHasBeenChangedEnum.both:
         return 'both';
-      case WhatSIMHasBeenChanged.none:
+      case WhatSIMHasBeenChangedEnum.none:
         return 'none';
     }
   }

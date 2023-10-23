@@ -3,12 +3,18 @@ import 'package:flutter/material.dart';
 class FormBodyRow extends StatelessWidget {
   const FormBodyRow({
     Key? key,
-    required this.title,
+    this.title,
+    this.titleWidget,
     required this.child,
     this.titleFlex = 5,
     this.childFlex = 7,
-  }) : super(key: key);
-  final String title;
+  })  : // titleWidget and title cant be used together
+        assert(titleWidget == null || title == null,
+            "titleWidget and title cant be used together"),
+        super(key: key);
+
+  final String? title;
+  final Widget? titleWidget;
   final Widget child;
 
   final int titleFlex;
@@ -19,7 +25,11 @@ class FormBodyRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(flex: titleFlex, child: Text(title)),
+        Expanded(
+          flex: titleFlex,
+          child: titleWidget ??
+              Text(title ?? "", style: Theme.of(context).textTheme.titleSmall),
+        ),
         Expanded(flex: childFlex, child: child),
       ],
     );

@@ -82,14 +82,14 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
       sim1: currentSIM1,
       sim2: currentSIM2,
       machineIds: const [],
-      machineSimSlot: WhatSIMHasBeenChanged.none,
+      machineSimSlot: WhatSIMHasBeenChangedEnum.none,
     );
 
     try {
       // Check if sim1 or sim2 has been changed
       if (oldSim1 != form.sim1 && oldSim2 != form.sim2) {
         form = form.copyWith(
-          machineSimSlot: WhatSIMHasBeenChanged.both,
+          machineSimSlot: WhatSIMHasBeenChangedEnum.both,
           machineIds: machines.map((e) => e.id).toList(),
         );
       } else if (oldSim1 != form.sim1) {
@@ -97,7 +97,7 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
           (element) => element.number == oldSim1,
         );
         form = form.copyWith(
-          machineSimSlot: WhatSIMHasBeenChanged.sim1,
+          machineSimSlot: WhatSIMHasBeenChangedEnum.sim1,
           machineIds: [machine?.id ?? ""],
         );
       } else if (oldSim2 != form.sim2) {
@@ -105,12 +105,12 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
           (element) => element.number == oldSim2,
         );
         form = form.copyWith(
-          machineSimSlot: WhatSIMHasBeenChanged.sim2,
+          machineSimSlot: WhatSIMHasBeenChangedEnum.sim2,
           machineIds: [machine?.id ?? ""],
         );
       } else {
         form = form.copyWith(
-          machineSimSlot: WhatSIMHasBeenChanged.none,
+          machineSimSlot: WhatSIMHasBeenChangedEnum.none,
           machineIds: const [],
         );
       }

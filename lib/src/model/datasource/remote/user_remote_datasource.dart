@@ -137,7 +137,7 @@ class UserRemoteDatasource {
 
   Future<void> _updateMachineDependSIM({
     required List<String> machineIds,
-    required WhatSIMHasBeenChanged machineSimSlot,
+    required WhatSIMHasBeenChangedEnum machineSimSlot,
     required String userId,
     required String sim1Number,
     required String sim2Number,
@@ -147,8 +147,8 @@ class UserRemoteDatasource {
     }
 
     switch (machineSimSlot) {
-      case WhatSIMHasBeenChanged.sim1:
-      case WhatSIMHasBeenChanged.sim2:
+      case WhatSIMHasBeenChangedEnum.sim1:
+      case WhatSIMHasBeenChangedEnum.sim2:
         final machineId = machineIds.first;
         final machine = await machineRemoteDatasource.getById(
           userId: userId,
@@ -158,7 +158,7 @@ class UserRemoteDatasource {
         await machineRemoteDatasource.update(
           form: FormMachineCreateUpdateModel(
             name: "${machine?.name}",
-            number: machineSimSlot == WhatSIMHasBeenChanged.sim1
+            number: machineSimSlot == WhatSIMHasBeenChangedEnum.sim1
                 ? sim1Number
                 : sim2Number,
             serialNumber: "${machine?.serialNumber}",
@@ -170,7 +170,7 @@ class UserRemoteDatasource {
 
         break;
 
-      case WhatSIMHasBeenChanged.both:
+      case WhatSIMHasBeenChangedEnum.both:
         int index = 0;
 
         for (final machineId in machineIds) {

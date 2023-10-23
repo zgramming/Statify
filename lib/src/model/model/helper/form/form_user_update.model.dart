@@ -8,7 +8,7 @@ class FormUserUpdateModel extends Equatable {
   final String sim1;
   final String sim2;
   final List<String> machineIds;
-  final WhatSIMHasBeenChanged machineSimSlot;
+  final WhatSIMHasBeenChangedEnum machineSimSlot;
 
   const FormUserUpdateModel({
     required this.username,
@@ -40,7 +40,7 @@ class FormUserUpdateModel extends Equatable {
     String? sim1,
     String? sim2,
     List<String>? machineIds,
-    WhatSIMHasBeenChanged? machineSimSlot,
+    WhatSIMHasBeenChangedEnum? machineSimSlot,
   }) {
     return FormUserUpdateModel(
       username: username ?? this.username,
