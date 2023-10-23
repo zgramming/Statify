@@ -83,25 +83,8 @@ class _LongDistanceAccessHomeFormPageState
     if (config == null) return;
 
     final index = widget.index;
-    final count = int.tryParse(config.count ?? "0") ?? 0;
-    final taskCount = int.tryParse(config.taskCount ?? "0") ?? 0;
-    final isReboot = int.tryParse(config.reboot ?? "0") ?? 0;
-    FormMachineUpdateConfigModel form = FormMachineUpdateConfigModel(
-      machineId: machine.id,
-      count: count,
-      taskCount: taskCount,
-      isReboot: isReboot == 1,
-      sender1: config.sender1,
-      sms1: config.sms1,
-      sender2: config.sender2,
-      sms2: config.sms2,
-      sender3: config.sender3,
-      sms3: config.sms3,
-      sender4: config.sender4,
-      sms4: config.sms4,
-      sender5: config.sender5,
-      sms5: config.sms5,
-    );
+    FormMachineUpdateConfigModel form =
+        FormMachineUpdateConfigModel.fromMachineConfigModel(machine.id, config);
 
     if (index == 1) {
       form = form.copyWith(
