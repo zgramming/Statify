@@ -212,7 +212,7 @@ class MachineRemoteDatasource {
       'wifiName': "${form.wifiName}",
       'autoArfcn': "${form.autoArfcn}",
       'autoReset': "${form.autoReset}",
-      'operator': "${form.operator}",
+      'operators': "${form.operator}",
 
       'taskCount': "${form.taskCount}",
       'wifiHidden': "${form.wifiHidden}",
