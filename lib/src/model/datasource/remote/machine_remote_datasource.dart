@@ -212,7 +212,7 @@ class MachineRemoteDatasource {
       'wifiName': "${form.wifiName}",
       'autoArfcn': "${form.autoArfcn}",
       'autoReset': "${form.autoReset}",
-      'operators': "${form.operator}",
+      'operators': kRawJsonConfigOperators,
 
       'taskCount': "${form.taskCount}",
       'wifiHidden': "${form.wifiHidden}",
