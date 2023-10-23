@@ -204,22 +204,34 @@ class MachineRemoteDatasource {
     );
 
     final formBody = {
-      'count': form.count.toString(),
-      'taskCount': form.taskCount.toString(),
-      'reboot': form.isReboot ? '1' : '0',
+      'count': "${form.count}",
+      'power': "${form.power}",
+      'start': "${form.start}",
+      'reboot': (form.isReboot ?? false) ? '1' : '0',
+      'flashSms': "${form.flashSms}",
+      'wifiName': "${form.wifiName}",
+      'autoArfcn': "${form.autoArfcn}",
+      'autoReset': "${form.autoReset}",
+      'operator': "${form.operator}",
+
+      'taskCount': "${form.taskCount}",
+      'wifiHidden': "${form.wifiHidden}",
+      'powerConfig': "${form.powerConfig}",
+      'saveSentList': "${form.saveSentList}",
+      'wifiPassword': "${form.wifiPassword}",
 
       // Include Sender or sms if not null
-      if (form.sender1 != null) 'sender1': form.sender1!,
-      if (form.sender2 != null) 'sender2': form.sender2!,
-      if (form.sender3 != null) 'sender3': form.sender3!,
-      if (form.sender4 != null) 'sender4': form.sender4!,
-      if (form.sender5 != null) 'sender5': form.sender5!,
+      if (form.sender1 != null) 'sender1': "${form.sender1}",
+      if (form.sender2 != null) 'sender2': "${form.sender2}",
+      if (form.sender3 != null) 'sender3': "${form.sender3}",
+      if (form.sender4 != null) 'sender4': "${form.sender4}",
+      if (form.sender5 != null) 'sender5': "${form.sender5}",
 
-      if (form.sms1 != null) 'sms1': form.sms1!,
-      if (form.sms2 != null) 'sms2': form.sms2!,
-      if (form.sms3 != null) 'sms3': form.sms3!,
-      if (form.sms4 != null) 'sms4': form.sms4!,
-      if (form.sms5 != null) 'sms5': form.sms5!,
+      if (form.sms1 != null) 'sms1': "${form.sms1}",
+      if (form.sms2 != null) 'sms2': "${form.sms2}",
+      if (form.sms3 != null) 'sms3': "${form.sms3}",
+      if (form.sms4 != null) 'sms4': "${form.sms4}",
+      if (form.sms5 != null) 'sms5': "${form.sms5}",
     };
 
     final mappingFormBody = {

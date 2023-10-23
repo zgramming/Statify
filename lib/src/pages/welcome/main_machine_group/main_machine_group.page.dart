@@ -303,7 +303,7 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
                             right: 16.0,
                             bottom: 80.0,
                           ),
-                          physics: const BouncingScrollPhysics(),
+                          physics: const AlwaysScrollableScrollPhysics(),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [

@@ -1,12 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../injection.dart';
 import '../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../utils/fonts.dart';
-import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
-import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/form_row_body.dart';
@@ -33,7 +32,8 @@ class _LongDistanceAccessSMSPageState
   bool _isFlashSMS = false;
 
   Future<void> onSubmit(bool isReboot) async {
-    final form = ref.read(CustomFormProvider.ldaSMSForm.notifier);
+    final form =
+        ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
     if (isReboot) {
       form.update((state) => state.copyWith(isReboot: true));
     }
@@ -47,7 +47,8 @@ class _LongDistanceAccessSMSPageState
     if (value == null) return;
 
     // Set Form SMS LDA Provider
-    final form = ref.read(CustomFormProvider.ldaSMSForm.notifier);
+    final form =
+        ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
     final machine =
         ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
     form.update(
@@ -64,7 +65,13 @@ class _LongDistanceAccessSMSPageState
         _selectedTaskCount = value;
         taskCounts.clear();
         for (int i = 1; i <= value; i++) {
-          taskCounts.add(_TaskItem(key: UniqueKey(), index: i));
+          taskCounts.add(
+            _TaskItem(
+              key: UniqueKey(),
+              index: i,
+              idMachine: widget.idMachine,
+            ),
+          );
         }
       },
     );
@@ -72,35 +79,6 @@ class _LongDistanceAccessSMSPageState
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(
-      machineNotifier.select((value) => value.onUpdateConfig),
-      (previous, next) {
-        next.when(
-          data: (data) {
-            if (data == null) return;
-            showSnackbar(
-              context: context,
-              message: "Update config success",
-              backgroundColor: Colors.green,
-            );
-
-            // Reload Machine Data
-            ref.invalidate(getAllMachineFutureProvider);
-          },
-          error: (error, stackTrace) => showSnackbar(
-            context: context,
-            message: error.toString(),
-            backgroundColor: Colors.red,
-          ),
-          loading: () => showSnackbar(
-            context: context,
-            message: "Loading...",
-            backgroundColor: Colors.blue,
-          ),
-        );
-      },
-    );
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
@@ -226,9 +204,11 @@ class _TaskItem extends ConsumerStatefulWidget {
   const _TaskItem({
     Key? key,
     required this.index,
+    required this.idMachine,
   }) : super(key: key);
 
   final int index;
+  final String idMachine;
 
   @override
   ConsumerState<_TaskItem> createState() => _TaskItemState();
@@ -243,7 +223,8 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
     String? sender,
     String? message,
   }) {
-    final form = ref.read(CustomFormProvider.ldaSMSForm.notifier);
+    final form =
+        ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
     switch (widget.index) {
       case 1:
         form.update((state) {

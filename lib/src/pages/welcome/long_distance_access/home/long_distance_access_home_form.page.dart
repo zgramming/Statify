@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
 import '../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
-import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/form_row_body.dart';
 
@@ -164,14 +164,7 @@ class _LongDistanceAccessHomeFormPageState
           data: (data) {
             if (data == null) return;
 
-            showSnackbar(
-              context: context,
-              message: "Success update config",
-              backgroundColor: Colors.green,
-            );
-
-            // Invalidate machine provider
-            ref.invalidate(getAllMachineFutureProvider);
+            context.pop();
           },
           error: (error, stackTrace) => showSnackbar(
             context: context,

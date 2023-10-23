@@ -31,9 +31,10 @@ class $ApplicationConfigTableTable extends ApplicationConfigTable
   @override
   List<GeneratedColumn> get $columns => [id, key, value];
   @override
-  String get aliasedName => _alias ?? 'application_config';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'application_config';
+  String get actualTableName => $name;
+  static const String $name = 'application_config';
   @override
   VerificationContext validateIntegrity(
       Insertable<ApplicationConfigTableData> instance,
@@ -250,9 +251,10 @@ class $LogoTableTable extends LogoTable
   @override
   List<GeneratedColumn> get $columns => [id, logo];
   @override
-  String get aliasedName => _alias ?? 'logo';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'logo';
+  String get actualTableName => $name;
+  static const String $name = 'logo';
   @override
   VerificationContext validateIntegrity(Insertable<LogoTableData> instance,
       {bool isInserting = false}) {
@@ -461,9 +463,10 @@ class $TemporaryPendingResponseTableTable extends TemporaryPendingResponseTable
         deletedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'temporary_pending_response';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'temporary_pending_response';
+  String get actualTableName => $name;
+  static const String $name = 'temporary_pending_response';
   @override
   VerificationContext validateIntegrity(
       Insertable<TemporaryPendingResponseTableData> instance,

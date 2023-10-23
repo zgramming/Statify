@@ -188,71 +188,85 @@ class _ContentStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+    return const Card(
+      margin: EdgeInsets.symmetric(horizontal: 16.0),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           vertical: 8.0,
           horizontal: 16.0,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(
-            3,
-            (index) => Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Sent",
-                    style: bodyFont.copyWith(
-                      fontSize: 14.0,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10.0),
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    alignment: WrapAlignment.center,
-                    spacing: 5.0,
-                    children: [
-                      Card(
-                        color: Colors.blue[400],
-                        margin: const EdgeInsets.all(0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            "Working",
-                            style: bodyFont.copyWith(
-                              fontSize: 8.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Card(
-                        color: Colors.blue[400],
-                        margin: const EdgeInsets.all(0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            "Stopped",
-                            style: bodyFont.copyWith(
-                              fontSize: 8.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          children: [
+            _ContentStatusItem(title: "Sent"),
+            _ContentStatusItem(title: "Status"),
+            _ContentStatusItem(title: "Task"),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _ContentStatusItem extends StatelessWidget {
+  const _ContentStatusItem({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            style: bodyFont.copyWith(
+              fontSize: 14.0,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10.0),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: WrapAlignment.center,
+            spacing: 5.0,
+            children: [
+              Card(
+                color: Colors.blue[400],
+                margin: const EdgeInsets.all(0),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    "Working",
+                    style: bodyFont.copyWith(
+                      fontSize: 8.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              Card(
+                color: Colors.blue[400],
+                margin: const EdgeInsets.all(0),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    "Stopped",
+                    style: bodyFont.copyWith(
+                      fontSize: 8.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -1,40 +1,64 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'machine_config.model.g.dart';
 
 @JsonSerializable(
-  fieldRename: FieldRename.snake,
+  fieldRename: FieldRename.none,
 )
 class MachineConfigModel extends Equatable {
+  final String? count;
+  final String? power;
+  final String? start;
+  final String? reboot;
+  final String? flashSms;
+  final String? wifiName;
+  final String? autoArfcn;
+  final String? autoReset;
+  final String? operators;
+  final String? taskCount;
+  final String? wifiHidden;
+  final String? powerConfig;
+  final String? saveSentList;
+  final String? wifiPassword;
+
   final String? sms1;
   final String? sms2;
   final String? sms3;
   final String? sms4;
   final String? sms5;
-  final String? count;
-  final String? reboot;
   final String? sender1;
   final String? sender2;
   final String? sender3;
   final String? sender4;
   final String? sender5;
-  final String? taskCount;
 
   const MachineConfigModel({
+    this.count,
+    this.power,
+    this.start,
+    this.reboot,
+    this.flashSms,
+    this.wifiName,
+    this.autoArfcn,
+    this.autoReset,
+    this.operators,
+    this.taskCount,
+    this.wifiHidden,
+    this.powerConfig,
+    this.saveSentList,
+    this.wifiPassword,
     this.sms1,
     this.sms2,
     this.sms3,
     this.sms4,
     this.sms5,
-    this.count,
-    this.reboot,
     this.sender1,
     this.sender2,
     this.sender3,
     this.sender4,
     this.sender5,
-    this.taskCount,
   });
 
   factory MachineConfigModel.fromJson(Map<String, dynamic> json) =>
@@ -46,19 +70,30 @@ class MachineConfigModel extends Equatable {
   @override
   List<Object?> get props {
     return [
+      count,
+      power,
+      start,
+      reboot,
+      flashSms,
+      wifiName,
+      autoArfcn,
+      autoReset,
+      operators,
+      taskCount,
+      wifiHidden,
+      powerConfig,
+      saveSentList,
+      wifiPassword,
       sms1,
       sms2,
       sms3,
       sms4,
       sms5,
-      count,
-      reboot,
       sender1,
       sender2,
       sender3,
       sender4,
       sender5,
-      taskCount,
     ];
   }
 

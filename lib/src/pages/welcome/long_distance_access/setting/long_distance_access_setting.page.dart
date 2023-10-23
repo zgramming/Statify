@@ -1,23 +1,109 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
 
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../injection.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/form_row_body.dart';
 
-class LongDistanceAccessSettingPage extends StatefulWidget {
-  const LongDistanceAccessSettingPage({super.key});
+class _PowerDropdownItem {
+  const _PowerDropdownItem({
+    required this.value,
+    required this.label,
+  });
+
+  final String value;
+  final String label;
+}
+
+class LongDistanceAccessSettingPage extends ConsumerStatefulWidget {
+  const LongDistanceAccessSettingPage({
+    Key? key,
+    required this.idMachine,
+  }) : super(key: key);
+
+  final String idMachine;
 
   @override
-  State<LongDistanceAccessSettingPage> createState() =>
+  ConsumerState<LongDistanceAccessSettingPage> createState() =>
       _LongDistanceAccessSettingPageState();
 }
 
 class _LongDistanceAccessSettingPageState
-    extends State<LongDistanceAccessSettingPage> {
+    extends ConsumerState<LongDistanceAccessSettingPage> {
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
 
+  final powers = <_PowerDropdownItem>[
+    const _PowerDropdownItem(value: "1", label: "VERY LOW"),
+    const _PowerDropdownItem(value: "2", label: "LOW"),
+    const _PowerDropdownItem(value: "3", label: "MEDIUM"),
+    const _PowerDropdownItem(value: "4", label: "HIGH"),
+    const _PowerDropdownItem(value: "5", label: "VERY HIGH"),
+  ];
+
+  bool wifiHidden = false;
+  bool flashSms = false;
+  bool saveSentList = false;
+  bool autoArfcn = false;
+  bool autoReset = false;
+  String? selectedPower;
+
   bool isShowPassword = false;
+
+  Future<void> onSubmit(bool isReboot) async {
+    final form = ref.read(
+      CustomFormProvider.ldaSettingForm(widget.idMachine).notifier,
+    )..update(
+        (state) => state.copyWith(
+          wifiName: nameController.text,
+          wifiPassword: passwordController.text,
+          wifiHidden: wifiHidden ? 1 : 0,
+          flashSms: flashSms ? 1 : 0,
+          saveSentList: saveSentList ? 1 : 0,
+          autoArfcn: autoArfcn ? 1 : 0,
+          autoReset: autoReset ? 1 : 0,
+          power: int.tryParse(selectedPower ?? "1"),
+        ),
+      );
+
+    if (isReboot) {
+      form.update((state) => state.copyWith(isReboot: true));
+    }
+
+    final formState = form.state;
+    final notifier = ref.read(machineNotifier.notifier);
+    await notifier.updateConfig(formState);
+  }
+
+  void init() {
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    final config = machine?.config;
+    log("machine: $config \n wifiName: ${config?.wifiName} \n wifiPassword: ${config?.wifiPassword}");
+    nameController.text = config?.wifiName ?? "";
+    passwordController.text = config?.wifiPassword ?? "";
+
+    setState(() {
+      wifiHidden = config?.wifiHidden == "1";
+      flashSms = config?.flashSms == "1";
+      saveSentList = config?.saveSentList == "1";
+      autoArfcn = config?.autoArfcn == "1";
+      autoReset = config?.autoReset == "1";
+      selectedPower = config?.power;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => init());
+  }
 
   @override
   void dispose() {
@@ -138,8 +224,10 @@ class _LongDistanceAccessSettingPageState
                                 "Wifi Hidden",
                                 style: bodyFont.copyWith(fontSize: 14.0),
                               ),
-                              value: true,
-                              onChanged: (value) {},
+                              value: wifiHidden,
+                              onChanged: (value) {
+                                setState(() => wifiHidden = value);
+                              },
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
@@ -147,8 +235,10 @@ class _LongDistanceAccessSettingPageState
                                 "Flash SMS",
                                 style: bodyFont.copyWith(fontSize: 14.0),
                               ),
-                              value: true,
-                              onChanged: (value) {},
+                              value: flashSms,
+                              onChanged: (value) {
+                                setState(() => flashSms = value);
+                              },
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
@@ -156,8 +246,10 @@ class _LongDistanceAccessSettingPageState
                                 "Save Sentlist",
                                 style: bodyFont.copyWith(fontSize: 14.0),
                               ),
-                              value: true,
-                              onChanged: (value) {},
+                              value: saveSentList,
+                              onChanged: (value) {
+                                setState(() => saveSentList = value);
+                              },
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
@@ -165,8 +257,10 @@ class _LongDistanceAccessSettingPageState
                                 "Auto ARFCN",
                                 style: bodyFont.copyWith(fontSize: 14.0),
                               ),
-                              value: true,
-                              onChanged: (value) {},
+                              value: autoArfcn,
+                              onChanged: (value) {
+                                setState(() => autoArfcn = value);
+                              },
                             ),
                             SwitchListTile.adaptive(
                               contentPadding: EdgeInsets.zero,
@@ -174,8 +268,45 @@ class _LongDistanceAccessSettingPageState
                                 "Auto Reset",
                                 style: bodyFont.copyWith(fontSize: 14.0),
                               ),
-                              value: true,
-                              onChanged: (value) {},
+                              value: autoReset,
+                              onChanged: (value) {
+                                setState(() => autoReset = value);
+                              },
+                            ),
+                            FormBodyRow(
+                              title: "Choose Power",
+                              child:
+                                  DropdownButtonFormField<_PowerDropdownItem>(
+                                value: powers.firstWhereOrNull((element) =>
+                                    element.value == selectedPower),
+                                onChanged: (value) {
+                                  if (value == null) return;
+                                  setState(() => selectedPower = value.value);
+                                },
+                                decoration: inputDecorationRounded().copyWith(
+                                  hintText: "Choose Power",
+                                  border: const OutlineInputBorder(),
+                                  fillColor: Colors.transparent,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                ),
+                                items: powers
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e.label),
+                                      ),
+                                    )
+                                    .toList(),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Please select power";
+                                  }
+                                  return null;
+                                },
+                              ),
                             ),
                           ],
                         ),
@@ -201,7 +332,7 @@ class _LongDistanceAccessSettingPageState
                               "GSM",
                               style: bodyFont.copyWith(fontSize: 14.0),
                             ),
-                            value: true,
+                            value: false,
                             onChanged: (value) {},
                           ),
                           CheckboxListTile.adaptive(
@@ -210,7 +341,7 @@ class _LongDistanceAccessSettingPageState
                               "WCDMA",
                               style: bodyFont.copyWith(fontSize: 14.0),
                             ),
-                            value: true,
+                            value: false,
                             onChanged: (value) {},
                           ),
                           CheckboxListTile.adaptive(
@@ -219,13 +350,13 @@ class _LongDistanceAccessSettingPageState
                               "LTE",
                               style: bodyFont.copyWith(fontSize: 14.0),
                             ),
-                            value: true,
+                            value: false,
                             onChanged: (value) {},
                           ),
                           Align(
                             alignment: Alignment.centerRight,
                             child: ElevatedButton.icon(
-                              onPressed: () {},
+                              onPressed: null,
                               style: elevatedButtonStyle(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8.0,
@@ -250,7 +381,7 @@ class _LongDistanceAccessSettingPageState
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => onSubmit(false),
                       style: elevatedButtonStyle(),
                       child: const Text("Save"),
                     ),
@@ -258,7 +389,7 @@ class _LongDistanceAccessSettingPageState
                   const SizedBox(width: 10),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => onSubmit(true),
                       style: elevatedButtonStyle(),
                       child: const FittedBox(child: Text("Save & Reboot")),
                     ),
@@ -266,7 +397,7 @@ class _LongDistanceAccessSettingPageState
                   const SizedBox(width: 10),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => onSubmit(true),
                       style: elevatedButtonStyle(),
                       child: const Text("Reboot"),
                     ),
