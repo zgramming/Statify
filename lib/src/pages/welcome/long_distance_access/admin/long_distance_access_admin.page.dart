@@ -66,7 +66,12 @@ const machineKeyTypes = [
 ];
 
 class LongDistanceAccessAdminPage extends StatefulWidget {
-  const LongDistanceAccessAdminPage({super.key});
+  const LongDistanceAccessAdminPage({
+    Key? key,
+    required this.idMachine,
+  }) : super(key: key);
+
+  final String idMachine;
 
   @override
   State<LongDistanceAccessAdminPage> createState() =>
@@ -148,8 +153,9 @@ class _LongDistanceAccessAdminPageState
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(title: const Text("LDA Admin")),
+      body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
         child: Form(

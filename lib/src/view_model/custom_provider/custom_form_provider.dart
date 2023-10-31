@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../model/model/helper/form/form_machine_config_country_mnc.model.dart';
 import '../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../model/model/helper/form/form_survey_create_update.model.dart';
 import 'custom_provider.dart';
@@ -69,4 +70,9 @@ class CustomFormProvider {
       config,
     );
   });
+
+  static final machineConfigCountries =
+      StateProvider<List<FormMachineConfigCountryMnc>>(
+    (ref) => [],
+  );
 }

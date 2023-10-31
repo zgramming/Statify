@@ -1,7 +1,9 @@
 import 'package:go_router/go_router.dart';
 
+import 'pages/welcome/long_distance_access/admin/long_distance_access_admin.page.dart';
 import 'pages/welcome/long_distance_access/home/long_distance_access_home_form.page.dart';
 import 'pages/welcome/long_distance_access/long_distance_access.page.dart';
+import 'pages/welcome/long_distance_access/manager/long_distance_access_manager.page.dart';
 import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
 import 'pages/welcome/main_survey/main_survey_summary.page.dart';
@@ -54,10 +56,12 @@ const routeSurveyResponseForm = "survey/:idSurvey/response/form/:id";
 // My Account
 
 const routeMyAccountPage = "my-account";
-
 const routeMyAccountFormPage = "my-account/form/:id";
-
 const routeChangeLogoPage = "change-logo";
+
+// Long Distance Access
+const routeLDAAdminPage = "machine/:idMachine/long-distance-access/admin";
+const routeLDAManagerPage = "machine/:idMachine/long-distance-access/manager";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -216,6 +220,28 @@ final _routes = <RouteBase>[
       return SurveySummaryPage(
         surveyId: surveyId,
         machineId: machineId,
+      );
+    },
+  ),
+
+  // Long Distance Access
+  GoRoute(
+    path: "/machine/:idMachine/long-distance-access/admin",
+    name: routeLDAAdminPage,
+    builder: (context, state) {
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return LongDistanceAccessAdminPage(
+        idMachine: idMachine,
+      );
+    },
+  ),
+  GoRoute(
+    path: "/machine/:idMachine/long-distance-access/manager",
+    name: routeLDAManagerPage,
+    builder: (context, state) {
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return LongDistanceAccessManagerPage(
+        idMachine: idMachine,
       );
     },
   ),

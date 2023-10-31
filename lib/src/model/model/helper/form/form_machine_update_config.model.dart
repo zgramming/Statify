@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 import '../../machine/machine_config.model.dart';
@@ -19,9 +18,21 @@ class FormMachineUpdateConfigModel extends Equatable {
   final String? powerConfig; // "1_3_5_8_10"
   final int? saveSentList;
   final String? wifiPassword;
+  final bool? isReboot;
   final List<MachineConfigOperatorsModel> operators;
 
-  final bool? isReboot;
+  final String? unallowed;
+  final String? arfcnLabel2g;
+  final String? arfcnLabel3g;
+  final String? arfcnLabel4g;
+  final String? arfcnLabel5g;
+  final String? arfcnHidden2g;
+  final String? arfcnHidden3g;
+  final String? arfcnHidden4g;
+  final String? arfcnHidden5g;
+  final String? removeManager;
+  final String? managerPassword;
+
   final String? sender1;
   final String? sender2;
   final String? sender3;
@@ -47,8 +58,19 @@ class FormMachineUpdateConfigModel extends Equatable {
     this.powerConfig,
     this.saveSentList,
     this.wifiPassword,
+    this.isReboot = false,
     this.operators = const [],
-    required this.isReboot,
+    this.unallowed,
+    this.arfcnLabel2g,
+    this.arfcnLabel3g,
+    this.arfcnLabel4g,
+    this.arfcnLabel5g,
+    this.arfcnHidden2g,
+    this.arfcnHidden3g,
+    this.arfcnHidden4g,
+    this.arfcnHidden5g,
+    this.removeManager,
+    this.managerPassword,
     this.sender1,
     this.sender2,
     this.sender3,
@@ -90,6 +112,17 @@ class FormMachineUpdateConfigModel extends Equatable {
       wifiHidden: int.tryParse(config.wifiHidden ?? "0"),
       wifiName: config.wifiName,
       wifiPassword: config.wifiPassword,
+      arfcnHidden2g: config.arfcnHidden2g,
+      arfcnHidden3g: config.arfcnHidden3g,
+      arfcnHidden4g: config.arfcnHidden4g,
+      arfcnHidden5g: config.arfcnHidden5g,
+      arfcnLabel2g: config.arfcnLabel2g,
+      arfcnLabel3g: config.arfcnLabel3g,
+      arfcnLabel4g: config.arfcnLabel4g,
+      arfcnLabel5g: config.arfcnLabel5g,
+      managerPassword: config.managerPassword,
+      removeManager: config.removeManager,
+      unallowed: config.unallowed,
       operators: config.operators,
     );
   }
@@ -110,8 +143,19 @@ class FormMachineUpdateConfigModel extends Equatable {
       powerConfig,
       saveSentList,
       wifiPassword,
-      operators,
       isReboot,
+      operators,
+      unallowed,
+      arfcnLabel2g,
+      arfcnLabel3g,
+      arfcnLabel4g,
+      arfcnLabel5g,
+      arfcnHidden2g,
+      arfcnHidden3g,
+      arfcnHidden4g,
+      arfcnHidden5g,
+      removeManager,
+      managerPassword,
       sender1,
       sender2,
       sender3,
@@ -142,8 +186,19 @@ class FormMachineUpdateConfigModel extends Equatable {
     String? powerConfig,
     int? saveSentList,
     String? wifiPassword,
-    List<MachineConfigOperatorsModel>? operators,
     bool? isReboot,
+    List<MachineConfigOperatorsModel>? operators,
+    String? unallowed,
+    String? arfcnLabel2g,
+    String? arfcnLabel3g,
+    String? arfcnLabel4g,
+    String? arfcnLabel5g,
+    String? arfcnHidden2g,
+    String? arfcnHidden3g,
+    String? arfcnHidden4g,
+    String? arfcnHidden5g,
+    String? removeManager,
+    String? managerPassword,
     String? sender1,
     String? sender2,
     String? sender3,
@@ -169,8 +224,19 @@ class FormMachineUpdateConfigModel extends Equatable {
       powerConfig: powerConfig ?? this.powerConfig,
       saveSentList: saveSentList ?? this.saveSentList,
       wifiPassword: wifiPassword ?? this.wifiPassword,
-      operators: operators ?? this.operators,
       isReboot: isReboot ?? this.isReboot,
+      operators: operators ?? this.operators,
+      unallowed: unallowed ?? this.unallowed,
+      arfcnLabel2g: arfcnLabel2g ?? this.arfcnLabel2g,
+      arfcnLabel3g: arfcnLabel3g ?? this.arfcnLabel3g,
+      arfcnLabel4g: arfcnLabel4g ?? this.arfcnLabel4g,
+      arfcnLabel5g: arfcnLabel5g ?? this.arfcnLabel5g,
+      arfcnHidden2g: arfcnHidden2g ?? this.arfcnHidden2g,
+      arfcnHidden3g: arfcnHidden3g ?? this.arfcnHidden3g,
+      arfcnHidden4g: arfcnHidden4g ?? this.arfcnHidden4g,
+      arfcnHidden5g: arfcnHidden5g ?? this.arfcnHidden5g,
+      removeManager: removeManager ?? this.removeManager,
+      managerPassword: managerPassword ?? this.managerPassword,
       sender1: sender1 ?? this.sender1,
       sender2: sender2 ?? this.sender2,
       sender3: sender3 ?? this.sender3,

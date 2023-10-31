@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
+import '../../../../model/model/machine/machine_config.model.dart';
 import '../../../../model/model/machine/machine_model.dart';
 import '../../../../router.dart';
 import '../../../../utils/colors.dart';
@@ -17,6 +18,7 @@ class LongDistanceAccessHomePage extends ConsumerWidget {
     Key? key,
     required this.idMachine,
   }) : super(key: key);
+
   final String idMachine;
 
   @override
@@ -69,7 +71,7 @@ class _Content extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const _ContentStatus(),
+                      _ContentStatus(config: machine.config),
                       const SizedBox(height: 20),
                       ListView(
                         padding: const EdgeInsets.only(),
@@ -184,14 +186,22 @@ class _ContentListItem extends StatelessWidget {
 }
 
 class _ContentStatus extends StatelessWidget {
-  const _ContentStatus();
+  const _ContentStatus({
+    Key? key,
+    required this.config,
+  }) : super(key: key);
+
+  final MachineConfigModel? config;
 
   @override
   Widget build(BuildContext context) {
-    return const Card(
-      margin: EdgeInsets.symmetric(horizontal: 16.0),
+    final totalSent = config?.count ?? 0;
+    final totalTask = config?.taskCount ?? 0;
+    final isWorking = (config?.start ?? "0") == "1";
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           vertical: 8.0,
           horizontal: 16.0,
         ),
@@ -199,9 +209,47 @@ class _ContentStatus extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _ContentStatusItem(title: "Sent"),
-            _ContentStatusItem(title: "Status"),
-            _ContentStatusItem(title: "Task"),
+            _ContentStatusItem(
+              title: "Sent",
+              children: [
+                Text(
+                  "$totalSent Sent",
+                  style: bodyFont.copyWith(
+                    fontSize: 12.0,
+                  ),
+                ),
+              ],
+            ),
+            _ContentStatusItem(
+              title: "Status",
+              children: [
+                Card(
+                  color: isWorking ? Colors.blue[400] : Colors.red[400],
+                  margin: const EdgeInsets.all(0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      isWorking ? "Working" : "Stop",
+                      style: bodyFont.copyWith(
+                        fontSize: 8.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            _ContentStatusItem(
+              title: "Task",
+              children: [
+                Text(
+                  "$totalTask",
+                  style: bodyFont.copyWith(
+                    fontSize: 12.0,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -213,8 +261,10 @@ class _ContentStatusItem extends StatelessWidget {
   const _ContentStatusItem({
     Key? key,
     required this.title,
+    required this.children,
   }) : super(key: key);
   final String title;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -235,36 +285,7 @@ class _ContentStatusItem extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             alignment: WrapAlignment.center,
             spacing: 5.0,
-            children: [
-              Card(
-                color: Colors.blue[400],
-                margin: const EdgeInsets.all(0),
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(
-                    "Working",
-                    style: bodyFont.copyWith(
-                      fontSize: 8.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              Card(
-                color: Colors.blue[400],
-                margin: const EdgeInsets.all(0),
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(
-                    "Stopped",
-                    style: bodyFont.copyWith(
-                      fontSize: 8.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            children: children,
           ),
         ],
       ),

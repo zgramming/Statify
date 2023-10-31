@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../utils/fonts.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../widgets/form_row_body.dart';
+import 'widgets/modal_add_country.dart';
+import 'widgets/modal_country_mnc.dart';
 
 class LongDistanceAccessManagerPage extends StatefulWidget {
-  const LongDistanceAccessManagerPage({super.key});
+  const LongDistanceAccessManagerPage({
+    Key? key,
+    required this.idMachine,
+  }) : super(key: key);
+  final String idMachine;
 
   @override
   State<LongDistanceAccessManagerPage> createState() =>
@@ -71,20 +79,24 @@ class _LongDistanceAccessManagerPageState
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(title: const Text("LDA Manager")),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 16.0),
+            const _DeviceSetup(),
+            const SizedBox(height: 16.0),
             FormBodyRow(
-              title: "Client Allowed",
+              title: "Sender Unallowed",
               child: TextFormField(
                 controller: senderUnallowedController,
                 style: bodyFont.copyWith(fontSize: 14.0),
                 decoration: inputDecorationRounded().copyWith(
-                  hintText: "Client Allowed",
+                  hintText: "Sender Unallowed",
                   border: const OutlineInputBorder(),
                   fillColor: Colors.transparent,
                   contentPadding: const EdgeInsets.all(8),
@@ -306,6 +318,119 @@ class _LongDistanceAccessManagerPageState
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DeviceSetup extends ConsumerWidget {
+  const _DeviceSetup();
+
+  static void removeCountry(WidgetRef ref, String label) {
+    final form = ref.read(CustomFormProvider.machineConfigCountries.notifier);
+    form.update((state) {
+      final newState =
+          state.where((element) => element.label != label).toList();
+      return newState;
+    });
+  }
+
+  static void showModalCountry(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const ModalAddCountryLDAManager(),
+    );
+  }
+
+  static void showModalCountryMNC(
+    BuildContext context,
+    String label,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => ModalCountryMNC(label: label),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final formMachineConfigCountryMnc = ref.watch(
+      CustomFormProvider.machineConfigCountries,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          "DEVICE SETUP",
+          style: bodyFontBold.copyWith(
+            fontSize: 16.0,
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        Wrap(
+          children: [
+            ElevatedButton(
+              onPressed: () => showModalCountry(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+              ),
+              child: const Text("Add"),
+            ),
+            const SizedBox(width: 8.0),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: const Text("Save"),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16.0),
+        if (formMachineConfigCountryMnc.isNotEmpty) ...[
+          DataTable(
+            columns: const [
+              DataColumn(label: Text("#")),
+              DataColumn(label: Text("Country")),
+              DataColumn(label: Text("")),
+            ],
+            rows: [
+              ...formMachineConfigCountryMnc
+                  .map(
+                    (e) => DataRow(
+                      cells: [
+                        DataCell(
+                          Checkbox(
+                            value: false,
+                            onChanged: (value) {},
+                          ),
+                        ),
+                        DataCell(
+                          TextButton(
+                            child: Text(e.name),
+                            onPressed: () => showModalCountryMNC(
+                              context,
+                              e.label,
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          IconButton(
+                            onPressed: () => removeCountry(ref, e.label),
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList(),
+            ],
+          ),
+        ],
+        const SizedBox(height: 16.0),
+      ],
     );
   }
 }
