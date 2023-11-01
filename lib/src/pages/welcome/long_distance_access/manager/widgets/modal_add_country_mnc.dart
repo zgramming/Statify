@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../model/model/helper/form/form_machine_config_country_mnc.model.dart';
+import '../../../../../model/model/machine/machine_config_countries.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/sizes.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_provider/custom_form_provider.dart';
-import '../../../../widgets/form_row_body.dart';
+import '../../../../widgets/form_body_row.dart';
 
 class ModalAddCountryMNC extends ConsumerStatefulWidget {
   const ModalAddCountryMNC({
@@ -30,7 +30,8 @@ class _ModalAddCountryMNCState extends ConsumerState<ModalAddCountryMNC> {
     final validate = _formKey.currentState?.validate() ?? false;
     if (!validate) return;
 
-    final form = ref.read(CustomFormProvider.machineConfigCountries.notifier);
+    final form =
+        ref.read(CustomFormProvider.machineConfigCountriesForm.notifier);
     final label = labelController.text;
     final mcc = mccController.text;
     final mnc = mncController.text;
@@ -38,7 +39,7 @@ class _ModalAddCountryMNCState extends ConsumerState<ModalAddCountryMNC> {
     form.update((state) {
       final country =
           state.firstWhere((element) => element.label == widget.label);
-      final model = CountryMnc(
+      final model = MachineConfigCountriesMNCModel(
         status: 1,
         label: label,
         mcc: mcc,

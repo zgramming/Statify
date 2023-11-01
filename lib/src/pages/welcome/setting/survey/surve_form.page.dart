@@ -13,7 +13,7 @@ import '../../../../view_model/custom_notifier/get_all_survey_by_user.notifier.d
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/async_error_builder.dart';
-import '../../../widgets/form_row_body.dart';
+import '../../../widgets/form_body_row.dart';
 import 'widgets/survey_tabbar_configuration.dart';
 
 class SurveyFormPage extends ConsumerStatefulWidget {

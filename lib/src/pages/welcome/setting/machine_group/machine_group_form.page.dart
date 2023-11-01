@@ -9,7 +9,7 @@ import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
 import '../../../../view_model/custom_notifier/get_alll_machine_group.notifier.dart';
 import '../../../widgets/async_error_builder.dart';
-import '../../../widgets/form_row_body.dart';
+import '../../../widgets/form_body_row.dart';
 
 class MachineGroupFormPage extends ConsumerStatefulWidget {
   const MachineGroupFormPage({

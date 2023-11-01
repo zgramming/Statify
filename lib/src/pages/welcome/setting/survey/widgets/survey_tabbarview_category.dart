@@ -11,7 +11,7 @@ import '../../../../../utils/functions.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_notifier/get_machine_setting_detail.notifier.dart';
 import '../../../../../view_model/custom_provider/custom_form_provider.dart';
-import '../../../../widgets/form_row_body.dart';
+import '../../../../widgets/form_body_row.dart';
 import 'survey_tabbarview_response.dart';
 
 class SurveyTabBarViewCategory extends ConsumerStatefulWidget {

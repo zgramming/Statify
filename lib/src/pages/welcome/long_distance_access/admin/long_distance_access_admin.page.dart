@@ -1,13 +1,18 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../injection.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
-import '../../../widgets/form_row_body.dart';
+import '../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../view_model/custom_provider/custom_provider.dart';
+import '../../../widgets/form_body_row.dart';
 
 class _BandDropdown {
   final String label;
@@ -30,42 +35,42 @@ class _MachineKeyTypeDropdown {
 const bands = [
   _BandDropdown(
     label: "850",
-    value: "850",
+    value: "192",
   ),
   _BandDropdown(
     label: "900",
-    value: "900",
+    value: "65",
   ),
   _BandDropdown(
     label: "1800",
-    value: "1800",
+    value: "97",
   ),
   _BandDropdown(
     label: "1900",
-    value: "1900",
+    value: "224",
   ),
   _BandDropdown(
     label: "900/1800",
-    value: "900/1800",
+    value: "1",
   ),
   _BandDropdown(
     label: "850/1900",
-    value: "850/1900",
+    value: "128",
   ),
 ];
 
 const machineKeyTypes = [
   _MachineKeyTypeDropdown(
     label: "IMSI",
-    value: "imsi",
+    value: "1",
   ),
   _MachineKeyTypeDropdown(
     label: "IMEI",
-    value: "imei",
+    value: "2",
   ),
 ];
 
-class LongDistanceAccessAdminPage extends StatefulWidget {
+class LongDistanceAccessAdminPage extends ConsumerStatefulWidget {
   const LongDistanceAccessAdminPage({
     Key? key,
     required this.idMachine,
@@ -74,12 +79,12 @@ class LongDistanceAccessAdminPage extends StatefulWidget {
   final String idMachine;
 
   @override
-  State<LongDistanceAccessAdminPage> createState() =>
+  ConsumerState<LongDistanceAccessAdminPage> createState() =>
       _LongDistanceAccessAdminPageState();
 }
 
 class _LongDistanceAccessAdminPageState
-    extends State<LongDistanceAccessAdminPage> {
+    extends ConsumerState<LongDistanceAccessAdminPage> {
   final _formKey = GlobalKey<FormState>();
 
   final newPasswordController = TextEditingController();
@@ -131,9 +136,49 @@ class _LongDistanceAccessAdminPageState
     if (!validate) {
       return;
     }
+
+    final form = ref.read(
+      CustomFormProvider.ldaAdminForm(widget.idMachine).notifier,
+    )..update(
+        (state) => state.copyWith(
+          adminPassword: newPasswordController.text,
+          allowed: senderAllowedController.text,
+          band: _selectedBand?.value,
+          runningText: runningTextController.text,
+          autoClear: isEnableAutoClear ? "1" : "0",
+          machineKeyType: _selectedMachineKeyType?.value,
+          machineKeyLast: machineKeyLastController.text,
+        ),
+      );
+
+    final notifier = ref.read(machineNotifier.notifier);
+    await notifier.updateConfig(form.state);
   }
 
-  void init() {}
+  void init() {
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    final config = machine?.config;
+    if (config == null) {
+      return;
+    }
+
+    newPasswordController.text = config.adminPassword ?? "";
+    senderAllowedController.text = config.allowed ?? "";
+    // clientAllowedController.text = config.allowed ?? "";
+    // fakeOperationEveryController.text = config.allowed ?? "";
+    // isRemoveAdminPage = config.removeManager == "1";
+    _selectedBand =
+        bands.firstWhereOrNull((element) => element.value == config.band);
+    runningTextController.text = config.runningText ?? "";
+    // _selectedLogo = config.allowed ?? "";
+    isEnableAutoClear = config.autoClear == "1";
+    _selectedMachineKeyType = machineKeyTypes.firstWhereOrNull(
+      (element) => element.value == config.machineKeyType,
+    );
+    machineKeyLastController.text = config.machineKeyLast ?? "";
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -145,6 +190,7 @@ class _LongDistanceAccessAdminPageState
   void dispose() {
     newPasswordController.dispose();
     senderAllowedController.dispose();
+    clientAllowedController.dispose();
     fakeOperationEveryController.dispose();
     runningTextController.dispose();
     machineKeyLastController.dispose();

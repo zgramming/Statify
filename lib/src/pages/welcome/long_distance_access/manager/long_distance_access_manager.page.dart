@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../injection.dart';
+import '../../../../model/model/machine/machine_config_boardips.model.dart';
+import '../../../../model/model/machine/machine_config_countries.model.dart';
 import '../../../../utils/fonts.dart';
+import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
-import '../../../widgets/form_row_body.dart';
+import '../../../../view_model/custom_provider/custom_provider.dart';
+import '../../../widgets/form_body_row.dart';
 import 'widgets/modal_add_country.dart';
 import 'widgets/modal_country_mnc.dart';
 
-class LongDistanceAccessManagerPage extends StatefulWidget {
+class LongDistanceAccessManagerPage extends ConsumerStatefulWidget {
   const LongDistanceAccessManagerPage({
     Key? key,
     required this.idMachine,
@@ -16,19 +21,19 @@ class LongDistanceAccessManagerPage extends StatefulWidget {
   final String idMachine;
 
   @override
-  State<LongDistanceAccessManagerPage> createState() =>
+  ConsumerState<LongDistanceAccessManagerPage> createState() =>
       _LongDistanceAccessManagerPageState();
 }
 
 class _LongDistanceAccessManagerPageState
-    extends State<LongDistanceAccessManagerPage> {
+    extends ConsumerState<LongDistanceAccessManagerPage> {
   final _formKey = GlobalKey<FormState>();
 
   final senderUnallowedController = TextEditingController();
   final arfcn2GLabelController = TextEditingController();
   final arfcn3GLabelController = TextEditingController();
   final arfcn4GLabelController = TextEditingController();
-  final arfcn5GController = TextEditingController();
+  final arfcn5GLabelController = TextEditingController();
   final newPasswordController = TextEditingController();
   final boardIPController = TextEditingController();
   final powerVeryLowController = TextEditingController();
@@ -44,15 +49,142 @@ class _LongDistanceAccessManagerPageState
 
   bool isRemoveManagerPage = false;
 
-  Future<void> onSubmit() async {
-    final validate = _formKey.currentState?.validate() ?? false;
-
-    if (!validate) {
-      return;
+  List<MachineBoardIpsModel> mappedBoardIps() {
+    try {
+      final joinBoardIps = boardIPController.text.split(",");
+      final mappingJoinBoardIps = joinBoardIps.map((e) {
+        final [ip, name, status] = e.split("-");
+        return MachineBoardIpsModel(ip: ip, name: name, status: status);
+      }).toList();
+      return mappingJoinBoardIps;
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
-  void init() {}
+  String mappedPowerConfig() {
+    try {
+      final joinPowerConfig = [
+        powerVeryLowController.text,
+        powerLowController.text,
+        powerMediumController.text,
+        powerHighController.text,
+        powerVeryHighController.text,
+      ].join("_");
+      return joinPowerConfig;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<void> onSubmit() async {
+    try {
+      final validate = _formKey.currentState?.validate() ?? false;
+
+      if (!validate) {
+        return;
+      }
+
+      final countries = ref.read(CustomFormProvider.machineConfigCountriesForm);
+      final form = ref.read(
+        CustomFormProvider.ldaManagerForm(widget.idMachine).notifier,
+      )..update(
+          (state) => state.copyWith(
+            countries: countries,
+            unallowed: senderUnallowedController.text,
+            arfcnLabel2g: arfcn2GLabelController.text,
+            arfcnLabel3g: arfcn3GLabelController.text,
+            arfcnLabel4g: arfcn4GLabelController.text,
+            arfcnLabel5g: arfcn5GLabelController.text,
+            arfcnHidden2g: isHiddenArfcn2G ? "1" : "0",
+            arfcnHidden3g: isHiddenArfcn3G ? "1" : "0",
+            arfcnHidden4g: isHiddenArfcn4G ? "1" : "0",
+            arfcnHidden5g: isHiddenArfcn5G ? "1" : "0",
+            removeManager: isRemoveManagerPage ? "1" : "0",
+            managerPassword: newPasswordController.text,
+            boardIps: mappedBoardIps(),
+            powerConfig: mappedPowerConfig(),
+          ),
+        );
+
+      final notifier = ref.read(machineNotifier.notifier);
+      await notifier.updateConfig(form.state);
+    } catch (e) {
+      if (!context.mounted) return;
+
+      showSnackbar(
+        context: context,
+        message: e.toString(),
+        backgroundColor: Colors.red,
+      );
+    }
+  }
+
+  void init() {
+    // Initialize initial data machine config countries
+    final formMachineConfigCountries = ref.read(
+      CustomFormProvider.machineConfigCountriesForm.notifier,
+    );
+    final machine = ref.read(
+      CustomProvider.getMachineByIdProvider(widget.idMachine),
+    );
+
+    if (machine == null) return;
+    final config = machine.config;
+
+    if (config == null) return;
+
+    final countries = config.countries;
+
+    formMachineConfigCountries.update((state) => countries
+        .map(
+          (e) => MachineConfigCountriesModel(
+            label: e.label,
+            name: e.name,
+            isActive: e.isActive,
+            mncs: e.mncs,
+          ),
+        )
+        .toList());
+
+    // Fill data
+    final listPower = config.powerConfig?.split("_") ?? [];
+    senderUnallowedController.text = "${config.unallowed}";
+    arfcn2GLabelController.text = "${config.arfcnLabel2g}";
+    arfcn3GLabelController.text = "${config.arfcnLabel3g}";
+    arfcn4GLabelController.text = "${config.arfcnLabel4g}";
+    arfcn5GLabelController.text = "${config.arfcnLabel5g}";
+    isHiddenArfcn2G = config.arfcnHidden2g == "1";
+    isHiddenArfcn3G = config.arfcnHidden3g == "1";
+    isHiddenArfcn4G = config.arfcnHidden4g == "1";
+    isHiddenArfcn5G = config.arfcnHidden5g == "1";
+    isRemoveManagerPage = config.removeManager == "1";
+    newPasswordController.text = "${config.managerPassword}";
+    boardIPController.text =
+        config.boardIps.map((e) => "${e.ip}-${e.name}-${e.status}").join(",");
+    List.generate(listPower.length, (index) {
+      switch (index) {
+        case 0:
+          powerVeryLowController.text = listPower[index];
+          break;
+        case 1:
+          powerLowController.text = listPower[index];
+          break;
+        case 2:
+          powerMediumController.text = listPower[index];
+          break;
+        case 3:
+          powerHighController.text = listPower[index];
+          break;
+        case 4:
+          powerVeryHighController.text = listPower[index];
+          break;
+        default:
+      }
+    });
+
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -66,7 +198,7 @@ class _LongDistanceAccessManagerPageState
     arfcn2GLabelController.dispose();
     arfcn3GLabelController.dispose();
     arfcn4GLabelController.dispose();
-    arfcn5GController.dispose();
+    arfcn5GLabelController.dispose();
     newPasswordController.dispose();
     boardIPController.dispose();
     powerVeryLowController.dispose();
@@ -84,238 +216,305 @@ class _LongDistanceAccessManagerPageState
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 16.0),
-            const _DeviceSetup(),
-            const SizedBox(height: 16.0),
-            FormBodyRow(
-              title: "Sender Unallowed",
-              child: TextFormField(
-                controller: senderUnallowedController,
-                style: bodyFont.copyWith(fontSize: 14.0),
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "Sender Unallowed",
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(8),
-                ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 16.0),
+              _DeviceSetup(
+                onSave: onSubmit,
               ),
-            ),
-            const SizedBox(height: 16),
-            FormBodyRow(
-              titleWidget: _ArfcnTitle(
-                title: "2G Arfcn",
-                value: isHiddenArfcn2G,
-                onChanged: (val) => setState(
-                  () => isHiddenArfcn2G = val ?? false,
-                ),
-              ),
-              child: TextFormField(
-                controller: arfcn2GLabelController,
-                style: bodyFont.copyWith(fontSize: 14.0),
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "2G Arfcn Label",
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(8),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            FormBodyRow(
-              titleWidget: _ArfcnTitle(
-                title: "3G Arfcn",
-                value: isHiddenArfcn3G,
-                onChanged: (val) => setState(
-                  () => isHiddenArfcn3G = val ?? false,
-                ),
-              ),
-              child: TextFormField(
-                controller: arfcn3GLabelController,
-                style: bodyFont.copyWith(fontSize: 14.0),
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "3G Arfcn Label",
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(8),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            FormBodyRow(
-              titleWidget: _ArfcnTitle(
-                title: "4G Arfcn",
-                value: isHiddenArfcn4G,
-                onChanged: (val) => setState(
-                  () => isHiddenArfcn4G = val ?? false,
-                ),
-              ),
-              child: TextFormField(
-                controller: arfcn4GLabelController,
-                style: bodyFont.copyWith(fontSize: 14.0),
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "4G Arfcn Label",
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(8),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            FormBodyRow(
-              titleWidget: _ArfcnTitle(
-                title: "5G Arfcn",
-                value: isHiddenArfcn5G,
-                onChanged: (val) => setState(
-                  () => isHiddenArfcn5G = val ?? false,
-                ),
-              ),
-              child: TextFormField(
-                controller: arfcn5GController,
-                style: bodyFont.copyWith(fontSize: 14.0),
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "5G Arfcn Label",
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(8),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            FormBodyRow(
-              title: "Remove Manager Page",
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Checkbox(
-                  value: isRemoveManagerPage,
-                  onChanged: (value) {
-                    if (value == null) return;
-
-                    setState(() => isRemoveManagerPage = value);
+              const SizedBox(height: 16.0),
+              FormBodyRow(
+                title: "Sender Unallowed",
+                child: TextFormField(
+                  controller: senderUnallowedController,
+                  style: bodyFont.copyWith(fontSize: 14.0),
+                  decoration: inputDecorationRounded().copyWith(
+                    hintText: "Sender Unallowed",
+                    border: const OutlineInputBorder(),
+                    fillColor: Colors.transparent,
+                    contentPadding: const EdgeInsets.all(8),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Sender Unallowed is required";
+                    }
+                    return null;
                   },
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            FormBodyRow(
-              title: "New Password",
-              child: TextFormField(
-                controller: newPasswordController,
-                style: bodyFont.copyWith(fontSize: 14.0),
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "New Password",
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(8),
+              const SizedBox(height: 16),
+              FormBodyRow(
+                titleWidget: _ArfcnTitle(
+                  title: "2G Arfcn",
+                  value: isHiddenArfcn2G,
+                  onChanged: (val) => setState(
+                    () => isHiddenArfcn2G = val ?? false,
+                  ),
+                ),
+                child: TextFormField(
+                  controller: arfcn2GLabelController,
+                  style: bodyFont.copyWith(fontSize: 14.0),
+                  decoration: inputDecorationRounded().copyWith(
+                    hintText: "2G Arfcn Label",
+                    border: const OutlineInputBorder(),
+                    fillColor: Colors.transparent,
+                    contentPadding: const EdgeInsets.all(8),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "2G Arfcn Label is required";
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            FormBodyRow(
-              title: "Board IP",
-              child: TextFormField(
-                controller: boardIPController,
-                style: bodyFont.copyWith(fontSize: 14.0),
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "Board IP",
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(8),
+              const SizedBox(height: 16),
+              FormBodyRow(
+                titleWidget: _ArfcnTitle(
+                  title: "3G Arfcn",
+                  value: isHiddenArfcn3G,
+                  onChanged: (val) => setState(
+                    () => isHiddenArfcn3G = val ?? false,
+                  ),
+                ),
+                child: TextFormField(
+                  controller: arfcn3GLabelController,
+                  style: bodyFont.copyWith(fontSize: 14.0),
+                  decoration: inputDecorationRounded().copyWith(
+                    hintText: "3G Arfcn Label",
+                    border: const OutlineInputBorder(),
+                    fillColor: Colors.transparent,
+                    contentPadding: const EdgeInsets.all(8),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "3G Arfcn Label is required";
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Power",
-              style: headerFontBold.copyWith(
-                fontSize: 20.0,
-                color: Colors.black,
+              const SizedBox(height: 16),
+              FormBodyRow(
+                titleWidget: _ArfcnTitle(
+                  title: "4G Arfcn",
+                  value: isHiddenArfcn4G,
+                  onChanged: (val) => setState(
+                    () => isHiddenArfcn4G = val ?? false,
+                  ),
+                ),
+                child: TextFormField(
+                  controller: arfcn4GLabelController,
+                  style: bodyFont.copyWith(fontSize: 14.0),
+                  decoration: inputDecorationRounded().copyWith(
+                    hintText: "4G Arfcn Label",
+                    border: const OutlineInputBorder(),
+                    fillColor: Colors.transparent,
+                    contentPadding: const EdgeInsets.all(8),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "4G Arfcn Label is required";
+                    }
+                    return null;
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                FormBodyRow(
-                  title: "Very Low",
-                  child: TextFormField(
-                    controller: powerVeryLowController,
-                    style: bodyFont.copyWith(fontSize: 14.0),
-                    decoration: inputDecorationRounded().copyWith(
-                      hintText: "Very Low",
+              const SizedBox(height: 16),
+              FormBodyRow(
+                titleWidget: _ArfcnTitle(
+                  title: "5G Arfcn",
+                  value: isHiddenArfcn5G,
+                  onChanged: (val) => setState(
+                    () => isHiddenArfcn5G = val ?? false,
+                  ),
+                ),
+                child: TextFormField(
+                  controller: arfcn5GLabelController,
+                  style: bodyFont.copyWith(fontSize: 14.0),
+                  decoration: inputDecorationRounded().copyWith(
+                    hintText: "5G Arfcn Label",
+                    border: const OutlineInputBorder(),
+                    fillColor: Colors.transparent,
+                    contentPadding: const EdgeInsets.all(8),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "5G Arfcn Label is required";
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              FormBodyRow(
+                title: "Remove Manager Page",
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Checkbox(
+                    value: isRemoveManagerPage,
+                    onChanged: (value) {
+                      if (value == null) return;
+
+                      setState(() => isRemoveManagerPage = value);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              FormBodyRow(
+                title: "New Password",
+                child: TextFormField(
+                  controller: newPasswordController,
+                  style: bodyFont.copyWith(fontSize: 14.0),
+                  decoration: inputDecorationRounded().copyWith(
+                    hintText: "New Password",
+                    border: const OutlineInputBorder(),
+                    fillColor: Colors.transparent,
+                    contentPadding: const EdgeInsets.all(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              FormBodyRow(
+                title: "Board IP",
+                child: TextFormField(
+                  controller: boardIPController,
+                  style: bodyFont.copyWith(fontSize: 14.0),
+                  decoration: inputDecorationRounded().copyWith(
+                      hintText: "Board IP",
                       border: const OutlineInputBorder(),
                       fillColor: Colors.transparent,
                       contentPadding: const EdgeInsets.all(8),
+                      helperText: "IP-Name-Status,IP-Name-Status,...",
+                      helperStyle: bodyFont.copyWith(fontSize: 10.0)),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Board IP is required";
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "Power",
+                style: headerFontBold.copyWith(
+                  fontSize: 20.0,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FormBodyRow(
+                    title: "Very Low",
+                    child: TextFormField(
+                      controller: powerVeryLowController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        hintText: "Very Low",
+                        border: const OutlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: const EdgeInsets.all(8),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Very Low is required";
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                FormBodyRow(
-                  title: "Low",
-                  child: TextFormField(
-                    controller: powerLowController,
-                    style: bodyFont.copyWith(fontSize: 14.0),
-                    decoration: inputDecorationRounded().copyWith(
-                      hintText: "Low",
-                      border: const OutlineInputBorder(),
-                      fillColor: Colors.transparent,
-                      contentPadding: const EdgeInsets.all(8),
+                  const SizedBox(height: 16.0),
+                  FormBodyRow(
+                    title: "Low",
+                    child: TextFormField(
+                      controller: powerLowController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        hintText: "Low",
+                        border: const OutlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: const EdgeInsets.all(8),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Low is required";
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                FormBodyRow(
-                  title: "Medium",
-                  child: TextFormField(
-                    controller: powerMediumController,
-                    style: bodyFont.copyWith(fontSize: 14.0),
-                    decoration: inputDecorationRounded().copyWith(
-                      hintText: "Medium",
-                      border: const OutlineInputBorder(),
-                      fillColor: Colors.transparent,
-                      contentPadding: const EdgeInsets.all(8),
+                  const SizedBox(height: 16.0),
+                  FormBodyRow(
+                    title: "Medium",
+                    child: TextFormField(
+                      controller: powerMediumController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        hintText: "Medium",
+                        border: const OutlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: const EdgeInsets.all(8),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Medium is required";
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                FormBodyRow(
-                  title: "High",
-                  child: TextFormField(
-                    controller: powerHighController,
-                    style: bodyFont.copyWith(fontSize: 14.0),
-                    decoration: inputDecorationRounded().copyWith(
-                      hintText: "High",
-                      border: const OutlineInputBorder(),
-                      fillColor: Colors.transparent,
-                      contentPadding: const EdgeInsets.all(8),
+                  const SizedBox(height: 16.0),
+                  FormBodyRow(
+                    title: "High",
+                    child: TextFormField(
+                      controller: powerHighController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        hintText: "High",
+                        border: const OutlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: const EdgeInsets.all(8),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "High is required";
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                FormBodyRow(
-                  title: "Very High",
-                  child: TextFormField(
-                    controller: powerVeryHighController,
-                    style: bodyFont.copyWith(fontSize: 14.0),
-                    decoration: inputDecorationRounded().copyWith(
-                      hintText: "Very High",
-                      border: const OutlineInputBorder(),
-                      fillColor: Colors.transparent,
-                      contentPadding: const EdgeInsets.all(8),
+                  const SizedBox(height: 16.0),
+                  FormBodyRow(
+                    title: "Very High",
+                    child: TextFormField(
+                      controller: powerVeryHighController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        hintText: "Very High",
+                        border: const OutlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: const EdgeInsets.all(8),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Very High is required";
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: onSubmit,
-              child: const Text("Submit"),
-            ),
-            const SizedBox(height: 16),
-          ],
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
@@ -323,10 +522,16 @@ class _LongDistanceAccessManagerPageState
 }
 
 class _DeviceSetup extends ConsumerWidget {
-  const _DeviceSetup();
+  const _DeviceSetup({
+    // ignore: unused_element
+    this.onSave,
+  });
+
+  final void Function()? onSave;
 
   static void removeCountry(WidgetRef ref, String label) {
-    final form = ref.read(CustomFormProvider.machineConfigCountries.notifier);
+    final form =
+        ref.read(CustomFormProvider.machineConfigCountriesForm.notifier);
     form.update((state) {
       final newState =
           state.where((element) => element.label != label).toList();
@@ -354,7 +559,7 @@ class _DeviceSetup extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formMachineConfigCountryMnc = ref.watch(
-      CustomFormProvider.machineConfigCountries,
+      CustomFormProvider.machineConfigCountriesForm,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -377,7 +582,7 @@ class _DeviceSetup extends ConsumerWidget {
             ),
             const SizedBox(width: 8.0),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: onSave,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),

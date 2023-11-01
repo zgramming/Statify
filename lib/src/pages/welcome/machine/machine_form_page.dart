@@ -12,7 +12,7 @@ import '../../../utils/styles.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
-import '../../widgets/form_row_body.dart';
+import '../../widgets/form_body_row.dart';
 
 class MachineFormPage extends ConsumerStatefulWidget {
   const MachineFormPage({

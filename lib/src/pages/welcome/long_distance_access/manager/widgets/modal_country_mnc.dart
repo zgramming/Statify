@@ -26,7 +26,7 @@ class ModalCountryMNC extends ConsumerWidget {
     required String labelMnc,
   }) {
     final form = ref.read(
-      CustomFormProvider.machineConfigCountries.notifier,
+      CustomFormProvider.machineConfigCountriesForm.notifier,
     );
     form.update((state) {
       final country = state.firstWhere(
@@ -45,8 +45,9 @@ class ModalCountryMNC extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final country = ref.watch(CustomFormProvider.machineConfigCountries.select(
-        (value) => value.firstWhere((element) => element.label == label)));
+    final country = ref.watch(CustomFormProvider.machineConfigCountriesForm
+        .select(
+            (value) => value.firstWhere((element) => element.label == label)));
     return AlertDialog(
       insetPadding: const EdgeInsets.all(16.0),
       title: const Text("Country MNC"),

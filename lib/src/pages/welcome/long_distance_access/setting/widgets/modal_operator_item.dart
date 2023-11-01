@@ -6,7 +6,7 @@ import '../../../../../model/model/machine/machine_config_operator.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_provider/custom_form_provider.dart';
-import '../../../../widgets/form_row_body.dart';
+import '../../../../widgets/form_body_row.dart';
 
 class ModalOperatorItem extends ConsumerStatefulWidget {
   const ModalOperatorItem({

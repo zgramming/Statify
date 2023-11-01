@@ -8,7 +8,7 @@ import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
-import '../../../widgets/form_row_body.dart';
+import '../../../widgets/form_body_row.dart';
 
 class LongDistanceAccessHomeFormPage extends ConsumerStatefulWidget {
   const LongDistanceAccessHomeFormPage({

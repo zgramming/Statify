@@ -7,7 +7,7 @@ import '../../../../utils/fonts.dart';
 import '../../../../utils/styles.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
-import '../../../widgets/form_row_body.dart';
+import '../../../widgets/form_body_row.dart';
 
 class LongDistanceAccessSMSPage extends ConsumerStatefulWidget {
   const LongDistanceAccessSMSPage({

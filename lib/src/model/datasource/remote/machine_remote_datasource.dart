@@ -204,23 +204,47 @@ class MachineRemoteDatasource {
     );
 
     final encodedOperators = form.operators.map((e) => e.toJson()).toList();
+    final encodedCountries = form.countries.map((e) => e.toJson()).toList();
+    final encodedBoardIps = form.boardIps.map((e) => e.toJson()).toList();
 
     final formBody = {
       'count': "${form.count}",
       'power': "${form.power}",
       'start': "${form.start}",
       'reboot': "${form.reboot}",
+      "boardIps": encodedBoardIps,
       'flashSms': "${form.flashSms}",
       'wifiName': "${form.wifiName}",
       'autoArfcn': "${form.autoArfcn}",
       'autoReset': "${form.autoReset}",
-      'operators': jsonEncode(encodedOperators),
-
+      "countries": encodedCountries,
+      'operators': encodedOperators,
       'taskCount': "${form.taskCount}",
+      "unallowed": "${form.unallowed}",
       'wifiHidden': "${form.wifiHidden}",
       'powerConfig': "${form.powerConfig}",
+      "arfcnLabel2g": "${form.arfcnLabel2g}",
+      "arfcnLabel3g": "${form.arfcnLabel3g}",
+      "arfcnLabel4g": "${form.arfcnLabel4g}",
+      "arfcnLabel5g": "${form.arfcnLabel5g}",
       'saveSentList': "${form.saveSentList}",
       'wifiPassword': "${form.wifiPassword}",
+      "arfcnHidden2g": "${form.arfcnHidden2g}",
+      "arfcnHidden3g": "${form.arfcnHidden3g}",
+      "arfcnHidden4g": "${form.arfcnHidden4g}",
+      "arfcnHidden5g": "${form.arfcnHidden5g}",
+      "removeManager": "${form.removeManager}",
+      "managerPassword": "${form.managerPassword}",
+
+      // new input admin response
+      "plmn": "${form.plmn}",
+      "band": "${form.band}",
+      "allowed": "${form.allowed}",
+      "autoClear": "${form.autoClear}",
+      "runningText": "${form.runningText}",
+      "adminPassword": "${form.adminPassword}",
+      "machineKeyLast": "${form.machineKeyLast}",
+      "machineKeyType": "${form.machineKeyType}",
 
       // Include Sender or sms if not null
       if (form.sender1 != null) 'sender1': "${form.sender1}",

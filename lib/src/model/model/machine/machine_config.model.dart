@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -24,18 +23,28 @@ class MachineConfigModel extends Equatable {
   final String? unallowed;
   final String? wifiHidden;
   final String? powerConfig;
-  final String? arfcnLabel2G;
-  final String? arfcnLabel3G;
-  final String? arfcnLabel4G;
-  final String? arfcnLabel5G;
+  final String? arfcnLabel2g;
+  final String? arfcnLabel3g;
+  final String? arfcnLabel4g;
+  final String? arfcnLabel5g;
   final String? saveSentList;
   final String? wifiPassword;
-  final String? arfcnHidden2G;
-  final String? arfcnHidden3G;
-  final String? arfcnHidden4G;
-  final String? arfcnHidden5G;
+  final String? arfcnHidden2g;
+  final String? arfcnHidden3g;
+  final String? arfcnHidden4g;
+  final String? arfcnHidden5g;
   final String? removeManager;
   final String? managerPassword;
+
+  // New Input Admin Response
+  final String? plmn;
+  final String? band;
+  final String? allowed;
+  final String? autoClear;
+  final String? runningText;
+  final String? adminPassword;
+  final String? machineKeyLast;
+  final String? machineKeyType;
 
   final String? sms1;
   final String? sms2;
@@ -66,18 +75,26 @@ class MachineConfigModel extends Equatable {
     this.unallowed,
     this.wifiHidden,
     this.powerConfig,
-    this.arfcnLabel2G,
-    this.arfcnLabel3G,
-    this.arfcnLabel4G,
-    this.arfcnLabel5G,
+    this.arfcnLabel2g,
+    this.arfcnLabel3g,
+    this.arfcnLabel4g,
+    this.arfcnLabel5g,
     this.saveSentList,
     this.wifiPassword,
-    this.arfcnHidden2G,
-    this.arfcnHidden3G,
-    this.arfcnHidden4G,
-    this.arfcnHidden5G,
+    this.arfcnHidden2g,
+    this.arfcnHidden3g,
+    this.arfcnHidden4g,
+    this.arfcnHidden5g,
     this.removeManager,
     this.managerPassword,
+    this.plmn,
+    this.band,
+    this.allowed,
+    this.autoClear,
+    this.runningText,
+    this.adminPassword,
+    this.machineKeyLast,
+    this.machineKeyType,
     this.sms1,
     this.sms2,
     this.sms3,
@@ -114,18 +131,26 @@ class MachineConfigModel extends Equatable {
       unallowed,
       wifiHidden,
       powerConfig,
-      arfcnLabel2G,
-      arfcnLabel3G,
-      arfcnLabel4G,
-      arfcnLabel5G,
+      arfcnLabel2g,
+      arfcnLabel3g,
+      arfcnLabel4g,
+      arfcnLabel5g,
       saveSentList,
       wifiPassword,
-      arfcnHidden2G,
-      arfcnHidden3G,
-      arfcnHidden4G,
-      arfcnHidden5G,
+      arfcnHidden2g,
+      arfcnHidden3g,
+      arfcnHidden4g,
+      arfcnHidden5g,
       removeManager,
       managerPassword,
+      plmn,
+      band,
+      allowed,
+      autoClear,
+      runningText,
+      adminPassword,
+      machineKeyLast,
+      machineKeyType,
       sms1,
       sms2,
       sms3,
@@ -158,18 +183,26 @@ class MachineConfigModel extends Equatable {
     String? unallowed,
     String? wifiHidden,
     String? powerConfig,
-    String? arfcnLabel2G,
-    String? arfcnLabel3G,
-    String? arfcnLabel4G,
-    String? arfcnLabel5G,
+    String? arfcnLabel2g,
+    String? arfcnLabel3g,
+    String? arfcnLabel4g,
+    String? arfcnLabel5g,
     String? saveSentList,
     String? wifiPassword,
-    String? arfcnHidden2G,
-    String? arfcnHidden3G,
-    String? arfcnHidden4G,
-    String? arfcnHidden5G,
+    String? arfcnHidden2g,
+    String? arfcnHidden3g,
+    String? arfcnHidden4g,
+    String? arfcnHidden5g,
     String? removeManager,
     String? managerPassword,
+    String? plmn,
+    String? band,
+    String? allowed,
+    String? autoClear,
+    String? runningText,
+    String? adminPassword,
+    String? machineKeyLast,
+    String? machineKeyType,
     String? sms1,
     String? sms2,
     String? sms3,
@@ -197,18 +230,26 @@ class MachineConfigModel extends Equatable {
       unallowed: unallowed ?? this.unallowed,
       wifiHidden: wifiHidden ?? this.wifiHidden,
       powerConfig: powerConfig ?? this.powerConfig,
-      arfcnLabel2G: arfcnLabel2G ?? this.arfcnLabel2G,
-      arfcnLabel3G: arfcnLabel3G ?? this.arfcnLabel3G,
-      arfcnLabel4G: arfcnLabel4G ?? this.arfcnLabel4G,
-      arfcnLabel5G: arfcnLabel5G ?? this.arfcnLabel5G,
+      arfcnLabel2g: arfcnLabel2g ?? this.arfcnLabel2g,
+      arfcnLabel3g: arfcnLabel3g ?? this.arfcnLabel3g,
+      arfcnLabel4g: arfcnLabel4g ?? this.arfcnLabel4g,
+      arfcnLabel5g: arfcnLabel5g ?? this.arfcnLabel5g,
       saveSentList: saveSentList ?? this.saveSentList,
       wifiPassword: wifiPassword ?? this.wifiPassword,
-      arfcnHidden2G: arfcnHidden2G ?? this.arfcnHidden2G,
-      arfcnHidden3G: arfcnHidden3G ?? this.arfcnHidden3G,
-      arfcnHidden4G: arfcnHidden4G ?? this.arfcnHidden4G,
-      arfcnHidden5G: arfcnHidden5G ?? this.arfcnHidden5G,
+      arfcnHidden2g: arfcnHidden2g ?? this.arfcnHidden2g,
+      arfcnHidden3g: arfcnHidden3g ?? this.arfcnHidden3g,
+      arfcnHidden4g: arfcnHidden4g ?? this.arfcnHidden4g,
+      arfcnHidden5g: arfcnHidden5g ?? this.arfcnHidden5g,
       removeManager: removeManager ?? this.removeManager,
       managerPassword: managerPassword ?? this.managerPassword,
+      plmn: plmn ?? this.plmn,
+      band: band ?? this.band,
+      allowed: allowed ?? this.allowed,
+      autoClear: autoClear ?? this.autoClear,
+      runningText: runningText ?? this.runningText,
+      adminPassword: adminPassword ?? this.adminPassword,
+      machineKeyLast: machineKeyLast ?? this.machineKeyLast,
+      machineKeyType: machineKeyType ?? this.machineKeyType,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,

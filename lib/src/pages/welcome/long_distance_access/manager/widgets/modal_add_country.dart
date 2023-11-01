@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../model/model/helper/form/form_machine_config_country_mnc.model.dart';
+import '../../../../../model/model/machine/machine_config_countries.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_provider/custom_form_provider.dart';
-import '../../../../widgets/form_row_body.dart';
+import '../../../../widgets/form_body_row.dart';
 
 class ModalAddCountryLDAManager extends ConsumerStatefulWidget {
   const ModalAddCountryLDAManager({
@@ -29,7 +29,8 @@ class _ModalAddCountryLDAManagerState
       return;
     }
 
-    final form = ref.read(CustomFormProvider.machineConfigCountries.notifier);
+    final form =
+        ref.read(CustomFormProvider.machineConfigCountriesForm.notifier);
     final label = labelController.text;
     form.update((state) {
       final isExists = state.any((element) => element.label == label);
@@ -38,7 +39,7 @@ class _ModalAddCountryLDAManagerState
       }
       final newState = [
         ...state,
-        FormMachineConfigCountryMnc(label: label, name: label)
+        MachineConfigCountriesModel(label: label, name: label)
       ];
 
       return newState;
