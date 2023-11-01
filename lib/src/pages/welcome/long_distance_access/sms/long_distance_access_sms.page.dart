@@ -34,7 +34,7 @@ class _LongDistanceAccessSMSPageState
     final form =
         ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
     if (isReboot) {
-      form.update((state) => state.copyWith(isReboot: true));
+      form.update((state) => state.copyWith(reboot: '1'));
     }
 
     final formState = form.state;
@@ -53,9 +53,9 @@ class _LongDistanceAccessSMSPageState
     form.update(
       (state) => FormMachineUpdateConfigModel(
         machineId: machine?.id ?? "",
-        count: value,
-        taskCount: value,
-        isReboot: false,
+        count: "$value",
+        taskCount: "$value",
+        reboot: "0",
       ),
     );
 

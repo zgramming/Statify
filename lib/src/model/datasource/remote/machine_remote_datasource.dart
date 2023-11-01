@@ -209,7 +209,7 @@ class MachineRemoteDatasource {
       'count': "${form.count}",
       'power': "${form.power}",
       'start': "${form.start}",
-      'reboot': (form.isReboot ?? false) ? '1' : '0',
+      'reboot': "${form.reboot}",
       'flashSms': "${form.flashSms}",
       'wifiName': "${form.wifiName}",
       'autoArfcn': "${form.autoArfcn}",

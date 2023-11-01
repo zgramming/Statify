@@ -37,9 +37,9 @@ class CustomFormProvider {
       if (config == null) {
         return const FormMachineUpdateConfigModel(
           machineId: "",
-          count: 0,
-          taskCount: 0,
-          isReboot: false,
+          count: '0',
+          taskCount: '0',
+          reboot: '0',
         );
       }
 
@@ -59,9 +59,9 @@ class CustomFormProvider {
     if (config == null) {
       return const FormMachineUpdateConfigModel(
         machineId: "",
-        count: 0,
-        taskCount: 0,
-        isReboot: false,
+        count: '0',
+        taskCount: '0',
+        reboot: '0',
       );
     }
 

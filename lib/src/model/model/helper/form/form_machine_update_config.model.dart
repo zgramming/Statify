@@ -1,86 +1,93 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 import '../../machine/machine_config.model.dart';
+import '../../machine/machine_config_boardips.model.dart';
+import '../../machine/machine_config_countries.model.dart';
 import '../../machine/machine_config_operator.model.dart';
 
 class FormMachineUpdateConfigModel extends Equatable {
   final String machineId;
-  final int? count;
-  final int? taskCount;
-
-  final int? power;
-  final int? start;
-  final int? flashSms;
+  final String? count;
+  final String? power;
+  final String? start;
+  final String? reboot;
+  final String? flashSms;
   final String? wifiName;
-  final int? autoArfcn;
-  final int? autoReset;
-  final int? wifiHidden;
-  final String? powerConfig; // "1_3_5_8_10"
-  final int? saveSentList;
-  final String? wifiPassword;
-  final bool? isReboot;
-  final List<MachineConfigOperatorsModel> operators;
-
+  final String? autoArfcn;
+  final String? autoReset;
+  final String? taskCount;
   final String? unallowed;
-  final String? arfcnLabel2g;
-  final String? arfcnLabel3g;
-  final String? arfcnLabel4g;
-  final String? arfcnLabel5g;
-  final String? arfcnHidden2g;
-  final String? arfcnHidden3g;
-  final String? arfcnHidden4g;
-  final String? arfcnHidden5g;
+  final String? wifiHidden;
+  final String? powerConfig;
+  final String? arfcnLabel2G;
+  final String? arfcnLabel3G;
+  final String? arfcnLabel4G;
+  final String? arfcnLabel5G;
+  final String? saveSentList;
+  final String? wifiPassword;
+  final String? arfcnHidden2G;
+  final String? arfcnHidden3G;
+  final String? arfcnHidden4G;
+  final String? arfcnHidden5G;
   final String? removeManager;
   final String? managerPassword;
 
-  final String? sender1;
-  final String? sender2;
-  final String? sender3;
-  final String? sender4;
-  final String? sender5;
   final String? sms1;
   final String? sms2;
   final String? sms3;
   final String? sms4;
   final String? sms5;
 
+  final String? sender1;
+  final String? sender2;
+  final String? sender3;
+  final String? sender4;
+  final String? sender5;
+
+  final List<MachineConfigOperatorsModel> operators;
+  final List<MachineBoardIpsModel> boardIps;
+  final List<MachineConfigCountriesModel> countries;
+
   const FormMachineUpdateConfigModel({
     required this.machineId,
-    required this.count,
-    required this.taskCount,
+    this.count,
     this.power,
     this.start,
+    this.reboot,
     this.flashSms,
     this.wifiName,
     this.autoArfcn,
     this.autoReset,
+    this.taskCount,
+    this.unallowed,
     this.wifiHidden,
     this.powerConfig,
+    this.arfcnLabel2G,
+    this.arfcnLabel3G,
+    this.arfcnLabel4G,
+    this.arfcnLabel5G,
     this.saveSentList,
     this.wifiPassword,
-    this.isReboot = false,
-    this.operators = const [],
-    this.unallowed,
-    this.arfcnLabel2g,
-    this.arfcnLabel3g,
-    this.arfcnLabel4g,
-    this.arfcnLabel5g,
-    this.arfcnHidden2g,
-    this.arfcnHidden3g,
-    this.arfcnHidden4g,
-    this.arfcnHidden5g,
+    this.arfcnHidden2G,
+    this.arfcnHidden3G,
+    this.arfcnHidden4G,
+    this.arfcnHidden5G,
     this.removeManager,
     this.managerPassword,
-    this.sender1,
-    this.sender2,
-    this.sender3,
-    this.sender4,
-    this.sender5,
     this.sms1,
     this.sms2,
     this.sms3,
     this.sms4,
     this.sms5,
+    this.sender1,
+    this.sender2,
+    this.sender3,
+    this.sender4,
+    this.sender5,
+    this.operators = const [],
+    this.boardIps = const [],
+    this.countries = const [],
   });
 
   factory FormMachineUpdateConfigModel.fromMachineConfigModel(
@@ -89,15 +96,15 @@ class FormMachineUpdateConfigModel extends Equatable {
   ) {
     return FormMachineUpdateConfigModel(
       machineId: machineId,
-      count: int.tryParse(config.count ?? "0"),
-      taskCount: int.tryParse(config.taskCount ?? "0"),
-      isReboot: config.reboot == "1",
-      autoArfcn: int.tryParse(config.autoArfcn ?? "0"),
-      autoReset: int.tryParse(config.autoReset ?? "0"),
-      flashSms: int.tryParse(config.flashSms ?? "0"),
-      power: int.tryParse(config.power ?? "0"),
+      count: config.count ?? "0",
+      taskCount: config.taskCount ?? "0",
+      reboot: config.reboot ?? "0",
+      autoArfcn: config.autoArfcn ?? "0",
+      autoReset: config.autoReset ?? "0",
+      flashSms: config.flashSms ?? "0",
+      power: config.power ?? "0",
       powerConfig: config.powerConfig,
-      saveSentList: int.tryParse(config.saveSentList ?? "0"),
+      saveSentList: config.saveSentList ?? "0",
       sender1: config.sender1,
       sender2: config.sender2,
       sender3: config.sender3,
@@ -108,22 +115,24 @@ class FormMachineUpdateConfigModel extends Equatable {
       sms3: config.sms3,
       sms4: config.sms4,
       sms5: config.sms5,
-      start: int.tryParse(config.start ?? "0"),
-      wifiHidden: int.tryParse(config.wifiHidden ?? "0"),
+      start: config.start ?? "0",
+      wifiHidden: config.wifiHidden ?? "0",
       wifiName: config.wifiName,
       wifiPassword: config.wifiPassword,
-      arfcnHidden2g: config.arfcnHidden2G,
-      arfcnHidden3g: config.arfcnHidden3G,
-      arfcnHidden4g: config.arfcnHidden4G,
-      arfcnHidden5g: config.arfcnHidden5G,
-      arfcnLabel2g: config.arfcnLabel2G,
-      arfcnLabel3g: config.arfcnLabel3G,
-      arfcnLabel4g: config.arfcnLabel4G,
-      arfcnLabel5g: config.arfcnLabel5G,
+      arfcnHidden2G: config.arfcnHidden2G,
+      arfcnHidden3G: config.arfcnHidden3G,
+      arfcnHidden4G: config.arfcnHidden4G,
+      arfcnHidden5G: config.arfcnHidden5G,
+      arfcnLabel2G: config.arfcnLabel2G,
+      arfcnLabel3G: config.arfcnLabel3G,
+      arfcnLabel4G: config.arfcnLabel4G,
+      arfcnLabel5G: config.arfcnLabel5G,
       managerPassword: config.managerPassword,
       removeManager: config.removeManager,
       unallowed: config.unallowed,
       operators: config.operators,
+      boardIps: config.boardIps,
+      countries: config.countries,
     );
   }
 
@@ -132,40 +141,42 @@ class FormMachineUpdateConfigModel extends Equatable {
     return [
       machineId,
       count,
-      taskCount,
       power,
       start,
+      reboot,
       flashSms,
       wifiName,
       autoArfcn,
       autoReset,
+      taskCount,
+      unallowed,
       wifiHidden,
       powerConfig,
+      arfcnLabel2G,
+      arfcnLabel3G,
+      arfcnLabel4G,
+      arfcnLabel5G,
       saveSentList,
       wifiPassword,
-      isReboot,
-      operators,
-      unallowed,
-      arfcnLabel2g,
-      arfcnLabel3g,
-      arfcnLabel4g,
-      arfcnLabel5g,
-      arfcnHidden2g,
-      arfcnHidden3g,
-      arfcnHidden4g,
-      arfcnHidden5g,
+      arfcnHidden2G,
+      arfcnHidden3G,
+      arfcnHidden4G,
+      arfcnHidden5G,
       removeManager,
       managerPassword,
-      sender1,
-      sender2,
-      sender3,
-      sender4,
-      sender5,
       sms1,
       sms2,
       sms3,
       sms4,
       sms5,
+      sender1,
+      sender2,
+      sender3,
+      sender4,
+      sender5,
+      operators,
+      boardIps,
+      countries,
     ];
   }
 
@@ -174,79 +185,83 @@ class FormMachineUpdateConfigModel extends Equatable {
 
   FormMachineUpdateConfigModel copyWith({
     String? machineId,
-    int? count,
-    int? taskCount,
-    int? power,
-    int? start,
-    int? flashSms,
+    String? count,
+    String? power,
+    String? start,
+    String? reboot,
+    String? flashSms,
     String? wifiName,
-    int? autoArfcn,
-    int? autoReset,
-    int? wifiHidden,
-    String? powerConfig,
-    int? saveSentList,
-    String? wifiPassword,
-    bool? isReboot,
-    List<MachineConfigOperatorsModel>? operators,
+    String? autoArfcn,
+    String? autoReset,
+    String? taskCount,
     String? unallowed,
-    String? arfcnLabel2g,
-    String? arfcnLabel3g,
-    String? arfcnLabel4g,
-    String? arfcnLabel5g,
-    String? arfcnHidden2g,
-    String? arfcnHidden3g,
-    String? arfcnHidden4g,
-    String? arfcnHidden5g,
+    String? wifiHidden,
+    String? powerConfig,
+    String? arfcnLabel2G,
+    String? arfcnLabel3G,
+    String? arfcnLabel4G,
+    String? arfcnLabel5G,
+    String? saveSentList,
+    String? wifiPassword,
+    String? arfcnHidden2G,
+    String? arfcnHidden3G,
+    String? arfcnHidden4G,
+    String? arfcnHidden5G,
     String? removeManager,
     String? managerPassword,
-    String? sender1,
-    String? sender2,
-    String? sender3,
-    String? sender4,
-    String? sender5,
     String? sms1,
     String? sms2,
     String? sms3,
     String? sms4,
     String? sms5,
+    String? sender1,
+    String? sender2,
+    String? sender3,
+    String? sender4,
+    String? sender5,
+    List<MachineConfigOperatorsModel>? operators,
+    List<MachineBoardIpsModel>? boardIps,
+    List<MachineConfigCountriesModel>? countries,
   }) {
     return FormMachineUpdateConfigModel(
       machineId: machineId ?? this.machineId,
       count: count ?? this.count,
-      taskCount: taskCount ?? this.taskCount,
       power: power ?? this.power,
       start: start ?? this.start,
+      reboot: reboot ?? this.reboot,
       flashSms: flashSms ?? this.flashSms,
       wifiName: wifiName ?? this.wifiName,
       autoArfcn: autoArfcn ?? this.autoArfcn,
       autoReset: autoReset ?? this.autoReset,
+      taskCount: taskCount ?? this.taskCount,
+      unallowed: unallowed ?? this.unallowed,
       wifiHidden: wifiHidden ?? this.wifiHidden,
       powerConfig: powerConfig ?? this.powerConfig,
+      arfcnLabel2G: arfcnLabel2G ?? this.arfcnLabel2G,
+      arfcnLabel3G: arfcnLabel3G ?? this.arfcnLabel3G,
+      arfcnLabel4G: arfcnLabel4G ?? this.arfcnLabel4G,
+      arfcnLabel5G: arfcnLabel5G ?? this.arfcnLabel5G,
       saveSentList: saveSentList ?? this.saveSentList,
       wifiPassword: wifiPassword ?? this.wifiPassword,
-      isReboot: isReboot ?? this.isReboot,
-      operators: operators ?? this.operators,
-      unallowed: unallowed ?? this.unallowed,
-      arfcnLabel2g: arfcnLabel2g ?? this.arfcnLabel2g,
-      arfcnLabel3g: arfcnLabel3g ?? this.arfcnLabel3g,
-      arfcnLabel4g: arfcnLabel4g ?? this.arfcnLabel4g,
-      arfcnLabel5g: arfcnLabel5g ?? this.arfcnLabel5g,
-      arfcnHidden2g: arfcnHidden2g ?? this.arfcnHidden2g,
-      arfcnHidden3g: arfcnHidden3g ?? this.arfcnHidden3g,
-      arfcnHidden4g: arfcnHidden4g ?? this.arfcnHidden4g,
-      arfcnHidden5g: arfcnHidden5g ?? this.arfcnHidden5g,
+      arfcnHidden2G: arfcnHidden2G ?? this.arfcnHidden2G,
+      arfcnHidden3G: arfcnHidden3G ?? this.arfcnHidden3G,
+      arfcnHidden4G: arfcnHidden4G ?? this.arfcnHidden4G,
+      arfcnHidden5G: arfcnHidden5G ?? this.arfcnHidden5G,
       removeManager: removeManager ?? this.removeManager,
       managerPassword: managerPassword ?? this.managerPassword,
-      sender1: sender1 ?? this.sender1,
-      sender2: sender2 ?? this.sender2,
-      sender3: sender3 ?? this.sender3,
-      sender4: sender4 ?? this.sender4,
-      sender5: sender5 ?? this.sender5,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,
       sms4: sms4 ?? this.sms4,
       sms5: sms5 ?? this.sms5,
+      sender1: sender1 ?? this.sender1,
+      sender2: sender2 ?? this.sender2,
+      sender3: sender3 ?? this.sender3,
+      sender4: sender4 ?? this.sender4,
+      sender5: sender5 ?? this.sender5,
+      operators: operators ?? this.operators,
+      boardIps: boardIps ?? this.boardIps,
+      countries: countries ?? this.countries,
     );
   }
 }

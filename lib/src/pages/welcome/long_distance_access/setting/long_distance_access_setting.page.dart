@@ -65,17 +65,17 @@ class _LongDistanceAccessSettingPageState
         (state) => state.copyWith(
           wifiName: nameController.text,
           wifiPassword: passwordController.text,
-          wifiHidden: wifiHidden ? 1 : 0,
-          flashSms: flashSms ? 1 : 0,
-          saveSentList: saveSentList ? 1 : 0,
-          autoArfcn: autoArfcn ? 1 : 0,
-          autoReset: autoReset ? 1 : 0,
-          power: int.tryParse(selectedPower ?? "1"),
+          wifiHidden: wifiHidden ? '1' : '0',
+          flashSms: flashSms ? '1' : '0',
+          saveSentList: saveSentList ? '1' : '0',
+          autoArfcn: autoArfcn ? '1' : '0',
+          autoReset: autoReset ? '1' : '0',
+          power: selectedPower ?? "1",
         ),
       );
 
     if (isReboot) {
-      form.update((state) => state.copyWith(isReboot: true));
+      form.update((state) => state.copyWith(reboot: '1'));
     }
 
     final formState = form.state;
