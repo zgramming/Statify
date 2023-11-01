@@ -17,7 +17,7 @@ MachineBoardIpsModel _$MachineBoardIpsModelFromJson(
 Map<String, dynamic> _$MachineBoardIpsModelToJson(
         MachineBoardIpsModel instance) =>
     <String, dynamic>{
-      'name': instance.name,
       'ip': instance.ip,
+      'name': instance.name,
       'status': instance.status,
     };

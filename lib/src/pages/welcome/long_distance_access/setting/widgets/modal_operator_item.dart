@@ -56,7 +56,7 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
               ltePlmn: plmnController.text,
               lteDowngrade: downgradeController.text,
               lteRotationTime: rotationTimeController.text,
-              isDefault: isDefault,
+              operatorDefault: isDefault ? "true" : "false",
             );
           }
 
@@ -78,7 +78,7 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
     plmnController.text = widget.item.ltePlmn.toString();
     downgradeController.text = widget.item.lteDowngrade.toString();
     rotationTimeController.text = widget.item.lteRotationTime.toString();
-    isDefault = widget.item.isDefault ?? false;
+    isDefault = (widget.item.operatorDefault ?? "false") == "true";
 
     setState(() {});
   }

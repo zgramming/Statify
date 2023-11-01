@@ -6,9 +6,9 @@ part 'machine_config_boardips.model.g.dart';
   fieldRename: FieldRename.snake,
 )
 class MachineBoardIpsModel extends Equatable {
-  final String name;
   final String ip;
-  final String status;
+  final String name;
+  final String status; // on, off
 
   const MachineBoardIpsModel({
     required this.name,

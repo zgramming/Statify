@@ -7,62 +7,52 @@ part 'machine_config_operator.model.g.dart';
   fieldRename: FieldRename.snake,
 )
 class MachineConfigOperatorsModel extends Equatable {
-  final int? status;
-  final String? label;
   final String? mcc;
   final String? mnc;
+  final int? curr;
   final String? name;
   final String? arfcn;
-  final String? timeout;
+  final String? label;
+  final int? status;
   final String? country;
-  final int? isPlay;
-  final int? curr;
-  final String? lteArfcn;
-  final String? ltePci;
-  final String? lteTac;
-  final String? lteCellId;
-  final String? lteDowngrade;
-  final String? lteRotationTime;
-  final String? ltePlmn;
   @JsonKey(
     name: 'default',
-    fromJson: _fromJsonDefault,
-    toJson: _toJsonDefault,
   )
-  final bool? isDefault;
-  final String? threeGArfcn;
+  final String? operatorDefault;
+  final int? isPlay;
+  final String? ltePci;
+  final String? lteTac;
+  final String? timeout;
+  final String? ltePlmn;
+  final String? lteArfcn;
+  final String? lteCellId;
   final String? fiveGArfcn;
+  final String? lteDowngrade;
+  final String? threeGArfcn;
+  final String? lteRotationTime;
 
   const MachineConfigOperatorsModel({
-    required this.status,
-    required this.label,
-    required this.mcc,
-    required this.mnc,
-    required this.name,
-    required this.arfcn,
-    required this.timeout,
-    required this.country,
-    required this.isPlay,
-    required this.curr,
-    required this.lteArfcn,
-    required this.ltePci,
-    required this.lteTac,
-    required this.lteCellId,
-    required this.lteDowngrade,
-    required this.lteRotationTime,
-    required this.ltePlmn,
-    required this.isDefault,
-    required this.threeGArfcn,
-    required this.fiveGArfcn,
+    this.mcc,
+    this.mnc,
+    this.curr,
+    this.name,
+    this.arfcn,
+    this.label,
+    this.status,
+    this.country,
+    this.operatorDefault,
+    this.isPlay,
+    this.ltePci,
+    this.lteTac,
+    this.timeout,
+    this.ltePlmn,
+    this.lteArfcn,
+    this.lteCellId,
+    this.fiveGArfcn,
+    this.lteDowngrade,
+    this.threeGArfcn,
+    this.lteRotationTime,
   });
-
-  static bool? _fromJsonDefault(String? value) {
-    return value == 'true';
-  }
-
-  static String? _toJsonDefault(bool? value) {
-    return value == true ? 'true' : 'false';
-  }
 
   factory MachineConfigOperatorsModel.fromJson(Map<String, dynamic> json) =>
       _$MachineConfigOperatorsModelFromJson(json);
@@ -73,26 +63,26 @@ class MachineConfigOperatorsModel extends Equatable {
   @override
   List<Object?> get props {
     return [
-      status,
-      label,
       mcc,
       mnc,
+      curr,
       name,
       arfcn,
-      timeout,
+      label,
+      status,
       country,
+      operatorDefault,
       isPlay,
-      curr,
-      lteArfcn,
       ltePci,
       lteTac,
-      lteCellId,
-      lteDowngrade,
-      lteRotationTime,
+      timeout,
       ltePlmn,
-      isDefault,
-      threeGArfcn,
+      lteArfcn,
+      lteCellId,
       fiveGArfcn,
+      lteDowngrade,
+      threeGArfcn,
+      lteRotationTime,
     ];
   }
 
@@ -100,48 +90,48 @@ class MachineConfigOperatorsModel extends Equatable {
   bool get stringify => true;
 
   MachineConfigOperatorsModel copyWith({
-    int? status,
-    String? label,
     String? mcc,
     String? mnc,
+    int? curr,
     String? name,
     String? arfcn,
-    String? timeout,
+    String? label,
+    int? status,
     String? country,
+    String? operatorDefault,
     int? isPlay,
-    int? curr,
-    String? lteArfcn,
     String? ltePci,
     String? lteTac,
-    String? lteCellId,
-    String? lteDowngrade,
-    String? lteRotationTime,
+    String? timeout,
     String? ltePlmn,
-    bool? isDefault,
-    String? threeGArfcn,
+    String? lteArfcn,
+    String? lteCellId,
     String? fiveGArfcn,
+    String? lteDowngrade,
+    String? threeGArfcn,
+    String? lteRotationTime,
   }) {
     return MachineConfigOperatorsModel(
-      status: status ?? this.status,
-      label: label ?? this.label,
       mcc: mcc ?? this.mcc,
       mnc: mnc ?? this.mnc,
+      curr: curr ?? this.curr,
       name: name ?? this.name,
       arfcn: arfcn ?? this.arfcn,
-      timeout: timeout ?? this.timeout,
+      label: label ?? this.label,
+      status: status ?? this.status,
       country: country ?? this.country,
+      operatorDefault: operatorDefault ?? this.operatorDefault,
       isPlay: isPlay ?? this.isPlay,
-      curr: curr ?? this.curr,
-      lteArfcn: lteArfcn ?? this.lteArfcn,
       ltePci: ltePci ?? this.ltePci,
       lteTac: lteTac ?? this.lteTac,
-      lteCellId: lteCellId ?? this.lteCellId,
-      lteDowngrade: lteDowngrade ?? this.lteDowngrade,
-      lteRotationTime: lteRotationTime ?? this.lteRotationTime,
+      timeout: timeout ?? this.timeout,
       ltePlmn: ltePlmn ?? this.ltePlmn,
-      isDefault: isDefault ?? this.isDefault,
-      threeGArfcn: threeGArfcn ?? this.threeGArfcn,
+      lteArfcn: lteArfcn ?? this.lteArfcn,
+      lteCellId: lteCellId ?? this.lteCellId,
       fiveGArfcn: fiveGArfcn ?? this.fiveGArfcn,
+      lteDowngrade: lteDowngrade ?? this.lteDowngrade,
+      threeGArfcn: threeGArfcn ?? this.threeGArfcn,
+      lteRotationTime: lteRotationTime ?? this.lteRotationTime,
     );
   }
 }

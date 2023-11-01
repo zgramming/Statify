@@ -7,18 +7,16 @@ part 'machine_config_countries.model.g.dart';
   fieldRename: FieldRename.snake,
 )
 class MachineConfigCountriesModel extends Equatable {
-  final String label;
   final String name;
+  final String label;
+  final int isActive;
   final List<MachineConfigCountriesMNCModel> mncs;
-  // ignore: non_constant_identifier_names
-  final int is_active;
 
   const MachineConfigCountriesModel({
-    required this.label,
-    required this.name,
+    this.name = '',
+    this.label = '',
+    this.isActive = 1,
     this.mncs = const [],
-    // ignore: non_constant_identifier_names
-    this.is_active = 1,
   });
 
   factory MachineConfigCountriesModel.fromJson(Map<String, dynamic> json) =>
@@ -28,23 +26,22 @@ class MachineConfigCountriesModel extends Equatable {
   Map<String, dynamic> toJson() => _$MachineConfigCountriesModelToJson(this);
 
   @override
-  List<Object> get props => [label, name, mncs, is_active];
+  List<Object> get props => [name, label, isActive, mncs];
 
   @override
   bool get stringify => true;
 
   MachineConfigCountriesModel copyWith({
-    String? label,
     String? name,
+    String? label,
+    int? isActive,
     List<MachineConfigCountriesMNCModel>? mncs,
-    // ignore: non_constant_identifier_names
-    int? is_active,
   }) {
     return MachineConfigCountriesModel(
-      label: label ?? this.label,
       name: name ?? this.name,
+      label: label ?? this.label,
+      isActive: isActive ?? this.isActive,
       mncs: mncs ?? this.mncs,
-      is_active: is_active ?? this.is_active,
     );
   }
 }
@@ -53,18 +50,18 @@ class MachineConfigCountriesModel extends Equatable {
   fieldRename: FieldRename.snake,
 )
 class MachineConfigCountriesMNCModel extends Equatable {
-  final int status;
-  final String label;
   final String mcc;
   final String mnc;
   final String name;
+  final String label;
+  final int status;
 
   const MachineConfigCountriesMNCModel({
-    required this.status,
-    required this.label,
-    required this.mcc,
-    required this.mnc,
-    required this.name,
+    this.mcc = '',
+    this.mnc = '',
+    this.name = '',
+    this.label = '',
+    this.status = 1,
   });
 
   factory MachineConfigCountriesMNCModel.fromJson(Map<String, dynamic> json) =>
@@ -76,11 +73,11 @@ class MachineConfigCountriesMNCModel extends Equatable {
   @override
   List<Object> get props {
     return [
-      status,
-      label,
       mcc,
       mnc,
       name,
+      label,
+      status,
     ];
   }
 
@@ -88,18 +85,18 @@ class MachineConfigCountriesMNCModel extends Equatable {
   bool get stringify => true;
 
   MachineConfigCountriesMNCModel copyWith({
-    int? status,
-    String? label,
     String? mcc,
     String? mnc,
     String? name,
+    String? label,
+    int? status,
   }) {
     return MachineConfigCountriesMNCModel(
-      status: status ?? this.status,
-      label: label ?? this.label,
       mcc: mcc ?? this.mcc,
       mnc: mnc ?? this.mnc,
       name: name ?? this.name,
+      label: label ?? this.label,
+      status: status ?? this.status,
     );
   }
 }
