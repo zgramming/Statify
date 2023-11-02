@@ -1,6 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:marquee/marquee.dart';
 
 import '../../../../injection.dart';
 import '../../../../model/model/machine/machine_config.model.dart';
@@ -30,7 +33,12 @@ class LongDistanceAccessHomePage extends ConsumerWidget {
 
     return Stack(
       fit: StackFit.expand,
-      children: [_Content(machine: machine), const _ButtonActions()],
+      children: [
+        _Content(machine: machine),
+        _ButtonActions(
+          config: machine.config,
+        )
+      ],
     );
   }
 }
@@ -294,7 +302,30 @@ class _ContentStatusItem extends StatelessWidget {
 }
 
 class _ButtonActions extends StatelessWidget {
-  const _ButtonActions();
+  const _ButtonActions({
+    Key? key,
+    // ignore: unused_element
+    this.config,
+  }) : super(key: key);
+
+  final MachineConfigModel? config;
+
+  static String marqueeText(MachineConfigModel? config) {
+    if (config == null) {
+      return "-";
+    }
+
+    final runningText = config.runningText;
+    final connectedWith = config.operators.firstWhereOrNull((element) {
+      return element.ltePlmn == config.plmn;
+    });
+
+    if (connectedWith == null) {
+      return "Device is not connected | $runningText";
+    }
+
+    return "Device is Connected with ${connectedWith.name} ${connectedWith.arfcn} ${connectedWith.lteArfcn} | $runningText";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -312,12 +343,15 @@ class _ButtonActions extends StatelessWidget {
               margin: const EdgeInsets.all(0),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Device is not connected",
-                  style: bodyFontBold.copyWith(
-                    fontSize: 14.0,
+                child: SizedBox(
+                  height: 20,
+                  child: Marquee(
+                    blankSpace: 300.0,
+                    text: marqueeText(config),
+                    style: bodyFontBold.copyWith(
+                      fontSize: 10.0,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
             ),
