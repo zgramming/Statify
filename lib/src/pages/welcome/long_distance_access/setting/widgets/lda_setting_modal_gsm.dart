@@ -1,0 +1,110 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../../model/model/machine/machine_config_2g_data.model.dart';
+import '../../../../../utils/fonts.dart';
+import '../../../../../utils/sizes.dart';
+import '../../../../../view_model/custom_provider/custom_provider.dart';
+
+class LDASettingModalGSM extends ConsumerWidget {
+  const LDASettingModalGSM({
+    Key? key,
+    required this.idMachine,
+  }) : super(key: key);
+
+  final String idMachine;
+
+  static List<MachineConfig2GDataModel> mappingTwoGData(String? data) {
+    if (data == null) return [];
+
+    final splitted = data.split("-");
+    final mappedSplitted = splitted.map((e) {
+      final split = e.split("_");
+      final ip = split[0];
+      final mcc = split[1];
+      final mnc = split[2];
+      final arfcn = split[3];
+      return MachineConfig2GDataModel(
+        ip: ip,
+        mcc: mcc,
+        mnc: mnc,
+        arfcn: arfcn,
+      );
+    }).toList();
+    return mappedSplitted;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final twoGData = ref.watch(CustomProvider.getMachineByIdProvider(idMachine)
+        .select((value) => value?.config?.twoGData));
+
+    final dataColumnStyle = bodyFont.copyWith(
+      fontSize: 12.0,
+      fontWeight: FontWeight.bold,
+    );
+    final dataRowStyle = bodyFont.copyWith(fontSize: 10.0);
+    return AlertDialog(
+      insetPadding: const EdgeInsets.all(8),
+      content: SizedBox(
+        width: w(context),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Text(
+                "GSM",
+                style: bodyFont.copyWith(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: [
+                  DataColumn(
+                    label: Text("IP", style: dataColumnStyle),
+                  ),
+                  DataColumn(
+                    label: Text("MCC", style: dataColumnStyle),
+                  ),
+                  DataColumn(
+                    label: Text("MNC", style: dataColumnStyle),
+                  ),
+                  DataColumn(
+                    label: Text("2G ARFCN", style: dataColumnStyle),
+                  ),
+                ],
+                rows: [
+                  ...mappingTwoGData(twoGData)
+                      .map(
+                        (e) => DataRow(
+                          cells: [
+                            DataCell(Text(e.ip, style: dataRowStyle)),
+                            DataCell(Text(e.mcc, style: dataRowStyle)),
+                            DataCell(Text(e.mnc, style: dataRowStyle)),
+                            DataCell(Text(e.arfcn, style: dataRowStyle)),
+                          ],
+                        ),
+                      )
+                      .toList(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => context.pop(),
+          child: const Text("Cancel"),
+        ),
+      ],
+    );
+  }
+}

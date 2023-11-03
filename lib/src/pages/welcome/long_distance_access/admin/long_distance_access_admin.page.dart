@@ -148,6 +148,7 @@ class _LongDistanceAccessAdminPageState
           autoClear: isEnableAutoClear ? "1" : "0",
           machineKeyType: _selectedMachineKeyType?.value,
           machineKeyLast: machineKeyLastController.text,
+          removeAdmin: isRemoveAdminPage ? "1" : "0",
         ),
       );
 

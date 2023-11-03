@@ -42,6 +42,15 @@ class FormMachineUpdateConfigModel extends Equatable {
   final String? machineKeyLast;
   final String? machineKeyType;
 
+  // New Input Again
+  final String? allRotation;
+  final String? autoCellId;
+  final String? fourGData;
+  final String? fourGDataChanged;
+  final String? removeAdmin;
+  final String? twoGData;
+  final String? twoGDataChanged;
+
   final String? sms1;
   final String? sms2;
   final String? sms3;
@@ -92,6 +101,13 @@ class FormMachineUpdateConfigModel extends Equatable {
     this.adminPassword,
     this.machineKeyLast,
     this.machineKeyType,
+    this.allRotation,
+    this.autoCellId,
+    this.fourGData,
+    this.fourGDataChanged,
+    this.removeAdmin,
+    this.twoGData,
+    this.twoGDataChanged,
     this.sms1,
     this.sms2,
     this.sms3,
@@ -158,6 +174,13 @@ class FormMachineUpdateConfigModel extends Equatable {
       machineKeyType: config.machineKeyType,
       plmn: config.plmn,
       runningText: config.runningText,
+      allRotation: config.allRotation,
+      autoCellId: config.autoCellId,
+      fourGData: config.fourGData,
+      fourGDataChanged: config.fourGDataChanged,
+      removeAdmin: config.removeAdmin,
+      twoGData: config.twoGData,
+      twoGDataChanged: config.twoGDataChanged,
     );
   }
 
@@ -197,6 +220,13 @@ class FormMachineUpdateConfigModel extends Equatable {
       adminPassword,
       machineKeyLast,
       machineKeyType,
+      allRotation,
+      autoCellId,
+      fourGData,
+      fourGDataChanged,
+      removeAdmin,
+      twoGData,
+      twoGDataChanged,
       sms1,
       sms2,
       sms3,
@@ -250,6 +280,13 @@ class FormMachineUpdateConfigModel extends Equatable {
     String? adminPassword,
     String? machineKeyLast,
     String? machineKeyType,
+    String? allRotation,
+    String? autoCellId,
+    String? fourGData,
+    String? fourGDataChanged,
+    String? removeAdmin,
+    String? twoGData,
+    String? twoGDataChanged,
     String? sms1,
     String? sms2,
     String? sms3,
@@ -298,6 +335,13 @@ class FormMachineUpdateConfigModel extends Equatable {
       adminPassword: adminPassword ?? this.adminPassword,
       machineKeyLast: machineKeyLast ?? this.machineKeyLast,
       machineKeyType: machineKeyType ?? this.machineKeyType,
+      allRotation: allRotation ?? this.allRotation,
+      autoCellId: autoCellId ?? this.autoCellId,
+      fourGData: fourGData ?? this.fourGData,
+      fourGDataChanged: fourGDataChanged ?? this.fourGDataChanged,
+      removeAdmin: removeAdmin ?? this.removeAdmin,
+      twoGData: twoGData ?? this.twoGData,
+      twoGDataChanged: twoGDataChanged ?? this.twoGDataChanged,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,

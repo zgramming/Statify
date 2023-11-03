@@ -394,7 +394,9 @@ class _LongDistanceAccessSettingPageState
                           const SizedBox(height: 10),
                           Row(
                             children: [
-                              const LDASettingNetworkItems(),
+                              LDASettingNetworkItems(
+                                idMachine: widget.idMachine,
+                              ),
                               Expanded(
                                 child: Align(
                                   alignment: Alignment.centerRight,
