@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../../model/model/machine/machine_config_2g_data.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/sizes.dart';
+import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_provider/custom_provider.dart';
 
 class LDASettingModalGSM extends ConsumerWidget {
@@ -95,6 +96,12 @@ class LDASettingModalGSM extends ConsumerWidget {
                       .toList(),
                 ],
               ),
+            ),
+            const SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {},
+              style: elevatedButtonStyle(backgroundColor: Colors.red),
+              child: const Text("DELETE"),
             ),
           ],
         ),

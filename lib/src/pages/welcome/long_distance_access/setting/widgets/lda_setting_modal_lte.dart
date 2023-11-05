@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../../model/model/machine/machine_config_4g_data.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/sizes.dart';
+import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_provider/custom_provider.dart';
 
 class LDASettingModalLTE extends ConsumerWidget {
@@ -138,6 +139,42 @@ class LDASettingModalLTE extends ConsumerWidget {
                       .toList(),
                 ],
               ),
+            ),
+            const SizedBox(height: 16.0),
+            Wrap(
+              spacing: 8.0,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      "SPECIFIC/ALL",
+                      style: bodyFontBold.copyWith(fontSize: 8.0),
+                    ),
+                    Switch.adaptive(
+                      value: true,
+                      onChanged: (value) {},
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      "AUTO CELLID",
+                      style: bodyFontBold.copyWith(fontSize: 8.0),
+                    ),
+                    Switch.adaptive(
+                      value: true,
+                      onChanged: (value) {},
+                    )
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {},
+              style: elevatedButtonStyle(backgroundColor: Colors.red),
+              child: const Text("DELETE"),
             ),
           ],
         ),

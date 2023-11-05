@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -67,8 +69,13 @@ class MachineConfigModel extends Equatable {
   final String? sender4;
   final String? sender5;
 
+  @JsonKey(defaultValue: [], fromJson: fromJsonOperators)
   final List<MachineConfigOperatorsModel> operators;
+
+  @JsonKey(fromJson: fromJsonBoardIps)
   final List<MachineBoardIpsModel> boardIps;
+
+  @JsonKey(fromJson: fromJsonCountries)
   final List<MachineConfigCountriesModel> countries;
 
   const MachineConfigModel({
@@ -131,6 +138,26 @@ class MachineConfigModel extends Equatable {
 
   /// Connect the generated [_$MachineConfigModelToJson] function to the `toJson` method.
   Map<String, dynamic> toJson() => _$MachineConfigModelToJson(this);
+
+  static List<MachineConfigOperatorsModel> fromJsonOperators(String json) {
+    final List<dynamic> data = jsonDecode(json);
+    final result =
+        data.map((e) => MachineConfigOperatorsModel.fromJson(e)).toList();
+    return result;
+  }
+
+  static List<MachineBoardIpsModel> fromJsonBoardIps(String json) {
+    final List<dynamic> data = jsonDecode(json);
+    final result = data.map((e) => MachineBoardIpsModel.fromJson(e)).toList();
+    return result;
+  }
+
+  static List<MachineConfigCountriesModel> fromJsonCountries(String json) {
+    final List<dynamic> data = jsonDecode(json);
+    final result =
+        data.map((e) => MachineConfigCountriesModel.fromJson(e)).toList();
+    return result;
+  }
 
   @override
   List<Object?> get props {

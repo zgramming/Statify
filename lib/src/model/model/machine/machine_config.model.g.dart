@@ -57,21 +57,15 @@ MachineConfigModel _$MachineConfigModelFromJson(Map<String, dynamic> json) =>
       sender3: json['sender3'] as String?,
       sender4: json['sender4'] as String?,
       sender5: json['sender5'] as String?,
-      operators: (json['operators'] as List<dynamic>?)
-              ?.map((e) => MachineConfigOperatorsModel.fromJson(
-                  e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      boardIps: (json['boardIps'] as List<dynamic>?)
-              ?.map((e) =>
-                  MachineBoardIpsModel.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      countries: (json['countries'] as List<dynamic>?)
-              ?.map((e) => MachineConfigCountriesModel.fromJson(
-                  e as Map<String, dynamic>))
-              .toList() ??
-          const [],
+      operators: json['operators'] == null
+          ? []
+          : MachineConfigModel.fromJsonOperators(json['operators'] as String),
+      boardIps: json['boardIps'] == null
+          ? const []
+          : MachineConfigModel.fromJsonBoardIps(json['boardIps'] as String),
+      countries: json['countries'] == null
+          ? const []
+          : MachineConfigModel.fromJsonCountries(json['countries'] as String),
     );
 
 Map<String, dynamic> _$MachineConfigModelToJson(MachineConfigModel instance) =>
