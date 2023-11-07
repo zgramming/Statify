@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
+import '../../../router.dart';
 import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/navigation_destination_item.dart';
-import 'another_menu/long_distance_access_another_menu.page.dart';
 import 'home/long_distance_access_home.page.dart';
 import 'report/long_distance_access_report.page.dart';
 import 'setting/long_distance_access_setting.page.dart';
@@ -50,11 +52,11 @@ class _LongDistanceAccessPageState
       selectedPrefixAsset: "setting.png",
       label: "Setting",
     ),
-    const NavigationDestinationItem(
-      prefixAsset: "another_menu_outline.png",
-      selectedPrefixAsset: "another_menu.png",
-      label: "Menu",
-    ),
+    // const NavigationDestinationItem(
+    //   prefixAsset: "another_menu_outline.png",
+    //   selectedPrefixAsset: "another_menu.png",
+    //   label: "Menu",
+    // ),
   ];
 
   void onTapMenu(int index) {
@@ -111,7 +113,7 @@ class _LongDistanceAccessPageState
                 LongDistanceAccessSMSPage(idMachine: widget.idMachine),
                 LongDistanceAccessReportPage(idMachine: widget.idMachine),
                 LongDistanceAccessSettingPage(idMachine: widget.idMachine),
-                LongDistanceAccessAnotherMenuPage(idMachine: widget.idMachine),
+                // LongDistanceAccessAnotherMenuPage(idMachine: widget.idMachine),
               ],
             ),
             error: (error, stackTrace) => AsyncErrorBuilder(
@@ -130,36 +132,47 @@ class _LongDistanceAccessPageState
         onDestinationSelected: onTapMenu,
       ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-      // floatingActionButton: SpeedDial(
-      //   animatedIcon: AnimatedIcons.menu_close,
-      //   animatedIconTheme: const IconThemeData(size: 22.0),
-      //   children: [
-      //     SpeedDialChild(
-      //       label: "Home",
-      //       onTap: () => onTapMenu(MenuLDAEnum.home),
-      //     ),
-      //     SpeedDialChild(
-      //       label: "SMS",
-      //       onTap: () => onTapMenu(MenuLDAEnum.sms),
-      //     ),
-      //     SpeedDialChild(
-      //       label: "Report",
-      //       onTap: () => onTapMenu(MenuLDAEnum.report),
-      //     ),
-      //     SpeedDialChild(
-      //       label: "Setting",
-      //       onTap: () => onTapMenu(MenuLDAEnum.setting),
-      //     ),
-      //     SpeedDialChild(
-      //       label: "Admin",
-      //       onTap: () => onTapMenu(MenuLDAEnum.admin),
-      //     ),
-      //     SpeedDialChild(
-      //       label: "Manager",
-      //       onTap: () => onTapMenu(MenuLDAEnum.manager),
-      //     ),
-      //   ],
-      // ),
+      floatingActionButton: SpeedDial(
+        buttonSize: const Size.square(56),
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme: const IconThemeData(size: 22.0),
+        children: [
+          // SpeedDialChild(
+          //   label: "Home",
+          //   onTap: () => onTapMenu(MenuLDAEnum.home),
+          // ),
+          // SpeedDialChild(
+          //   label: "SMS",
+          //   onTap: () => onTapMenu(MenuLDAEnum.sms),
+          // ),
+          // SpeedDialChild(
+          //   label: "Report",
+          //   onTap: () => onTapMenu(MenuLDAEnum.report),
+          // ),
+          // SpeedDialChild(
+          //   label: "Setting",
+          //   onTap: () => onTapMenu(MenuLDAEnum.setting),
+          // ),
+          SpeedDialChild(
+            label: "Admin",
+            onTap: () => context.pushNamed(
+              routeLDAAdminPage,
+              pathParameters: {
+                "idMachine": widget.idMachine,
+              },
+            ),
+          ),
+          SpeedDialChild(
+            label: "Manager",
+            onTap: () => context.pushNamed(
+              routeLDAManagerPage,
+              pathParameters: {
+                "idMachine": widget.idMachine,
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
@@ -56,6 +57,10 @@ class MachineConfigModel extends Equatable {
   final String? removeAdmin;
   final String? twoGData;
   final String? twoGDataChanged;
+
+  // New Input Again
+  final String? clientAllowed;
+  final String? hiddenManager;
 
   final String? sms1;
   final String? sms2;
@@ -118,6 +123,8 @@ class MachineConfigModel extends Equatable {
     this.removeAdmin,
     this.twoGData,
     this.twoGDataChanged,
+    this.clientAllowed,
+    this.hiddenManager,
     this.sms1,
     this.sms2,
     this.sms3,
@@ -201,6 +208,8 @@ class MachineConfigModel extends Equatable {
       removeAdmin,
       twoGData,
       twoGDataChanged,
+      clientAllowed,
+      hiddenManager,
       sms1,
       sms2,
       sms3,
@@ -260,6 +269,8 @@ class MachineConfigModel extends Equatable {
     String? removeAdmin,
     String? twoGData,
     String? twoGDataChanged,
+    String? clientAllowed,
+    String? hiddenManager,
     String? sms1,
     String? sms2,
     String? sms3,
@@ -314,6 +325,8 @@ class MachineConfigModel extends Equatable {
       removeAdmin: removeAdmin ?? this.removeAdmin,
       twoGData: twoGData ?? this.twoGData,
       twoGDataChanged: twoGDataChanged ?? this.twoGDataChanged,
+      clientAllowed: clientAllowed ?? this.clientAllowed,
+      hiddenManager: hiddenManager ?? this.hiddenManager,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,

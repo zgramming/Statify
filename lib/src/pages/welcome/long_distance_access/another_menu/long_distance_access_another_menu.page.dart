@@ -20,10 +20,12 @@ class LongDistanceAccessAnotherMenuPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ListTileSettingMenu(
-              onTap: () =>
-                  context.pushNamed(routeLDAAdminPage, pathParameters: {
-                "idMachine": idMachine,
-              }),
+              onTap: () => context.pushNamed(
+                routeLDAAdminPage,
+                pathParameters: {
+                  "idMachine": idMachine,
+                },
+              ),
               title: "LDA Admin",
               subtitle: "Manage LDA Admin",
               leadingIcon: Icons.person,

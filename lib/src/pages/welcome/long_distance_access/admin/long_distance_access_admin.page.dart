@@ -166,7 +166,7 @@ class _LongDistanceAccessAdminPageState
 
     newPasswordController.text = config.adminPassword ?? "";
     senderAllowedController.text = config.allowed ?? "";
-    // clientAllowedController.text = config.allowed ?? "";
+    clientAllowedController.text = config.clientAllowed ?? "";
     // fakeOperationEveryController.text = config.allowed ?? "";
     // isRemoveAdminPage = config.removeManager == "1";
     _selectedBand =
