@@ -138,6 +138,23 @@ class MachineRemoteDatasource {
     }
   }
 
+  Future<List<String>> getResults(String nameFileResult) async {
+    final uri = Uri.parse("$kBaseFileUrl/$nameFileResult");
+    final response = await client.get(uri);
+    final body = response.body;
+
+    final statusCode = response.statusCode;
+
+    if (statusCode == 200) {
+      final splitByEnter =
+          body.split("\n").where((element) => element != "").toList();
+      return splitByEnter;
+    } else {
+      const message = "Failed to get results";
+      throw Exception(message);
+    }
+  }
+
   Future<MachineCreateResponseModel> create({
     required FormMachineCreateUpdateModel form,
     required String userId,

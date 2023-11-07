@@ -109,7 +109,7 @@ class _LongDistanceAccessPageState
               children: [
                 LongDistanceAccessHomePage(idMachine: widget.idMachine),
                 LongDistanceAccessSMSPage(idMachine: widget.idMachine),
-                const LongDistanceAccessReportPage(),
+                LongDistanceAccessReportPage(idMachine: widget.idMachine),
                 LongDistanceAccessSettingPage(idMachine: widget.idMachine),
                 LongDistanceAccessAnotherMenuPage(idMachine: widget.idMachine),
               ],

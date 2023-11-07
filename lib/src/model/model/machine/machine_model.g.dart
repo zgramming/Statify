@@ -19,13 +19,14 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
       activeSurveyId: json['active_survey_id'] as String?,
       group: json['group'] as bool,
       status: $enumDecode(_$MachineStatusEnumEnumMap, json['status']),
-      config: json['config'] == null
-          ? null
-          : MachineConfigModel.fromJson(json['config'] as Map<String, dynamic>),
       lastOnline: json['last_online'] == null
           ? null
           : DateTime.parse(json['last_online'] as String),
+      config: json['config'] == null
+          ? null
+          : MachineConfigModel.fromJson(json['config'] as Map<String, dynamic>),
       isUpdating: json['is_updating'] as bool,
+      result: json['result'] as String?,
       summary: json['summary'] == null
           ? null
           : MachineSummaryModel.fromJson(
@@ -46,9 +47,10 @@ Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
       'active_survey_id': instance.activeSurveyId,
       'group': instance.group,
       'status': _$MachineStatusEnumEnumMap[instance.status]!,
-      'config': instance.config,
       'last_online': instance.lastOnline?.toIso8601String(),
+      'config': instance.config,
       'is_updating': instance.isUpdating,
+      'result': instance.result,
       'summary': instance.summary,
     };
 

@@ -72,6 +72,16 @@ class MachineRepository {
     }
   }
 
+  Future<Either<Failure, List<String>>> getResults(
+      String nameFileResult) async {
+    try {
+      final result = await remoteDatasource.getResults(nameFileResult);
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
   Future<Either<Failure, MachineCreateResponseModel>> create({
     required FormMachineCreateUpdateModel form,
     required String userId,

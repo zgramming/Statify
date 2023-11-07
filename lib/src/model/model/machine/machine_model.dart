@@ -23,9 +23,10 @@ class MachineModel extends Equatable {
   final String? activeSurveyId;
   final bool group;
   final MachineStatusEnum status;
-  final MachineConfigModel? config;
   final DateTime? lastOnline;
+  final MachineConfigModel? config;
   final bool isUpdating;
+  final String? result;
   final MachineSummaryModel? summary;
 
   const MachineModel({
@@ -41,9 +42,10 @@ class MachineModel extends Equatable {
     this.activeSurveyId,
     required this.group,
     required this.status,
-    this.config,
     this.lastOnline,
+    this.config,
     required this.isUpdating,
+    required this.result,
     this.summary,
   });
 
@@ -68,9 +70,10 @@ class MachineModel extends Equatable {
       activeSurveyId,
       group,
       status,
-      config,
       lastOnline,
+      config,
       isUpdating,
+      result,
       summary,
     ];
   }
@@ -91,9 +94,10 @@ class MachineModel extends Equatable {
     String? activeSurveyId,
     bool? group,
     MachineStatusEnum? status,
-    MachineConfigModel? config,
     DateTime? lastOnline,
+    MachineConfigModel? config,
     bool? isUpdating,
+    String? result,
     MachineSummaryModel? summary,
   }) {
     return MachineModel(
@@ -109,9 +113,10 @@ class MachineModel extends Equatable {
       activeSurveyId: activeSurveyId ?? this.activeSurveyId,
       group: group ?? this.group,
       status: status ?? this.status,
-      config: config ?? this.config,
       lastOnline: lastOnline ?? this.lastOnline,
+      config: config ?? this.config,
       isUpdating: isUpdating ?? this.isUpdating,
+      result: result ?? this.result,
       summary: summary ?? this.summary,
     );
   }

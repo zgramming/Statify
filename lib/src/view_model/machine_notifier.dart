@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
@@ -18,6 +19,7 @@ class MachineState extends Equatable {
   final AsyncValue<MachineModel?> onGetById;
   final AsyncValue<MachineModel?> onGetByNumber;
   final AsyncValue<Uint8List?> onGetExport;
+  final AsyncValue<List<String>?> onGetResults;
   final AsyncValue<MachineCreateResponseModel?> onCreate;
   final AsyncValue<MachineUpdateResponseModel?> onUpdate;
   final AsyncValue<MachineModel?> onUpdateConfig;
@@ -29,6 +31,7 @@ class MachineState extends Equatable {
     this.onGetById = const AsyncData(null),
     this.onGetByNumber = const AsyncData(null),
     this.onGetExport = const AsyncData(null),
+    this.onGetResults = const AsyncData(null),
     this.onCreate = const AsyncData(null),
     this.onUpdate = const AsyncData(null),
     this.onUpdateConfig = const AsyncData(null),
@@ -43,6 +46,7 @@ class MachineState extends Equatable {
       onGetById,
       onGetByNumber,
       onGetExport,
+      onGetResults,
       onCreate,
       onUpdate,
       onUpdateConfig,
@@ -59,6 +63,7 @@ class MachineState extends Equatable {
     AsyncValue<MachineModel?>? onGetById,
     AsyncValue<MachineModel?>? onGetByNumber,
     AsyncValue<Uint8List?>? onGetExport,
+    AsyncValue<List<String>?>? onGetResults,
     AsyncValue<MachineCreateResponseModel?>? onCreate,
     AsyncValue<MachineUpdateResponseModel?>? onUpdate,
     AsyncValue<MachineModel?>? onUpdateConfig,
@@ -70,6 +75,7 @@ class MachineState extends Equatable {
       onGetById: onGetById ?? this.onGetById,
       onGetByNumber: onGetByNumber ?? this.onGetByNumber,
       onGetExport: onGetExport ?? this.onGetExport,
+      onGetResults: onGetResults ?? this.onGetResults,
       onCreate: onCreate ?? this.onCreate,
       onUpdate: onUpdate ?? this.onUpdate,
       onUpdateConfig: onUpdateConfig ?? this.onUpdateConfig,
@@ -148,6 +154,17 @@ class MachineNotifier extends StateNotifier<MachineState> {
       (failure) => state = state.copyWith(
           onGetExport: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onGetExport: AsyncData(data)),
+    );
+  }
+
+  Future<MachineState> getResults(String nameFileResult) async {
+    state = state.copyWith(onGetResults: const AsyncLoading());
+    final result = await repository.getResults(nameFileResult);
+
+    return result.fold(
+      (failure) => state = state.copyWith(
+          onGetResults: AsyncError(failure.message, StackTrace.current)),
+      (data) => state = state.copyWith(onGetResults: AsyncData(data)),
     );
   }
 
