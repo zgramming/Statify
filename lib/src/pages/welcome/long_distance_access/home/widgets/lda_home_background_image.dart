@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../injection.dart';
 import '../../../../../utils/colors.dart';
 import '../../../../../utils/constant.dart';
-import '../../../../widgets/async_error_builder.dart';
+
+class _DefaultImage extends StatelessWidget {
+  const _DefaultImage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      kURLLogoHitech,
+      width: 100,
+      height: 100,
+    );
+  }
+}
 
 class LDAHomeBackgroundImage extends ConsumerWidget {
-  const LDAHomeBackgroundImage({super.key});
+  const LDAHomeBackgroundImage({
+    super.key,
+    required this.updateLogo,
+  });
+  final String? updateLogo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final logoAsync = ref.watch(logoNotifier).onGetFirstLogo;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -26,31 +40,18 @@ class LDAHomeBackgroundImage extends ConsumerWidget {
             ),
             child: Builder(
               builder: (context) {
-                return logoAsync.when(
-                  data: (data) {
-                    if (data == null) {
-                      return Image.asset(
-                        kURLLogoHitech,
-                        width: 100,
-                        height: 100,
-                      );
-                    }
+                if (updateLogo == null) {
+                  return const _DefaultImage();
+                }
 
-                    return Image.memory(
-                      data.logo!,
-                      fit: BoxFit.cover,
-                      width: 100,
-                      height: 100,
-                    );
+                final pathFile = "$kBaseFileUrl/$updateLogo";
+                return Image.network(
+                  pathFile,
+                  width: 100,
+                  height: 100,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const _DefaultImage();
                   },
-                  error: (error, stackTrace) => AsyncErrorBuilder(
-                    error: error.toString(),
-                    onRetry: () {
-                      ref.invalidate(logoNotifier);
-                    },
-                  ),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
                 );
               },
             ),

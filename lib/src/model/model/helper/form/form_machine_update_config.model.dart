@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 
 import '../../machine/machine_config.model.dart';
@@ -50,6 +52,13 @@ class FormMachineUpdateConfigModel extends Equatable {
   final String? removeAdmin;
   final String? twoGData;
   final String? twoGDataChanged;
+
+  // New Input Again
+  final String? clientAllowed;
+  final String? hiddenManager;
+  final String? updateLogo;
+  // Digunakan untuk flag apakah logo diupdate atau tidak, kalau ada filenya maka logo diupdate dan ubah "updateLogo" menjadi "1", kalau tidak ada filenya maka "updateLogo" dibiarkan saja
+  final Uint8List? updateLogoFile;
 
   final String? sms1;
   final String? sms2;
@@ -108,6 +117,10 @@ class FormMachineUpdateConfigModel extends Equatable {
     this.removeAdmin,
     this.twoGData,
     this.twoGDataChanged,
+    this.clientAllowed,
+    this.hiddenManager,
+    this.updateLogo,
+    this.updateLogoFile,
     this.sms1,
     this.sms2,
     this.sms3,
@@ -181,6 +194,9 @@ class FormMachineUpdateConfigModel extends Equatable {
       removeAdmin: config.removeAdmin,
       twoGData: config.twoGData,
       twoGDataChanged: config.twoGDataChanged,
+      clientAllowed: config.clientAllowed,
+      hiddenManager: config.hiddenManager,
+      updateLogo: config.updateLogo,
     );
   }
 
@@ -227,6 +243,10 @@ class FormMachineUpdateConfigModel extends Equatable {
       removeAdmin,
       twoGData,
       twoGDataChanged,
+      clientAllowed,
+      hiddenManager,
+      updateLogo,
+      updateLogoFile,
       sms1,
       sms2,
       sms3,
@@ -287,6 +307,10 @@ class FormMachineUpdateConfigModel extends Equatable {
     String? removeAdmin,
     String? twoGData,
     String? twoGDataChanged,
+    String? clientAllowed,
+    String? hiddenManager,
+    String? updateLogo,
+    Uint8List? updateLogoFile,
     String? sms1,
     String? sms2,
     String? sms3,
@@ -342,6 +366,10 @@ class FormMachineUpdateConfigModel extends Equatable {
       removeAdmin: removeAdmin ?? this.removeAdmin,
       twoGData: twoGData ?? this.twoGData,
       twoGDataChanged: twoGDataChanged ?? this.twoGDataChanged,
+      clientAllowed: clientAllowed ?? this.clientAllowed,
+      hiddenManager: hiddenManager ?? this.hiddenManager,
+      updateLogo: updateLogo ?? this.updateLogo,
+      updateLogoFile: updateLogoFile ?? this.updateLogoFile,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,

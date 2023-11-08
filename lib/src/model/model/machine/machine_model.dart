@@ -27,6 +27,7 @@ class MachineModel extends Equatable {
   final MachineConfigModel? config;
   final bool isUpdating;
   final String? result;
+  final String? logo;
   final MachineSummaryModel? summary;
 
   const MachineModel({
@@ -46,6 +47,7 @@ class MachineModel extends Equatable {
     this.config,
     required this.isUpdating,
     required this.result,
+    this.logo,
     this.summary,
   });
 
@@ -74,6 +76,7 @@ class MachineModel extends Equatable {
       config,
       isUpdating,
       result,
+      logo,
       summary,
     ];
   }
@@ -98,6 +101,7 @@ class MachineModel extends Equatable {
     MachineConfigModel? config,
     bool? isUpdating,
     String? result,
+    String? logo,
     MachineSummaryModel? summary,
   }) {
     return MachineModel(
@@ -117,6 +121,7 @@ class MachineModel extends Equatable {
       config: config ?? this.config,
       isUpdating: isUpdating ?? this.isUpdating,
       result: result ?? this.result,
+      logo: logo ?? this.logo,
       summary: summary ?? this.summary,
     );
   }

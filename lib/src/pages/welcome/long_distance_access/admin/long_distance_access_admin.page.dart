@@ -149,6 +149,8 @@ class _LongDistanceAccessAdminPageState
           machineKeyType: _selectedMachineKeyType?.value,
           machineKeyLast: machineKeyLastController.text,
           removeAdmin: isRemoveAdminPage ? "1" : "0",
+          clientAllowed: clientAllowedController.text,
+          updateLogoFile: _selectedLogo,
         ),
       );
 
@@ -168,7 +170,7 @@ class _LongDistanceAccessAdminPageState
     senderAllowedController.text = config.allowed ?? "";
     clientAllowedController.text = config.clientAllowed ?? "";
     // fakeOperationEveryController.text = config.allowed ?? "";
-    // isRemoveAdminPage = config.removeManager == "1";
+    isRemoveAdminPage = config.removeAdmin == "1";
     _selectedBand =
         bands.firstWhereOrNull((element) => element.value == config.band);
     runningTextController.text = config.runningText ?? "";

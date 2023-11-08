@@ -38,7 +38,9 @@ class LDAHomeContent extends ConsumerWidget {
               children: [
                 SizedBox(
                   height: height * 0.25,
-                  child: const LDAHomeBackgroundImage(),
+                  child: LDAHomeBackgroundImage(
+                    updateLogo: machine.logo,
+                  ),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: height * 0.22),

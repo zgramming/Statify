@@ -61,6 +61,7 @@ class MachineConfigModel extends Equatable {
   // New Input Again
   final String? clientAllowed;
   final String? hiddenManager;
+  final String? updateLogo;
 
   final String? sms1;
   final String? sms2;
@@ -125,6 +126,7 @@ class MachineConfigModel extends Equatable {
     this.twoGDataChanged,
     this.clientAllowed,
     this.hiddenManager,
+    this.updateLogo,
     this.sms1,
     this.sms2,
     this.sms3,
@@ -210,6 +212,7 @@ class MachineConfigModel extends Equatable {
       twoGDataChanged,
       clientAllowed,
       hiddenManager,
+      updateLogo,
       sms1,
       sms2,
       sms3,
@@ -271,6 +274,7 @@ class MachineConfigModel extends Equatable {
     String? twoGDataChanged,
     String? clientAllowed,
     String? hiddenManager,
+    String? updateLogo,
     String? sms1,
     String? sms2,
     String? sms3,
@@ -327,6 +331,7 @@ class MachineConfigModel extends Equatable {
       twoGDataChanged: twoGDataChanged ?? this.twoGDataChanged,
       clientAllowed: clientAllowed ?? this.clientAllowed,
       hiddenManager: hiddenManager ?? this.hiddenManager,
+      updateLogo: updateLogo ?? this.updateLogo,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,

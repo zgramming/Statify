@@ -215,10 +215,49 @@ class MachineRemoteDatasource {
     }
   }
 
+  Future<MachineModel> _updateLogo(
+    String machineId,
+    Uint8List fileBytes,
+  ) async {
+    final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
+    final uri = Uri.parse("$kBaseApiUrl/machines/$machineId/update-logo");
+    final request = http.MultipartRequest('POST', uri);
+
+    // Add Headers
+    request.headers.addAll({
+      "Authorization": "Bearer $currentToken",
+    });
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'logo',
+        fileBytes,
+        filename: 'logo.png',
+      ),
+    );
+
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+
+    final statusCode = response.statusCode;
+
+    if (statusCode == 200) {
+      final decoded = Map<String, dynamic>.from(jsonDecode(body));
+      final data = decoded['data'];
+      final machine = MachineModel.fromJson(data);
+      return machine;
+    } else {
+      const message = "Failed to update logo";
+      throw Exception(message);
+    }
+  }
+
   Future<MachineModel> updateConfig(FormMachineUpdateConfigModel form) async {
     final uri = Uri.parse(
       '$kBaseApiUrl/machines/${form.machineId}/update-config',
     );
+
+    final isHaveUploadLogo = form.updateLogoFile != null;
 
     final encodedOperators = form.operators.map((e) => e.toJson()).toList();
     final encodedCountries = form.countries.map((e) => e.toJson()).toList();
@@ -263,6 +302,10 @@ class MachineRemoteDatasource {
       "machineKeyLast": "${form.machineKeyLast}",
       "machineKeyType": "${form.machineKeyType}",
 
+      // new input admin response
+      "clientAllowed": "${form.clientAllowed}",
+      if (isHaveUploadLogo) "updateLogo": "1",
+
       // Include Sender or sms if not null
       if (form.sender1 != null) 'sender1': "${form.sender1}",
       if (form.sender2 != null) 'sender2': "${form.sender2}",
@@ -295,6 +338,12 @@ class MachineRemoteDatasource {
 
     if (response.statusCode == 200) {
       final machine = MachineModel.fromJson(data);
+
+      // Update Logo when have file
+      if (isHaveUploadLogo) {
+        await _updateLogo(machine.id, form.updateLogoFile!);
+      }
+
       return machine;
     } else {
       final message = decoded.containsKey('message')

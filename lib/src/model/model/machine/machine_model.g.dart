@@ -27,6 +27,7 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
           : MachineConfigModel.fromJson(json['config'] as Map<String, dynamic>),
       isUpdating: json['is_updating'] as bool,
       result: json['result'] as String?,
+      logo: json['logo'] as String?,
       summary: json['summary'] == null
           ? null
           : MachineSummaryModel.fromJson(
@@ -51,6 +52,7 @@ Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
       'config': instance.config,
       'is_updating': instance.isUpdating,
       'result': instance.result,
+      'logo': instance.logo,
       'summary': instance.summary,
     };
 
