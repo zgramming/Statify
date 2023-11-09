@@ -1,21 +1,37 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:marquee/marquee.dart';
 
+import '../../../../../injection.dart';
 import '../../../../../model/model/machine/machine_config.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/styles.dart';
+import '../../../../../view_model/custom_provider/custom_form_provider.dart';
 
-class LDAHomeButtonAction extends StatelessWidget {
+enum _ButtonState {
+  start,
+  stop,
+  reset,
+}
+
+class LDAHomeButtonAction extends ConsumerStatefulWidget {
   const LDAHomeButtonAction({
     Key? key,
-    // ignore: unused_element
     this.config,
+    required this.machineId,
   }) : super(key: key);
 
+  final String machineId;
   final MachineConfigModel? config;
 
-  static String marqueeText(MachineConfigModel? config) {
+  @override
+  ConsumerState<LDAHomeButtonAction> createState() =>
+      _LDAHomeButtonActionState();
+}
+
+class _LDAHomeButtonActionState extends ConsumerState<LDAHomeButtonAction> {
+  String marqueeText(MachineConfigModel? config) {
     if (config == null) {
       return "-";
     }
@@ -30,6 +46,29 @@ class LDAHomeButtonAction extends StatelessWidget {
     }
 
     return "Device is Connected with ${connectedWith.name} ${connectedWith.arfcn} ${connectedWith.lteArfcn} | $runningText";
+  }
+
+  Future<void> onSubmit(_ButtonState currentState) async {
+    final form = ref.read(
+      CustomFormProvider.ldaHomeForm(widget.machineId).notifier,
+    )..update(
+        (state) {
+          switch (currentState) {
+            case _ButtonState.start:
+              return state = state.copyWith(start: '1');
+            case _ButtonState.stop:
+              return state = state.copyWith(start: '0');
+            case _ButtonState.reset:
+              return state = state.copyWith(count: '0');
+            default:
+              return state;
+          }
+        },
+      );
+
+    final formState = form.state;
+    final notifier = ref.read(machineNotifier.notifier);
+    await notifier.updateConfig(formState);
   }
 
   @override
@@ -52,7 +91,7 @@ class LDAHomeButtonAction extends StatelessWidget {
                   height: 20,
                   child: Marquee(
                     blankSpace: 300.0,
-                    text: marqueeText(config),
+                    text: marqueeText(widget.config),
                     style: bodyFontBold.copyWith(
                       fontSize: 10.0,
                     ),
@@ -65,7 +104,7 @@ class LDAHomeButtonAction extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => onSubmit(_ButtonState.start),
                     style: elevatedButtonStyle(),
                     child: const Text("Start"),
                   ),
@@ -73,7 +112,7 @@ class LDAHomeButtonAction extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => onSubmit(_ButtonState.stop),
                     style: elevatedButtonStyle(),
                     child: const Text("Stop"),
                   ),
@@ -81,7 +120,7 @@ class LDAHomeButtonAction extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => onSubmit(_ButtonState.reset),
                     style: elevatedButtonStyle(),
                     child: const Text("Reset"),
                   ),

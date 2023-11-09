@@ -27,6 +27,29 @@ class CustomFormProvider {
     },
   );
 
+  static final ldaHomeForm =
+      StateProvider.family<FormMachineUpdateConfigModel, String>(
+    (ref, idMachine) {
+      final machine =
+          ref.watch(CustomProvider.getMachineByIdProvider(idMachine));
+      final config = machine?.config;
+
+      if (config == null) {
+        return const FormMachineUpdateConfigModel(
+          machineId: "",
+          count: '0',
+          taskCount: '0',
+          reboot: '0',
+        );
+      }
+
+      return FormMachineUpdateConfigModel.fromMachineConfigModel(
+        idMachine,
+        config,
+      );
+    },
+  );
+
   static final ldaSMSForm =
       StateProvider.family<FormMachineUpdateConfigModel, String>(
     (ref, idMachine) {

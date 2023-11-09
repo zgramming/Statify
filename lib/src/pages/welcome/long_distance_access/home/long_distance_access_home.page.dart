@@ -24,7 +24,10 @@ class LongDistanceAccessHomePage extends ConsumerWidget {
       fit: StackFit.expand,
       children: [
         LDAHomeContent(machine: machine),
-        LDAHomeButtonAction(config: machine.config)
+        LDAHomeButtonAction(
+          config: machine.config,
+          machineId: machine.id,
+        )
       ],
     );
   }
