@@ -20,9 +20,9 @@ class _DefaultImage extends StatelessWidget {
 class LDAHomeBackgroundImage extends ConsumerWidget {
   const LDAHomeBackgroundImage({
     super.key,
-    required this.updateLogo,
+    required this.logo,
   });
-  final String? updateLogo;
+  final String? logo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,17 +40,22 @@ class LDAHomeBackgroundImage extends ConsumerWidget {
             ),
             child: Builder(
               builder: (context) {
-                if (updateLogo == null) {
+                if (logo == null) {
                   return const _DefaultImage();
                 }
 
-                final pathFile = "$kBaseFileUrl/$updateLogo";
                 return Image.network(
-                  pathFile,
+                  logo!,
                   width: 100,
                   height: 100,
                   errorBuilder: (context, error, stackTrace) {
-                    return const _DefaultImage();
+                    return const Center(
+                      child: Icon(
+                        Icons.error,
+                        color: Colors.red,
+                        size: 50,
+                      ),
+                    );
                   },
                 );
               },

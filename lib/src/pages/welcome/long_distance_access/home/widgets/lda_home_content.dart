@@ -39,7 +39,7 @@ class LDAHomeContent extends ConsumerWidget {
                 SizedBox(
                   height: height * 0.25,
                   child: LDAHomeBackgroundImage(
-                    updateLogo: machine.logo,
+                    logo: machine.logo,
                   ),
                 ),
                 Container(
