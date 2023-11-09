@@ -179,6 +179,8 @@ class _LongDistanceAccessHomeFormPageState
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     FormBodyRow(
+                      titleFlex: 3,
+                      childFlex: 9,
                       title: "Sender",
                       child: TextFormField(
                         controller: senderController,
@@ -199,10 +201,15 @@ class _LongDistanceAccessHomeFormPageState
                     ),
                     const SizedBox(height: 16),
                     FormBodyRow(
+                      titleFlex: 3,
+                      childFlex: 9,
                       title: "Message",
                       child: TextFormField(
                         controller: messageController,
+                        minLines: 3,
+                        maxLines: 5,
                         style: bodyFont.copyWith(fontSize: 14.0),
+                        textInputAction: TextInputAction.newline,
                         decoration: inputDecorationRounded().copyWith(
                           border: const OutlineInputBorder(),
                           fillColor: Colors.transparent,

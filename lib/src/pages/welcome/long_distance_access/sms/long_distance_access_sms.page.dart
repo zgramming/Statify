@@ -419,6 +419,8 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
             ),
             const SizedBox(height: 8.0),
             FormBodyRow(
+              titleFlex: 3,
+              childFlex: 9,
               title: "Sender",
               child: TextFormField(
                 controller: senderController,
@@ -434,6 +436,8 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
             ),
             const SizedBox(height: 8.0),
             FormBodyRow(
+              titleFlex: 3,
+              childFlex: 9,
               title: "Message",
               child: TextFormField(
                 controller: messageController,
