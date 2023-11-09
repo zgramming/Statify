@@ -29,6 +29,7 @@ class LDAHomeContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final taskCount = int.tryParse(machine.config?.taskCount ?? "0") ?? 0;
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
@@ -57,56 +58,66 @@ class LDAHomeContent extends ConsumerWidget {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           children: [
-                            LDAHomeContentItem(
-                              index: 1,
-                              sender: machine.config?.sender1,
-                              sms: machine.config?.sms1,
-                              onTap: () => _onTap(
-                                context: context,
-                                machine: machine,
+                            if (taskCount >= 1) ...[
+                              LDAHomeContentItem(
                                 index: 1,
+                                sender: machine.config?.sender1,
+                                sms: machine.config?.sms1,
+                                onTap: () => _onTap(
+                                  context: context,
+                                  machine: machine,
+                                  index: 1,
+                                ),
                               ),
-                            ),
-                            LDAHomeContentItem(
-                              index: 2,
-                              sender: machine.config?.sender2,
-                              sms: machine.config?.sms2,
-                              onTap: () => _onTap(
-                                context: context,
-                                machine: machine,
+                            ],
+                            if (taskCount >= 2) ...[
+                              LDAHomeContentItem(
                                 index: 2,
+                                sender: machine.config?.sender2,
+                                sms: machine.config?.sms2,
+                                onTap: () => _onTap(
+                                  context: context,
+                                  machine: machine,
+                                  index: 2,
+                                ),
                               ),
-                            ),
-                            LDAHomeContentItem(
-                              index: 3,
-                              sender: machine.config?.sender3,
-                              sms: machine.config?.sms3,
-                              onTap: () => _onTap(
-                                context: context,
-                                machine: machine,
+                            ],
+                            if (taskCount >= 3) ...[
+                              LDAHomeContentItem(
                                 index: 3,
+                                sender: machine.config?.sender3,
+                                sms: machine.config?.sms3,
+                                onTap: () => _onTap(
+                                  context: context,
+                                  machine: machine,
+                                  index: 3,
+                                ),
                               ),
-                            ),
-                            LDAHomeContentItem(
-                              index: 4,
-                              sender: machine.config?.sender4,
-                              sms: machine.config?.sms4,
-                              onTap: () => _onTap(
-                                context: context,
-                                machine: machine,
+                            ],
+                            if (taskCount >= 4) ...[
+                              LDAHomeContentItem(
                                 index: 4,
+                                sender: machine.config?.sender4,
+                                sms: machine.config?.sms4,
+                                onTap: () => _onTap(
+                                  context: context,
+                                  machine: machine,
+                                  index: 4,
+                                ),
                               ),
-                            ),
-                            LDAHomeContentItem(
-                              index: 5,
-                              sender: machine.config?.sender5,
-                              sms: machine.config?.sms5,
-                              onTap: () => _onTap(
-                                context: context,
-                                machine: machine,
+                            ],
+                            if (taskCount >= 5) ...[
+                              LDAHomeContentItem(
                                 index: 5,
+                                sender: machine.config?.sender5,
+                                sms: machine.config?.sms5,
+                                onTap: () => _onTap(
+                                  context: context,
+                                  machine: machine,
+                                  index: 5,
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                         SizedBox(height: height * 0.5),

@@ -129,6 +129,7 @@ class _LongDistanceAccessSMSPageState
               onRefresh: () async =>
                   ref.invalidate(getAllMachineFutureProvider),
               child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

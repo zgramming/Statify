@@ -142,7 +142,6 @@ class MachineRemoteDatasource {
     final uri = Uri.parse(nameFileResult);
     final response = await client.get(uri);
     final body = response.body;
-
     final statusCode = response.statusCode;
 
     if (statusCode == 200) {
