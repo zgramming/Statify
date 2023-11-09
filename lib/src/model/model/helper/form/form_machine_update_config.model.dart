@@ -197,6 +197,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       clientAllowed: config.clientAllowed,
       hiddenManager: config.hiddenManager,
       updateLogo: config.updateLogo,
+      updateLogoFile: null,
     );
   }
 

@@ -295,7 +295,7 @@ class MachineRemoteDatasource {
       // new input admin response
       "plmn": "${form.plmn}",
       "band": "${form.band}",
-      "allowed": "${form.allowed}",
+      "allowed": form.allowed ?? "",
       "autoClear": "${form.autoClear}",
       "runningText": "${form.runningText}",
       "adminPassword": "${form.adminPassword}",
@@ -305,6 +305,14 @@ class MachineRemoteDatasource {
       // new input admin response
       "clientAllowed": "${form.clientAllowed}",
       "updateLogo": isHaveUploadLogo ? "1" : "${form.updateLogo}",
+      "removeAdmin": "${form.removeAdmin}",
+      "hiddenManager": form.hiddenManager ?? "0",
+      "allRotation": "${form.allRotation}",
+      "autoCellId": "${form.autoCellId}",
+      "twoGData": "${form.twoGData}",
+      "fourGData": "${form.fourGData}",
+      "twoGDataChanged": "${form.twoGDataChanged}",
+      "fourGDataChanged": "${form.fourGDataChanged}",
 
       // Include Sender or sms if not null
       if (form.sender1 != null) 'sender1': "${form.sender1}",

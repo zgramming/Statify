@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
-import '../../../router.dart';
 import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
-
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/navigation_destination_item.dart';
 import 'home/long_distance_access_home.page.dart';
 import 'report/long_distance_access_report.page.dart';
 import 'setting/long_distance_access_setting.page.dart';
 import 'sms/long_distance_access_sms.page.dart';
+import 'widgets/custom_floating_action_button_lda.dart';
 
 class LongDistanceAccessPage extends ConsumerStatefulWidget {
   const LongDistanceAccessPage({
@@ -102,76 +99,41 @@ class _LongDistanceAccessPageState
     final machineAsync =
         ref.watch(getAllMachineFutureProvider).unwrapPrevious();
 
-    return Scaffold(
-      body: Builder(
-        builder: (context) {
-          return machineAsync.when(
-            data: (data) => IndexedStack(
-              index: _selectedIndex,
-              children: [
-                LongDistanceAccessHomePage(idMachine: widget.idMachine),
-                LongDistanceAccessSMSPage(idMachine: widget.idMachine),
-                LongDistanceAccessReportPage(idMachine: widget.idMachine),
-                LongDistanceAccessSettingPage(idMachine: widget.idMachine),
-                // LongDistanceAccessAnotherMenuPage(idMachine: widget.idMachine),
-              ],
-            ),
-            error: (error, stackTrace) => AsyncErrorBuilder(
-              error: error.toString(),
-              onRetry: () {
-                ref.invalidate(getAllMachineFutureProvider);
-              },
-            ),
-            loading: () => const Center(child: CircularProgressIndicator()),
-          );
-        },
-      ),
-      bottomNavigationBar: NavigationBar(
-        destinations: _destinations,
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: onTapMenu,
-      ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-      floatingActionButton: SpeedDial(
-        buttonSize: const Size.square(56),
-        animatedIcon: AnimatedIcons.menu_close,
-        animatedIconTheme: const IconThemeData(size: 22.0),
-        children: [
-          // SpeedDialChild(
-          //   label: "Home",
-          //   onTap: () => onTapMenu(MenuLDAEnum.home),
-          // ),
-          // SpeedDialChild(
-          //   label: "SMS",
-          //   onTap: () => onTapMenu(MenuLDAEnum.sms),
-          // ),
-          // SpeedDialChild(
-          //   label: "Report",
-          //   onTap: () => onTapMenu(MenuLDAEnum.report),
-          // ),
-          // SpeedDialChild(
-          //   label: "Setting",
-          //   onTap: () => onTapMenu(MenuLDAEnum.setting),
-          // ),
-          SpeedDialChild(
-            label: "Admin",
-            onTap: () => context.pushNamed(
-              routeLDAAdminPage,
-              pathParameters: {
-                "idMachine": widget.idMachine,
-              },
-            ),
+    return machineAsync.when(
+      data: (machine) {
+        return Scaffold(
+          body: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              LongDistanceAccessHomePage(idMachine: widget.idMachine),
+              LongDistanceAccessSMSPage(idMachine: widget.idMachine),
+              LongDistanceAccessReportPage(idMachine: widget.idMachine),
+              LongDistanceAccessSettingPage(idMachine: widget.idMachine),
+              // LongDistanceAccessAnotherMenuPage(idMachine: widget.idMachine),
+            ],
           ),
-          SpeedDialChild(
-            label: "Manager",
-            onTap: () => context.pushNamed(
-              routeLDAManagerPage,
-              pathParameters: {
-                "idMachine": widget.idMachine,
-              },
-            ),
+          bottomNavigationBar: NavigationBar(
+            destinations: _destinations,
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: onTapMenu,
           ),
-        ],
+          // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+          floatingActionButton:
+              CustomFloatingActionButtonLDA(idMachine: widget.idMachine),
+        );
+      },
+      error: (error, stackTrace) => Scaffold(
+        body: AsyncErrorBuilder(
+          error: error.toString(),
+          onRetry: () {
+            ref.invalidate(getAllMachineFutureProvider);
+          },
+        ),
+      ),
+      loading: () => const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
       ),
     );
   }

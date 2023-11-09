@@ -151,6 +151,7 @@ class _LongDistanceAccessAdminPageState
           removeAdmin: isRemoveAdminPage ? "1" : "0",
           clientAllowed: clientAllowedController.text,
           updateLogoFile: _selectedLogo,
+          updateLogo: _selectedLogo != null ? "1" : state.updateLogo,
         ),
       );
 
