@@ -10,7 +10,6 @@ import 'home/long_distance_access_home.page.dart';
 import 'report/long_distance_access_report.page.dart';
 import 'setting/long_distance_access_setting.page.dart';
 import 'sms/long_distance_access_sms.page.dart';
-import 'widgets/custom_floating_action_button_lda.dart';
 
 class LongDistanceAccessPage extends ConsumerStatefulWidget {
   const LongDistanceAccessPage({
@@ -117,9 +116,6 @@ class _LongDistanceAccessPageState
             selectedIndex: _selectedIndex,
             onDestinationSelected: onTapMenu,
           ),
-          // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-          floatingActionButton:
-              CustomFloatingActionButtonLDA(idMachine: widget.idMachine),
         );
       },
       error: (error, stackTrace) => Scaffold(

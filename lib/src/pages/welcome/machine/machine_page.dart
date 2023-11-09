@@ -156,12 +156,6 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
             child: PopupMenuButton(
               itemBuilder: (context) {
                 return [
-                  // const PopupMenuItem(
-                  //   value: 'survey',
-                  //   child: Text(
-                  //     "Survey",
-                  //   ),
-                  // ),
                   PopupMenuItem(
                     value: "delete",
                     child: Text(

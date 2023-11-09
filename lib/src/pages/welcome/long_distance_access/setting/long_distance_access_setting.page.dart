@@ -1,11 +1,15 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
 import '../../../../model/model/machine/machine_config.model.dart';
+import '../../../../router.dart';
 import '../../../../utils/fonts.dart';
+import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import 'widgets/lda_setting_config_operator_item.dart';
@@ -57,6 +61,52 @@ class _LongDistanceAccessSettingPageState
 
   bool isShowPassword = false;
 
+  void init() {
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    final config = machine?.config;
+    nameController.text = config?.wifiName ?? "";
+    passwordController.text = config?.wifiPassword ?? "";
+
+    setState(() {
+      wifiHidden = config?.wifiHidden == "1";
+      flashSms = config?.flashSms == "1";
+      saveSentList = config?.saveSentList == "1";
+      autoArfcn = config?.autoArfcn == "3";
+      autoReset = config?.autoReset == "1";
+      selectedPower = config?.power;
+      machineConfig = config;
+    });
+  }
+
+  void onSelectedMenu(String value) {
+    switch (value) {
+      case "admin":
+        context.pushNamed(
+          routeLDAAdminPage,
+          pathParameters: {
+            "idMachine": widget.idMachine,
+          },
+        );
+        break;
+      case "manager":
+        context.pushNamed(
+          routeLDAManagerPage,
+          pathParameters: {
+            "idMachine": widget.idMachine,
+          },
+        );
+        break;
+      default:
+        showSnackbar(
+          context: context,
+          message: "Menu Not Valid",
+          backgroundColor: Colors.red,
+        );
+        break;
+    }
+  }
+
   Future<void> onSubmit(bool isReboot) async {
     final form = ref.read(
       CustomFormProvider.ldaSettingForm(widget.idMachine).notifier,
@@ -67,7 +117,7 @@ class _LongDistanceAccessSettingPageState
           wifiHidden: wifiHidden ? '1' : '0',
           flashSms: flashSms ? '1' : '0',
           saveSentList: saveSentList ? '1' : '0',
-          autoArfcn: autoArfcn ? '1' : '0',
+          autoArfcn: autoArfcn ? '3' : '0',
           autoReset: autoReset ? '1' : '0',
           power: selectedPower ?? "1",
         ),
@@ -80,24 +130,6 @@ class _LongDistanceAccessSettingPageState
     final formState = form.state;
     final notifier = ref.read(machineNotifier.notifier);
     await notifier.updateConfig(formState);
-  }
-
-  void init() {
-    final machine =
-        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
-    final config = machine?.config;
-    nameController.text = config?.wifiName ?? "";
-    passwordController.text = config?.wifiPassword ?? "";
-
-    setState(() {
-      wifiHidden = config?.wifiHidden == "1";
-      flashSms = config?.flashSms == "1";
-      saveSentList = config?.saveSentList == "1";
-      autoArfcn = config?.autoArfcn == "1";
-      autoReset = config?.autoReset == "1";
-      selectedPower = config?.power;
-      machineConfig = config;
-    });
   }
 
   @override
@@ -117,11 +149,35 @@ class _LongDistanceAccessSettingPageState
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppBar(
+            title: const Text('Setting'),
+            centerTitle: true,
+            automaticallyImplyLeading: false,
+            actions: [
+              PopupMenuButton(
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'admin',
+                    child: Text("Admin"),
+                  ),
+                  const PopupMenuItem(
+                    value: 'manager',
+                    child: Text("Manager"),
+                  ),
+                ],
+                onSelected: (value) => onSelectedMenu(value),
+                child: const Icon(Icons.more_vert),
+              ),
+              const SizedBox(width: 10.0),
+            ],
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async =>
+                  ref.invalidate(getAllMachineFutureProvider),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
@@ -433,7 +489,7 @@ class _LongDistanceAccessSettingPageState
                           ...machineConfig?.operators
                                   .map(
                                     (e) => LDASettingConfigOperatorItem(
-                                      e: e,
+                                      cfgOperator: e,
                                       idMachine: widget.idMachine,
                                     ),
                                   )
@@ -447,38 +503,38 @@ class _LongDistanceAccessSettingPageState
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onSubmit(false),
-                      style: elevatedButtonStyle(),
-                      child: const Text("Save"),
-                    ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => onSubmit(false),
+                    style: elevatedButtonStyle(),
+                    child: const Text("Save"),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onSubmit(true),
-                      style: elevatedButtonStyle(),
-                      child: const FittedBox(child: Text("Save & Reboot")),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => onSubmit(true),
+                    style: elevatedButtonStyle(),
+                    child: const FittedBox(child: Text("Save & Reboot")),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => onSubmit(true),
-                      style: elevatedButtonStyle(),
-                      child: const Text("Reboot"),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => onSubmit(true),
+                    style: elevatedButtonStyle(),
+                    child: const Text("Reboot"),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

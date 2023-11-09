@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../injection.dart';
-import '../../../../model/model/helper/form/form_machine_update_config.model.dart';
+import '../../../../model/model/machine/machine_model.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/styles.dart';
+import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/form_body_row.dart';
@@ -30,6 +31,27 @@ class _LongDistanceAccessSMSPageState
   int? _selectedTaskCount;
   bool _isFlashSMS = false;
 
+  void init() {
+    final machine = ref.read(
+      CustomProvider.getMachineByIdProvider(widget.idMachine),
+    );
+    final config = machine?.config;
+
+    if (config == null) {
+      return;
+    }
+
+    _selectedTaskCount = config.taskCount == null
+        ? null
+        : int.parse(
+            config.taskCount!,
+          );
+
+    onChangeTaskCount(_selectedTaskCount);
+
+    setState(() {});
+  }
+
   Future<void> onSubmit(bool isReboot) async {
     final form =
         ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
@@ -50,12 +72,20 @@ class _LongDistanceAccessSMSPageState
         ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
     final machine =
         ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+
+    if (machine == null) return;
+
     form.update(
-      (state) => FormMachineUpdateConfigModel(
-        machineId: machine?.id ?? "",
+      // (state) => FormMachineUpdateConfigModel(
+      //   machineId: machine.id,
+      //   count: "$value",
+      //   taskCount: "$value",
+      //   reboot: "0",
+      // ),
+      (state) => state.copyWith(
+        machineId: machine.id,
         count: "$value",
         taskCount: "$value",
-        reboot: "0",
       ),
     );
 
@@ -68,7 +98,7 @@ class _LongDistanceAccessSMSPageState
             _TaskItem(
               key: UniqueKey(),
               index: i,
-              idMachine: widget.idMachine,
+              machine: machine,
             ),
           );
         }
@@ -77,123 +107,154 @@ class _LongDistanceAccessSMSPageState
   }
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => init());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    FormBodyRow(
-                      title: "Task Count",
-                      child: DropdownButtonFormField<int>(
-                        value: _selectedTaskCount,
-                        onChanged: onChangeTaskCount,
-                        decoration: inputDecorationRounded().copyWith(
-                          hintText: "Choose task count",
-                          border: const OutlineInputBorder(),
-                          fillColor: Colors.transparent,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                        ),
-                        items: taskCountOption
-                            .map(
-                              (e) => DropdownMenuItem(
-                                value: e,
-                                child: Text("$e"),
-                              ),
-                            )
-                            .toList(),
-                        validator: (value) {
-                          if (value == null) {
-                            return "Please select task count";
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    FormBodyRow(
-                      title: "Flash SMS",
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Checkbox(
-                          value: _isFlashSMS,
-                          onChanged: (value) {
-                            if (value == null) return;
-                            setState(() => _isFlashSMS = value);
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppBar(
+            title: const Text('SMS'),
+            centerTitle: true,
+            automaticallyImplyLeading: false,
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async =>
+                  ref.invalidate(getAllMachineFutureProvider),
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.zero,
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Card(
+                      margin: const EdgeInsets.only(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    "Task Count",
+                                    style:
+                                        bodyFontBold.copyWith(fontSize: 14.0),
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  DropdownButtonFormField<int>(
+                                    value: _selectedTaskCount,
+                                    onChanged: onChangeTaskCount,
+                                    decoration:
+                                        inputDecorationRounded().copyWith(
+                                      hintText: "Choose task count",
+                                      border: const OutlineInputBorder(),
+                                      fillColor: Colors.transparent,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                    ),
+                                    items: taskCountOption
+                                        .map(
+                                          (e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text("$e"),
+                                          ),
+                                        )
+                                        .toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Please select task count";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8.0),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    "Flash SMS",
+                                    style:
+                                        bodyFontBold.copyWith(fontSize: 14.0),
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: SizedBox(
+                                      height: 32,
+                                      child: Switch.adaptive(
+                                        value: _isFlashSMS,
+                                        onChanged: (value) {
+                                          setState(() => _isFlashSMS = value);
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     ...taskCounts,
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _selectedTaskCount == null
-                          ? null
-                          : () => onSubmit(false),
-                      style: elevatedButtonStyle(),
-                      child: const Text("Save"),
-                    ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _selectedTaskCount == null
+                        ? null
+                        : () => onSubmit(false),
+                    style: elevatedButtonStyle(),
+                    child: const Text("Save"),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _selectedTaskCount == null
-                          ? null
-                          : () => onSubmit(true),
-                      style: elevatedButtonStyle(),
-                      child: const FittedBox(child: Text("Save & Reboot")),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _selectedTaskCount == null
+                        ? null
+                        : () => onSubmit(true),
+                    style: elevatedButtonStyle(),
+                    child: const FittedBox(child: Text("Save & Reboot")),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _selectedTaskCount == null
-                          ? null
-                          : () => onSubmit(true),
-                      style: elevatedButtonStyle(),
-                      child: const Text("Reboot"),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _selectedTaskCount == null
+                        ? null
+                        : () => onSubmit(true),
+                    style: elevatedButtonStyle(),
+                    child: const Text("Reboot"),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -203,11 +264,11 @@ class _TaskItem extends ConsumerStatefulWidget {
   const _TaskItem({
     Key? key,
     required this.index,
-    required this.idMachine,
+    required this.machine,
   }) : super(key: key);
 
   final int index;
-  final String idMachine;
+  final MachineModel machine;
 
   @override
   ConsumerState<_TaskItem> createState() => _TaskItemState();
@@ -217,13 +278,54 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
   final senderController = TextEditingController();
   final messageController = TextEditingController();
 
+  void init() {
+    final config = widget.machine.config;
+    if (config == null) return;
+
+    String sender = "";
+    String message = "";
+
+    switch (widget.index) {
+      case 1:
+        sender = config.sender1 ?? "";
+        message = config.sms1 ?? "";
+
+        break;
+      case 2:
+        sender = config.sender2 ?? "";
+        message = config.sms2 ?? "";
+        break;
+      case 3:
+        sender = config.sender3 ?? "";
+        message = config.sms3 ?? "";
+
+        break;
+      case 4:
+        sender = config.sender4 ?? "";
+        message = config.sms4 ?? "";
+
+        break;
+      case 5:
+        sender = config.sender5 ?? "";
+        message = config.sms5 ?? "";
+
+        break;
+      default:
+    }
+
+    senderController.text = sender;
+    messageController.text = message;
+    updateForm(true, sender: sender);
+    updateForm(false, message: message);
+  }
+
   void updateForm(
     bool isSender, {
     String? sender,
     String? message,
   }) {
-    final form =
-        ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
+    final idMachine = widget.machine.id;
+    final form = ref.read(CustomFormProvider.ldaSMSForm(idMachine).notifier);
     switch (widget.index) {
       case 1:
         form.update((state) {
@@ -288,10 +390,7 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      updateForm(true, sender: senderController.text);
-      updateForm(false, message: messageController.text);
-    });
+    Future.microtask(() => init());
   }
 
   @override
@@ -304,10 +403,7 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16.0,
-        vertical: 8.0,
-      ),
+      margin: const EdgeInsets.only(top: 8.0),
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
