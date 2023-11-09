@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -77,7 +76,6 @@ class ChangeLogoPageState extends ConsumerState<ChangeLogoPage> {
         next.when(
           data: (data) {
             if (data == null) return;
-            log("data logo ${data.id}");
 
             if (mounted) {
               showSnackbar(

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../../../../../utils/fonts.dart';
@@ -14,21 +12,17 @@ class LDASettingNetworkItems extends StatelessWidget {
   final String idMachine;
 
   static Future<void> onGSMtap(BuildContext context, String idMachine) async {
-    final result = await showDialog(
+    await showDialog(
       context: context,
       builder: (context) => LDASettingModalGSM(idMachine: idMachine),
     );
-
-    log("result after open dialog: $result");
   }
 
   static Future<void> onLTEtap(BuildContext context, String idMachine) async {
-    final result = await showDialog(
+    await showDialog(
       context: context,
       builder: (context) => LDASettingModalLTE(idMachine: idMachine),
     );
-
-    log("result after open dialog: $result");
   }
 
   @override

@@ -6,9 +6,10 @@ import '../../../../../model/model/machine/machine_config_4g_data.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/sizes.dart';
 import '../../../../../utils/styles.dart';
+import '../../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../../view_model/custom_provider/custom_provider.dart';
 
-class LDASettingModalLTE extends ConsumerWidget {
+class LDASettingModalLTE extends ConsumerStatefulWidget {
   const LDASettingModalLTE({
     Key? key,
     required this.idMachine,
@@ -16,8 +17,35 @@ class LDASettingModalLTE extends ConsumerWidget {
 
   final String idMachine;
 
-  static List<MachineConfig4GDataModel> mapping4GData(String? data) {
-    if (data == null) return [];
+  @override
+  ConsumerState<LDASettingModalLTE> createState() => _LDASettingModalLTEState();
+}
+
+class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
+  bool isSpecificAll = false;
+  bool isAutoCellId = false;
+  String? fourGData;
+
+  void init() {
+    final machine = ref.read(
+      CustomProvider.getMachineByIdProvider(widget.idMachine),
+    );
+
+    final config = machine?.config;
+    if (config == null) return;
+
+    isSpecificAll = config.allRotation == "1";
+    isAutoCellId = config.autoCellId == "1";
+    fourGData = config.fourGData;
+
+    setState(() {});
+  }
+
+  List<MachineConfig4GDataModel> mapping4GData(String? data) {
+    if (data == null) {
+      return [];
+    }
+
     final splitted = data.split("-");
     final mappedSplitted = splitted.map((e) {
       // 192.168.1.91=60_510_10_1850_111_1111_11111*60_510_10_1852_222_2222_22222
@@ -60,14 +88,43 @@ class LDASettingModalLTE extends ConsumerWidget {
     return mappedSplitted;
   }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final fourGData = ref.watch(
-      CustomProvider.getMachineByIdProvider(idMachine).select(
-        (value) => value?.config?.fourGData,
+  void onTapSpecificAll(bool value) {
+    final form =
+        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    form.update(
+      (state) => state.copyWith(
+        allRotation: value ? "1" : "0",
       ),
     );
 
+    setState(() {
+      isSpecificAll = value;
+    });
+  }
+
+  void onTapAutoCellId(bool value) {
+    final form =
+        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    form.update(
+      (state) => state.copyWith(
+        autoCellId: value ? "1" : "0",
+      ),
+    );
+
+    setState(() {
+      isAutoCellId = value;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() => init());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final dataColumnStyle = bodyFont.copyWith(
       fontSize: 12.0,
       fontWeight: FontWeight.bold,
@@ -151,8 +208,8 @@ class LDASettingModalLTE extends ConsumerWidget {
                       style: bodyFontBold.copyWith(fontSize: 8.0),
                     ),
                     Switch.adaptive(
-                      value: true,
-                      onChanged: (value) {},
+                      value: isSpecificAll,
+                      onChanged: onTapSpecificAll,
                     )
                   ],
                 ),
@@ -163,8 +220,8 @@ class LDASettingModalLTE extends ConsumerWidget {
                       style: bodyFontBold.copyWith(fontSize: 8.0),
                     ),
                     Switch.adaptive(
-                      value: true,
-                      onChanged: (value) {},
+                      value: isAutoCellId,
+                      onChanged: onTapAutoCellId,
                     )
                   ],
                 ),

@@ -303,16 +303,16 @@ class MachineRemoteDatasource {
       "machineKeyType": "${form.machineKeyType}",
 
       // new input admin response
-      "clientAllowed": "${form.clientAllowed}",
-      "updateLogo": isHaveUploadLogo ? "1" : "${form.updateLogo}",
-      "removeAdmin": "${form.removeAdmin}",
+      "clientAllowed": form.clientAllowed ?? '',
+      "updateLogo": isHaveUploadLogo ? "1" : form.updateLogo ?? "0",
+      "removeAdmin": form.removeAdmin ?? "0",
       "hiddenManager": form.hiddenManager ?? "0",
-      "allRotation": "${form.allRotation}",
-      "autoCellId": "${form.autoCellId}",
-      "twoGData": "${form.twoGData}",
-      "fourGData": "${form.fourGData}",
-      "twoGDataChanged": "${form.twoGDataChanged}",
-      "fourGDataChanged": "${form.fourGDataChanged}",
+      "allRotation": form.allRotation ?? "0",
+      "autoCellId": form.autoCellId ?? "0",
+      "twoGData": form.twoGData,
+      "fourGData": form.fourGData,
+      "twoGDataChanged": form.twoGDataChanged,
+      "fourGDataChanged": form.fourGDataChanged,
 
       // Include Sender or sms if not null
       if (form.sender1 != null) 'sender1': "${form.sender1}",

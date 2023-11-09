@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +17,7 @@ class MyAccountFormPage extends ConsumerStatefulWidget {
     Key? key,
     required this.id,
   }) : super(key: key);
+
   final String id;
 
   @override
@@ -115,8 +114,6 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
         );
       }
 
-      log("form  $form");
-
       await notifier.update(
         id: widget.id,
         form: form,
@@ -193,7 +190,6 @@ class _MyAccountFormPageState extends ConsumerState<MyAccountFormPage> {
         builder: (context) {
           return userAsync.when(
             data: (data) {
-              log("data $data");
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Form(

@@ -41,10 +41,10 @@ class _LongDistanceAccessSettingPageState
 
   final powers = <_PowerDropdownItem>[
     const _PowerDropdownItem(value: "1", label: "VERY LOW"),
-    const _PowerDropdownItem(value: "2", label: "LOW"),
-    const _PowerDropdownItem(value: "3", label: "MEDIUM"),
-    const _PowerDropdownItem(value: "4", label: "HIGH"),
-    const _PowerDropdownItem(value: "5", label: "VERY HIGH"),
+    const _PowerDropdownItem(value: "3", label: "LOW"),
+    const _PowerDropdownItem(value: "5", label: "MEDIUM"),
+    const _PowerDropdownItem(value: "8", label: "HIGH"),
+    const _PowerDropdownItem(value: "10", label: "VERY HIGH"),
   ];
 
   MachineConfigModel? machineConfig;
