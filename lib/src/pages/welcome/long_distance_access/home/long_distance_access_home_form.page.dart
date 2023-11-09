@@ -8,7 +8,6 @@ import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
-import '../../../widgets/form_body_row.dart';
 
 class LongDistanceAccessHomeFormPage extends ConsumerStatefulWidget {
   const LongDistanceAccessHomeFormPage({
@@ -178,52 +177,98 @@ class _LongDistanceAccessHomeFormPageState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    FormBodyRow(
-                      titleFlex: 3,
-                      childFlex: 9,
-                      title: "Sender",
-                      child: TextFormField(
-                        controller: senderController,
-                        style: bodyFont.copyWith(fontSize: 14.0),
-                        decoration: inputDecorationRounded().copyWith(
-                          border: const OutlineInputBorder(),
-                          fillColor: Colors.transparent,
-                          contentPadding: const EdgeInsets.all(8),
-                          hintText: "Sender",
+                    Center(
+                      child: Text(
+                        "Sender ${widget.index}",
+                        style: bodyFontBold.copyWith(
+                          fontSize: 20.0,
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Sender is required";
-                          }
-                          return null;
-                        },
                       ),
                     ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          "Sender Name",
+                          style: bodyFontBold.copyWith(
+                            fontSize: 14.0,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: senderController,
+                          style: bodyFont.copyWith(fontSize: 14.0),
+                          decoration: inputDecorationRounded().copyWith(
+                            border: const OutlineInputBorder(),
+                            fillColor: Colors.transparent,
+                            contentPadding: const EdgeInsets.all(8),
+                            hintText: "Sender",
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Sender is required";
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+
                     const SizedBox(height: 16),
-                    FormBodyRow(
-                      titleFlex: 3,
-                      childFlex: 9,
-                      title: "Message",
-                      child: TextFormField(
-                        controller: messageController,
-                        minLines: 3,
-                        maxLines: 5,
-                        style: bodyFont.copyWith(fontSize: 14.0),
-                        textInputAction: TextInputAction.newline,
-                        decoration: inputDecorationRounded().copyWith(
-                          border: const OutlineInputBorder(),
-                          fillColor: Colors.transparent,
-                          contentPadding: const EdgeInsets.all(8),
-                          hintText: "Message",
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          "Message",
+                          style: bodyFontBold.copyWith(
+                            fontSize: 14.0,
+                          ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Message is required";
-                          }
-                          return null;
-                        },
-                      ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: messageController,
+                          minLines: 3,
+                          maxLines: 5,
+                          style: bodyFont.copyWith(fontSize: 14.0),
+                          textInputAction: TextInputAction.newline,
+                          decoration: inputDecorationRounded().copyWith(
+                            border: const OutlineInputBorder(),
+                            fillColor: Colors.transparent,
+                            contentPadding: const EdgeInsets.all(8),
+                            hintText: "Message",
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Message is required";
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
+
+                    // FormBodyRow(
+                    //   titleFlex: 3,
+                    //   childFlex: 9,
+                    //   title: "Sender",
+                    //   child: TextFormField(
+                    //     controller: senderController,
+                    //     style: bodyFont.copyWith(fontSize: 14.0),
+                    //     decoration: inputDecorationRounded().copyWith(
+                    //       border: const OutlineInputBorder(),
+                    //       fillColor: Colors.transparent,
+                    //       contentPadding: const EdgeInsets.all(8),
+                    //       hintText: "Sender",
+                    //     ),
+                    //     validator: (value) {
+                    //       if (value == null || value.isEmpty) {
+                    //         return "Sender is required";
+                    //       }
+                    //       return null;
+                    //     },
+                    //   ),
+                    // ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),

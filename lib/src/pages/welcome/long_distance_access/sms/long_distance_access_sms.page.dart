@@ -76,12 +76,6 @@ class _LongDistanceAccessSMSPageState
     if (machine == null) return;
 
     form.update(
-      // (state) => FormMachineUpdateConfigModel(
-      //   machineId: machine.id,
-      //   count: "$value",
-      //   taskCount: "$value",
-      //   reboot: "0",
-      // ),
       (state) => state.copyWith(
         machineId: machine.id,
         count: "$value",
@@ -125,99 +119,108 @@ class _LongDistanceAccessSMSPageState
             automaticallyImplyLeading: false,
           ),
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async =>
-                  ref.invalidate(getAllMachineFutureProvider),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Card(
-                      margin: const EdgeInsets.only(),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Text(
-                                    "Task Count",
-                                    style:
-                                        bodyFontBold.copyWith(fontSize: 14.0),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  DropdownButtonFormField<int>(
-                                    value: _selectedTaskCount,
-                                    onChanged: onChangeTaskCount,
-                                    decoration:
-                                        inputDecorationRounded().copyWith(
-                                      hintText: "Choose task count",
-                                      border: const OutlineInputBorder(),
-                                      fillColor: Colors.transparent,
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
+            child: LayoutBuilder(builder: (context, constraints) {
+              final height = constraints.maxHeight;
+              return RefreshIndicator(
+                onRefresh: () async =>
+                    ref.invalidate(getAllMachineFutureProvider),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(8.0),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: height),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Card(
+                          margin: const EdgeInsets.only(),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text(
+                                        "Task Count",
+                                        style: bodyFontBold.copyWith(
+                                            fontSize: 14.0),
                                       ),
-                                    ),
-                                    items: taskCountOption
-                                        .map(
-                                          (e) => DropdownMenuItem(
-                                            value: e,
-                                            child: Text("$e"),
+                                      const SizedBox(height: 8.0),
+                                      DropdownButtonFormField<int>(
+                                        value: _selectedTaskCount,
+                                        onChanged: onChangeTaskCount,
+                                        decoration:
+                                            inputDecorationRounded().copyWith(
+                                          hintText: "Choose task count",
+                                          border: const OutlineInputBorder(),
+                                          fillColor: Colors.transparent,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
                                           ),
-                                        )
-                                        .toList(),
-                                    validator: (value) {
-                                      if (value == null) {
-                                        return "Please select task count";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8.0),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Text(
-                                    "Flash SMS",
-                                    style:
-                                        bodyFontBold.copyWith(fontSize: 14.0),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: SizedBox(
-                                      height: 32,
-                                      child: Switch.adaptive(
-                                        value: _isFlashSMS,
-                                        onChanged: (value) {
-                                          setState(() => _isFlashSMS = value);
+                                        ),
+                                        items: taskCountOption
+                                            .map(
+                                              (e) => DropdownMenuItem(
+                                                value: e,
+                                                child: Text("$e"),
+                                              ),
+                                            )
+                                            .toList(),
+                                        validator: (value) {
+                                          if (value == null) {
+                                            return "Please select task count";
+                                          }
+                                          return null;
                                         },
                                       ),
-                                    ),
-                                  )
-                                ],
-                              ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8.0),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text(
+                                        "Flash SMS",
+                                        style: bodyFontBold.copyWith(
+                                            fontSize: 14.0),
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: SizedBox(
+                                          height: 32,
+                                          child: Switch.adaptive(
+                                            value: _isFlashSMS,
+                                            onChanged: (value) {
+                                              setState(
+                                                  () => _isFlashSMS = value);
+                                            },
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                        ...taskCounts,
+                      ],
                     ),
-                    ...taskCounts,
-                  ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            }),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -403,8 +406,22 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(top: 8.0),
+    return Container(
+      margin: const EdgeInsets.only(top: 16.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        color: Colors.white,
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.5),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(1),
+            blurRadius: 2,
+            offset: const Offset(0, 0),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
@@ -435,25 +452,20 @@ class _TaskItemState extends ConsumerState<_TaskItem> {
               ),
             ),
             const SizedBox(height: 8.0),
-            FormBodyRow(
-              titleFlex: 3,
-              childFlex: 9,
-              title: "Message",
-              child: TextFormField(
-                controller: messageController,
-                style: bodyFont.copyWith(fontSize: 14.0),
-                minLines: 3,
-                maxLines: 5,
-                keyboardType: TextInputType.multiline,
-                textInputAction: TextInputAction.newline,
-                decoration: inputDecorationRounded().copyWith(
-                  hintText: "Enter message",
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.all(8),
-                ),
-                onChanged: onChangeMessage,
+            TextFormField(
+              controller: messageController,
+              style: bodyFont.copyWith(fontSize: 14.0),
+              minLines: 3,
+              maxLines: 5,
+              keyboardType: TextInputType.multiline,
+              textInputAction: TextInputAction.newline,
+              decoration: inputDecorationRounded().copyWith(
+                hintText: "Enter message",
+                border: const OutlineInputBorder(),
+                fillColor: Colors.transparent,
+                contentPadding: const EdgeInsets.all(8),
               ),
+              onChanged: onChangeMessage,
             ),
           ],
         ),

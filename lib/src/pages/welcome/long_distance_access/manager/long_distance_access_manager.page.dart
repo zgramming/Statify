@@ -370,6 +370,7 @@ class _LongDistanceAccessManagerPageState
                 child: TextFormField(
                   controller: newPasswordController,
                   style: bodyFont.copyWith(fontSize: 14.0),
+                  obscureText: true,
                   decoration: inputDecorationRounded().copyWith(
                     hintText: "New Password",
                     border: const OutlineInputBorder(),

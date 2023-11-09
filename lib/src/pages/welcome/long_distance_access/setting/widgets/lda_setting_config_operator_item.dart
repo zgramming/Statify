@@ -173,171 +173,196 @@ class LDASettingConfigOperatorItemState
     final is5GArfcnHidden = config?.arfcnHidden5g == "1";
     final textStyleInput = bodyFont.copyWith(fontSize: 10.0);
     const widthInput = 80.0;
-    return Card(
+    return Container(
+      padding: const EdgeInsets.all(8.0),
       margin: const EdgeInsets.only(bottom: 16.0),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              "${widget.cfgOperator.name} - ${widget.cfgOperator.ltePlmn} ",
-              style: bodyFont.copyWith(
-                fontSize: 14.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        color: Colors.white,
+        border: Border.all(color: Colors.grey.withOpacity(0.5)),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.grey,
+            blurRadius: 2.0,
+            offset: Offset(0, 0),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: Checkbox.adaptive(
+                  value: true,
+                  onChanged: (value) {},
+                ),
               ),
-            ),
-            const Divider(),
-            SizedBox(
-              height: 60,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Wrap(
-                  spacing: 8,
-                  children: [
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "${widget.cfgOperator.name} - ${widget.cfgOperator.ltePlmn} ",
+                  style: bodyFont.copyWith(
+                    fontSize: 14.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Divider(),
+          SizedBox(
+            height: 60,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Wrap(
+                spacing: 8,
+                children: [
+                  SizedBox(
+                    width: widthInput,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Auto Switch",
+                          style: textStyleInput,
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: autoSwitchController,
+                          style: bodyFont.copyWith(fontSize: 14.0),
+                          decoration: inputDecorationRounded().copyWith(
+                            hintText: "Enter auto switch",
+                            border: const OutlineInputBorder(),
+                            fillColor: Colors.transparent,
+                            contentPadding: const EdgeInsets.all(8),
+                          ),
+                          onChanged: onChangeAutoSwitch,
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (!is2GArfcnHidden) ...[
                     SizedBox(
                       width: widthInput,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            "Auto Switch",
-                            style: textStyleInput,
+                          FittedBox(
+                            child: Text(
+                              config?.arfcnLabel2g ?? "2G ARFCN",
+                              style: textStyleInput,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           TextFormField(
-                            controller: autoSwitchController,
+                            controller: arfcn2gController,
                             style: bodyFont.copyWith(fontSize: 14.0),
                             decoration: inputDecorationRounded().copyWith(
-                              hintText: "Enter auto switch",
+                              hintText: "Enter 2G ARFCN",
                               border: const OutlineInputBorder(),
                               fillColor: Colors.transparent,
                               contentPadding: const EdgeInsets.all(8),
                             ),
-                            onChanged: onChangeAutoSwitch,
+                            onChanged: onChange2gArfcn,
                           ),
                         ],
                       ),
                     ),
-                    if (!is2GArfcnHidden) ...[
-                      SizedBox(
-                        width: widthInput,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FittedBox(
-                              child: Text(
-                                config?.arfcnLabel2g ?? "2G ARFCN",
-                                style: textStyleInput,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: arfcn2gController,
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                              decoration: inputDecorationRounded().copyWith(
-                                hintText: "Enter 2G ARFCN",
-                                border: const OutlineInputBorder(),
-                                fillColor: Colors.transparent,
-                                contentPadding: const EdgeInsets.all(8),
-                              ),
-                              onChanged: onChange2gArfcn,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    if (!is3GArfcnHidden) ...[
-                      SizedBox(
-                        width: widthInput,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FittedBox(
-                              child: Text(
-                                config?.arfcnLabel3g ?? "3G ARFCN",
-                                style: textStyleInput,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: arfcn3gController,
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                              decoration: inputDecorationRounded().copyWith(
-                                hintText: "Enter 3G ARFCN",
-                                border: const OutlineInputBorder(),
-                                fillColor: Colors.transparent,
-                                contentPadding: const EdgeInsets.all(8),
-                              ),
-                              onChanged: onChange3gArfcn,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    if (!is4GArfcnHidden) ...[
-                      SizedBox(
-                        width: widthInput,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FittedBox(
-                              child: Text(
-                                config?.arfcnLabel4g ?? "4G ARFCN",
-                                style: textStyleInput,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              onTap: onTap4g,
-                              readOnly: true,
-                              controller: arfcn4gController,
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                              decoration: inputDecorationRounded().copyWith(
-                                hintText: "Enter 4G ARFCN",
-                                border: const OutlineInputBorder(),
-                                fillColor: Colors.transparent,
-                                contentPadding: const EdgeInsets.all(8),
-                              ),
-                              onChanged: onChange4gArfcn,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    if (!is5GArfcnHidden) ...[
-                      SizedBox(
-                        width: widthInput,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FittedBox(
-                              child: Text(
-                                config?.arfcnLabel5g ?? "5G ARFCN",
-                                style: textStyleInput,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: arfcn5gController,
-                              style: bodyFont.copyWith(fontSize: 14.0),
-                              decoration: inputDecorationRounded().copyWith(
-                                hintText: "Enter 5G ARFCN",
-                                border: const OutlineInputBorder(),
-                                fillColor: Colors.transparent,
-                                contentPadding: const EdgeInsets.all(8),
-                              ),
-                              onChanged: onChange5gArfcn,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
                   ],
-                ),
+                  if (!is3GArfcnHidden) ...[
+                    SizedBox(
+                      width: widthInput,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          FittedBox(
+                            child: Text(
+                              config?.arfcnLabel3g ?? "3G ARFCN",
+                              style: textStyleInput,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: arfcn3gController,
+                            style: bodyFont.copyWith(fontSize: 14.0),
+                            decoration: inputDecorationRounded().copyWith(
+                              hintText: "Enter 3G ARFCN",
+                              border: const OutlineInputBorder(),
+                              fillColor: Colors.transparent,
+                              contentPadding: const EdgeInsets.all(8),
+                            ),
+                            onChanged: onChange3gArfcn,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (!is4GArfcnHidden) ...[
+                    SizedBox(
+                      width: widthInput,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          FittedBox(
+                            child: Text(
+                              config?.arfcnLabel4g ?? "4G ARFCN",
+                              style: textStyleInput,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            onTap: onTap4g,
+                            readOnly: true,
+                            controller: arfcn4gController,
+                            style: bodyFont.copyWith(fontSize: 14.0),
+                            decoration: inputDecorationRounded().copyWith(
+                              hintText: "Enter 4G ARFCN",
+                              border: const OutlineInputBorder(),
+                              fillColor: Colors.transparent,
+                              contentPadding: const EdgeInsets.all(8),
+                            ),
+                            onChanged: onChange4gArfcn,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (!is5GArfcnHidden) ...[
+                    SizedBox(
+                      width: widthInput,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          FittedBox(
+                            child: Text(
+                              config?.arfcnLabel5g ?? "5G ARFCN",
+                              style: textStyleInput,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: arfcn5gController,
+                            style: bodyFont.copyWith(fontSize: 14.0),
+                            decoration: inputDecorationRounded().copyWith(
+                              hintText: "Enter 5G ARFCN",
+                              border: const OutlineInputBorder(),
+                              fillColor: Colors.transparent,
+                              contentPadding: const EdgeInsets.all(8),
+                            ),
+                            onChanged: onChange5gArfcn,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

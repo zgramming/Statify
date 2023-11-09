@@ -83,18 +83,23 @@ class _LDAHomeButtonActionState extends ConsumerState<LDAHomeButtonAction> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Card(
+            Container(
               margin: const EdgeInsets.all(0),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 20,
-                  child: Marquee(
-                    blankSpace: 300.0,
-                    text: marqueeText(widget.config),
-                    style: bodyFontBold.copyWith(
-                      fontSize: 10.0,
-                    ),
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                color: Colors.white,
+                border: Border.all(
+                  color: Colors.grey.withOpacity(0.5),
+                ),
+              ),
+              child: SizedBox(
+                height: 20,
+                child: Marquee(
+                  blankSpace: 300.0,
+                  text: marqueeText(widget.config),
+                  style: bodyFontBold.copyWith(
+                    fontSize: 10.0,
                   ),
                 ),
               ),

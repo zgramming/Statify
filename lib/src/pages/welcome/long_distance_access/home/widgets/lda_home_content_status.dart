@@ -16,8 +16,20 @@ class LDAHomeContentStatus extends StatelessWidget {
     final totalSent = config?.count ?? 0;
     final totalTask = config?.taskCount ?? 0;
     final isWorking = (config?.start ?? "0") == "1";
-    return Card(
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            blurRadius: 5.0,
+            spreadRadius: 1.0,
+            offset: const Offset(0, 0),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 8.0,
@@ -47,7 +59,7 @@ class LDAHomeContentStatus extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Text(
-                      isWorking ? "Working" : "Stop",
+                      isWorking ? "Working" : "Stopped",
                       style: bodyFont.copyWith(
                         fontSize: 8.0,
                         color: Colors.white,

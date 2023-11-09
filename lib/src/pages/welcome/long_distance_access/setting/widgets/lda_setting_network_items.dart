@@ -4,7 +4,7 @@ import '../../../../../utils/fonts.dart';
 import 'lda_setting_modal_gsm.dart';
 import 'lda_setting_modal_lte.dart';
 
-class LDASettingNetworkItems extends StatelessWidget {
+class LDASettingNetworkItems extends StatefulWidget {
   const LDASettingNetworkItems({
     Key? key,
     required this.idMachine,
@@ -26,33 +26,62 @@ class LDASettingNetworkItems extends StatelessWidget {
   }
 
   @override
+  State<LDASettingNetworkItems> createState() => _LDASettingNetworkItemsState();
+}
+
+class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
+  bool _isGSM = false;
+  bool _isWCDMA = false;
+  bool _isLTE = false;
+
+  void onTapGSM(bool? value) {
+    setState(() {
+      _isGSM = value ?? false;
+    });
+  }
+
+  void onTapWCDMA(bool? value) {
+    setState(() {
+      _isWCDMA = value ?? false;
+    });
+  }
+
+  void onTapLTE(bool? value) {
+    setState(() {
+      _isLTE = value ?? false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Expanded(
       flex: 2,
       child: Row(
         children: [
           InkWell(
-            onTap: () => onGSMtap(context, idMachine),
+            onTap: () =>
+                LDASettingNetworkItems.onGSMtap(context, widget.idMachine),
             child: Row(
               children: [
-                Transform.scale(
-                  scale: 0.8,
+                SizedBox(
+                  width: 28,
                   child: Checkbox(
-                    value: true,
-                    onChanged: (value) {},
+                    value: _isGSM,
+                    onChanged: onTapGSM,
                   ),
                 ),
                 Text("GSM", style: bodyFont.copyWith(fontSize: 9.0)),
               ],
             ),
           ),
+          const SizedBox(width: 16.0),
           Row(
             children: [
-              Transform.scale(
-                scale: 0.8,
+              SizedBox(
+                width: 28,
                 child: Checkbox(
-                  value: true,
-                  onChanged: (value) {},
+                  value: _isWCDMA,
+                  onChanged: onTapWCDMA,
                 ),
               ),
               Text(
@@ -63,15 +92,17 @@ class LDASettingNetworkItems extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(width: 16.0),
           InkWell(
-            onTap: () => onLTEtap(context, idMachine),
+            onTap: () =>
+                LDASettingNetworkItems.onLTEtap(context, widget.idMachine),
             child: Row(
               children: [
-                Transform.scale(
-                  scale: 0.8,
+                SizedBox(
+                  width: 28,
                   child: Checkbox(
-                    value: true,
-                    onChanged: (value) {},
+                    value: _isLTE,
+                    onChanged: onTapLTE,
                   ),
                 ),
                 Text(

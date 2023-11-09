@@ -51,52 +51,63 @@ class _LongDistanceAccessReportPageState
           automaticallyImplyLeading: false,
         ),
         Expanded(
-          child: RefreshIndicator(
-            onRefresh: () async => ref.invalidate(getAllMachineFutureProvider),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Builder(
-                    builder: (context) {
-                      return machineResultsAsync.when(
-                        data: (results) => SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DataTable(
-                            columns: const [
-                              DataColumn(label: Text('ID')),
-                              DataColumn(label: Text('IMSI')),
-                            ],
-                            rows: [
-                              for (int i = 0; i < (results?.length ?? 0); i++)
-                                DataRow(
-                                  cells: [
-                                    DataCell(Text("${i + 1}")),
-                                    DataCell(Text(results?[i] ?? "")),
-                                  ],
-                                )
-                            ],
-                          ),
-                        ),
-                        error: (error, stackTrace) => AsyncErrorBuilder(
-                          error: error.toString(),
-                          onRetry: () =>
-                              ref.invalidate(getAllMachineFutureProvider),
-                        ),
-                        loading: () {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+          child: LayoutBuilder(builder: (context, constraints) {
+            final height = constraints.maxHeight;
+            return RefreshIndicator(
+              onRefresh: () async =>
+                  ref.invalidate(getAllMachineFutureProvider),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(8.0),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: height),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Builder(
+                        builder: (context) {
+                          return machineResultsAsync.when(
+                            data: (results) => SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: DataTable(
+                                border: TableBorder.all(),
+                                headingRowHeight: 24,
+                                columns: const [
+                                  DataColumn(label: Text('ID')),
+                                  DataColumn(label: Text('IMSI')),
+                                ],
+                                rows: [
+                                  for (int i = 0;
+                                      i < (results?.length ?? 0);
+                                      i++)
+                                    DataRow(
+                                      cells: [
+                                        DataCell(Text("${i + 1}")),
+                                        DataCell(Text(results?[i] ?? "")),
+                                      ],
+                                    )
+                                ],
+                              ),
+                            ),
+                            error: (error, stackTrace) => AsyncErrorBuilder(
+                              error: error.toString(),
+                              onRetry: () =>
+                                  ref.invalidate(getAllMachineFutureProvider),
+                            ),
+                            loading: () {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  )
-                ],
+                      )
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          }),
         ),
       ],
     );

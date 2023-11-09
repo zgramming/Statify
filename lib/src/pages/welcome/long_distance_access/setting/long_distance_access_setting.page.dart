@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,7 @@ import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import 'widgets/lda_setting_config_operator_item.dart';
 import 'widgets/lda_setting_network_items.dart';
+import 'widgets/modal_lda_setting_warning.dart';
 
 class _PowerDropdownItem {
   const _PowerDropdownItem({
@@ -105,6 +107,30 @@ class _LongDistanceAccessSettingPageState
         );
         break;
     }
+  }
+
+  void onTapExclamationMark() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const ModalLDASettingWarning();
+      },
+    );
+  }
+
+  void onTapTogglePassword() {
+    setState(() {
+      isShowPassword = !isShowPassword;
+    });
+  }
+
+  void onTapWifiHidden(bool? value) {
+    if (value == null) return;
+    setState(() {
+      wifiHidden = !wifiHidden;
+    });
+
+    onTapExclamationMark();
   }
 
   Future<void> onSubmit(bool isReboot) async {
@@ -203,15 +229,35 @@ class _LongDistanceAccessSettingPageState
                                       ),
                                     ),
                                     const SizedBox(height: 10),
-                                    TextFormField(
-                                      controller: nameController,
-                                      style: bodyFont.copyWith(fontSize: 14.0),
-                                      decoration:
-                                          inputDecorationRounded().copyWith(
-                                        hintText: "Wifi Name",
-                                        border: const OutlineInputBorder(),
-                                        fillColor: Colors.transparent,
-                                        contentPadding: const EdgeInsets.all(8),
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Expanded(
+                                            child: TextFormField(
+                                              controller: nameController,
+                                              style: bodyFont.copyWith(
+                                                fontSize: 14.0,
+                                              ),
+                                              decoration:
+                                                  inputDecorationRounded()
+                                                      .copyWith(
+                                                hintText: "Wifi Name",
+                                                border:
+                                                    const OutlineInputBorder(),
+                                                fillColor: Colors.transparent,
+                                                contentPadding:
+                                                    const EdgeInsets.all(8.0),
+                                              ),
+                                            ),
+                                          ),
+                                          _InputIconButton(
+                                              onTap: onTapExclamationMark,
+                                              icon:
+                                                  Icons.warning_amber_rounded),
+                                          const SizedBox(width: 16.0),
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -224,47 +270,66 @@ class _LongDistanceAccessSettingPageState
                                       CrossAxisAlignment.stretch,
                                   children: [
                                     Text(
-                                      "Wifi Name",
+                                      "Wifi Password",
                                       style: headerFontBold.copyWith(
                                         fontSize: 16.0,
                                         color: Colors.black,
                                       ),
                                     ),
                                     const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            controller: passwordController,
-                                            style: bodyFont.copyWith(
-                                                fontSize: 14.0),
-                                            decoration: inputDecorationRounded()
-                                                .copyWith(
-                                              hintText: "Wifi Password",
-                                              border:
-                                                  const OutlineInputBorder(),
-                                              fillColor: Colors.transparent,
-                                              contentPadding:
-                                                  const EdgeInsets.all(8),
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Expanded(
+                                            child: TextFormField(
+                                              controller: passwordController,
+                                              style: bodyFont.copyWith(
+                                                  fontSize: 14.0),
+                                              decoration:
+                                                  inputDecorationRounded()
+                                                      .copyWith(
+                                                hintText: "Wifi Password",
+                                                border:
+                                                    const OutlineInputBorder(),
+                                                fillColor: Colors.transparent,
+                                                contentPadding:
+                                                    const EdgeInsets.all(8),
+                                              ),
+                                              obscureText: !isShowPassword,
                                             ),
-                                            obscureText: !isShowPassword,
                                           ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              isShowPassword = !isShowPassword;
-                                            });
-                                          },
-                                          icon: Icon(
-                                            isShowPassword
+                                          _InputIconButton(
+                                            onTap: onTapTogglePassword,
+                                            icon: isShowPassword
                                                 ? Icons.visibility
                                                 : Icons.visibility_off,
-                                            size: 20.0,
+                                            borderRadius:
+                                                const BorderRadius.only(),
                                           ),
-                                        ),
-                                      ],
+                                          _InputIconButton(
+                                            onTap: onTapExclamationMark,
+                                            icon: Icons.warning_amber_rounded,
+                                          ),
+
+                                          // const SizedBox(width: 8),
+                                          // IconButton(
+                                          //   onPressed: () {
+                                          //     setState(() {
+                                          //       isShowPassword =
+                                          //           !isShowPassword;
+                                          //     });
+                                          //   },
+                                          //   icon: Icon(
+                                          //     isShowPassword
+                                          //         ? Icons.visibility
+                                          //         : Icons.visibility_off,
+                                          //     size: 20.0,
+                                          //   ),
+                                          // ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -274,7 +339,23 @@ class _LongDistanceAccessSettingPageState
                         ],
                       ),
                     ),
-                    Padding(
+                    const SizedBox(height: 10),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 2,
+                            offset: Offset(0, 0),
+                          ),
+                        ],
+                      ),
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -283,54 +364,61 @@ class _LongDistanceAccessSettingPageState
                             children: [
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Wifi Hidden",
                                       overflow: TextOverflow.ellipsis,
                                       style: bodyFont.copyWith(fontSize: 12.0),
                                     ),
-                                    Switch.adaptive(
-                                      value: wifiHidden,
-                                      onChanged: (value) {
-                                        setState(() => wifiHidden = value);
-                                      },
+                                    SizedBox(
+                                      height: 32,
+                                      child: Switch.adaptive(
+                                        value: wifiHidden,
+                                        onChanged: onTapWifiHidden,
+                                      ),
                                     )
                                   ],
                                 ),
                               ),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Flash SMS",
                                       overflow: TextOverflow.ellipsis,
                                       style: bodyFont.copyWith(fontSize: 12.0),
                                     ),
-                                    Switch.adaptive(
-                                      value: flashSms,
-                                      onChanged: (value) {
-                                        setState(() => flashSms = value);
-                                      },
+                                    SizedBox(
+                                      height: 32,
+                                      child: Switch.adaptive(
+                                        value: flashSms,
+                                        onChanged: (value) {
+                                          setState(() => flashSms = value);
+                                        },
+                                      ),
                                     )
                                   ],
                                 ),
                               ),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Save Sentlist",
                                       overflow: TextOverflow.ellipsis,
                                       style: bodyFont.copyWith(fontSize: 12.0),
                                     ),
-                                    Switch.adaptive(
-                                      value: saveSentList,
-                                      onChanged: (value) {
-                                        setState(() => saveSentList = value);
-                                      },
+                                    SizedBox(
+                                      height: 32,
+                                      child: Switch.adaptive(
+                                        value: saveSentList,
+                                        onChanged: (value) {
+                                          setState(() => saveSentList = value);
+                                        },
+                                      ),
                                     )
                                   ],
                                 ),
@@ -342,50 +430,56 @@ class _LongDistanceAccessSettingPageState
                             children: [
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Auto ARFCN",
                                       overflow: TextOverflow.ellipsis,
                                       style: bodyFont.copyWith(fontSize: 12.0),
                                     ),
-                                    Switch.adaptive(
-                                      value: autoArfcn,
-                                      onChanged: (value) {
-                                        setState(() => autoArfcn = value);
-                                      },
+                                    SizedBox(
+                                      height: 32,
+                                      child: Switch.adaptive(
+                                        value: autoArfcn,
+                                        onChanged: (value) {
+                                          setState(() => autoArfcn = value);
+                                        },
+                                      ),
                                     )
                                   ],
                                 ),
                               ),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Auto Reset",
                                       overflow: TextOverflow.ellipsis,
                                       style: bodyFont.copyWith(fontSize: 12.0),
                                     ),
-                                    Switch.adaptive(
-                                      value: autoReset,
-                                      onChanged: (value) {
-                                        setState(() => autoReset = value);
-                                      },
+                                    SizedBox(
+                                      height: 32,
+                                      child: Switch.adaptive(
+                                        value: autoReset,
+                                        onChanged: (value) {
+                                          setState(() => autoReset = value);
+                                        },
+                                      ),
                                     )
                                   ],
                                 ),
                               ),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Power",
                                       overflow: TextOverflow.ellipsis,
                                       style: bodyFont.copyWith(fontSize: 12.0),
                                     ),
-                                    const SizedBox(height: 16),
+                                    const SizedBox(height: 8),
                                     DropdownButtonFormField<_PowerDropdownItem>(
                                       isExpanded: true,
                                       value: powers.firstWhereOrNull(
@@ -478,13 +572,6 @@ class _LongDistanceAccessSettingPageState
                               ),
                             ],
                           ),
-                          Text(
-                            "Operators",
-                            style: headerFontBold.copyWith(
-                              fontSize: 16.0,
-                              color: Colors.black,
-                            ),
-                          ),
                           const SizedBox(height: 10),
                           ...machineConfig?.operators
                                   .map(
@@ -535,6 +622,49 @@ class _LongDistanceAccessSettingPageState
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _InputIconButton extends StatelessWidget {
+  const _InputIconButton({
+    Key? key,
+    required this.icon,
+    // ignore: unused_element
+    this.onTap,
+    // ignore: unused_element
+    this.borderRadius,
+  }) : super(key: key);
+
+  final IconData icon;
+  final void Function()? onTap;
+  final BorderRadiusGeometry? borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          border: Border.all(
+            color: Colors.grey.withOpacity(0.5),
+          ),
+          borderRadius: borderRadius ??
+              const BorderRadius.only(
+                topRight: Radius.circular(8.0),
+                bottomRight: Radius.circular(8.0),
+              ),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 4.0,
+        ),
+        child: Icon(
+          icon,
+          size: 20.0,
+          color: Colors.black,
+        ),
       ),
     );
   }

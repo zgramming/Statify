@@ -26,7 +26,13 @@ class LDAHomeContentItem extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: CircleAvatar(
-        child: Text("$index"),
+        radius: 15.0,
+        child: FittedBox(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("#$index"),
+          ),
+        ),
       ),
       title: Text(
         "$sender",

@@ -218,6 +218,7 @@ class _LongDistanceAccessAdminPageState
                 child: TextFormField(
                   controller: newPasswordController,
                   style: bodyFont.copyWith(fontSize: 14.0),
+                  obscureText: true,
                   decoration: inputDecorationRounded().copyWith(
                     hintText: "New Password",
                     border: const OutlineInputBorder(),
@@ -254,20 +255,20 @@ class _LongDistanceAccessAdminPageState
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              FormBodyRow(
-                title: "Fake Operation Every",
-                child: TextFormField(
-                  controller: fakeOperationEveryController,
-                  style: bodyFont.copyWith(fontSize: 14.0),
-                  decoration: inputDecorationRounded().copyWith(
-                    hintText: "Fake Operation Every",
-                    border: const OutlineInputBorder(),
-                    fillColor: Colors.transparent,
-                    contentPadding: const EdgeInsets.all(8),
-                  ),
-                ),
-              ),
+              // const SizedBox(height: 16),
+              // FormBodyRow(
+              //   title: "Fake Operation Every",
+              //   child: TextFormField(
+              //     controller: fakeOperationEveryController,
+              //     style: bodyFont.copyWith(fontSize: 14.0),
+              //     decoration: inputDecorationRounded().copyWith(
+              //       hintText: "Fake Operation Every",
+              //       border: const OutlineInputBorder(),
+              //       fillColor: Colors.transparent,
+              //       contentPadding: const EdgeInsets.all(8),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 16),
               FormBodyRow(
                 title: "Remove Admin Page",
