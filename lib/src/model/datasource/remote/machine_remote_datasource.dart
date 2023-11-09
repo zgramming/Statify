@@ -139,7 +139,7 @@ class MachineRemoteDatasource {
   }
 
   Future<List<String>> getResults(String nameFileResult) async {
-    final uri = Uri.parse("$kBaseFileUrl/$nameFileResult");
+    final uri = Uri.parse(nameFileResult);
     final response = await client.get(uri);
     final body = response.body;
 
