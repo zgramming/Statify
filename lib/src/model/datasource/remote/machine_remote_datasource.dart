@@ -304,7 +304,7 @@ class MachineRemoteDatasource {
 
       // new input admin response
       "clientAllowed": "${form.clientAllowed}",
-      if (isHaveUploadLogo) "updateLogo": "1",
+      "updateLogo": isHaveUploadLogo ? "1" : "${form.updateLogo}",
 
       // Include Sender or sms if not null
       if (form.sender1 != null) 'sender1': "${form.sender1}",

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../model/model/machine/machine_model.dart';
 import '../../../../../router.dart';
+import '../../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import 'lda_home_background_image.dart';
 import 'lda_home_content_item.dart';
 import 'lda_home_content_status.dart';
@@ -31,86 +32,89 @@ class LDAHomeContent extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        return SingleChildScrollView(
-          child: Container(
-            constraints: BoxConstraints(minHeight: height),
-            child: Stack(
-              children: [
-                SizedBox(
-                  height: height * 0.25,
-                  child: LDAHomeBackgroundImage(
-                    logo: machine.logo,
+        return RefreshIndicator(
+          onRefresh: () async => ref.invalidate(getAllMachineFutureProvider),
+          child: SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: height),
+              child: Stack(
+                children: [
+                  SizedBox(
+                    height: height * 0.25,
+                    child: LDAHomeBackgroundImage(
+                      logo: machine.logo,
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: height * 0.22),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      LDAHomeContentStatus(config: machine.config),
-                      const SizedBox(height: 20),
-                      ListView(
-                        padding: const EdgeInsets.only(),
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          LDAHomeContentItem(
-                            index: 1,
-                            sender: machine.config?.sender1,
-                            sms: machine.config?.sms1,
-                            onTap: () => _onTap(
-                              context: context,
-                              machine: machine,
+                  Container(
+                    margin: EdgeInsets.only(top: height * 0.22),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        LDAHomeContentStatus(config: machine.config),
+                        const SizedBox(height: 20),
+                        ListView(
+                          padding: const EdgeInsets.only(),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: [
+                            LDAHomeContentItem(
                               index: 1,
+                              sender: machine.config?.sender1,
+                              sms: machine.config?.sms1,
+                              onTap: () => _onTap(
+                                context: context,
+                                machine: machine,
+                                index: 1,
+                              ),
                             ),
-                          ),
-                          LDAHomeContentItem(
-                            index: 2,
-                            sender: machine.config?.sender2,
-                            sms: machine.config?.sms2,
-                            onTap: () => _onTap(
-                              context: context,
-                              machine: machine,
+                            LDAHomeContentItem(
                               index: 2,
+                              sender: machine.config?.sender2,
+                              sms: machine.config?.sms2,
+                              onTap: () => _onTap(
+                                context: context,
+                                machine: machine,
+                                index: 2,
+                              ),
                             ),
-                          ),
-                          LDAHomeContentItem(
-                            index: 3,
-                            sender: machine.config?.sender3,
-                            sms: machine.config?.sms3,
-                            onTap: () => _onTap(
-                              context: context,
-                              machine: machine,
+                            LDAHomeContentItem(
                               index: 3,
+                              sender: machine.config?.sender3,
+                              sms: machine.config?.sms3,
+                              onTap: () => _onTap(
+                                context: context,
+                                machine: machine,
+                                index: 3,
+                              ),
                             ),
-                          ),
-                          LDAHomeContentItem(
-                            index: 4,
-                            sender: machine.config?.sender4,
-                            sms: machine.config?.sms4,
-                            onTap: () => _onTap(
-                              context: context,
-                              machine: machine,
+                            LDAHomeContentItem(
                               index: 4,
+                              sender: machine.config?.sender4,
+                              sms: machine.config?.sms4,
+                              onTap: () => _onTap(
+                                context: context,
+                                machine: machine,
+                                index: 4,
+                              ),
                             ),
-                          ),
-                          LDAHomeContentItem(
-                            index: 5,
-                            sender: machine.config?.sender5,
-                            sms: machine.config?.sms5,
-                            onTap: () => _onTap(
-                              context: context,
-                              machine: machine,
+                            LDAHomeContentItem(
                               index: 5,
+                              sender: machine.config?.sender5,
+                              sms: machine.config?.sms5,
+                              onTap: () => _onTap(
+                                context: context,
+                                machine: machine,
+                                index: 5,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: height * 0.5),
-                    ],
-                  ),
-                )
-              ],
+                          ],
+                        ),
+                        SizedBox(height: height * 0.5),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );

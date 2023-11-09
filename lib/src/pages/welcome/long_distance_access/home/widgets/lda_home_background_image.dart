@@ -13,6 +13,13 @@ class _DefaultImage extends StatelessWidget {
       kURLLogoHitech,
       width: 100,
       height: 100,
+      errorBuilder: (context, error, stackTrace) => const Center(
+        child: Icon(
+          Icons.error,
+          size: 50.0,
+          color: Colors.red,
+        ),
+      ),
     );
   }
 }
@@ -40,22 +47,12 @@ class LDAHomeBackgroundImage extends ConsumerWidget {
             ),
             child: Builder(
               builder: (context) {
-                if (logo == null) {
-                  return const _DefaultImage();
-                }
-
                 return Image.network(
-                  logo!,
+                  logo ?? "",
                   width: 100,
                   height: 100,
                   errorBuilder: (context, error, stackTrace) {
-                    return const Center(
-                      child: Icon(
-                        Icons.error,
-                        color: Colors.red,
-                        size: 50,
-                      ),
-                    );
+                    return const _DefaultImage();
                   },
                 );
               },
