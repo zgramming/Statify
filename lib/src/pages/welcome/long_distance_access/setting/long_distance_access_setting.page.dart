@@ -14,6 +14,7 @@ import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import 'widgets/lda_setting_config_operator_item.dart';
+import 'widgets/lda_setting_modal_syncronize.dart';
 import 'widgets/lda_setting_network_items.dart';
 import 'widgets/modal_lda_setting_warning.dart';
 
@@ -131,6 +132,13 @@ class _LongDistanceAccessSettingPageState
     });
 
     onTapExclamationMark();
+  }
+
+  void onTapSyncronize() async {
+    await showDialog(
+      context: context,
+      builder: (context) => const LDASettingModalSyncronize(),
+    );
   }
 
   Future<void> onSubmit(bool isReboot) async {
@@ -551,7 +559,7 @@ class _LongDistanceAccessSettingPageState
                                 child: Align(
                                   alignment: Alignment.centerRight,
                                   child: ElevatedButton.icon(
-                                    onPressed: null,
+                                    onPressed: onTapSyncronize,
                                     style: elevatedButtonStyle(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0,
