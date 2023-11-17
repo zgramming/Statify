@@ -47,10 +47,11 @@ class MachineGroupRepository {
   }
 
   Future<Either<Failure, MachineGroupModel>> update(
+    String machineGroupId,
     FormMachineGroupCreateOrUpdateModel form,
   ) async {
     try {
-      final result = await remoteDatasource.update(form);
+      final result = await remoteDatasource.update(machineGroupId, form);
       return Right(result);
     } catch (e) {
       return Left(CommonFailure(e.toString()));

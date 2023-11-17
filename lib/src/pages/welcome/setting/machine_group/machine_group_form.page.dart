@@ -1,8 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
+import '../../../../model/model/helper/dropdown/machine_dropdown_model.dart';
 import '../../../../model/model/helper/form/form_machine_group_create_update.model.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
@@ -29,7 +31,10 @@ class _MachineGroupFormPageState extends ConsumerState<MachineGroupFormPage> {
   final nameController = TextEditingController();
   final selectedMachines = <String>[];
 
+  MachineDropdownModel? selectedMasterId;
   bool isEdit = false;
+  bool isCopySetting = false;
+  bool isCopySmsSetting = false;
 
   Future<void> onSubmit() async {
     final validate = _formKey.currentState?.validate() ?? false;
@@ -44,14 +49,16 @@ class _MachineGroupFormPageState extends ConsumerState<MachineGroupFormPage> {
       userId: userId,
       name: name,
       machineIds: machineIds,
+      copySetting: isCopySetting,
+      copySmsSetting: isCopySmsSetting,
+      master: selectedMasterId?.id ?? "",
     );
 
     if (isEdit) {
-      await ref.read(machineGroupNotifier.notifier).update(
-            form.copyWith(
-              machineGroupId: widget.id,
-            ),
-          );
+      final machineGroupId = widget.id;
+      await ref
+          .read(machineGroupNotifier.notifier)
+          .update(machineGroupId, form.copyWith());
     } else {
       await ref.read(machineGroupNotifier.notifier).create(form);
     }
@@ -154,9 +161,21 @@ class _MachineGroupFormPageState extends ConsumerState<MachineGroupFormPage> {
         next.when(
           data: (data) {
             if (data == null) return;
+            final machines =
+                ref.read(machineNotifier.select((value) => value.items));
+            final selectedMaster = machines.firstWhereOrNull(
+              (element) => element.id == data.masterId,
+            );
+            final existingMachineIds =
+                data.machines?.map((e) => e.id).toList() ?? [];
             nameController.text = data.name;
-            final machineIds = data.machines?.map((e) => e.id).toList() ?? [];
-            selectedMachines.addAll(machineIds);
+            isCopySetting = data.copySetting;
+            isCopySmsSetting = data.copySmsSetting;
+            selectedMasterId = MachineDropdownModel(
+              id: selectedMaster?.id ?? "",
+              name: selectedMaster?.name ?? "",
+            );
+            selectedMachines.addAll(existingMachineIds);
             setState(() {});
           },
           error: (error, stackTrace) => showSnackbar(
@@ -192,6 +211,44 @@ class _MachineGroupFormPageState extends ConsumerState<MachineGroupFormPage> {
                       children: [
                         const SizedBox(height: 16),
                         FormBodyRow(
+                          title: "Choose Master Machine",
+                          child: DropdownButtonFormField<MachineDropdownModel>(
+                            value: selectedMasterId,
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setState(() {
+                                selectedMasterId = value;
+                              });
+                            },
+                            decoration: inputDecorationRounded().copyWith(
+                              hintText: "Choose Master Machine",
+                              border: const OutlineInputBorder(),
+                              fillColor: Colors.transparent,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                            ),
+                            items: machines
+                                .map((e) => MachineDropdownModel(
+                                    id: e.id, name: e.name))
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e.name),
+                                  ),
+                                )
+                                .toList(),
+                            validator: (value) {
+                              if (value == null) {
+                                return "Master is required";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        FormBodyRow(
                           title: "Name",
                           child: TextFormField(
                             controller: nameController,
@@ -208,6 +265,34 @@ class _MachineGroupFormPageState extends ConsumerState<MachineGroupFormPage> {
                               }
                               return null;
                             },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        FormBodyRow(
+                          title: "Copy Setting",
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Checkbox(
+                              value: isCopySetting,
+                              onChanged: (value) {
+                                setState(() => isCopySetting = value ?? false);
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        FormBodyRow(
+                          title: "Copy SMS Setting",
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Checkbox(
+                              value: isCopySmsSetting,
+                              onChanged: (value) {
+                                setState(() {
+                                  isCopySmsSetting = value ?? false;
+                                });
+                              },
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),

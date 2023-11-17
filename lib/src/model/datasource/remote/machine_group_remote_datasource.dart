@@ -67,6 +67,9 @@ class MachineGroupRemoteDatasource {
     final uri = Uri.parse("$kBaseApiUrl/users/${form.userId}/machine-groups");
 
     final bodyForm = jsonEncode({
+      'master': form.master,
+      'copy_setting': form.copySetting ? 1 : 0,
+      'copy_sms_setting': form.copySmsSetting ? 1 : 0,
       'name': form.name,
       'machines': form.machineIds,
     });
@@ -93,14 +96,18 @@ class MachineGroupRemoteDatasource {
   }
 
   Future<MachineGroupModel> update(
+    String machineGroupId,
     FormMachineGroupCreateOrUpdateModel form,
   ) async {
     final uri = Uri.parse(
-        "$kBaseApiUrl/users/${form.userId}/machine-groups/${form.machineGroupId}");
+        "$kBaseApiUrl/users/${form.userId}/machine-groups/$machineGroupId");
 
     final bodyForm = jsonEncode(
       {
         'name': form.name,
+        'master': form.master,
+        'copy_setting': form.copySetting ? 1 : 0,
+        'copy_sms_setting': form.copySmsSetting ? 1 : 0,
         'machines': form.machineIds,
       },
     );

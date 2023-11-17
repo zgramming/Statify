@@ -113,10 +113,14 @@ class MachineGroupNotifier extends StateNotifier<MachineGroupState> {
   }
 
   Future<MachineGroupState> update(
+    String machineGroupId,
     FormMachineGroupCreateOrUpdateModel form,
   ) async {
     state = state.copyWith(onUpdate: const AsyncLoading());
-    final result = await repository.update(form);
+    final result = await repository.update(
+      machineGroupId,
+      form,
+    );
     return result.fold(
       (failure) => state = state.copyWith(
         onUpdate: AsyncError(failure.message, StackTrace.current),

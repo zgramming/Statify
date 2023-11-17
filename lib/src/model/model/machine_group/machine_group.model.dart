@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -10,18 +11,24 @@ part 'machine_group.model.g.dart';
 )
 class MachineGroupModel extends Equatable {
   final String id;
-  final String name;
   final String userId;
-  final DateTime updatedAt;
+  final String name;
   final DateTime createdAt;
+  final DateTime updatedAt;
+  final String masterId;
+  final bool copySetting;
+  final bool copySmsSetting;
   final List<MachineModel>? machines;
 
   const MachineGroupModel({
     required this.id,
-    required this.name,
     required this.userId,
-    required this.updatedAt,
+    required this.name,
     required this.createdAt,
+    required this.updatedAt,
+    required this.masterId,
+    required this.copySetting,
+    required this.copySmsSetting,
     this.machines = const [],
   });
 
@@ -35,10 +42,13 @@ class MachineGroupModel extends Equatable {
   List<Object?> get props {
     return [
       id,
-      name,
       userId,
-      updatedAt,
+      name,
       createdAt,
+      updatedAt,
+      masterId,
+      copySetting,
+      copySmsSetting,
       machines,
     ];
   }
