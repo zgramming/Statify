@@ -211,9 +211,11 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
         final activeSurveyId = machine.activeSurveyId;
 
         if (activeSurveyId == null) {
-          throw Exception(
-            "Machine not have active survey id when listen incoming message",
-          );
+          log("Machine not have active survey id when listen incoming message : ${machine.id}");
+          return;
+          // throw Exception(
+          //   "Machine not have active survey id when listen incoming message",
+          // );
         }
 
         final result = await ref
@@ -362,6 +364,19 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
                                     return _MachineItem(
                                         item: item, index: index);
                                   },
+                                ),
+                              ] else ...[
+                                const SizedBox(height: 16.0),
+                                Center(
+                                  child: Text(
+                                    "No Machine Found, Please Add Machine",
+                                    style: headerFont.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ],
                             ],

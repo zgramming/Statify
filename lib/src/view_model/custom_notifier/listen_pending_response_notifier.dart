@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../injection.dart';
@@ -16,9 +18,11 @@ final listenPendingResponseNotifier =
     final activeSurveyId = machine.activeSurveyId;
 
     if (activeSurveyId == null) {
-      return throw Exception(
-        'Machine ${machine.name} does not have active survey, please activate survey first to listen pending response',
-      );
+      log("Machine ${machine.name} does not have active survey, please activate survey first to listen pending response");
+      return Stream.value("");
+      // return throw Exception(
+      //   'Machine ${machine.name} does not have active survey, please activate survey first to listen pending response',
+      // );
     }
 
     final simSlot = ref.watch(
