@@ -15,7 +15,7 @@ class MachineGroupModel extends Equatable {
   final String name;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String masterId;
+  final String? masterId;
   final bool copySetting;
   final bool copySmsSetting;
   final List<MachineModel>? machines;
@@ -55,4 +55,28 @@ class MachineGroupModel extends Equatable {
 
   @override
   bool get stringify => true;
+
+  MachineGroupModel copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? masterId,
+    bool? copySetting,
+    bool? copySmsSetting,
+    List<MachineModel>? machines,
+  }) {
+    return MachineGroupModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      masterId: masterId ?? this.masterId,
+      copySetting: copySetting ?? this.copySetting,
+      copySmsSetting: copySmsSetting ?? this.copySmsSetting,
+      machines: machines ?? this.machines,
+    );
+  }
 }

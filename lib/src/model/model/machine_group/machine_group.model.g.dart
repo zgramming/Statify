@@ -13,7 +13,7 @@ MachineGroupModel _$MachineGroupModelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      masterId: json['master_id'] as String,
+      masterId: json['master_id'] as String?,
       copySetting: json['copy_setting'] as bool,
       copySmsSetting: json['copy_sms_setting'] as bool,
       machines: (json['machines'] as List<dynamic>?)

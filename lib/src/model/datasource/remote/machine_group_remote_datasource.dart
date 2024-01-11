@@ -20,7 +20,6 @@ class MachineGroupRemoteDatasource {
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final list = decoded['data'] as List;
-
       final machines = list.map((e) {
         final result = MachineGroupModel.fromJson(e);
         return result;
