@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -78,6 +79,11 @@ int chooseSimSlotSMS(String smsSetting) {
     default:
       throw Exception("Unknown sms setting, cant get sim slot");
   }
+}
+
+int generateRandomNumber(int min, int max) {
+  final random = Random();
+  return min + random.nextInt(max - min + 1);
 }
 
 void showSnackbar({

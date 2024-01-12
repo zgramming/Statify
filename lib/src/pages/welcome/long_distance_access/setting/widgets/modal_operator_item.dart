@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../model/model/machine/machine_config_operator.model.dart';
 import '../../../../../utils/fonts.dart';
+import '../../../../../utils/functions.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../widgets/form_body_row.dart';
@@ -83,6 +86,24 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
     setState(() {});
   }
 
+  void generateInputFormat({
+    required TextEditingController controller,
+    required int min,
+    required int max,
+  }) {
+    List<String> formattedArr = [];
+    final arfcn4g = arfcnController.text;
+    final split = arfcn4g.split(",");
+    for (final _ in split) {
+      final randomNumber = generateRandomNumber(min, max);
+      formattedArr.add(randomNumber.toString());
+    }
+
+    final join = formattedArr.join(",");
+    log("join: $join");
+    controller.text = join;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -118,7 +139,9 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
             ),
             const SizedBox(height: 16.0),
             FormBodyRow(
-              title: "ARFCN",
+              title: "4G ARFCN",
+              titleFlex: 7,
+              childFlex: 5,
               child: TextFormField(
                 controller: arfcnController,
                 style: bodyFont.copyWith(fontSize: 14.0),
@@ -138,7 +161,22 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
             ),
             const SizedBox(height: 8),
             FormBodyRow(
-              title: "PCI",
+              titleWidget: Row(
+                children: [
+                  const Text("4G PCI"),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () => generateInputFormat(
+                      controller: pciController,
+                      min: 1,
+                      max: 503,
+                    ),
+                    child: const Text("Generate"),
+                  )
+                ],
+              ),
+              titleFlex: 7,
+              childFlex: 5,
               child: TextFormField(
                 controller: pciController,
                 style: bodyFont.copyWith(fontSize: 14.0),
@@ -158,7 +196,22 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
             ),
             const SizedBox(height: 8),
             FormBodyRow(
-              title: "TAC",
+              titleWidget: Row(
+                children: [
+                  const Text("4G TAC"),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () => generateInputFormat(
+                      controller: tacController,
+                      min: 1,
+                      max: 65535,
+                    ),
+                    child: const Text("Generate"),
+                  )
+                ],
+              ),
+              titleFlex: 7,
+              childFlex: 5,
               child: TextFormField(
                 controller: tacController,
                 style: bodyFont.copyWith(fontSize: 14.0),
@@ -178,7 +231,22 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
             ),
             const SizedBox(height: 8),
             FormBodyRow(
-              title: "Cell ID",
+              titleWidget: Row(
+                children: [
+                  const Text("4G Cell ID"),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () => generateInputFormat(
+                      controller: cellIdController,
+                      min: 1,
+                      max: 65535,
+                    ),
+                    child: const Text("Generate"),
+                  )
+                ],
+              ),
+              titleFlex: 7,
+              childFlex: 5,
               child: TextFormField(
                 controller: cellIdController,
                 style: bodyFont.copyWith(fontSize: 14.0),
@@ -197,10 +265,25 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
               ),
             ),
             const SizedBox(height: 8),
+            Row(
+              children: [
+                Checkbox(
+                  value: isDefault,
+                  onChanged: (value) {
+                    setState(() => isDefault = value ?? false);
+                  },
+                ),
+                const Text("Default"),
+              ],
+            ),
+            const SizedBox(height: 8),
             FormBodyRow(
-              title: "PLMN",
+              title: "4G PLMN",
+              titleFlex: 7,
+              childFlex: 5,
               child: TextFormField(
                 controller: plmnController,
+                enabled: !isDefault,
                 style: bodyFont.copyWith(fontSize: 14.0),
                 decoration: inputDecorationRounded().copyWith(
                   hintText: "PLMN",
@@ -218,9 +301,12 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
             ),
             const SizedBox(height: 8),
             FormBodyRow(
-              title: "Downgrade",
+              title: "4G Downgrade",
+              titleFlex: 7,
+              childFlex: 5,
               child: TextFormField(
                 controller: downgradeController,
+                enabled: !isDefault,
                 style: bodyFont.copyWith(fontSize: 14.0),
                 decoration: inputDecorationRounded().copyWith(
                   hintText: "Downgrade",
@@ -238,9 +324,12 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
             ),
             const SizedBox(height: 8),
             FormBodyRow(
-              title: "Rotation Time",
+              title: "4G Rotation Time",
+              titleFlex: 7,
+              childFlex: 5,
               child: TextFormField(
                 controller: rotationTimeController,
+                enabled: !isDefault,
                 style: bodyFont.copyWith(fontSize: 14.0),
                 decoration: inputDecorationRounded().copyWith(
                   hintText: "Rotation Time",
@@ -255,18 +344,6 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
                   return null;
                 },
               ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Checkbox(
-                  value: isDefault,
-                  onChanged: (value) {
-                    setState(() => isDefault = value ?? false);
-                  },
-                ),
-                const Text("Default"),
-              ],
             ),
             const SizedBox(height: 8),
             ElevatedButton(
