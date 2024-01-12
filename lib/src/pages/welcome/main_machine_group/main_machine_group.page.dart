@@ -309,6 +309,21 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              if (groups.isEmpty &&
+                                  machinesNotHaveGroup.isEmpty) ...[
+                                const SizedBox(height: 16.0),
+                                Center(
+                                  child: Text(
+                                    "No Machine Found, Please Add Machine",
+                                    style: headerFont.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                               if (groups.isNotEmpty) ...[
                                 ListView.separated(
                                   physics: const NeverScrollableScrollPhysics(),
@@ -365,20 +380,7 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
                                         item: item, index: index);
                                   },
                                 ),
-                              ] else ...[
-                                const SizedBox(height: 16.0),
-                                Center(
-                                  child: Text(
-                                    "No Machine Found, Please Add Machine",
-                                    style: headerFont.copyWith(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
+                              ]
                             ],
                           ),
                         ),
@@ -422,22 +424,6 @@ class _MachineGroupMachines extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEmpty = machines.isEmpty;
-
-    if (isEmpty) {
-      return Center(
-        child: Text(
-          "No Machine Found, Please Add Machine",
-          style: headerFont.copyWith(
-            color: Colors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-
     return ListView.separated(
       itemCount: machines.length,
       shrinkWrap: true,

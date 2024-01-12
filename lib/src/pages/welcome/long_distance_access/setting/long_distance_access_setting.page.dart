@@ -60,9 +60,10 @@ class _LongDistanceAccessSettingPageState
   bool saveSentList = false;
   bool autoArfcn = false;
   bool autoReset = false;
-  String? selectedPower;
-
+  bool hiddenManager = false;
   bool isShowPassword = false;
+
+  String? selectedPower;
 
   void init() {
     final machine =
@@ -79,6 +80,7 @@ class _LongDistanceAccessSettingPageState
       autoReset = config?.autoReset == "1";
       selectedPower = config?.power;
       machineConfig = config;
+      hiddenManager = config?.hiddenManager == "1";
     });
   }
 
@@ -197,10 +199,11 @@ class _LongDistanceAccessSettingPageState
                     value: 'admin',
                     child: Text("Admin"),
                   ),
-                  const PopupMenuItem(
-                    value: 'manager',
-                    child: Text("Manager"),
-                  ),
+                  if (!hiddenManager)
+                    const PopupMenuItem(
+                      value: 'manager',
+                      child: Text("Manager"),
+                    ),
                 ],
                 onSelected: (value) => onSelectedMenu(value),
                 child: const Icon(Icons.more_vert),
