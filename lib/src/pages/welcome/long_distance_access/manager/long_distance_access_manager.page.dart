@@ -1,9 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../injection.dart';
+import '../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../model/model/machine/machine_config_boardips.model.dart';
 import '../../../../model/model/machine/machine_config_countries.model.dart';
+import '../../../../model/model/machine/machine_config_operator.model.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
@@ -42,12 +45,21 @@ class _LongDistanceAccessManagerPageState
   final powerHighController = TextEditingController();
   final powerVeryHighController = TextEditingController();
 
+  MachineConfigCountriesModel? selectedCountry;
+
   bool isHiddenArfcn2G = false;
   bool isHiddenArfcn3G = false;
   bool isHiddenArfcn4G = false;
   bool isHiddenArfcn5G = false;
 
   bool isRemoveManagerPage = false;
+
+  void showModalCountry(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const ModalAddCountryLDAManager(),
+    );
+  }
 
   List<MachineBoardIpsModel> mappedBoardIps() {
     try {
@@ -77,6 +89,85 @@ class _LongDistanceAccessManagerPageState
     }
   }
 
+  String? mappedRegisteredMccMnc(List<MachineConfigCountriesModel> countries) {
+    const kTimeout = "15";
+    const kArfcn = "5";
+
+    if (selectedCountry == null) return null;
+
+    final country = countries.firstWhereOrNull(
+      (element) => element.label == selectedCountry?.label,
+    );
+
+    if (country == null) {
+      return null;
+    }
+
+    final mapping = country.mncs.map((e) {
+      return "${e.mcc}${e.mnc}_${kTimeout}_$kArfcn";
+    }).toList();
+
+    final joinByComma = mapping.join(",");
+
+    return joinByComma;
+  }
+
+  List<MachineConfigOperatorsModel>? mappedOperators(
+      List<MachineConfigCountriesModel> countries) {
+    if (selectedCountry == null) return null;
+
+    final country = countries.firstWhereOrNull(
+      (element) => element.label == selectedCountry?.label,
+    );
+
+    if (country == null) {
+      return null;
+    }
+
+    const kArfcn = "5";
+    const kTimeout = "15";
+    const isPlay = 1;
+    const curr = 1;
+    const lteArfcn = "1850";
+    const ltePci = "111";
+    const lteTac = "1111";
+    const lteCellId = "11111";
+    const lteDowngrade = "5";
+    const lteRotationTime = "70";
+    const ltePlmn = "46010";
+    const kDefault = "true";
+    const k3GArfcn = "10638";
+    const k5GArfcn = "1333";
+    const kStatus = 1;
+
+    final mapping = country.mncs.map((e) {
+      return MachineConfigOperatorsModel(
+        mcc: e.mcc,
+        mnc: e.mnc,
+        label: e.label,
+        name: e.name,
+        country: e.country,
+        arfcn: kArfcn,
+        timeout: kTimeout,
+        isPlay: isPlay,
+        curr: curr,
+        lteArfcn: lteArfcn,
+        ltePci: ltePci,
+        lteTac: lteTac,
+        lteCellId: lteCellId,
+        lteDowngrade: lteDowngrade,
+        lteRotationTime: lteRotationTime,
+        fiveGArfcn: k5GArfcn,
+        ltePlmn: ltePlmn,
+        threeGArfcn: k3GArfcn,
+        operatorDefault: kDefault,
+        status: kStatus,
+      );
+    }).toList();
+
+    return mapping;
+  }
+
   Future<void> onSubmit() async {
     try {
       final validate = _formKey.currentState?.validate() ?? false;
@@ -89,22 +180,36 @@ class _LongDistanceAccessManagerPageState
       final form = ref.read(
         CustomFormProvider.ldaManagerForm(widget.idMachine).notifier,
       )..update(
-          (state) => state.copyWith(
-            countries: countries,
-            unallowed: senderUnallowedController.text,
-            arfcnLabel2g: arfcn2GLabelController.text,
-            arfcnLabel3g: arfcn3GLabelController.text,
-            arfcnLabel4g: arfcn4GLabelController.text,
-            arfcnLabel5g: arfcn5GLabelController.text,
-            arfcnHidden2g: isHiddenArfcn2G ? "1" : "0",
-            arfcnHidden3g: isHiddenArfcn3G ? "1" : "0",
-            arfcnHidden4g: isHiddenArfcn4G ? "1" : "0",
-            arfcnHidden5g: isHiddenArfcn5G ? "1" : "0",
-            removeManager: isRemoveManagerPage ? "1" : "0",
-            managerPassword: newPasswordController.text,
-            boardIps: mappedBoardIps(),
-            powerConfig: mappedPowerConfig(),
-          ),
+          (state) {
+            FormMachineUpdateConfigModel temporaryState = state.copyWith(
+              countries: countries,
+              unallowed: senderUnallowedController.text,
+              arfcnLabel2g: arfcn2GLabelController.text,
+              arfcnLabel3g: arfcn3GLabelController.text,
+              arfcnLabel4g: arfcn4GLabelController.text,
+              arfcnLabel5g: arfcn5GLabelController.text,
+              arfcnHidden2g: isHiddenArfcn2G ? "1" : "0",
+              arfcnHidden3g: isHiddenArfcn3G ? "1" : "0",
+              arfcnHidden4g: isHiddenArfcn4G ? "1" : "0",
+              arfcnHidden5g: isHiddenArfcn5G ? "1" : "0",
+              removeManager: isRemoveManagerPage ? "1" : "0",
+              managerPassword: newPasswordController.text,
+              boardIps: mappedBoardIps(),
+              powerConfig: mappedPowerConfig(),
+            );
+
+            if (selectedCountry != null) {
+              final registeredMccMnc = mappedRegisteredMccMnc(countries);
+              final operators = mappedOperators(countries);
+
+              temporaryState = temporaryState.copyWith(
+                registeredMccMnc: registeredMccMnc,
+                operators: operators,
+              );
+            }
+
+            return temporaryState;
+          },
         );
 
       final notifier = ref.read(machineNotifier.notifier);
@@ -222,8 +327,36 @@ class _LongDistanceAccessManagerPageState
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 16.0),
+              Text(
+                "DEVICE SETUP",
+                style: bodyFontBold.copyWith(fontSize: 16.0),
+              ),
+              const SizedBox(height: 8.0),
+              Wrap(
+                children: [
+                  ElevatedButton(
+                    onPressed: () => showModalCountry(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: const Text("Add"),
+                  ),
+                  const SizedBox(width: 8.0),
+                  ElevatedButton(
+                    onPressed: () => onSubmit(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: const Text("Save"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16.0),
               _DeviceSetup(
-                onSave: onSubmit,
+                onSelectedCountry: (value) {
+                  selectedCountry = value;
+                  setState(() {});
+                },
               ),
               const SizedBox(height: 16.0),
               FormBodyRow(
@@ -522,15 +655,22 @@ class _LongDistanceAccessManagerPageState
   }
 }
 
-class _DeviceSetup extends ConsumerWidget {
+class _DeviceSetup extends ConsumerStatefulWidget {
+  final void Function(MachineConfigCountriesModel? value)? onSelectedCountry;
   const _DeviceSetup({
+    Key? key,
     // ignore: unused_element
-    this.onSave,
-  });
+    this.onSelectedCountry,
+  }) : super(key: key);
 
-  final void Function()? onSave;
+  @override
+  ConsumerState<_DeviceSetup> createState() => _DeviceSetupState();
+}
 
-  static void removeCountry(WidgetRef ref, String label) {
+class _DeviceSetupState extends ConsumerState<_DeviceSetup> {
+  MachineConfigCountriesModel? selectedCountry;
+
+  void removeCountry(WidgetRef ref, String label) {
     final form =
         ref.read(CustomFormProvider.machineConfigCountriesForm.notifier);
     form.update((state) {
@@ -540,14 +680,7 @@ class _DeviceSetup extends ConsumerWidget {
     });
   }
 
-  static void showModalCountry(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const ModalAddCountryLDAManager(),
-    );
-  }
-
-  static void showModalCountryMNC(
+  void showModalCountryMNC(
     BuildContext context,
     String label,
   ) {
@@ -557,41 +690,29 @@ class _DeviceSetup extends ConsumerWidget {
     );
   }
 
+  void onSelectedCountry({
+    required bool value,
+    required MachineConfigCountriesModel country,
+  }) {
+    if (value) {
+      selectedCountry = country;
+    } else {
+      selectedCountry = null;
+    }
+
+    widget.onSelectedCountry?.call(selectedCountry);
+
+    setState(() {});
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final formMachineConfigCountryMnc = ref.watch(
       CustomFormProvider.machineConfigCountriesForm,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          "DEVICE SETUP",
-          style: bodyFontBold.copyWith(
-            fontSize: 16.0,
-          ),
-        ),
-        const SizedBox(height: 8.0),
-        Wrap(
-          children: [
-            ElevatedButton(
-              onPressed: () => showModalCountry(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-              ),
-              child: const Text("Add"),
-            ),
-            const SizedBox(width: 8.0),
-            ElevatedButton(
-              onPressed: onSave,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              child: const Text("Save"),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16.0),
         if (formMachineConfigCountryMnc.isNotEmpty) ...[
           DataTable(
             columns: const [
@@ -606,8 +727,13 @@ class _DeviceSetup extends ConsumerWidget {
                       cells: [
                         DataCell(
                           Checkbox(
-                            value: false,
-                            onChanged: (value) {},
+                            value: selectedCountry?.label == e.label,
+                            onChanged: (value) {
+                              onSelectedCountry(
+                                country: e,
+                                value: value ?? false,
+                              );
+                            },
                           ),
                         ),
                         DataCell(

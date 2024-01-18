@@ -55,13 +55,18 @@ class MachineConfigCountriesMNCModel extends Equatable {
   final String name;
   final String label;
   final int status;
+  @JsonKey(
+    defaultValue: 'Indonesia',
+  )
+  final String country;
 
   const MachineConfigCountriesMNCModel({
-    this.mcc = '',
-    this.mnc = '',
-    this.name = '',
-    this.label = '',
+    required this.mcc,
+    required this.mnc,
+    required this.name,
+    required this.label,
     this.status = 1,
+    required this.country,
   });
 
   factory MachineConfigCountriesMNCModel.fromJson(Map<String, dynamic> json) =>
@@ -78,6 +83,7 @@ class MachineConfigCountriesMNCModel extends Equatable {
       name,
       label,
       status,
+      country,
     ];
   }
 
@@ -90,6 +96,7 @@ class MachineConfigCountriesMNCModel extends Equatable {
     String? name,
     String? label,
     int? status,
+    String? country,
   }) {
     return MachineConfigCountriesMNCModel(
       mcc: mcc ?? this.mcc,
@@ -97,6 +104,7 @@ class MachineConfigCountriesMNCModel extends Equatable {
       name: name ?? this.name,
       label: label ?? this.label,
       status: status ?? this.status,
+      country: country ?? this.country,
     );
   }
 }

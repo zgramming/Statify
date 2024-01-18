@@ -90,7 +90,6 @@ class _LoginLDAManagerPageState extends ConsumerState<LoginLDAManagerPage> {
   Widget build(BuildContext context) {
     final machine =
         ref.watch(CustomProvider.getMachineByIdProvider(widget.idMachine));
-
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {

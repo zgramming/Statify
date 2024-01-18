@@ -9,12 +9,13 @@ part 'machine_config_operator.model.g.dart';
 class MachineConfigOperatorsModel extends Equatable {
   final String? mcc;
   final String? mnc;
-  final int? curr;
   final String? name;
-  final String? arfcn;
   final String? label;
-  final int? status;
   final String? country;
+
+  final int? status;
+  final int? curr;
+  final String? arfcn;
   @JsonKey(
     name: 'default',
   )

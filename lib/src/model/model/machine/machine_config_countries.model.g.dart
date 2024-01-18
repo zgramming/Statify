@@ -31,11 +31,12 @@ Map<String, dynamic> _$MachineConfigCountriesModelToJson(
 MachineConfigCountriesMNCModel _$MachineConfigCountriesMNCModelFromJson(
         Map<String, dynamic> json) =>
     MachineConfigCountriesMNCModel(
-      mcc: json['mcc'] as String? ?? '',
-      mnc: json['mnc'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      label: json['label'] as String? ?? '',
+      mcc: json['mcc'] as String,
+      mnc: json['mnc'] as String,
+      name: json['name'] as String,
+      label: json['label'] as String,
       status: json['status'] as int? ?? 1,
+      country: json['country'] as String? ?? 'Indonesia',
     );
 
 Map<String, dynamic> _$MachineConfigCountriesMNCModelToJson(
@@ -46,4 +47,5 @@ Map<String, dynamic> _$MachineConfigCountriesMNCModelToJson(
       'name': instance.name,
       'label': instance.label,
       'status': instance.status,
+      'country': instance.country,
     };

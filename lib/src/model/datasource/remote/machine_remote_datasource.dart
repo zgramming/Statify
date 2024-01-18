@@ -312,6 +312,7 @@ class MachineRemoteDatasource {
       "fourGData": form.fourGData,
       "twoGDataChanged": form.twoGDataChanged,
       "fourGDataChanged": form.fourGDataChanged,
+      "registeredMccMnc": form.registeredMccMnc,
 
       // Include Sender or sms if not null
       if (form.sender1 != null) 'sender1': "${form.sender1}",

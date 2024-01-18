@@ -59,6 +59,7 @@ class FormMachineUpdateConfigModel extends Equatable {
   final String? updateLogo;
   // Digunakan untuk flag apakah logo diupdate atau tidak, kalau ada filenya maka logo diupdate dan ubah "updateLogo" menjadi "1", kalau tidak ada filenya maka "updateLogo" dibiarkan saja
   final Uint8List? updateLogoFile;
+  final String? registeredMccMnc;
 
   final String? sms1;
   final String? sms2;
@@ -121,6 +122,7 @@ class FormMachineUpdateConfigModel extends Equatable {
     this.hiddenManager,
     this.updateLogo,
     this.updateLogoFile,
+    this.registeredMccMnc,
     this.sms1,
     this.sms2,
     this.sms3,
@@ -198,6 +200,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       hiddenManager: config.hiddenManager,
       updateLogo: config.updateLogo,
       updateLogoFile: null,
+      registeredMccMnc: config.registeredMccMnc,
     );
   }
 
@@ -248,6 +251,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       hiddenManager,
       updateLogo,
       updateLogoFile,
+      registeredMccMnc,
       sms1,
       sms2,
       sms3,
@@ -312,6 +316,7 @@ class FormMachineUpdateConfigModel extends Equatable {
     String? hiddenManager,
     String? updateLogo,
     Uint8List? updateLogoFile,
+    String? registeredMccMnc,
     String? sms1,
     String? sms2,
     String? sms3,
@@ -371,6 +376,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       hiddenManager: hiddenManager ?? this.hiddenManager,
       updateLogo: updateLogo ?? this.updateLogo,
       updateLogoFile: updateLogoFile ?? this.updateLogoFile,
+      registeredMccMnc: registeredMccMnc ?? this.registeredMccMnc,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,

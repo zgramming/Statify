@@ -16,7 +16,7 @@ class ModalCountryMNC extends ConsumerWidget {
   static void showModalAddCountryMNC(BuildContext context, String label) {
     showDialog(
       context: context,
-      builder: (context) => ModalAddCountryMNC(label: label),
+      builder: (context) => ModalAddCountryMNC(countryName: label),
     );
   }
 

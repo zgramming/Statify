@@ -12,9 +12,9 @@ import '../../../../widgets/form_body_row.dart';
 class ModalAddCountryMNC extends ConsumerStatefulWidget {
   const ModalAddCountryMNC({
     Key? key,
-    required this.label,
+    required this.countryName,
   }) : super(key: key);
-  final String label;
+  final String countryName;
 
   @override
   ConsumerState<ModalAddCountryMNC> createState() => _ModalAddCountryMNCState();
@@ -38,17 +38,17 @@ class _ModalAddCountryMNCState extends ConsumerState<ModalAddCountryMNC> {
 
     form.update((state) {
       final country =
-          state.firstWhere((element) => element.label == widget.label);
+          state.firstWhere((element) => element.label == widget.countryName);
       final model = MachineConfigCountriesMNCModel(
-        status: 1,
         label: label,
         mcc: mcc,
         mnc: mnc,
         name: label,
+        country: widget.countryName,
       );
       final mncs = [...country.mncs, model];
       return state.map((e) {
-        if (e.label == widget.label) {
+        if (e.label == widget.countryName) {
           return e.copyWith(mncs: mncs);
         }
         return e;

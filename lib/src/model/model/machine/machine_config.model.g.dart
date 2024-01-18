@@ -50,6 +50,7 @@ MachineConfigModel _$MachineConfigModelFromJson(Map<String, dynamic> json) =>
       clientAllowed: json['clientAllowed'] as String?,
       hiddenManager: json['hiddenManager'] as String?,
       updateLogo: json['updateLogo'] as String?,
+      registeredMccMnc: json['registeredMccMnc'] as String?,
       sms1: json['sms1'] as String?,
       sms2: json['sms2'] as String?,
       sms3: json['sms3'] as String?,
@@ -61,7 +62,7 @@ MachineConfigModel _$MachineConfigModelFromJson(Map<String, dynamic> json) =>
       sender4: json['sender4'] as String?,
       sender5: json['sender5'] as String?,
       operators: json['operators'] == null
-          ? []
+          ? const []
           : MachineConfigModel.fromJsonOperators(json['operators'] as String),
       boardIps: json['boardIps'] == null
           ? const []
@@ -115,6 +116,7 @@ Map<String, dynamic> _$MachineConfigModelToJson(MachineConfigModel instance) =>
       'clientAllowed': instance.clientAllowed,
       'hiddenManager': instance.hiddenManager,
       'updateLogo': instance.updateLogo,
+      'registeredMccMnc': instance.registeredMccMnc,
       'sms1': instance.sms1,
       'sms2': instance.sms2,
       'sms3': instance.sms3,

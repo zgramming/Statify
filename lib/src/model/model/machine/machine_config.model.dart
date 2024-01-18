@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
@@ -62,6 +61,7 @@ class MachineConfigModel extends Equatable {
   final String? clientAllowed;
   final String? hiddenManager;
   final String? updateLogo;
+  final String? registeredMccMnc;
 
   final String? sms1;
   final String? sms2;
@@ -75,7 +75,7 @@ class MachineConfigModel extends Equatable {
   final String? sender4;
   final String? sender5;
 
-  @JsonKey(defaultValue: [], fromJson: fromJsonOperators)
+  @JsonKey(fromJson: fromJsonOperators)
   final List<MachineConfigOperatorsModel> operators;
 
   @JsonKey(fromJson: fromJsonBoardIps)
@@ -127,6 +127,7 @@ class MachineConfigModel extends Equatable {
     this.clientAllowed,
     this.hiddenManager,
     this.updateLogo,
+    this.registeredMccMnc,
     this.sms1,
     this.sms2,
     this.sms3,
@@ -213,6 +214,7 @@ class MachineConfigModel extends Equatable {
       clientAllowed,
       hiddenManager,
       updateLogo,
+      registeredMccMnc,
       sms1,
       sms2,
       sms3,
@@ -275,6 +277,7 @@ class MachineConfigModel extends Equatable {
     String? clientAllowed,
     String? hiddenManager,
     String? updateLogo,
+    String? registeredMccMnc,
     String? sms1,
     String? sms2,
     String? sms3,
@@ -332,6 +335,7 @@ class MachineConfigModel extends Equatable {
       clientAllowed: clientAllowed ?? this.clientAllowed,
       hiddenManager: hiddenManager ?? this.hiddenManager,
       updateLogo: updateLogo ?? this.updateLogo,
+      registeredMccMnc: registeredMccMnc ?? this.registeredMccMnc,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,
