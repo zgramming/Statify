@@ -1,8 +1,10 @@
 import 'package:go_router/go_router.dart';
 
 import 'pages/welcome/long_distance_access/admin/long_distance_access_admin.page.dart';
+import 'pages/welcome/long_distance_access/admin/long_distance_access_login_admin.page.dart';
 import 'pages/welcome/long_distance_access/home/long_distance_access_home_form.page.dart';
 import 'pages/welcome/long_distance_access/long_distance_access.page.dart';
+import 'pages/welcome/long_distance_access/manager/long_distance_access_login_manager.page.dart';
 import 'pages/welcome/long_distance_access/manager/long_distance_access_manager.page.dart';
 import 'pages/welcome/machine/machine_form_page.dart';
 import 'pages/welcome/machine/machine_page.dart';
@@ -61,7 +63,12 @@ const routeChangeLogoPage = "change-logo";
 
 // Long Distance Access
 const routeLDAAdminPage = "machine/:idMachine/long-distance-access/admin";
+const routeLoginLDAAdminPage =
+    "machine/:idMachine/long-distance-access/admin/login";
+
 const routeLDAManagerPage = "machine/:idMachine/long-distance-access/manager";
+const routeLoginLDAManagerPage =
+    "machine/:idMachine/long-distance-access/manager/login";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -236,13 +243,29 @@ final _routes = <RouteBase>[
     },
   ),
   GoRoute(
+    path: "/machine/:idMachine/long-distance-access/admin/login",
+    name: routeLoginLDAAdminPage,
+    builder: (context, state) {
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return LoginLDAAdminPage(
+        idMachine: idMachine,
+      );
+    },
+  ),
+  GoRoute(
     path: "/machine/:idMachine/long-distance-access/manager",
     name: routeLDAManagerPage,
     builder: (context, state) {
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
-      return LongDistanceAccessManagerPage(
-        idMachine: idMachine,
-      );
+      return LongDistanceAccessManagerPage(idMachine: idMachine);
+    },
+  ),
+  GoRoute(
+    path: "/machine/:idMachine/long-distance-access/manager/login",
+    name: routeLoginLDAManagerPage,
+    builder: (context, state) {
+      final idMachine = state.pathParameters['idMachine'] ?? "-1";
+      return LoginLDAManagerPage(idMachine: idMachine);
     },
   ),
 ];

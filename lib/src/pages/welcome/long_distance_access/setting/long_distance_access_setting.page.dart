@@ -88,7 +88,7 @@ class _LongDistanceAccessSettingPageState
     switch (value) {
       case "admin":
         context.pushNamed(
-          routeLDAAdminPage,
+          routeLoginLDAAdminPage,
           pathParameters: {
             "idMachine": widget.idMachine,
           },
@@ -96,7 +96,7 @@ class _LongDistanceAccessSettingPageState
         break;
       case "manager":
         context.pushNamed(
-          routeLDAManagerPage,
+          routeLoginLDAManagerPage,
           pathParameters: {
             "idMachine": widget.idMachine,
           },
