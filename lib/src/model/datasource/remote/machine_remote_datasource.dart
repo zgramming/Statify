@@ -166,6 +166,8 @@ class MachineRemoteDatasource {
         'number': form.number,
         'license': form.license,
         'serial_number': form.serialNumber,
+        'code': form.code,
+        'ip': form.ip,
       },
     );
 
@@ -197,6 +199,8 @@ class MachineRemoteDatasource {
         'serial_number': form.serialNumber,
         'number': form.number,
         'license': form.license,
+        'code': form.code,
+        'ip': form.ip,
       },
     );
     final body = response.body;

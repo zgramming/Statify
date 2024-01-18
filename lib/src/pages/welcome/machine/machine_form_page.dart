@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
 import '../../../model/model/helper/form/form_machine_create_update.model.dart';
+import '../../../router.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
@@ -29,41 +30,35 @@ class MachineFormPage extends ConsumerStatefulWidget {
 class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  late final TextEditingController _nameController;
-  late final TextEditingController _licenseController;
-  late final TextEditingController _serialNumberController;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _licenseController = TextEditingController();
+  final TextEditingController _serialNumberController = TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _ipController = TextEditingController();
 
   bool _needReload = false;
 
   List<SimChooseDropdownModel> availableSim = [];
   SimChooseDropdownModel? selectedSim;
 
-  @override
-  void initState() {
-    super.initState();
-    final id = widget.id;
-
-    final resultAvailableSim = ref.read(CustomProvider.getAvailableSIM);
-    availableSim = resultAvailableSim;
-
-    // Load Machine detail if id is not -1
-
-    _nameController = TextEditingController();
-    _licenseController = TextEditingController();
-    _serialNumberController = TextEditingController();
-
-    Future.microtask(() {
-      ref.read(machineNotifier.notifier).getById(machineId: id);
-    });
+  void onScanQRCode() async {
+    final result =
+        await context.pushNamed<String?>(routeScanQRCodeSerialNumberPage);
+    if (result == null) return;
+    _serialNumberController.text = result;
     setState(() {});
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _licenseController.dispose();
-    _serialNumberController.dispose();
-    super.dispose();
+  void resetForm() {
+    _nameController.clear();
+    _licenseController.clear();
+    _serialNumberController.clear();
+    _formKey.currentState?.reset();
+    _codeController.clear();
+    _ipController.clear();
+    _needReload = true;
+
+    setState(() {});
   }
 
   Future<void> onSubmit() async {
@@ -78,12 +73,16 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     final name = _nameController.text;
     final license = _licenseController.text;
     final serialNumber = _serialNumberController.text;
+    final code = _codeController.text;
+    final ip = _ipController.text;
 
     final form = FormMachineCreateUpdateModel(
       serialNumber: serialNumber,
       name: name,
       number: selectedSim?.value ?? "",
       license: license,
+      code: code,
+      ip: ip,
     );
 
     if (isCreate) {
@@ -93,14 +92,31 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     }
   }
 
-  void resetForm() {
-    _nameController.clear();
-    _licenseController.clear();
-    _serialNumberController.clear();
-    _formKey.currentState?.reset();
-    _needReload = true;
+  void init() {
+    final id = widget.id;
 
+    final resultAvailableSim = ref.read(CustomProvider.getAvailableSIM);
+    availableSim = resultAvailableSim;
+
+    // Load Machine detail if id is not -1
+    ref.read(machineNotifier.notifier).getById(machineId: id);
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => init());
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _licenseController.dispose();
+    _serialNumberController.dispose();
+    _codeController.dispose();
+    _ipController.dispose();
+    super.dispose();
   }
 
   @override
@@ -188,6 +204,8 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
           _nameController.text = value.name;
           _licenseController.text = value.license;
           _serialNumberController.text = value.serialNumber;
+          _codeController.text = value.code ?? "";
+          _ipController.text = value.ip ?? "";
           selectedSim = currentSim;
 
           setState(() {});
@@ -276,15 +294,29 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                             const SizedBox(height: 20),
                             FormBodyRow(
                               title: "Machine Serial Number",
-                              child: TextFormField(
-                                controller: _serialNumberController,
-                                style: bodyFont.copyWith(fontSize: 14.0),
-                                decoration: inputDecorationRounded().copyWith(
-                                  border: const OutlineInputBorder(),
-                                  fillColor: Colors.transparent,
-                                  contentPadding: const EdgeInsets.all(8),
-                                  hintText: "Serial Number",
-                                ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _serialNumberController,
+                                      enabled: false,
+                                      style: bodyFont.copyWith(fontSize: 14.0),
+                                      decoration:
+                                          inputDecorationRounded().copyWith(
+                                        border: const OutlineInputBorder(),
+                                        fillColor: Colors.transparent,
+                                        contentPadding: const EdgeInsets.all(8),
+                                        hintText: "Serial Number",
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton.outlined(
+                                    onPressed: onScanQRCode,
+                                    icon: const Icon(
+                                      Icons.qr_code_scanner_rounded,
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -299,6 +331,36 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                                   fillColor: Colors.transparent,
                                   contentPadding: const EdgeInsets.all(8),
                                   hintText: "Activation License",
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            FormBodyRow(
+                              title: "Code",
+                              child: TextFormField(
+                                controller: _codeController,
+                                style: bodyFont.copyWith(fontSize: 14.0),
+                                keyboardType: TextInputType.phone,
+                                decoration: inputDecorationRounded().copyWith(
+                                  border: const OutlineInputBorder(),
+                                  fillColor: Colors.transparent,
+                                  contentPadding: const EdgeInsets.all(8),
+                                  hintText: "Code",
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            FormBodyRow(
+                              title: "IP",
+                              child: TextFormField(
+                                controller: _ipController,
+                                style: bodyFont.copyWith(fontSize: 14.0),
+                                keyboardType: TextInputType.phone,
+                                decoration: inputDecorationRounded().copyWith(
+                                  border: const OutlineInputBorder(),
+                                  fillColor: Colors.transparent,
+                                  contentPadding: const EdgeInsets.all(8),
+                                  hintText: "IP",
                                 ),
                               ),
                             ),

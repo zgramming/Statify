@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import 'pages/scan-qr-serial-number/scan-qr-serial-number.page.dart';
 import 'pages/welcome/long_distance_access/admin/long_distance_access_admin.page.dart';
 import 'pages/welcome/long_distance_access/admin/long_distance_access_login_admin.page.dart';
 import 'pages/welcome/long_distance_access/home/long_distance_access_home_form.page.dart';
@@ -69,6 +70,9 @@ const routeLoginLDAAdminPage =
 const routeLDAManagerPage = "machine/:idMachine/long-distance-access/manager";
 const routeLoginLDAManagerPage =
     "machine/:idMachine/long-distance-access/manager/login";
+
+// Scan QR Code Serial Number
+const routeScanQRCodeSerialNumberPage = "serial-number/scan";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -266,6 +270,15 @@ final _routes = <RouteBase>[
     builder: (context, state) {
       final idMachine = state.pathParameters['idMachine'] ?? "-1";
       return LoginLDAManagerPage(idMachine: idMachine);
+    },
+  ),
+
+  // Scan QR Code Serial Number
+  GoRoute(
+    path: "/serial-number/scan",
+    name: routeScanQRCodeSerialNumberPage,
+    builder: (context, state) {
+      return const ScanQRCodeSerialNumberPage();
     },
   ),
 ];

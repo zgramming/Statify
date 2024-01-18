@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -17,6 +18,7 @@ class MachineModel extends Equatable {
   final String number;
   final String serialNumber;
   final String license;
+
   final int totalSmsSent;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -29,6 +31,8 @@ class MachineModel extends Equatable {
   final String? result;
   final String? logo;
   final MachineSummaryModel? summary;
+  final String? code;
+  final String? ip;
 
   const MachineModel({
     required this.id,
@@ -37,6 +41,8 @@ class MachineModel extends Equatable {
     required this.number,
     required this.serialNumber,
     required this.license,
+    this.code,
+    this.ip,
     required this.totalSmsSent,
     required this.createdAt,
     required this.updatedAt,
@@ -66,6 +72,8 @@ class MachineModel extends Equatable {
       number,
       serialNumber,
       license,
+      code,
+      ip,
       totalSmsSent,
       createdAt,
       updatedAt,
@@ -91,6 +99,8 @@ class MachineModel extends Equatable {
     String? number,
     String? serialNumber,
     String? license,
+    String? code,
+    String? ip,
     int? totalSmsSent,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -111,6 +121,8 @@ class MachineModel extends Equatable {
       number: number ?? this.number,
       serialNumber: serialNumber ?? this.serialNumber,
       license: license ?? this.license,
+      code: code ?? this.code,
+      ip: ip ?? this.ip,
       totalSmsSent: totalSmsSent ?? this.totalSmsSent,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

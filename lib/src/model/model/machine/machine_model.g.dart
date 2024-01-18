@@ -13,6 +13,8 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
       number: json['number'] as String,
       serialNumber: json['serial_number'] as String,
       license: json['license'] as String,
+      code: json['code'] as String?,
+      ip: json['ip'] as String?,
       totalSmsSent: json['total_sms_sent'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
@@ -54,6 +56,8 @@ Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
       'result': instance.result,
       'logo': instance.logo,
       'summary': instance.summary,
+      'code': instance.code,
+      'ip': instance.ip,
     };
 
 const _$MachineStatusEnumEnumMap = {

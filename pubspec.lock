@@ -664,6 +664,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  mobile_scanner:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: fbd1595495dc58c5837fd94c0ebeddb339ffa405
+      url: "https://github.com/juliansteenbakker/mobile_scanner.git"
+    source: git
+    version: "3.5.6"
   package_config:
     dependency: transitive
     description:
