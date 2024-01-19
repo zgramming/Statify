@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/functions.dart';
 import '../../../../../utils/sizes.dart';
 import '../../../../../utils/styles.dart';
 
-class LDASettingModalSyncronize extends StatefulWidget {
-  const LDASettingModalSyncronize({super.key});
+class LDASettingModalSyncronize extends ConsumerStatefulWidget {
+  const LDASettingModalSyncronize({
+    Key? key,
+    required this.machineId,
+  }) : super(key: key);
+  final String machineId;
 
   @override
-  State<LDASettingModalSyncronize> createState() =>
+  ConsumerState<LDASettingModalSyncronize> createState() =>
       _LDASettingModalSyncronizeState();
 }
 
-class _LDASettingModalSyncronizeState extends State<LDASettingModalSyncronize> {
+class _LDASettingModalSyncronizeState
+    extends ConsumerState<LDASettingModalSyncronize> {
   final ipController = TextEditingController();
   final intervalController = TextEditingController();
-
-  void init() async {}
 
   void onTapSelectAll() {
     showSnackbar(context: context, message: "Not implemented yet");
@@ -26,6 +30,8 @@ class _LDASettingModalSyncronizeState extends State<LDASettingModalSyncronize> {
   void onTapUpload() {
     showSnackbar(context: context, message: "Not implemented yet");
   }
+
+  void init() async {}
 
   @override
   void initState() {
@@ -44,6 +50,12 @@ class _LDASettingModalSyncronizeState extends State<LDASettingModalSyncronize> {
   @override
   Widget build(BuildContext context) {
     bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    // final machine =
+    //     ref.watch(CustomProvider.getMachineByIdProvider(widget.machineId));
+    // final config = machine?.config;
+    // final boardIps = config?.boardIps ?? [];
+    // final operators = config?.operators ?? [];
+
     return AlertDialog(
       insetPadding: const EdgeInsets.all(8),
       contentPadding: const EdgeInsets.all(16),
@@ -61,36 +73,31 @@ class _LDASettingModalSyncronizeState extends State<LDASettingModalSyncronize> {
               ),
             ),
             const SizedBox(height: 10.0),
-            SizedBox(
-              height: h(context) / 3,
-              child: SingleChildScrollView(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(
-                        label: Text("OPERATOR PLMN", style: bodyFontBold),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                height: h(context) / 3,
+                width: w(context) * 0.8,
+                child: const SingleChildScrollView(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SyncItem(
+                        title: "OPERATOR PLMN",
+                        children: [],
                       ),
-                      DataColumn(
-                        label: Text("2G DATA", style: bodyFontBold),
+                      _SyncItem(
+                        title: "2G DATA",
+                        children: [],
                       ),
-                      DataColumn(
-                        label: Text("3G DATA", style: bodyFontBold),
+                      _SyncItem(
+                        title: "3G DATA",
+                        children: [],
                       ),
-                      DataColumn(
-                        label: Text("4G DATA", style: bodyFontBold),
+                      _SyncItem(
+                        title: "4G DATA",
+                        children: [],
                       ),
-                    ],
-                    rows: [
-                      for (int i = 0; i < 10; i++)
-                        DataRow(
-                          cells: [
-                            DataCell(Text("123", style: bodyFont)),
-                            DataCell(Text("123", style: bodyFont)),
-                            DataCell(Text("123", style: bodyFont)),
-                            DataCell(Text("123", style: bodyFont)),
-                          ],
-                        ),
                     ],
                   ),
                 ),
@@ -172,6 +179,34 @@ class _LDASettingModalSyncronizeState extends State<LDASettingModalSyncronize> {
             ],
           ),
       ],
+    );
+  }
+}
+
+class _SyncItem extends StatelessWidget {
+  const _SyncItem({
+    Key? key,
+    required this.title,
+    required this.children,
+  }) : super(key: key);
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            style:
+                bodyFont.copyWith(fontSize: 12.0, fontWeight: FontWeight.bold),
+          ),
+          ...children,
+        ],
+      ),
     );
   }
 }

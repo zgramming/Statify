@@ -42,14 +42,15 @@ class ModalAddMachineGroupOrMachine extends ConsumerWidget {
             child: const Text("Machine Group"),
           ),
           const SizedBox(height: 8.0),
-          ElevatedButton(
+          ElevatedButton.icon(
             onPressed: () {
               context.pop();
               context.pushNamed(routeMachineForm, pathParameters: {
                 "id": "-1",
               });
             },
-            child: const Text("Machine"),
+            icon: const Icon(Icons.qr_code_scanner_rounded),
+            label: const Text("Machine"),
           ),
         ],
       ),

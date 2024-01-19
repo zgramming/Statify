@@ -139,7 +139,9 @@ class _LongDistanceAccessSettingPageState
   void onTapSyncronize() async {
     await showDialog(
       context: context,
-      builder: (context) => const LDASettingModalSyncronize(),
+      builder: (context) => LDASettingModalSyncronize(
+        machineId: widget.idMachine,
+      ),
     );
   }
 

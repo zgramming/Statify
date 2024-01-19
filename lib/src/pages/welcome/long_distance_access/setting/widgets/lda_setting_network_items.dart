@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../utils/fonts.dart';
+import '../../../../../utils/functions.dart';
 import 'lda_setting_modal_gsm.dart';
 import 'lda_setting_modal_lte.dart';
 
@@ -30,9 +31,9 @@ class LDASettingNetworkItems extends StatefulWidget {
 }
 
 class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
-  bool _isGSM = false;
-  bool _isWCDMA = false;
-  bool _isLTE = false;
+  bool _isGSM = true;
+  bool _isWCDMA = true;
+  bool _isLTE = true;
 
   void onTapGSM(bool? value) {
     setState(() {
@@ -70,7 +71,13 @@ class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
                     onChanged: onTapGSM,
                   ),
                 ),
-                Text("GSM", style: bodyFont.copyWith(fontSize: 9.0)),
+                Text(
+                  "GSM",
+                  style: bodyFont.copyWith(
+                    fontSize: 9.0,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ],
             ),
           ),
@@ -106,11 +113,19 @@ class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
                   ),
                 ),
                 Text(
-                  "LTE",
+                  "LTE / 5G",
                   style: bodyFont.copyWith(
                     fontSize: 9.0,
+                    decoration: TextDecoration.underline,
                   ),
                 ),
+                const SizedBox(width: 8.0),
+                InkWell(
+                  onTap: () {
+                    showSnackbar(context: context, message: "Coming soon");
+                  },
+                  child: const Icon(Icons.send_and_archive_outlined),
+                )
               ],
             ),
           ),

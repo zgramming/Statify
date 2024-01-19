@@ -307,12 +307,10 @@ class LDASettingConfigOperatorItemState
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           FittedBox(
-                            child: Text(
-                              config?.arfcnLabel4g ?? "4G ARFCN",
-                              style: textStyleInput,
-                            ),
+                            child: Text(config?.arfcnLabel4g ?? "4G ARFCN",
+                                style: textStyleInput),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 10),
                           TextFormField(
                             onTap: onTap4g,
                             readOnly: true,
@@ -321,7 +319,7 @@ class LDASettingConfigOperatorItemState
                             decoration: inputDecorationRounded().copyWith(
                               hintText: "Enter 4G ARFCN",
                               border: const OutlineInputBorder(),
-                              fillColor: Colors.transparent,
+                              fillColor: Colors.grey.withOpacity(0.2),
                               contentPadding: const EdgeInsets.all(8),
                             ),
                             onChanged: onChange4gArfcn,
@@ -342,7 +340,7 @@ class LDASettingConfigOperatorItemState
                               style: textStyleInput,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 10),
                           TextFormField(
                             controller: arfcn5gController,
                             style: bodyFont.copyWith(fontSize: 14.0),

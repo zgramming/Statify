@@ -56,7 +56,7 @@ class LDASettingModalGSM extends ConsumerWidget {
           children: [
             Center(
               child: Text(
-                "GSM",
+                "2G Data",
                 style: bodyFont.copyWith(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,

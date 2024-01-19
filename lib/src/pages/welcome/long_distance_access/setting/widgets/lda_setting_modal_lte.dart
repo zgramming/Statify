@@ -140,7 +140,7 @@ class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
           children: [
             Center(
               child: Text(
-                "GSM",
+                "4G / 5G Data",
                 style: bodyFont.copyWith(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,

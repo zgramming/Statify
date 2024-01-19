@@ -97,6 +97,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
 
     final resultAvailableSim = ref.read(CustomProvider.getAvailableSIM);
     availableSim = resultAvailableSim;
+    selectedSim = availableSim.firstOrNull;
 
     // Load Machine detail if id is not -1
     ref.read(machineNotifier.notifier).getById(machineId: id);
@@ -292,76 +293,96 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            FormBodyRow(
-                              title: "Machine Serial Number",
-                              child: Row(
+                            Container(
+                              margin: const EdgeInsets.only(),
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Expanded(
+                                  FormBodyRow(
+                                    title: "Machine Serial Number",
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                            controller: _serialNumberController,
+                                            enabled: false,
+                                            style: bodyFont.copyWith(
+                                                fontSize: 14.0),
+                                            decoration: inputDecorationRounded()
+                                                .copyWith(
+                                              border:
+                                                  const OutlineInputBorder(),
+                                              fillColor: Colors.transparent,
+                                              contentPadding:
+                                                  const EdgeInsets.all(8),
+                                              hintText: "Serial Number",
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton.outlined(
+                                          onPressed: onScanQRCode,
+                                          icon: const Icon(
+                                            Icons.qr_code_scanner_rounded,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  // const SizedBox(height: 20),
+                                  // FormBodyRow(
+                                  //   title: "Activation License",
+                                  //   child: TextFormField(
+                                  //     controller: _licenseController,
+                                  //     style: bodyFont.copyWith(fontSize: 14.0),
+                                  //     keyboardType: TextInputType.phone,
+                                  //     decoration: inputDecorationRounded().copyWith(
+                                  //       border: const OutlineInputBorder(),
+                                  //       fillColor: Colors.transparent,
+                                  //       contentPadding: const EdgeInsets.all(8),
+                                  //       hintText: "Activation License",
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  const SizedBox(height: 20),
+                                  FormBodyRow(
+                                    title: "PIN",
                                     child: TextFormField(
-                                      controller: _serialNumberController,
+                                      controller: _codeController,
                                       enabled: false,
                                       style: bodyFont.copyWith(fontSize: 14.0),
+                                      keyboardType: TextInputType.phone,
                                       decoration:
                                           inputDecorationRounded().copyWith(
                                         border: const OutlineInputBorder(),
                                         fillColor: Colors.transparent,
                                         contentPadding: const EdgeInsets.all(8),
-                                        hintText: "Serial Number",
+                                        hintText: "PIN",
                                       ),
                                     ),
                                   ),
-                                  IconButton.outlined(
-                                    onPressed: onScanQRCode,
-                                    icon: const Icon(
-                                      Icons.qr_code_scanner_rounded,
+                                  const SizedBox(height: 20),
+                                  FormBodyRow(
+                                    title: "IP",
+                                    child: TextFormField(
+                                      controller: _ipController,
+                                      enabled: false,
+                                      style: bodyFont.copyWith(fontSize: 14.0),
+                                      keyboardType: TextInputType.phone,
+                                      decoration:
+                                          inputDecorationRounded().copyWith(
+                                        border: const OutlineInputBorder(),
+                                        fillColor: Colors.transparent,
+                                        contentPadding: const EdgeInsets.all(8),
+                                        hintText: "IP",
+                                      ),
                                     ),
-                                  )
+                                  ),
                                 ],
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            FormBodyRow(
-                              title: "Activation License",
-                              child: TextFormField(
-                                controller: _licenseController,
-                                style: bodyFont.copyWith(fontSize: 14.0),
-                                keyboardType: TextInputType.phone,
-                                decoration: inputDecorationRounded().copyWith(
-                                  border: const OutlineInputBorder(),
-                                  fillColor: Colors.transparent,
-                                  contentPadding: const EdgeInsets.all(8),
-                                  hintText: "Activation License",
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            FormBodyRow(
-                              title: "Code",
-                              child: TextFormField(
-                                controller: _codeController,
-                                style: bodyFont.copyWith(fontSize: 14.0),
-                                keyboardType: TextInputType.phone,
-                                decoration: inputDecorationRounded().copyWith(
-                                  border: const OutlineInputBorder(),
-                                  fillColor: Colors.transparent,
-                                  contentPadding: const EdgeInsets.all(8),
-                                  hintText: "Code",
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            FormBodyRow(
-                              title: "IP",
-                              child: TextFormField(
-                                controller: _ipController,
-                                style: bodyFont.copyWith(fontSize: 14.0),
-                                keyboardType: TextInputType.phone,
-                                decoration: inputDecorationRounded().copyWith(
-                                  border: const OutlineInputBorder(),
-                                  fillColor: Colors.transparent,
-                                  contentPadding: const EdgeInsets.all(8),
-                                  hintText: "IP",
-                                ),
                               ),
                             ),
                             const SizedBox(height: 20),
