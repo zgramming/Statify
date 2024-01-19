@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
 import '../../../model/model/helper/form/form_machine_create_update.model.dart';
+import '../../../model/model/route/scan-qrcode-serial-number.route-extra.model.dart';
 import '../../../router.dart';
 import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
@@ -19,9 +21,11 @@ class MachineFormPage extends ConsumerStatefulWidget {
   const MachineFormPage({
     super.key,
     required this.id,
+    this.extraScannedQRCodeNewMachine,
   });
 
   final String id;
+  final String? extraScannedQRCodeNewMachine;
 
   @override
   ConsumerState<MachineFormPage> createState() => _MachineFormPageState();
@@ -42,8 +46,12 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   SimChooseDropdownModel? selectedSim;
 
   void onScanQRCode() async {
-    final result =
-        await context.pushNamed<String?>(routeScanQRCodeSerialNumberPage);
+    final result = await context.pushNamed<String?>(
+      routeScanQRCodeSerialNumberPage,
+      extra: ScanQRCodeSerialNumberRouteExtraModel(
+        isNewMachine: widget.id == "-1",
+      ),
+    );
     if (result == null) return;
     _serialNumberController.text = result;
     setState(() {});
@@ -92,6 +100,21 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     }
   }
 
+  void autoFilledScanQRCodeNewMachine() {
+    final isCreate = widget.id == "-1";
+    if (!isCreate) return;
+    final extraScannedQRCodeNewMachine = widget.extraScannedQRCodeNewMachine;
+    if (extraScannedQRCodeNewMachine == null) return;
+
+    final splitted = extraScannedQRCodeNewMachine.split("_");
+    if (splitted.length != 3) return;
+
+    final [serialNumber, code, ip] = splitted;
+    _serialNumberController.text = serialNumber;
+    _codeController.text = code;
+    _ipController.text = ip;
+  }
+
   void init() {
     final id = widget.id;
 
@@ -101,6 +124,10 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
 
     // Load Machine detail if id is not -1
     ref.read(machineNotifier.notifier).getById(machineId: id);
+
+    // Auto filled scan QR Code new machine
+    autoFilledScanQRCodeNewMachine();
+
     setState(() {});
   }
 
@@ -117,6 +144,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     _serialNumberController.dispose();
     _codeController.dispose();
     _ipController.dispose();
+
     super.dispose();
   }
 
@@ -246,6 +274,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
                               title: "Machine Name",
                               child: TextFormField(
                                 controller: _nameController,
+                                autofocus: widget.id == "-1",
                                 style: bodyFont.copyWith(fontSize: 14.0),
                                 decoration: inputDecorationRounded().copyWith(
                                   hintText: "Machine Name",

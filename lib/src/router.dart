@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 
+import 'model/model/route/machine_form.route-extra.model.dart';
+import 'model/model/route/scan-qrcode-serial-number.route-extra.model.dart';
 import 'pages/scan-qr-serial-number/scan-qr-serial-number.page.dart';
 import 'pages/welcome/long_distance_access/admin/long_distance_access_admin.page.dart';
 import 'pages/welcome/long_distance_access/admin/long_distance_access_login_admin.page.dart';
@@ -113,7 +115,11 @@ final _routes = <RouteBase>[
     name: routeMachineForm,
     builder: (context, state) {
       final id = state.pathParameters['id'] ?? "-1";
-      return MachineFormPage(id: id);
+      final extra = state.extra as MachineFormRouteExtraModel?;
+      return MachineFormPage(
+        id: id,
+        extraScannedQRCodeNewMachine: extra?.scannedQRCodeValueNewMachine,
+      );
     },
   ),
 
@@ -278,7 +284,10 @@ final _routes = <RouteBase>[
     path: "/serial-number/scan",
     name: routeScanQRCodeSerialNumberPage,
     builder: (context, state) {
-      return const ScanQRCodeSerialNumberPage();
+      final extra = state.extra as ScanQRCodeSerialNumberRouteExtraModel?;
+      return ScanQRCodeSerialNumberPage(
+        isNewMachine: extra?.isNewMachine ?? false,
+      );
     },
   ),
 ];

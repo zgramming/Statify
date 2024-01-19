@@ -1,9 +1,17 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../model/model/route/machine_form.route-extra.model.dart';
+import '../../router.dart';
+
 class ScanQRCodeSerialNumberPage extends StatefulWidget {
-  const ScanQRCodeSerialNumberPage({super.key});
+  const ScanQRCodeSerialNumberPage({
+    Key? key,
+    required this.isNewMachine,
+  }) : super(key: key);
+  final bool isNewMachine;
 
   @override
   State<ScanQRCodeSerialNumberPage> createState() =>
@@ -35,8 +43,19 @@ class _ScanQRCodeSerialNumberPageState
       isAlreadyScanned = true;
     });
 
-    // back to previous page with barcode value
-    context.pop(value);
+    if (widget.isNewMachine) {
+      context.pop(value);
+      context.pushNamed(
+        routeMachineForm,
+        pathParameters: {
+          "id": "-1",
+        },
+        extra: MachineFormRouteExtraModel(scannedQRCodeValueNewMachine: value),
+      );
+    } else {
+      // Only back to previous page with barcode value if not new machine
+      context.pop(value);
+    }
   }
 
   @override

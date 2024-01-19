@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../model/model/route/scan-qrcode-serial-number.route-extra.model.dart';
 import '../../../../router.dart';
 import '../../../../utils/fonts.dart';
 
@@ -43,11 +44,14 @@ class ModalAddMachineGroupOrMachine extends ConsumerWidget {
           ),
           const SizedBox(height: 8.0),
           ElevatedButton.icon(
-            onPressed: () {
+            onPressed: () async {
               context.pop();
-              context.pushNamed(routeMachineForm, pathParameters: {
-                "id": "-1",
-              });
+              context.pushNamed<String?>(
+                routeScanQRCodeSerialNumberPage,
+                extra: const ScanQRCodeSerialNumberRouteExtraModel(
+                  isNewMachine: true,
+                ),
+              );
             },
             icon: const Icon(Icons.qr_code_scanner_rounded),
             label: const Text("Machine"),
