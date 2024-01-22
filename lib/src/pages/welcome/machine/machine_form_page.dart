@@ -106,7 +106,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     final extraScannedQRCodeNewMachine = widget.extraScannedQRCodeNewMachine;
     if (extraScannedQRCodeNewMachine == null) return;
 
-    final splitted = extraScannedQRCodeNewMachine.split("_");
+    final splitted = extraScannedQRCodeNewMachine.split(",");
     if (splitted.length != 3) return;
 
     final [serialNumber, code, ip] = splitted;
