@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../injection.dart';
-import '../../../../../model/model/helper/props/props_get_survey_response_grouping.model.dart';
+import '../../../../../model/model/helper/props_provider/props_get_survey_response_grouping.model.dart';
 import '../../../../../model/model/survey_response/survey_response_model.dart';
 import '../../../../../router.dart';
 import '../../../../../utils/enum.dart';

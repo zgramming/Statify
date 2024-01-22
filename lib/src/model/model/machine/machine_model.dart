@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -33,6 +32,8 @@ class MachineModel extends Equatable {
   final MachineSummaryModel? summary;
   final String? code;
   final String? ip;
+  final String? pivotMachineGroupId;
+  final String? pivotMachineId;
 
   const MachineModel({
     required this.id,
@@ -41,8 +42,6 @@ class MachineModel extends Equatable {
     required this.number,
     required this.serialNumber,
     required this.license,
-    this.code,
-    this.ip,
     required this.totalSmsSent,
     required this.createdAt,
     required this.updatedAt,
@@ -55,6 +54,10 @@ class MachineModel extends Equatable {
     required this.result,
     this.logo,
     this.summary,
+    this.code,
+    this.ip,
+    this.pivotMachineGroupId,
+    this.pivotMachineId,
   });
 
   factory MachineModel.fromJson(Map<String, dynamic> json) =>
@@ -72,8 +75,6 @@ class MachineModel extends Equatable {
       number,
       serialNumber,
       license,
-      code,
-      ip,
       totalSmsSent,
       createdAt,
       updatedAt,
@@ -86,6 +87,10 @@ class MachineModel extends Equatable {
       result,
       logo,
       summary,
+      code,
+      ip,
+      pivotMachineGroupId,
+      pivotMachineId,
     ];
   }
 
@@ -99,8 +104,6 @@ class MachineModel extends Equatable {
     String? number,
     String? serialNumber,
     String? license,
-    String? code,
-    String? ip,
     int? totalSmsSent,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -113,6 +116,10 @@ class MachineModel extends Equatable {
     String? result,
     String? logo,
     MachineSummaryModel? summary,
+    String? code,
+    String? ip,
+    String? pivotMachineGroupId,
+    String? pivotMachineId,
   }) {
     return MachineModel(
       id: id ?? this.id,
@@ -121,8 +128,6 @@ class MachineModel extends Equatable {
       number: number ?? this.number,
       serialNumber: serialNumber ?? this.serialNumber,
       license: license ?? this.license,
-      code: code ?? this.code,
-      ip: ip ?? this.ip,
       totalSmsSent: totalSmsSent ?? this.totalSmsSent,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -135,6 +140,10 @@ class MachineModel extends Equatable {
       result: result ?? this.result,
       logo: logo ?? this.logo,
       summary: summary ?? this.summary,
+      code: code ?? this.code,
+      ip: ip ?? this.ip,
+      pivotMachineGroupId: pivotMachineGroupId ?? this.pivotMachineGroupId,
+      pivotMachineId: pivotMachineId ?? this.pivotMachineId,
     );
   }
 }

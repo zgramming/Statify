@@ -138,6 +138,41 @@ class MachineRemoteDatasource {
     }
   }
 
+  Future<MachineModel?> getByIP({
+    required String ip,
+    required String machineId,
+  }) async {
+    final currentToken = await FlutterSecureStorageUtils.getTokenAuth();
+    final uri = Uri.parse("$kBaseApiUrl/machines/$machineId/find-by-ip");
+    final request = http.Request('GET', uri);
+    final headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $currentToken",
+    };
+    final bodyJson = {
+      "ip": ip,
+    };
+    request.body = json.encode(bodyJson);
+    request.headers.addAll(headers);
+
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+    final statusCode = response.statusCode;
+    final decoded = Map<String, dynamic>.from(jsonDecode(body));
+
+    if (statusCode == 200) {
+      final data = decoded['data'];
+      final machine = MachineModel.fromJson(data);
+      return machine;
+    } else {
+      final message = decoded.containsKey('message')
+          ? decoded['message']
+          : 'Failed to load machine';
+      throw Exception(message);
+    }
+  }
+
   Future<List<String>> getResults(String nameFileResult) async {
     final uri = Uri.parse(nameFileResult);
     final response = await client.get(uri);

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../injection.dart';
 import '../../model/model/helper/dropdown/sim_choose_dropdown_model.dart';
-import '../../model/model/helper/props/props_get_survey_response_grouping.model.dart';
+import '../../model/model/helper/props_provider/props_get_survey_response_grouping.model.dart';
 import '../../model/model/machine/machine_model.dart';
 import '../../model/model/machine_whatsapp/machine_whatsapp_model.dart';
 import '../../model/model/survey_response/survey_response_model.dart';

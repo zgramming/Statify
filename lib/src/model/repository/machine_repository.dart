@@ -72,6 +72,21 @@ class MachineRepository {
     }
   }
 
+  Future<Either<Failure, MachineModel?>> getByIP({
+    required String machineId,
+    required String ip,
+  }) async {
+    try {
+      final result = await remoteDatasource.getByIP(
+        machineId: machineId,
+        ip: ip,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
   Future<Either<Failure, List<String>>> getResults(
       String nameFileResult) async {
     try {

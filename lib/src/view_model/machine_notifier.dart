@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
@@ -153,6 +154,21 @@ class MachineNotifier extends StateNotifier<MachineState> {
       (failure) => state = state.copyWith(
           onGetExport: AsyncError(failure.message, StackTrace.current)),
       (data) => state = state.copyWith(onGetExport: AsyncData(data)),
+    );
+  }
+
+  Future<MachineModel?> getByIP({
+    required String machineId,
+    required String ip,
+  }) async {
+    final result = await repository.getByIP(
+      machineId: machineId,
+      ip: ip,
+    );
+
+    return result.fold(
+      (failure) => throw failure.message,
+      (data) => data,
     );
   }
 

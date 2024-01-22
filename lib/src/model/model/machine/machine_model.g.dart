@@ -13,8 +13,6 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
       number: json['number'] as String,
       serialNumber: json['serial_number'] as String,
       license: json['license'] as String,
-      code: json['code'] as String?,
-      ip: json['ip'] as String?,
       totalSmsSent: json['total_sms_sent'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
@@ -34,6 +32,10 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
           ? null
           : MachineSummaryModel.fromJson(
               json['summary'] as Map<String, dynamic>),
+      code: json['code'] as String?,
+      ip: json['ip'] as String?,
+      pivotMachineGroupId: json['pivot_machine_group_id'] as String?,
+      pivotMachineId: json['pivot_machine_id'] as String?,
     );
 
 Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
@@ -58,6 +60,8 @@ Map<String, dynamic> _$MachineModelToJson(MachineModel instance) =>
       'summary': instance.summary,
       'code': instance.code,
       'ip': instance.ip,
+      'pivot_machine_group_id': instance.pivotMachineGroupId,
+      'pivot_machine_id': instance.pivotMachineId,
     };
 
 const _$MachineStatusEnumEnumMap = {
