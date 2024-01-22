@@ -190,12 +190,11 @@ class _SurveyResponseFormPageState
         });
       },
     );
-    return WillPopScope(
-      onWillPop: () {
-        if (shouldReload) {
+    return PopScope(
+      onPopInvoked: (didPop) {
+        if (didPop && shouldReload) {
           ref.invalidate(surveyResponseNotifier(widget.idSurvey));
         }
-        return Future.value(true);
       },
       child: Scaffold(
         appBar: AppBar(

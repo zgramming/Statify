@@ -243,12 +243,11 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
     );
 
     final machine = ref.watch(machineNotifier).onGetById.unwrapPrevious();
-    return WillPopScope(
-      onWillPop: () {
-        if (_needReload) {
+    return PopScope(
+      onPopInvoked: (didPop) {
+        if (didPop && _needReload) {
           ref.invalidate(getAllMachineFutureProvider);
         }
-        return Future.value(true);
       },
       child: Scaffold(
         appBar: AppBar(
