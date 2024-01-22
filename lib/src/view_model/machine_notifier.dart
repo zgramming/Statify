@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
@@ -6,10 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/model/helper/form/form_machine_create_update.model.dart';
 import '../model/model/helper/form/form_machine_update_config.model.dart';
-import '../model/model/machine/machine_create_response_model.dart';
-import '../model/model/machine/machine_delete_response_model.dart';
 import '../model/model/machine/machine_model.dart';
-import '../model/model/machine/machine_update_response_model.dart';
 import '../model/repository/machine_repository.dart';
 import '../utils/enum.dart';
 
@@ -20,10 +16,10 @@ class MachineState extends Equatable {
   final AsyncValue<MachineModel?> onGetByNumber;
   final AsyncValue<Uint8List?> onGetExport;
   final AsyncValue<List<String>?> onGetResults;
-  final AsyncValue<MachineCreateResponseModel?> onCreate;
-  final AsyncValue<MachineUpdateResponseModel?> onUpdate;
+  final AsyncValue<MachineModel?> onCreate;
+  final AsyncValue<MachineModel?> onUpdate;
   final AsyncValue<MachineModel?> onUpdateConfig;
-  final AsyncValue<MachineDeleteResponseModel?> onDelete;
+  final AsyncValue<MachineModel?> onDelete;
 
   const MachineState({
     this.items = const [],
@@ -64,10 +60,10 @@ class MachineState extends Equatable {
     AsyncValue<MachineModel?>? onGetByNumber,
     AsyncValue<Uint8List?>? onGetExport,
     AsyncValue<List<String>?>? onGetResults,
-    AsyncValue<MachineCreateResponseModel?>? onCreate,
-    AsyncValue<MachineUpdateResponseModel?>? onUpdate,
+    AsyncValue<MachineModel?>? onCreate,
+    AsyncValue<MachineModel?>? onUpdate,
     AsyncValue<MachineModel?>? onUpdateConfig,
-    AsyncValue<MachineDeleteResponseModel?>? onDelete,
+    AsyncValue<MachineModel?>? onDelete,
   }) {
     return MachineState(
       items: items ?? this.items,

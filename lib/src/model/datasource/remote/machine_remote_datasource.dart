@@ -8,11 +8,8 @@ import '../../../utils/enum.dart';
 import '../../../utils/flutter_secure_storage.dart';
 import '../../model/helper/form/form_machine_create_update.model.dart';
 import '../../model/helper/form/form_machine_update_config.model.dart';
-import '../../model/machine/machine_create_response_model.dart';
-import '../../model/machine/machine_delete_response_model.dart';
 import '../../model/machine/machine_model.dart';
 import '../../model/machine/machine_summary.model.dart';
-import '../../model/machine/machine_update_response_model.dart';
 
 class MachineRemoteDatasource {
   final http.Client client;
@@ -189,7 +186,7 @@ class MachineRemoteDatasource {
     }
   }
 
-  Future<MachineCreateResponseModel> create({
+  Future<MachineModel> create({
     required FormMachineCreateUpdateModel form,
     required String userId,
   }) async {
@@ -210,7 +207,7 @@ class MachineRemoteDatasource {
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final data = decoded['data'];
-      final result = MachineCreateResponseModel.fromJson(data);
+      final result = MachineModel.fromJson(data);
       return result;
     } else {
       final message = decoded.containsKey('message')
@@ -220,7 +217,7 @@ class MachineRemoteDatasource {
     }
   }
 
-  Future<MachineUpdateResponseModel> update({
+  Future<MachineModel> update({
     required FormMachineCreateUpdateModel form,
     required String machineId,
     required String userId,
@@ -243,7 +240,7 @@ class MachineRemoteDatasource {
 
     if (response.statusCode == 200) {
       final data = decoded['data'];
-      final result = MachineUpdateResponseModel.fromJson(data);
+      final result = MachineModel.fromJson(data);
       return result;
     } else {
       final message = decoded.containsKey('message')
@@ -400,7 +397,7 @@ class MachineRemoteDatasource {
     }
   }
 
-  Future<MachineDeleteResponseModel> delete({
+  Future<MachineModel> delete({
     required String userId,
     required String machineId,
   }) async {
@@ -410,7 +407,7 @@ class MachineRemoteDatasource {
     final decoded = Map<String, dynamic>.from(jsonDecode(body));
     if (response.statusCode == 200) {
       final data = decoded['data'];
-      final result = MachineDeleteResponseModel.fromJson(data);
+      final result = MachineModel.fromJson(data);
       return result;
     } else {
       final message = decoded.containsKey('message')

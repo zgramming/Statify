@@ -231,7 +231,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
               .firstWhereOrNull((element) => element.value == value.number);
 
           _nameController.text = value.name;
-          _licenseController.text = value.license;
+          _licenseController.text = value.license ?? "";
           _serialNumberController.text = value.serialNumber;
           _codeController.text = value.code ?? "";
           _ipController.text = value.ip ?? "";

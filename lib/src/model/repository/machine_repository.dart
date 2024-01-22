@@ -7,10 +7,7 @@ import '../../utils/failure.dart';
 import '../datasource/remote/machine_remote_datasource.dart';
 import '../model/helper/form/form_machine_create_update.model.dart';
 import '../model/helper/form/form_machine_update_config.model.dart';
-import '../model/machine/machine_create_response_model.dart';
-import '../model/machine/machine_delete_response_model.dart';
 import '../model/machine/machine_model.dart';
-import '../model/machine/machine_update_response_model.dart';
 
 class MachineRepository {
   final MachineRemoteDatasource remoteDatasource;
@@ -97,7 +94,7 @@ class MachineRepository {
     }
   }
 
-  Future<Either<Failure, MachineCreateResponseModel>> create({
+  Future<Either<Failure, MachineModel>> create({
     required FormMachineCreateUpdateModel form,
     required String userId,
   }) async {
@@ -112,7 +109,7 @@ class MachineRepository {
     }
   }
 
-  Future<Either<Failure, MachineUpdateResponseModel>> update({
+  Future<Either<Failure, MachineModel>> update({
     required String machineId,
     required String userId,
     required FormMachineCreateUpdateModel form,
@@ -140,7 +137,7 @@ class MachineRepository {
     }
   }
 
-  Future<Either<Failure, MachineDeleteResponseModel>> delete({
+  Future<Either<Failure, MachineModel>> delete({
     required String userId,
     required String machineId,
   }) async {

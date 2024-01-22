@@ -131,7 +131,7 @@ class _MachinePageItemState extends ConsumerState<_MachinePageItem> {
                 const SizedBox(height: 4.0),
                 RowBody(
                   title: "Activation License",
-                  content: item.license,
+                  content: "${item.license}",
                   titleFlex: 7,
                   contentFlex: 5,
                   contentStyle: textStyle,

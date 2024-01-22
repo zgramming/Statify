@@ -12,7 +12,7 @@ MachineModel _$MachineModelFromJson(Map<String, dynamic> json) => MachineModel(
       name: json['name'] as String,
       number: json['number'] as String,
       serialNumber: json['serial_number'] as String,
-      license: json['license'] as String,
+      license: json['license'] as String?,
       totalSmsSent: json['total_sms_sent'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
