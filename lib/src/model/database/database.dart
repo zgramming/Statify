@@ -5,6 +5,7 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
+import '../model/application_config/application_config_model.dart';
 import '../model/logo/logo.model.dart';
 import '../model/wifi_control/wifi_control.model.dart';
 
@@ -125,10 +126,15 @@ class MyDatabase extends _$MyDatabase {
   Future<bool> updateByKeyApplicationConfig(
     ApplicationConfigTableCompanion applicationConfig,
   ) async {
-    final result = await (update(applicationConfigTable)
-          ..where((tbl) => tbl.key.equals(applicationConfig.key.value)))
-        .replace(applicationConfig);
-    return result;
+    try {
+      final result = await (update(applicationConfigTable)
+            ..where((tbl) => tbl.key.equals(applicationConfig.key.value)))
+          .write(applicationConfig);
+
+      return result > 0;
+    } catch (e) {
+      return false;
+    }
   }
 
   // Delete by key Application Config
@@ -137,6 +143,26 @@ class MyDatabase extends _$MyDatabase {
           ..where((tbl) => tbl.key.equals(key)))
         .go();
     return result > 0;
+  }
+
+  Future<ApplicationConfigModel> upsertApplicationConfig(
+    ApplicationConfigTableCompanion applicationConfig,
+  ) async {
+    final result = await getByKeyApplicationConfig(applicationConfig.key.value);
+    if (result == null) {
+      await insertApplicationConfig(applicationConfig);
+    } else {
+      await updateByKeyApplicationConfig(applicationConfig);
+    }
+
+    final currentApplicationConfig =
+        await getByKeyApplicationConfig(applicationConfig.key.value);
+
+    return ApplicationConfigModel(
+      id: currentApplicationConfig!.id,
+      key: currentApplicationConfig.key,
+      value: currentApplicationConfig.value,
+    );
   }
 
   //! Logo Table Query Start

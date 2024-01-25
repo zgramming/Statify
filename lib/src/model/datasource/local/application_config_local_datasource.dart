@@ -68,6 +68,20 @@ class ApplicationConfigLocalDatasource {
     return result;
   }
 
+  Future<ApplicationConfigModel> upsert({
+    required String key,
+    required String value,
+  }) async {
+    final result = await database.upsertApplicationConfig(
+      ApplicationConfigTableCompanion(
+        key: Value(key),
+        value: Value(value),
+      ),
+    );
+
+    return result;
+  }
+
   Future<bool> deleteByKey(String key) async {
     final result = await database.deleteByKeyApplicationConfig(key);
     return result;

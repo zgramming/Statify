@@ -71,7 +71,7 @@ class IncomingMessageReceiver : BroadcastReceiver(), EventChannel.StreamHandler 
             Log.wtf("IncomingMessageReceiver", "onReceive: $map");
 
             // Show toast
-            Toast.makeText(context, "Incoming SMS detected", Toast.LENGTH_LONG).show();
+            // Toast.makeText(context, "Incoming SMS detected", Toast.LENGTH_LONG).show();
 
             eventSink?.success(map);
         } else {

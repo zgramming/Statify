@@ -66,6 +66,21 @@ class ApplicationConfigRepository {
     }
   }
 
+  Future<Either<Failure, ApplicationConfigModel>> upsert({
+    required String key,
+    required String value,
+  }) async {
+    try {
+      final result = await localDatasource.upsert(
+        key: key,
+        value: value,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
   Future<Either<Failure, bool>> delete(String key) async {
     try {
       final result = await localDatasource.deleteByKey(key);

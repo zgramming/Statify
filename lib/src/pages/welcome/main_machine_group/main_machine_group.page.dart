@@ -14,6 +14,7 @@ import '../../../model/model/machine/machine_model.dart';
 import '../../../model/model/machine_group/machine_group.model.dart';
 import '../../../model/model/temporary_pending_response/temporary_pending_response.model.dart';
 import '../../../router.dart';
+import '../../../utils/constant.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/event_channel.dart';
 import '../../../utils/fonts.dart';
@@ -21,6 +22,7 @@ import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../../view_model/custom_notifier/get_alll_machine_group.notifier.dart';
+import '../../../view_model/custom_notifier/get_application_config_by_key.notifier.dart';
 import '../../../view_model/custom_notifier/listen_pending_response_notifier.dart';
 import '../../../view_model/custom_notifier/log_listen_pending_response.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
@@ -249,15 +251,24 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
+  void init() async {
+    final autoResponseServerFuture = await ref.read(
+        getApplicationConfigByKeyFutureProvider(kAutoRespondServer).future);
+    final isActiveAutoResponseServer =
+        autoResponseServerFuture?.value == "true";
+
+    if (isActiveAutoResponseServer) {
       listenIncomingCallV2();
       listenIncomingMessage();
       listenOnSentMessage();
       listenTemporaryPendingResponse();
-    });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => init());
   }
 
   @override

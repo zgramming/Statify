@@ -10,6 +10,7 @@ class ApplicationConfigState extends Equatable {
   final AsyncValue<int> onInsert;
   final AsyncValue<bool> onUpdateByKey;
   final AsyncValue<bool> onDeleteByKey;
+  final AsyncValue<ApplicationConfigModel?> onUpsert;
 
   const ApplicationConfigState({
     this.onGetAll = const AsyncLoading(),
@@ -17,6 +18,7 @@ class ApplicationConfigState extends Equatable {
     this.onInsert = const AsyncLoading(),
     this.onUpdateByKey = const AsyncLoading(),
     this.onDeleteByKey = const AsyncLoading(),
+    this.onUpsert = const AsyncLoading(),
   });
 
   @override
@@ -27,6 +29,7 @@ class ApplicationConfigState extends Equatable {
       onInsert,
       onUpdateByKey,
       onDeleteByKey,
+      onUpsert,
     ];
   }
 
@@ -39,6 +42,7 @@ class ApplicationConfigState extends Equatable {
     AsyncValue<int>? onInsert,
     AsyncValue<bool>? onUpdateByKey,
     AsyncValue<bool>? onDeleteByKey,
+    AsyncValue<ApplicationConfigModel?>? onUpsert,
   }) {
     return ApplicationConfigState(
       onGetAll: onGetAll ?? this.onGetAll,
@@ -46,6 +50,7 @@ class ApplicationConfigState extends Equatable {
       onInsert: onInsert ?? this.onInsert,
       onUpdateByKey: onUpdateByKey ?? this.onUpdateByKey,
       onDeleteByKey: onDeleteByKey ?? this.onDeleteByKey,
+      onUpsert: onUpsert ?? this.onUpsert,
     );
   }
 }
@@ -109,6 +114,22 @@ class ApplicationConfigNotifier extends StateNotifier<ApplicationConfigState> {
         onInsert: AsyncError(failure.message, StackTrace.current),
       ),
       (data) => state = state.copyWith(onInsert: AsyncData(data)),
+    );
+  }
+
+  Future<void> upsert({
+    required String key,
+    required String value,
+  }) async {
+    final result = await repository.upsert(
+      key: key,
+      value: value,
+    );
+    result.fold(
+      (failure) => state = state.copyWith(
+        onUpsert: AsyncError(failure.message, StackTrace.current),
+      ),
+      (data) => state = state.copyWith(onUpsert: AsyncData(data)),
     );
   }
 

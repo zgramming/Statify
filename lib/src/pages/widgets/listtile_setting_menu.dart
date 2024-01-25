@@ -1,4 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
+import '../../utils/fonts.dart';
 
 class ListTileSettingMenu extends StatelessWidget {
   const ListTileSettingMenu({
@@ -7,6 +10,7 @@ class ListTileSettingMenu extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.leadingIcon,
+    this.trailing = const Icon(Icons.chevron_right),
     this.leadingBackgroundColor,
   }) : super(key: key);
 
@@ -14,6 +18,7 @@ class ListTileSettingMenu extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData leadingIcon;
+  final Widget trailing;
   final Color? leadingBackgroundColor;
 
   @override
@@ -28,9 +33,17 @@ class ListTileSettingMenu extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
+        title: Text(
+          title,
+          style: bodyFont.copyWith(
+            fontSize: 14.0,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: bodyFont.copyWith(fontSize: 10.0, color: Colors.grey),
+        ),
+        trailing: trailing,
         onTap: onTap,
       ),
     );
