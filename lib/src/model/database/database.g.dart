@@ -793,6 +793,180 @@ class TemporaryPendingResponseTableCompanion
   }
 }
 
+class $WifiControlTableTable extends WifiControlTable
+    with TableInfo<$WifiControlTableTable, WifiControlTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WifiControlTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+      'url', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, url];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'wifi_control';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<WifiControlTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+          _urlMeta, url.isAcceptableOrUnknown(data['url']!, _urlMeta));
+    } else if (isInserting) {
+      context.missing(_urlMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  WifiControlTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return WifiControlTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      url: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}url'])!,
+    );
+  }
+
+  @override
+  $WifiControlTableTable createAlias(String alias) {
+    return $WifiControlTableTable(attachedDatabase, alias);
+  }
+}
+
+class WifiControlTableData extends DataClass
+    implements Insertable<WifiControlTableData> {
+  final int id;
+  final String url;
+  const WifiControlTableData({required this.id, required this.url});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['url'] = Variable<String>(url);
+    return map;
+  }
+
+  WifiControlTableCompanion toCompanion(bool nullToAbsent) {
+    return WifiControlTableCompanion(
+      id: Value(id),
+      url: Value(url),
+    );
+  }
+
+  factory WifiControlTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return WifiControlTableData(
+      id: serializer.fromJson<int>(json['id']),
+      url: serializer.fromJson<String>(json['url']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'url': serializer.toJson<String>(url),
+    };
+  }
+
+  WifiControlTableData copyWith({int? id, String? url}) => WifiControlTableData(
+        id: id ?? this.id,
+        url: url ?? this.url,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('WifiControlTableData(')
+          ..write('id: $id, ')
+          ..write('url: $url')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, url);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is WifiControlTableData &&
+          other.id == this.id &&
+          other.url == this.url);
+}
+
+class WifiControlTableCompanion extends UpdateCompanion<WifiControlTableData> {
+  final Value<int> id;
+  final Value<String> url;
+  const WifiControlTableCompanion({
+    this.id = const Value.absent(),
+    this.url = const Value.absent(),
+  });
+  WifiControlTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String url,
+  }) : url = Value(url);
+  static Insertable<WifiControlTableData> custom({
+    Expression<int>? id,
+    Expression<String>? url,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (url != null) 'url': url,
+    });
+  }
+
+  WifiControlTableCompanion copyWith({Value<int>? id, Value<String>? url}) {
+    return WifiControlTableCompanion(
+      id: id ?? this.id,
+      url: url ?? this.url,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WifiControlTableCompanion(')
+          ..write('id: $id, ')
+          ..write('url: $url')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(e);
   late final $ApplicationConfigTableTable applicationConfigTable =
@@ -800,10 +974,16 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   late final $LogoTableTable logoTable = $LogoTableTable(this);
   late final $TemporaryPendingResponseTableTable temporaryPendingResponseTable =
       $TemporaryPendingResponseTableTable(this);
+  late final $WifiControlTableTable wifiControlTable =
+      $WifiControlTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [applicationConfigTable, logoTable, temporaryPendingResponseTable];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        applicationConfigTable,
+        logoTable,
+        temporaryPendingResponseTable,
+        wifiControlTable
+      ];
 }

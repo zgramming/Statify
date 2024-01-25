@@ -119,50 +119,52 @@ class ChangeLogoPageState extends ConsumerState<ChangeLogoPage> {
       appBar: AppBar(
         title: const Text("Change Logo Form"),
       ),
-      body: Builder(builder: (context) {
-        return logoAsync.when(
-          data: (data) => SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              margin: const EdgeInsets.all(0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (_selectedFile != null) ...[
-                      Image.memory(
-                        _selectedFile!,
-                        width: 100,
-                        height: 100,
+      body: Builder(
+        builder: (context) {
+          return logoAsync.when(
+            data: (data) => SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Card(
+                margin: const EdgeInsets.all(0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (_selectedFile != null) ...[
+                        Image.memory(
+                          _selectedFile!,
+                          width: 100,
+                          height: 100,
+                        ),
+                        const SizedBox(height: 16.0),
+                      ] else ...[
+                        Image.asset(
+                          kURLLogoHitech,
+                          // width: 100,
+                        ),
+                        const SizedBox(height: 16.0),
+                      ],
+                      OutlinedButton.icon(
+                        onPressed: onUpload,
+                        icon: const Icon(Icons.file_upload),
+                        label: const Text("Pick Image from Gallery"),
                       ),
-                      const SizedBox(height: 16.0),
-                    ] else ...[
-                      Image.asset(
-                        kURLLogoHitech,
-                        // width: 100,
-                      ),
-                      const SizedBox(height: 16.0),
                     ],
-                    OutlinedButton.icon(
-                      onPressed: onUpload,
-                      icon: const Icon(Icons.file_upload),
-                      label: const Text("Pick Image from Gallery"),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-          error: (error, stackTrace) => AsyncErrorBuilder(
-            error: error.toString(),
-            onRetry: () {
-              ref.invalidate(logoNotifier);
-            },
-          ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-        );
-      }),
+            error: (error, stackTrace) => AsyncErrorBuilder(
+              error: error.toString(),
+              onRetry: () {
+                ref.invalidate(logoNotifier);
+              },
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+          );
+        },
+      ),
     );
   }
 }

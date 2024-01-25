@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Statify',
       theme: theme.copyWith(
+        // ignore: deprecated_member_use
+        useMaterial3: false,
         textTheme: bodyFontTheme(theme.textTheme),
         scaffoldBackgroundColor: Colors.white,
         primaryColor: darkPrimaryColor,
@@ -23,8 +25,16 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.white,
           elevation: 10,
           indicatorColor: darkPrimaryColor,
+          labelTextStyle: MaterialStatePropertyAll(TextStyle(fontSize: 9)),
           iconTheme:
               MaterialStatePropertyAll(IconThemeData(color: Colors.black)),
+        ),
+        cardTheme: CardTheme(
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: Colors.white,
         ),
         colorScheme: theme.colorScheme.copyWith(
           primary: darkPrimaryColor,

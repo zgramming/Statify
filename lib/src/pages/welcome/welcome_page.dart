@@ -7,6 +7,7 @@ import '../widgets/navigation_destination_item.dart';
 import 'main_long_distance_access/main_long_distance_access.page.dart';
 import 'main_machine_group/main_machine_group.page.dart';
 import 'main_survey/main_survey.page.dart';
+import 'main_wifi_control/main_wifi_control.page.dart';
 import 'setting/setting_page.dart';
 import 'whatsapp/main_whatsapp.page.dart';
 
@@ -42,6 +43,11 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
       label: "LDA",
     ),
     const NavigationDestinationItem(
+      prefixAsset: "wifi-control-outline.png",
+      selectedPrefixAsset: "wifi-control.png",
+      label: "Wifi Control",
+    ),
+    const NavigationDestinationItem(
       prefixAsset: "setting_outline.png",
       selectedPrefixAsset: "setting.png",
       label: "Admin",
@@ -53,6 +59,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
     const MainWhatsAppPage(),
     const MainSurveyPage(),
     const MainLongDistanceAccessPage(),
+    const MainWifiControlPage(),
     const SettingPage(),
   ];
 
@@ -76,6 +83,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         destinations: _destinations,
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         onDestinationSelected: (value) {
           setState(() => _selectedIndex = value);
         },

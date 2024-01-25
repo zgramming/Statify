@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
+
     <application
         android:label="Hitech Bot"
         android:name="${applicationName}"
@@ -57,7 +58,6 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-
         <!--        Receiver Pending Intent Sent SMS -->
         <receiver
             android:name=".SentSMSReceiver"
@@ -75,6 +75,7 @@
                 <action android:name="DELIVERED_SMS_ACTION" />
             </intent-filter>
         </receiver>
+   
 
     </application>
 </manifest>

@@ -4,6 +4,7 @@ import 'model/database/database.dart';
 import 'model/datasource/local/application_config_local_datasource.dart';
 import 'model/datasource/local/logo_local.datasource.dart';
 import 'model/datasource/local/temporary_pending_response_local_datasource.dart';
+import 'model/datasource/local/wifi_control_local_datasource.dart';
 import 'model/datasource/remote/authentication_remote_datasource.dart';
 import 'model/datasource/remote/incoming_message_remote_datasource.dart';
 import 'model/datasource/remote/machine_group_remote_datasource.dart';
@@ -149,12 +150,15 @@ final applicationConfigNotifier =
     repository: ref.watch(_applicationConfigRepository),
   ),
 );
-final logoNotifier = StateNotifierProvider<LogoNotifier, LogoState>((ref) {
-  return LogoNotifier(
+final logoNotifier = StateNotifierProvider<LogoNotifier, LogoState>(
+  (ref) => LogoNotifier(
     repository: ref.watch(_logoRepository),
-  );
-});
-
+  ),
+);
+final wifiControlNotifier =
+    StateNotifierProvider<WifiControlNotifier, WifiControlState>(
+  (ref) => WifiControlNotifier(repository: ref.watch(_wifiControlRepository)),
+);
 // repository
 
 final _incomingMessageRepository = Provider((ref) => IncomingMessageRepository(
@@ -220,6 +224,11 @@ final _applicationConfigRepository = Provider(
 final _logoRepository = Provider(
   (ref) => LogoRepository(
     localDatasource: ref.watch(_logoLocalDatasource),
+  ),
+);
+final _wifiControlRepository = Provider(
+  (ref) => WifiControlRepository(
+    localDatasource: ref.watch(_wifiControlLocalDatasource),
   ),
 );
 
@@ -304,6 +313,9 @@ final _applicationConfigLocalDatasource = Provider(
 );
 final _logoLocalDatasource = Provider(
   (ref) => LogoLocalDatasource(database: ref.watch(databaseProvider)),
+);
+final _wifiControlLocalDatasource = Provider(
+  (ref) => WifiControlLocalDatasource(database: ref.watch(databaseProvider)),
 );
 
 // Utils & Helpers

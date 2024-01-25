@@ -20,7 +20,8 @@ import 'pages/welcome/setting/log/log_page.dart';
 import 'pages/welcome/setting/my_account/change_logo_form.page.dart';
 import 'pages/welcome/setting/my_account/my_account.page.dart';
 import 'pages/welcome/setting/my_account/my_account_form.page.dart';
-import 'pages/welcome/setting/survey/surve_form.page.dart';
+import 'pages/welcome/setting/survey/survey_form.page.dart';
+import 'pages/welcome/setting/wifi_control/wifi_control_form.page.dart';
 import 'pages/welcome/welcome_page.dart';
 import 'pages/introduction/introduction_page.dart';
 import 'pages/login/login_page.dart';
@@ -53,13 +54,10 @@ const routeLogPage = "log";
 
 // Survey
 const routeSurveySummaryPage = "survey/summary/:id";
-
 const routeSurveyFormPage = "survey/form/:id";
-
 const routeSurveyResponseForm = "survey/:idSurvey/response/form/:id";
 
 // My Account
-
 const routeMyAccountPage = "my-account";
 const routeMyAccountFormPage = "my-account/form/:id";
 const routeChangeLogoPage = "change-logo";
@@ -75,6 +73,9 @@ const routeLoginLDAManagerPage =
 
 // Scan QR Code Serial Number
 const routeScanQRCodeSerialNumberPage = "serial-number/scan";
+
+// Wifi Control Page
+const routeWifiControlFormPage = "wifi-control/form";
 
 final routerConfig = GoRouter(
   routes: _routes,
@@ -288,6 +289,15 @@ final _routes = <RouteBase>[
       return ScanQRCodeSerialNumberPage(
         isNewMachine: extra?.isNewMachine ?? false,
       );
+    },
+  ),
+
+  // Wifi Control Form Page
+  GoRoute(
+    path: "/wifi-control/form",
+    name: routeWifiControlFormPage,
+    builder: (context, state) {
+      return const WifiControlFormPage();
     },
   ),
 ];

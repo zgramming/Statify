@@ -6,9 +6,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 import '../model/logo/logo.model.dart';
+import '../model/wifi_control/wifi_control.model.dart';
+
 import 'table/application_config.table.dart';
 import 'table/logo.table.dart';
 import 'table/temporary_pending_response.table.dart';
+import 'table/wifi_control.table.dart';
 
 part 'database.g.dart';
 
@@ -16,6 +19,7 @@ part 'database.g.dart';
   ApplicationConfigTable,
   LogoTable,
   TemporaryPendingResponseTable,
+  WifiControlTable
 ])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
@@ -160,6 +164,28 @@ class MyDatabase extends _$MyDatabase {
     return LogoModel(
       id: currentLogo.id,
       logo: currentLogo.logo,
+    );
+  }
+
+  //! Wifi Control Table Query Start
+  Future<WifiControlTableData?> getFirstWifiControl() async {
+    return select(wifiControlTable).getSingleOrNull();
+  }
+
+  Future<WifiControlModel> upsertWifiControl(
+      WifiControlTableCompanion form) async {
+    // Delete first previous wifi control then insert new one
+    await (delete(wifiControlTable)).go();
+    await into(wifiControlTable).insert(form);
+
+    final currentWifiControl = await getFirstWifiControl();
+    if (currentWifiControl == null) {
+      throw Exception("Failed to get wifi control after upsert");
+    }
+
+    return WifiControlModel(
+      id: currentWifiControl.id,
+      url: currentWifiControl.url,
     );
   }
 }

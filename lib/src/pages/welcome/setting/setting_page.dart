@@ -77,6 +77,16 @@ class _SettingPageState extends ConsumerState<SettingPage> {
                 const SizedBox(height: 16),
                 ListTileSettingMenu(
                   onTap: () {
+                    context.pushNamed(routeWifiControlFormPage);
+                  },
+                  title: "Wifi Control",
+                  subtitle: "Manage wifi control",
+                  leadingIcon: Icons.wifi,
+                  leadingBackgroundColor: Colors.green,
+                ),
+                const SizedBox(height: 16),
+                ListTileSettingMenu(
+                  onTap: () {
                     context.pushNamed(
                       routeLogPage,
                     );
