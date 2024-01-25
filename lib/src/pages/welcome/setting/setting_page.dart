@@ -79,8 +79,8 @@ class _SettingPageState extends ConsumerState<SettingPage> {
                   onTap: () {
                     context.pushNamed(routeWifiControlFormPage);
                   },
-                  title: "Wifi Control",
-                  subtitle: "Manage wifi control",
+                  title: "Wifi Control IP",
+                  subtitle: "Manage wifi control ip",
                   leadingIcon: Icons.wifi,
                   leadingBackgroundColor: Colors.green,
                 ),
