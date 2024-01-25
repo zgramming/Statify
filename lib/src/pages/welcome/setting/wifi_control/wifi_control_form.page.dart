@@ -130,7 +130,6 @@ class _WifiControlFormPageState extends ConsumerState<WifiControlFormPage> {
                                 child: TextFormField(
                                   controller: _urlController,
                                   style: bodyFont.copyWith(fontSize: 14.0),
-                                  keyboardType: TextInputType.phone,
                                   decoration: inputDecorationRounded().copyWith(
                                     border: const OutlineInputBorder(),
                                     fillColor: Colors.transparent,

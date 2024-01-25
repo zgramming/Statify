@@ -61,6 +61,9 @@ class _MainWifiControlPageState extends ConsumerState<MainWifiControlPage> {
       (previous, next) {
         if (next != null) {
           _controller.loadRequest(Uri.parse(next.url));
+        } else {
+          const defaultURL = "http://192.168.88.100";
+          _controller.loadRequest(Uri.parse(defaultURL));
         }
       },
     );
