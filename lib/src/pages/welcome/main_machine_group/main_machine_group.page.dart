@@ -772,7 +772,7 @@ class _MachineItemState extends ConsumerState<_MachineItem> {
                   PopupMenuItem(
                     value: "long_distance_access",
                     child: Text(
-                      "Long Distance Access",
+                      "Long Distance Control",
                       style: bodyFont.copyWith(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,

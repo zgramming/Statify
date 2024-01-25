@@ -25,7 +25,7 @@ class MainLongDistanceAccessPage extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const CustomAppbar(title: "Long Distance Access"),
+        const CustomAppbar(title: "Long Distance Control"),
         Expanded(
           child: Builder(
             builder: (ctx) {

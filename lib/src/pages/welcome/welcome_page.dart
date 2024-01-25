@@ -40,7 +40,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
     const NavigationDestinationItem(
       prefixAsset: "distance_outline.png",
       selectedPrefixAsset: "distance.png",
-      label: "LDA",
+      label: "LDC",
     ),
     const NavigationDestinationItem(
       prefixAsset: "wifi-control-outline.png",

@@ -67,7 +67,7 @@ class _LongDistanceAccessSMSPageState
   void onChangeTaskCount(int? value) {
     if (value == null) return;
 
-    // Set Form SMS LDA Provider
+    // Set Form SMS LDC Provider
     final form =
         ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
     final machine =

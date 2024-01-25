@@ -204,7 +204,7 @@ class _LongDistanceAccessAdminPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("LDA Admin")),
+      appBar: AppBar(title: const Text("LDC Admin")),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
