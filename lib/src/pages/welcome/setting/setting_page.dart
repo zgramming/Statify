@@ -114,7 +114,7 @@ class _SettingPageState extends ConsumerState<SettingPage> {
                     trailing: Builder(builder: (context) {
                       return futureAutoResponseServer.when(
                         data: (data) {
-                          final isActive = data?.value == "true";
+                          final isActive = (data?.value ?? "true") == "true";
                           return Switch(
                             value: isActive,
                             onChanged: (value) {

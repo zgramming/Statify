@@ -252,10 +252,10 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
   }
 
   void init() async {
-    final autoResponseServerFuture = await ref.read(
+    final autoRespondServerFuture = await ref.read(
         getApplicationConfigByKeyFutureProvider(kAutoRespondServer).future);
     final isActiveAutoResponseServer =
-        autoResponseServerFuture?.value == "true";
+        (autoRespondServerFuture?.value ?? "true") == "true";
 
     if (isActiveAutoResponseServer) {
       listenIncomingCallV2();
