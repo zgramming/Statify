@@ -22,9 +22,7 @@ class _WifiControlFormPageState extends ConsumerState<WifiControlFormPage> {
 
   void init() {
     final notifier = ref.read(wifiControlNotifier.notifier);
-    Future.microtask(() {
-      notifier.getFirstWifiControl();
-    });
+    Future.microtask(() => notifier.getFirstWifiControl());
   }
 
   void onSubmit() async {
@@ -137,8 +135,15 @@ class _WifiControlFormPageState extends ConsumerState<WifiControlFormPage> {
                                     hintText: "URL Address",
                                   ),
                                   validator: (value) {
+                                    // Check if value is valid URL Address
                                     if (value == null || value.isEmpty) {
                                       return "URL Address is required";
+                                    }
+
+                                    final urlRegex = RegExp(
+                                        r"^(http|https)://[\w\.\/]+\.[a-z]+$");
+                                    if (!urlRegex.hasMatch(value)) {
+                                      return "URL Address is not valid";
                                     }
                                     return null;
                                   },

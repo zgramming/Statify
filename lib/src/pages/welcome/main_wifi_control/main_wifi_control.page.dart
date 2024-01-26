@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../injection.dart';
-import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 
 class MainWifiControlPage extends ConsumerStatefulWidget {
@@ -36,10 +35,12 @@ class _MainWifiControlPageState extends ConsumerState<MainWifiControlPage> {
       },
     );
 
+    final defaultUrl = Uri.parse("http://192.168.88.100");
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.black)
-      ..setNavigationDelegate(navigationDelegate);
+      ..setNavigationDelegate(navigationDelegate)
+      ..loadRequest(defaultUrl);
   }
 
   @override
@@ -55,45 +56,26 @@ class _MainWifiControlPageState extends ConsumerState<MainWifiControlPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Listen wifi control state here
     ref.listen(
-      wifiControlNotifier.select((value) => value.item),
-      (previous, next) {
-        if (next != null) {
-          _controller.loadRequest(Uri.parse(next.url));
-        } else {
-          const defaultURL = "http://192.168.88.100";
-          _controller.loadRequest(Uri.parse(defaultURL));
+      wifiControlNotifier.select((value) => value.item?.url),
+      (previous, urlAddress) {
+        log("trigger wifiControlNotifier");
+        if (urlAddress != null) {
+          _controller.loadRequest(Uri.parse(urlAddress));
         }
       },
     );
 
-    final wifiControl =
-        ref.watch(wifiControlNotifier.select((value) => value.item));
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (wifiControl == null) ...[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Please set wifi control first in setting > wifi control before using this feature",
-                textAlign: TextAlign.center,
-                style: bodyFont.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+          Expanded(
+            child: WebViewWidget(
+              controller: _controller,
             ),
-            const SizedBox(height: 16),
-          ] else ...[
-            Expanded(
-              child: WebViewWidget(
-                controller: _controller,
-              ),
-            ),
-          ],
+          ),
         ],
       ),
     );
