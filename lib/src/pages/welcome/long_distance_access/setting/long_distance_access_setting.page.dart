@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../injection.dart';
 import '../../../../model/model/machine/machine_config.model.dart';
 import '../../../../router.dart';
+import '../../../../utils/colors.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
@@ -62,6 +62,7 @@ class _LongDistanceAccessSettingPageState
   bool autoReset = false;
   bool hiddenManager = false;
   bool isShowPassword = false;
+  bool isEnableSyncronize = false;
 
   String? selectedPower;
 
@@ -69,6 +70,15 @@ class _LongDistanceAccessSettingPageState
     final machine =
         ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
     final config = machine?.config;
+
+    // Check board ips based on machine ip
+    final boardIps = (config?.boardIps ?? [])
+        .firstWhereOrNull((element) => element.ip == machine?.ip);
+
+    if (boardIps?.status == "on") {
+      isEnableSyncronize = true;
+    }
+
     nameController.text = config?.wifiName ?? "";
     passwordController.text = config?.wifiPassword ?? "";
 
@@ -218,7 +228,7 @@ class _LongDistanceAccessSettingPageState
               onRefresh: () async =>
                   ref.invalidate(getAllMachineFutureProvider),
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -325,22 +335,6 @@ class _LongDistanceAccessSettingPageState
                                             onTap: onTapExclamationMark,
                                             icon: Icons.warning_amber_rounded,
                                           ),
-
-                                          // const SizedBox(width: 8),
-                                          // IconButton(
-                                          //   onPressed: () {
-                                          //     setState(() {
-                                          //       isShowPassword =
-                                          //           !isShowPassword;
-                                          //     });
-                                          //   },
-                                          //   icon: Icon(
-                                          //     isShowPassword
-                                          //         ? Icons.visibility
-                                          //         : Icons.visibility_off,
-                                          //     size: 20.0,
-                                          //   ),
-                                          // ),
                                         ],
                                       ),
                                     ),
@@ -564,13 +558,15 @@ class _LongDistanceAccessSettingPageState
                                 child: Align(
                                   alignment: Alignment.centerRight,
                                   child: ElevatedButton.icon(
-                                    onPressed: onTapSyncronize,
+                                    onPressed: !isEnableSyncronize
+                                        ? null
+                                        : onTapSyncronize,
                                     style: elevatedButtonStyle(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0,
                                       ),
                                       minimumSize: const Size(0, 40),
-                                      backgroundColor: Colors.blueGrey,
+                                      backgroundColor: darkPrimaryColor,
                                     ).copyWith(),
                                     icon: const Icon(
                                       Icons.sync,

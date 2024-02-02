@@ -340,14 +340,37 @@ class _MainMachineGroupPageState extends ConsumerState<MainMachineGroupPage> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: groups.length,
                                   shrinkWrap: true,
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(),
+                                  separatorBuilder: (context, index) {
+                                    return const Column(
+                                      children: [
+                                        SizedBox(height: 16.0),
+                                        Divider(),
+                                        SizedBox(height: 16.0),
+                                      ],
+                                    );
+                                  },
                                   itemBuilder: (context, index) {
                                     final item = groups[index];
                                     final machines = item.machines ?? [];
-                                    return Card(
+                                    return Container(
                                       margin: const EdgeInsets.only(),
-                                      elevation: 5,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 5,
+                                            offset: const Offset(0, 0),
+                                          ),
+                                        ],
+                                      ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(16),
                                         child: Column(

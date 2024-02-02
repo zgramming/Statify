@@ -44,6 +44,7 @@ class _LongDistanceAccessManagerPageState
   final powerMediumController = TextEditingController();
   final powerHighController = TextEditingController();
   final powerVeryHighController = TextEditingController();
+  final osVersionController = TextEditingController();
 
   MachineConfigCountriesModel? selectedCountry;
 
@@ -317,6 +318,7 @@ class _LongDistanceAccessManagerPageState
     powerMediumController.dispose();
     powerHighController.dispose();
     powerVeryHighController.dispose();
+    osVersionController.dispose();
     super.dispose();
   }
 
@@ -645,6 +647,26 @@ class _LongDistanceAccessManagerPageState
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Very High is required";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  FormBodyRow(
+                    title: "OS Version",
+                    child: TextFormField(
+                      controller: osVersionController,
+                      style: bodyFont.copyWith(fontSize: 14.0),
+                      decoration: inputDecorationRounded().copyWith(
+                        hintText: "OS Version",
+                        border: const OutlineInputBorder(),
+                        fillColor: Colors.transparent,
+                        contentPadding: const EdgeInsets.all(8),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "OS Version is required";
                         }
                         return null;
                       },

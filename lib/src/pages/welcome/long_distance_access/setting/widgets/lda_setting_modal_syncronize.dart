@@ -60,17 +60,16 @@ class _LDASettingModalSyncronizeState
       final notifier = ref.read(machineNotifier.notifier);
 
       final syncState = ref.read(CustomStateProvider.ldaSettingSyncState);
+      final tempNewTwoGData = [];
+      final tempNewFourGData = [];
+
       for (final syn in syncState) {
         if (syn.twoGData.isNotEmpty) {
           final newTwoGData = [
-            "${config.twoGData}",
             "${ip}_${syn.twoGData}",
           ];
 
-          form = form.copyWith(
-            twoGData: newTwoGData.join("-"),
-            twoGDataChanged: '1',
-          );
+          tempNewTwoGData.addAll(newTwoGData);
         }
 
         if (syn.fourGDatas.isNotEmpty) {
@@ -81,19 +80,32 @@ class _LDASettingModalSyncronizeState
           final mapping4G =
               syn.fourGDatas.map((e) => "${interval}_$e").toList().join("*");
 
-          final newFourGData = [
-            config.fourGData,
-            "$ip=$mapping4G",
-          ].join("-");
-
-          form = form.copyWith(
-            fourGData: newFourGData,
-            fourGDataChanged: '1',
-          );
+          if (config.fourGData != null) {
+            tempNewFourGData.addAll([
+              "$ip=$mapping4G",
+            ]);
+          }
         }
-
-        await notifier.updateConfig(form);
       }
+
+      final mapping2G = [
+        config.twoGData ?? "",
+        ...tempNewTwoGData.where((e) => e.isNotEmpty),
+      ].where((e) => e.isNotEmpty);
+
+      final mapping4G = [
+        config.fourGData ?? "",
+        ...tempNewFourGData.where((e) => e.isNotEmpty)
+      ].where((e) => e.isNotEmpty);
+
+      form = form.copyWith(
+        twoGData: mapping2G.join("-"),
+        twoGDataChanged: '1',
+        fourGData: mapping4G.join("-"),
+        fourGDataChanged: '1',
+      );
+
+      await notifier.updateConfig(form);
     } catch (e) {
       if (!context.mounted) return;
 
@@ -119,6 +131,9 @@ class _LDASettingModalSyncronizeState
     ref
         .read(CustomStateProvider.ldaSettingSyncState.notifier)
         .update((state) => []);
+
+    // default interval 60
+    intervalController.text = "60";
   }
 
   @override

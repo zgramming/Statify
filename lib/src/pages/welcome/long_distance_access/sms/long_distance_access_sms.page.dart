@@ -41,6 +41,10 @@ class _LongDistanceAccessSMSPageState
       return;
     }
 
+    if (config.flashSms == "1") {
+      _isFlashSMS = true;
+    }
+
     _selectedTaskCount = config.taskCount == null
         ? null
         : int.parse(
@@ -53,10 +57,16 @@ class _LongDistanceAccessSMSPageState
   }
 
   Future<void> onSubmit(bool isReboot) async {
-    final form =
-        ref.read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier);
+    final form = ref
+        .read(CustomFormProvider.ldaSMSForm(widget.idMachine).notifier)
+      ..update((state) => state.copyWith(flashSms: _isFlashSMS ? '1' : '0'));
+
     if (isReboot) {
-      form.update((state) => state.copyWith(reboot: '1'));
+      form.update(
+        (state) => state.copyWith(
+          reboot: '1',
+        ),
+      );
     }
 
     final formState = form.state;

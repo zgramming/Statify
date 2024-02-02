@@ -297,7 +297,6 @@ class MachineRemoteDatasource {
     final encodedOperators = form.operators.map((e) => e.toJson()).toList();
     final encodedCountries = form.countries.map((e) => e.toJson()).toList();
     final encodedBoardIps = form.boardIps.map((e) => e.toJson()).toList();
-
     final formBody = {
       'count': "${form.count}",
       'power': "${form.power}",

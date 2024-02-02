@@ -122,7 +122,10 @@ class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
                 const SizedBox(width: 8.0),
                 InkWell(
                   onTap: () {
-                    showSnackbar(context: context, message: "Coming soon");
+                    showSnackbar(
+                      context: context,
+                      message: "This function only at Wifi Control",
+                    );
                   },
                   child: const Icon(Icons.send_and_archive_outlined),
                 )

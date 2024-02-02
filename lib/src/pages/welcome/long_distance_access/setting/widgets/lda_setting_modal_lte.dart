@@ -48,7 +48,7 @@ class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
       return [];
     }
 
-    final splitted = data.split("-");
+    final splitted = data.split("-").where((e) => e.isNotEmpty).toList();
     final mappedSplitted = splitted.map((e) {
       // 192.168.1.91=60_510_10_1850_111_1111_11111*60_510_10_1852_222_2222_22222
       final [ip, combinationItems] = e.split("=");

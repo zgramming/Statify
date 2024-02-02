@@ -26,7 +26,10 @@ class _LDASettingModalGSMState extends ConsumerState<LDASettingModalGSM> {
   List<MachineConfig2GDataModel> mappingTwoGData(String? data) {
     if (data == null) return [];
 
-    final splitted = data.split("-");
+    final splitted = data.split("-").where((e) => e.isNotEmpty).toList();
+
+    if (splitted.isEmpty) return [];
+
     final mappedSplitted = splitted.map((e) {
       final split = e.split("_");
       final ip = split[0];
@@ -92,42 +95,49 @@ class _LDASettingModalGSMState extends ConsumerState<LDASettingModalGSM> {
               ),
             ),
             const SizedBox(height: 16.0),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  DataColumn(
-                    label: Text("IP", style: dataColumnStyle),
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: h(context) / 1.5,
+              ),
+              child: SingleChildScrollView(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: [
+                      DataColumn(
+                        label: Text("IP", style: dataColumnStyle),
+                      ),
+                      DataColumn(
+                        label: Text("MCC", style: dataColumnStyle),
+                      ),
+                      DataColumn(
+                        label: Text("MNC", style: dataColumnStyle),
+                      ),
+                      DataColumn(
+                        label: Text("2G ARFCN", style: dataColumnStyle),
+                      ),
+                    ],
+                    rows: [
+                      ...mappingTwoGData(twoGData)
+                          .map(
+                            (e) => DataRow(
+                              cells: [
+                                DataCell(Text(e.ip, style: dataRowStyle)),
+                                DataCell(Text(e.mcc, style: dataRowStyle)),
+                                DataCell(Text(e.mnc, style: dataRowStyle)),
+                                DataCell(Text(e.arfcn, style: dataRowStyle)),
+                              ],
+                            ),
+                          )
+                          .toList(),
+                    ],
                   ),
-                  DataColumn(
-                    label: Text("MCC", style: dataColumnStyle),
-                  ),
-                  DataColumn(
-                    label: Text("MNC", style: dataColumnStyle),
-                  ),
-                  DataColumn(
-                    label: Text("2G ARFCN", style: dataColumnStyle),
-                  ),
-                ],
-                rows: [
-                  ...mappingTwoGData(twoGData)
-                      .map(
-                        (e) => DataRow(
-                          cells: [
-                            DataCell(Text(e.ip, style: dataRowStyle)),
-                            DataCell(Text(e.mcc, style: dataRowStyle)),
-                            DataCell(Text(e.mnc, style: dataRowStyle)),
-                            DataCell(Text(e.arfcn, style: dataRowStyle)),
-                          ],
-                        ),
-                      )
-                      .toList(),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: onDelete,
               style: elevatedButtonStyle(backgroundColor: Colors.red),
               child: const Text("DELETE"),
             ),
