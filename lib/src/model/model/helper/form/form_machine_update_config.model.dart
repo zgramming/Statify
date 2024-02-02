@@ -58,6 +58,7 @@ class FormMachineUpdateConfigModel extends Equatable {
   final String? clientAllowed;
   final String? hiddenManager;
   final String? updateLogo;
+
   // Digunakan untuk flag apakah logo diupdate atau tidak, kalau ada filenya maka logo diupdate dan ubah "updateLogo" menjadi "1", kalau tidak ada filenya maka "updateLogo" dibiarkan saja
   final Uint8List? updateLogoFile;
   final String? registeredMccMnc;
@@ -204,7 +205,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       updateLogo: config.updateLogo,
       updateLogoFile: null,
       registeredMccMnc: config.registeredMccMnc,
-      fake: config.fake,
+      fake: config.fake ?? "0",
     );
   }
 

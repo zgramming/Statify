@@ -61,6 +61,7 @@ MachineConfigModel _$MachineConfigModelFromJson(Map<String, dynamic> json) =>
       sender3: json['sender3'] as String?,
       sender4: json['sender4'] as String?,
       sender5: json['sender5'] as String?,
+      fake: json['fake'] as String?,
       operators: json['operators'] == null
           ? const []
           : MachineConfigModel.fromJsonOperators(json['operators'] as String),
@@ -127,6 +128,7 @@ Map<String, dynamic> _$MachineConfigModelToJson(MachineConfigModel instance) =>
       'sender3': instance.sender3,
       'sender4': instance.sender4,
       'sender5': instance.sender5,
+      'fake': instance.fake,
       'operators': instance.operators,
       'boardIps': instance.boardIps,
       'countries': instance.countries,
