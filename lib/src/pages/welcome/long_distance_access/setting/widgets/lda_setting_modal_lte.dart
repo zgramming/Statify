@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../injection.dart';
+import '../../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../../model/model/machine/machine_config_4g_data.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/sizes.dart';
@@ -114,6 +116,30 @@ class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
     setState(() {
       isAutoCellId = value;
     });
+  }
+
+  void onDelete() async {
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    final config = machine?.config;
+
+    if (config == null) {
+      return;
+    }
+
+    final notifier = ref.read(machineNotifier.notifier);
+    final form = FormMachineUpdateConfigModel.fromMachineConfigModel(
+      widget.idMachine,
+      config.copyWith(
+        fourGData: "",
+        fourGDataChanged: "1",
+      ),
+    );
+
+    await notifier.updateConfig(form);
+
+    // Close Modal
+    if (context.mounted) context.pop();
   }
 
   @override
@@ -229,7 +255,7 @@ class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: onDelete,
               style: elevatedButtonStyle(backgroundColor: Colors.red),
               child: const Text("DELETE"),
             ),

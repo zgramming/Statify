@@ -12,7 +12,6 @@ import '../utils/enum.dart';
 class MachineState extends Equatable {
   final List<MachineModel> items;
   final AsyncValue<List<MachineModel>> onGetAll;
-  final AsyncValue<MachineModel?> onGetById;
   final AsyncValue<MachineModel?> onGetByNumber;
   final AsyncValue<Uint8List?> onGetExport;
   final AsyncValue<List<String>?> onGetResults;
@@ -24,7 +23,6 @@ class MachineState extends Equatable {
   const MachineState({
     this.items = const [],
     this.onGetAll = const AsyncLoading(),
-    this.onGetById = const AsyncData(null),
     this.onGetByNumber = const AsyncData(null),
     this.onGetExport = const AsyncData(null),
     this.onGetResults = const AsyncData(null),
@@ -39,7 +37,6 @@ class MachineState extends Equatable {
     return [
       items,
       onGetAll,
-      onGetById,
       onGetByNumber,
       onGetExport,
       onGetResults,
@@ -56,7 +53,6 @@ class MachineState extends Equatable {
   MachineState copyWith({
     List<MachineModel>? items,
     AsyncValue<List<MachineModel>>? onGetAll,
-    AsyncValue<MachineModel?>? onGetById,
     AsyncValue<MachineModel?>? onGetByNumber,
     AsyncValue<Uint8List?>? onGetExport,
     AsyncValue<List<String>?>? onGetResults,
@@ -68,7 +64,6 @@ class MachineState extends Equatable {
     return MachineState(
       items: items ?? this.items,
       onGetAll: onGetAll ?? this.onGetAll,
-      onGetById: onGetById ?? this.onGetById,
       onGetByNumber: onGetByNumber ?? this.onGetByNumber,
       onGetExport: onGetExport ?? this.onGetExport,
       onGetResults: onGetResults ?? this.onGetResults,
@@ -107,18 +102,17 @@ class MachineNotifier extends StateNotifier<MachineState> {
     );
   }
 
-  Future<void> getById({
+  Future<MachineModel?> getById({
     required String machineId,
   }) async {
-    state = state.copyWith(onGetById: const AsyncLoading());
     final result = await repository.getById(
       userId: userId,
       machineId: machineId,
     );
-    result.fold(
-      (failure) => state = state.copyWith(
-          onGetById: AsyncError(failure.message, StackTrace.current)),
-      (data) => state = state.copyWith(onGetById: AsyncData(data)),
+
+    return result.fold(
+      (failure) => throw failure.message,
+      (data) => data,
     );
   }
 

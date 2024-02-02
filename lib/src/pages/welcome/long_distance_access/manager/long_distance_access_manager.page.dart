@@ -176,44 +176,50 @@ class _LongDistanceAccessManagerPageState
         return;
       }
 
+      final machine = ref.read(
+        CustomProvider.getMachineByIdProvider(widget.idMachine),
+      );
+      final config = machine?.config;
+
+      if (config == null) {
+        return;
+      }
+
       final countries = ref.read(CustomFormProvider.machineConfigCountriesForm);
-      final form = ref.read(
-        CustomFormProvider.ldaManagerForm(widget.idMachine).notifier,
-      )..update(
-          (state) {
-            FormMachineUpdateConfigModel temporaryState = state.copyWith(
-              countries: countries,
-              unallowed: senderUnallowedController.text,
-              arfcnLabel2g: arfcn2GLabelController.text,
-              arfcnLabel3g: arfcn3GLabelController.text,
-              arfcnLabel4g: arfcn4GLabelController.text,
-              arfcnLabel5g: arfcn5GLabelController.text,
-              arfcnHidden2g: isHiddenArfcn2G ? "1" : "0",
-              arfcnHidden3g: isHiddenArfcn3G ? "1" : "0",
-              arfcnHidden4g: isHiddenArfcn4G ? "1" : "0",
-              arfcnHidden5g: isHiddenArfcn5G ? "1" : "0",
-              removeManager: isRemoveManagerPage ? "1" : "0",
-              managerPassword: newPasswordController.text,
-              boardIps: mappedBoardIps(),
-              powerConfig: mappedPowerConfig(),
-            );
 
-            if (selectedCountry != null) {
-              final registeredMccMnc = mappedRegisteredMccMnc(countries);
-              final operators = mappedOperators(countries);
+      FormMachineUpdateConfigModel form =
+          FormMachineUpdateConfigModel.fromMachineConfigModel(
+        widget.idMachine,
+        config,
+      ).copyWith(
+        countries: countries,
+        unallowed: senderUnallowedController.text,
+        arfcnLabel2g: arfcn2GLabelController.text,
+        arfcnLabel3g: arfcn3GLabelController.text,
+        arfcnLabel4g: arfcn4GLabelController.text,
+        arfcnLabel5g: arfcn5GLabelController.text,
+        arfcnHidden2g: isHiddenArfcn2G ? "1" : "0",
+        arfcnHidden3g: isHiddenArfcn3G ? "1" : "0",
+        arfcnHidden4g: isHiddenArfcn4G ? "1" : "0",
+        arfcnHidden5g: isHiddenArfcn5G ? "1" : "0",
+        removeManager: isRemoveManagerPage ? "1" : "0",
+        managerPassword: newPasswordController.text,
+        boardIps: mappedBoardIps(),
+        powerConfig: mappedPowerConfig(),
+      );
 
-              temporaryState = temporaryState.copyWith(
-                registeredMccMnc: registeredMccMnc,
-                operators: operators,
-              );
-            }
+      if (selectedCountry != null) {
+        final registeredMccMnc = mappedRegisteredMccMnc(countries);
+        final operators = mappedOperators(countries);
 
-            return temporaryState;
-          },
+        form = form.copyWith(
+          registeredMccMnc: registeredMccMnc,
+          operators: operators,
         );
+      }
 
       final notifier = ref.read(machineNotifier.notifier);
-      await notifier.updateConfig(form.state);
+      await notifier.updateConfig(form);
     } catch (e) {
       if (!context.mounted) return;
 

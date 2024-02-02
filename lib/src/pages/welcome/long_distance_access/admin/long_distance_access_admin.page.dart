@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../injection.dart';
+import '../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
-import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/form_body_row.dart';
 
@@ -137,26 +137,36 @@ class _LongDistanceAccessAdminPageState
       return;
     }
 
-    final form = ref.read(
-      CustomFormProvider.ldaAdminForm(widget.idMachine).notifier,
-    )..update(
-        (state) => state.copyWith(
-          adminPassword: newPasswordController.text,
-          allowed: senderAllowedController.text,
-          band: _selectedBand?.value,
-          runningText: runningTextController.text,
-          autoClear: isEnableAutoClear ? "1" : "0",
-          machineKeyType: _selectedMachineKeyType?.value,
-          machineKeyLast: machineKeyLastController.text,
-          removeAdmin: isRemoveAdminPage ? "1" : "0",
-          clientAllowed: clientAllowedController.text,
-          updateLogoFile: _selectedLogo,
-          updateLogo: _selectedLogo != null ? "1" : state.updateLogo,
-        ),
-      );
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    final config = machine?.config;
+
+    if (config == null) {
+      return;
+    }
+
+    FormMachineUpdateConfigModel form =
+        FormMachineUpdateConfigModel.fromMachineConfigModel(
+      widget.idMachine,
+      config,
+    );
+
+    form = form.copyWith(
+      adminPassword: newPasswordController.text,
+      allowed: senderAllowedController.text,
+      band: _selectedBand?.value,
+      runningText: runningTextController.text,
+      autoClear: isEnableAutoClear ? "1" : "0",
+      machineKeyType: _selectedMachineKeyType?.value,
+      machineKeyLast: machineKeyLastController.text,
+      removeAdmin: isRemoveAdminPage ? "1" : "0",
+      clientAllowed: clientAllowedController.text,
+      updateLogoFile: _selectedLogo,
+      updateLogo: _selectedLogo != null ? "1" : form.updateLogo,
+    );
 
     final notifier = ref.read(machineNotifier.notifier);
-    await notifier.updateConfig(form.state);
+    await notifier.updateConfig(form);
   }
 
   void init() {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../injection.dart';
+import '../../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../../model/model/helper/props_provider/props_get_machine_by_ip.model.dart';
 import '../../../../../model/model/machine/machine_config_boardips.model.dart';
 import '../../../../../model/model/machine/machine_config_operator.model.dart';
@@ -11,7 +12,6 @@ import '../../../../../utils/functions.dart';
 import '../../../../../utils/sizes.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_notifier/get_machine_by_ip.notifier.dart';
-import '../../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../../../view_model/custom_provider/custom_state_provider.dart';
 import '../../../../../view_model/custom_provider/model/lda_setting_sync_state.model.dart';
@@ -45,25 +45,31 @@ class _LDASettingModalSyncronizeState
         throw "IP cannot be empty";
       }
 
+      final machine =
+          ref.read(CustomProvider.getMachineByIdProvider(widget.machineId));
+      final config = machine?.config;
+      if (config == null) {
+        throw "Config cannot be empty";
+      }
+
+      FormMachineUpdateConfigModel form =
+          FormMachineUpdateConfigModel.fromMachineConfigModel(
+        widget.machineId,
+        config,
+      );
       final notifier = ref.read(machineNotifier.notifier);
-      final form = ref
-          .read(CustomFormProvider.ldaSettingForm(widget.machineId).notifier);
 
       final syncState = ref.read(CustomStateProvider.ldaSettingSyncState);
       for (final syn in syncState) {
         if (syn.twoGData.isNotEmpty) {
-          form.update(
-            (state) {
-              final newTwoGData = [
-                "${state.twoGData}",
-                "${ip}_${syn.twoGData}",
-              ];
+          final newTwoGData = [
+            "${config.twoGData}",
+            "${ip}_${syn.twoGData}",
+          ];
 
-              return state.copyWith(
-                twoGData: newTwoGData.join("-"),
-                twoGDataChanged: '1',
-              );
-            },
+          form = form.copyWith(
+            twoGData: newTwoGData.join("-"),
+            twoGDataChanged: '1',
           );
         }
 
@@ -72,33 +78,21 @@ class _LDASettingModalSyncronizeState
             throw "Interval cannot be empty when 4G data is not empty";
           }
 
-          form.update(
-            (state) {
-              final mapping4G = syn.fourGDatas
-                  .map((e) => "${interval}_$e")
-                  .toList()
-                  .join("*");
+          final mapping4G =
+              syn.fourGDatas.map((e) => "${interval}_$e").toList().join("*");
 
-              final newFourGData = [
-                state.fourGData,
-                "$ip=$mapping4G",
-              ];
+          final newFourGData = [
+            config.fourGData,
+            "$ip=$mapping4G",
+          ].join("-");
 
-              return state.copyWith(
-                fourGData: newFourGData.join("-"),
-                fourGDataChanged: '1',
-              );
-            },
+          form = form.copyWith(
+            fourGData: newFourGData,
+            fourGDataChanged: '1',
           );
         }
 
-        final formState = form.state;
-        await notifier.updateConfig(formState);
-
-        // Close modal
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
+        await notifier.updateConfig(form);
       }
     } catch (e) {
       if (!context.mounted) return;
@@ -110,6 +104,11 @@ class _LDASettingModalSyncronizeState
       );
 
       return;
+    } finally {
+      // Close modal
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
     }
   }
 
@@ -117,7 +116,6 @@ class _LDASettingModalSyncronizeState
 
   void init() async {
     // Reset lda sync state
-
     ref
         .read(CustomStateProvider.ldaSettingSyncState.notifier)
         .update((state) => []);

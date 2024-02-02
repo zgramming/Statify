@@ -4,10 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:marquee/marquee.dart';
 
 import '../../../../../injection.dart';
+import '../../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../../model/model/machine/machine_config.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/styles.dart';
-import '../../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../../view_model/custom_provider/custom_provider.dart';
 
 enum _ButtonState {
   start,
@@ -49,26 +50,35 @@ class _LDAHomeButtonActionState extends ConsumerState<LDAHomeButtonAction> {
   }
 
   Future<void> onSubmit(_ButtonState currentState) async {
-    final form = ref.read(
-      CustomFormProvider.ldaHomeForm(widget.machineId).notifier,
-    )..update(
-        (state) {
-          switch (currentState) {
-            case _ButtonState.start:
-              return state = state.copyWith(start: '1');
-            case _ButtonState.stop:
-              return state = state.copyWith(start: '0');
-            case _ButtonState.reset:
-              return state = state.copyWith(count: '0');
-            default:
-              return state;
-          }
-        },
-      );
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.machineId));
+    final config = machine?.config;
+    if (config == null) {
+      return;
+    }
 
-    final formState = form.state;
+    FormMachineUpdateConfigModel form =
+        FormMachineUpdateConfigModel.fromMachineConfigModel(
+      widget.machineId,
+      config,
+    );
+
+    switch (currentState) {
+      case _ButtonState.start:
+        form = form.copyWith(start: '1');
+
+        break;
+      case _ButtonState.stop:
+      case _ButtonState.reset:
+        form = form.copyWith(start: '0');
+        break;
+
+      default:
+        form = form;
+    }
+
     final notifier = ref.read(machineNotifier.notifier);
-    await notifier.updateConfig(formState);
+    await notifier.updateConfig(form);
   }
 
   @override

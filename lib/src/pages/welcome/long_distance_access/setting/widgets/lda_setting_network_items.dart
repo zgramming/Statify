@@ -56,7 +56,7 @@ class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 2,
+      flex: 3,
       child: Row(
         children: [
           InkWell(

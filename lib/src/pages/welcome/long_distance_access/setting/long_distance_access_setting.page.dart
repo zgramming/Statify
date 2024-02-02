@@ -578,7 +578,7 @@ class _LongDistanceAccessSettingPageState
                                     ),
                                     label: Text(
                                       "Syncronize",
-                                      style: bodyFont.copyWith(fontSize: 10.0),
+                                      style: bodyFont.copyWith(fontSize: 7.0),
                                     ),
                                   ),
                                 ),

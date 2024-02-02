@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../model/model/helper/form/form_machine_update_config.model.dart';
@@ -5,6 +7,8 @@ import '../../model/model/helper/form/form_survey_create_update.model.dart';
 import '../../model/model/machine/machine_config_countries.model.dart';
 import 'custom_provider.dart';
 
+// Perlu perombakan, seharusnya ini tidak perlu ada
+// Semua harus dihandle oleh custom state provider
 class CustomFormProvider {
   static final surveyForm = StateProvider<FormSurveyCreateOrUpdateModel>(
     (ref) {
@@ -23,29 +27,6 @@ class CustomFormProvider {
         template: "",
         sms: formSetting,
         wa: formSetting,
-      );
-    },
-  );
-
-  static final ldaHomeForm =
-      StateProvider.family<FormMachineUpdateConfigModel, String>(
-    (ref, idMachine) {
-      final machine =
-          ref.watch(CustomProvider.getMachineByIdProvider(idMachine));
-      final config = machine?.config;
-
-      if (config == null) {
-        return const FormMachineUpdateConfigModel(
-          machineId: "",
-          count: '0',
-          taskCount: '0',
-          reboot: '0',
-        );
-      }
-
-      return FormMachineUpdateConfigModel.fromMachineConfigModel(
-        idMachine,
-        config,
       );
     },
   );
@@ -82,52 +63,6 @@ class CustomFormProvider {
 
       if (config == null) {
         return FormMachineUpdateConfigModel(machineId: idMachine);
-      }
-
-      return FormMachineUpdateConfigModel.fromMachineConfigModel(
-        idMachine,
-        config,
-      );
-    },
-  );
-
-  static final ldaManagerForm =
-      StateProvider.family<FormMachineUpdateConfigModel, String>(
-    (ref, idMachine) {
-      final machine =
-          ref.watch(CustomProvider.getMachineByIdProvider(idMachine));
-      final config = machine?.config;
-
-      if (config == null) {
-        return const FormMachineUpdateConfigModel(
-          machineId: "",
-          count: '0',
-          taskCount: '0',
-          reboot: '0',
-        );
-      }
-
-      return FormMachineUpdateConfigModel.fromMachineConfigModel(
-        idMachine,
-        config,
-      );
-    },
-  );
-
-  static final ldaAdminForm =
-      StateProvider.family<FormMachineUpdateConfigModel, String>(
-    (ref, idMachine) {
-      final machine =
-          ref.watch(CustomProvider.getMachineByIdProvider(idMachine));
-      final config = machine?.config;
-
-      if (config == null) {
-        return const FormMachineUpdateConfigModel(
-          machineId: "",
-          count: '0',
-          taskCount: '0',
-          reboot: '0',
-        );
       }
 
       return FormMachineUpdateConfigModel.fromMachineConfigModel(

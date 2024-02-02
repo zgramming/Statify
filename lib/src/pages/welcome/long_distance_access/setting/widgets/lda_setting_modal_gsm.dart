@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../injection.dart';
+import '../../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../../model/model/machine/machine_config_2g_data.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/sizes.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_provider/custom_provider.dart';
 
-class LDASettingModalGSM extends ConsumerWidget {
+class LDASettingModalGSM extends ConsumerStatefulWidget {
   const LDASettingModalGSM({
     Key? key,
     required this.idMachine,
@@ -16,7 +18,12 @@ class LDASettingModalGSM extends ConsumerWidget {
 
   final String idMachine;
 
-  static List<MachineConfig2GDataModel> mappingTwoGData(String? data) {
+  @override
+  ConsumerState<LDASettingModalGSM> createState() => _LDASettingModalGSMState();
+}
+
+class _LDASettingModalGSMState extends ConsumerState<LDASettingModalGSM> {
+  List<MachineConfig2GDataModel> mappingTwoGData(String? data) {
     if (data == null) return [];
 
     final splitted = data.split("-");
@@ -36,10 +43,31 @@ class LDASettingModalGSM extends ConsumerWidget {
     return mappedSplitted;
   }
 
+  void onDelete() async {
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    final config = machine?.config;
+    if (config == null) return;
+
+    final notifier = ref.read(machineNotifier.notifier);
+    final form = FormMachineUpdateConfigModel.fromMachineConfigModel(
+      widget.idMachine,
+      config.copyWith(
+        twoGData: "",
+        twoGDataChanged: "1",
+      ),
+    );
+
+    await notifier.updateConfig(form);
+
+    if (context.mounted) context.pop();
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final twoGData = ref.watch(CustomProvider.getMachineByIdProvider(idMachine)
-        .select((value) => value?.config?.twoGData));
+  Widget build(BuildContext context) {
+    final twoGData = ref.watch(
+        CustomProvider.getMachineByIdProvider(widget.idMachine)
+            .select((value) => value?.config?.twoGData));
 
     final dataColumnStyle = bodyFont.copyWith(
       fontSize: 12.0,

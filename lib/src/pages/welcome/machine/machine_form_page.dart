@@ -13,6 +13,7 @@ import '../../../utils/fonts.dart';
 import '../../../utils/functions.dart';
 import '../../../utils/styles.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
+import '../../../view_model/custom_notifier/get_machine_by_id.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
 import '../../widgets/form_body_row.dart';
@@ -116,14 +117,9 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
   }
 
   void init() {
-    final id = widget.id;
-
     final resultAvailableSim = ref.read(CustomProvider.getAvailableSIM);
     availableSim = resultAvailableSim;
     selectedSim = availableSim.firstOrNull;
-
-    // Load Machine detail if id is not -1
-    ref.read(machineNotifier.notifier).getById(machineId: id);
 
     // Auto filled scan QR Code new machine
     autoFilledScanQRCodeNewMachine();
@@ -223,7 +219,7 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
 
     // Listen to onGetById
     ref.listen(
-      machineNotifier.select((value) => value.onGetById.unwrapPrevious()),
+      getMachineByIdFutureProvider(widget.id),
       (previous, next) {
         next.whenData((value) {
           if (value == null) return;
@@ -242,7 +238,8 @@ class _MachineFormPageState extends ConsumerState<MachineFormPage> {
       },
     );
 
-    final machine = ref.watch(machineNotifier).onGetById.unwrapPrevious();
+    final machine =
+        ref.watch(getMachineByIdFutureProvider(widget.id)).unwrapPrevious();
     return PopScope(
       onPopInvoked: (didPop) {
         if (didPop && _needReload) {

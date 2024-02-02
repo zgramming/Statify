@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
-// const kBaseApiUrl = "https://sms-api.hitechterminal.com/api";
-const kBaseApiUrl = kReleaseMode
-    ? "https://sms-api.hitechterminal.com/api"
-    : 'http://192.168.0.6:8000/api';
+const kBaseApiUrl = "https://sms-api.hitechterminal.com/api";
+// const kBaseApiUrl = kReleaseMode
+//     ? "https://sms-api.hitechterminal.com/api"
+//     : 'http://192.168.0.6:8000/api';
 const kBaseFileUrl = "$kBaseApiUrl/files";
 
 const kTokenAuth = 'token_auth';
