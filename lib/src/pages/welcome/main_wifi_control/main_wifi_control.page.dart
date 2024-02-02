@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../injection.dart';
-import '../../../utils/functions.dart';
 
 class MainWifiControlPage extends ConsumerStatefulWidget {
   const MainWifiControlPage({super.key});
@@ -25,10 +24,11 @@ class _MainWifiControlPageState extends ConsumerState<MainWifiControlPage> {
       onPageFinished: (url) {},
       onWebResourceError: (error) {
         log("Error: ${error.description} ${error.errorCode} ${error.errorType} ${error.url}");
-        showSnackbar(
-          context: context,
-          message: error.description,
-        );
+        // showSnackbar(
+        //   context: context,
+        //   message: error.description,
+        //   backgroundColor: Colors.red,
+        // );
       },
       onNavigationRequest: (request) {
         return NavigationDecision.navigate;
