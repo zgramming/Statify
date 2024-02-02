@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
@@ -60,6 +61,7 @@ class FormMachineUpdateConfigModel extends Equatable {
   // Digunakan untuk flag apakah logo diupdate atau tidak, kalau ada filenya maka logo diupdate dan ubah "updateLogo" menjadi "1", kalau tidak ada filenya maka "updateLogo" dibiarkan saja
   final Uint8List? updateLogoFile;
   final String? registeredMccMnc;
+  final String? fake;
 
   final String? sms1;
   final String? sms2;
@@ -123,6 +125,7 @@ class FormMachineUpdateConfigModel extends Equatable {
     this.updateLogo,
     this.updateLogoFile,
     this.registeredMccMnc,
+    this.fake,
     this.sms1,
     this.sms2,
     this.sms3,
@@ -201,6 +204,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       updateLogo: config.updateLogo,
       updateLogoFile: null,
       registeredMccMnc: config.registeredMccMnc,
+      fake: config.fake,
     );
   }
 
@@ -252,6 +256,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       updateLogo,
       updateLogoFile,
       registeredMccMnc,
+      fake,
       sms1,
       sms2,
       sms3,
@@ -317,6 +322,7 @@ class FormMachineUpdateConfigModel extends Equatable {
     String? updateLogo,
     Uint8List? updateLogoFile,
     String? registeredMccMnc,
+    String? fake,
     String? sms1,
     String? sms2,
     String? sms3,
@@ -377,6 +383,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       updateLogo: updateLogo ?? this.updateLogo,
       updateLogoFile: updateLogoFile ?? this.updateLogoFile,
       registeredMccMnc: registeredMccMnc ?? this.registeredMccMnc,
+      fake: fake ?? this.fake,
       sms1: sms1 ?? this.sms1,
       sms2: sms2 ?? this.sms2,
       sms3: sms3 ?? this.sms3,

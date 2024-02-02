@@ -75,6 +75,8 @@ class MachineConfigModel extends Equatable {
   final String? sender4;
   final String? sender5;
 
+  final String? fake;
+
   @JsonKey(fromJson: fromJsonOperators)
   final List<MachineConfigOperatorsModel> operators;
 
@@ -138,6 +140,7 @@ class MachineConfigModel extends Equatable {
     this.sender3,
     this.sender4,
     this.sender5,
+    this.fake,
     this.operators = const [],
     this.boardIps = const [],
     this.countries = const [],
@@ -225,6 +228,7 @@ class MachineConfigModel extends Equatable {
       sender3,
       sender4,
       sender5,
+      fake,
       operators,
       boardIps,
       countries,
@@ -288,6 +292,7 @@ class MachineConfigModel extends Equatable {
     String? sender3,
     String? sender4,
     String? sender5,
+    String? fake,
     List<MachineConfigOperatorsModel>? operators,
     List<MachineBoardIpsModel>? boardIps,
     List<MachineConfigCountriesModel>? countries,
@@ -346,6 +351,7 @@ class MachineConfigModel extends Equatable {
       sender3: sender3 ?? this.sender3,
       sender4: sender4 ?? this.sender4,
       sender5: sender5 ?? this.sender5,
+      fake: fake ?? this.fake,
       operators: operators ?? this.operators,
       boardIps: boardIps ?? this.boardIps,
       countries: countries ?? this.countries,

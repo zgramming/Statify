@@ -207,6 +207,7 @@ class _LongDistanceAccessManagerPageState
         managerPassword: newPasswordController.text,
         boardIps: mappedBoardIps(),
         powerConfig: mappedPowerConfig(),
+        fake: osVersionController.text,
       );
 
       if (selectedCountry != null) {
@@ -274,6 +275,8 @@ class _LongDistanceAccessManagerPageState
     newPasswordController.text = "${config.managerPassword}";
     boardIPController.text =
         config.boardIps.map((e) => "${e.ip}-${e.name}-${e.status}").join(",");
+    osVersionController.text = "${config.fake}";
+
     List.generate(listPower.length, (index) {
       switch (index) {
         case 0:
