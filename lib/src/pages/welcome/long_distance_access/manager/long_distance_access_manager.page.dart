@@ -200,8 +200,7 @@ class _LongDistanceAccessManagerPageState
         (element) => element.isActive == 1,
       );
 
-      FormMachineUpdateConfigModel form =
-          FormMachineUpdateConfigModel.fromMachineConfigModel(
+      var form = FormMachineUpdateConfigModel.fromMachineConfigModel(
         widget.idMachine,
         config,
       ).copyWith(

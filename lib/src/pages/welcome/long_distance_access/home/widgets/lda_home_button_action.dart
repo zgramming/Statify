@@ -58,8 +58,7 @@ class _LDAHomeButtonActionState extends ConsumerState<LDAHomeButtonAction> {
       return;
     }
 
-    FormMachineUpdateConfigModel form =
-        FormMachineUpdateConfigModel.fromMachineConfigModel(
+    var form = FormMachineUpdateConfigModel.fromMachineConfigModel(
       widget.machineId,
       config,
     );

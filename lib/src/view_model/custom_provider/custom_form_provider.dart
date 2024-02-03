@@ -50,22 +50,4 @@ class CustomFormProvider {
       );
     },
   );
-
-  static final ldaSettingForm =
-      StateProvider.family<FormMachineUpdateConfigModel, String>(
-    (ref, idMachine) {
-      final machine =
-          ref.watch(CustomProvider.getMachineByIdProvider(idMachine));
-      final config = machine?.config;
-
-      if (config == null) {
-        return FormMachineUpdateConfigModel(machineId: idMachine);
-      }
-
-      return FormMachineUpdateConfigModel.fromMachineConfigModel(
-        idMachine,
-        config,
-      );
-    },
-  );
 }

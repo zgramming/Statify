@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
+import '../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../model/model/machine/machine_config.model.dart';
 import '../../../../router.dart';
 import '../../../../utils/colors.dart';
@@ -11,8 +12,8 @@ import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
 import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
-import '../../../../view_model/custom_notifier/selected_machine_config_operators.notifier.dart';
-import '../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../view_model/custom_notifier/machine_config_common_setting.notifier.dart';
+import '../../../../view_model/custom_notifier/machine_config_operators_setting.notifier.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import 'widgets/lda_setting_config_operator_item.dart';
 import 'widgets/lda_setting_modal_syncronize.dart';
@@ -71,17 +72,21 @@ class _LongDistanceAccessSettingPageState
     final machine =
         ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
     final config = machine?.config;
+    final boardIps = config?.boardIps ?? [];
+    final board =
+        boardIps.firstWhereOrNull((element) => element.ip == machine?.ip);
 
     // Init selected operators state
     ref
-        .read(selectedMachineConfigOperatorsNotifier.notifier)
+        .read(machineConfigOperatorsSettingNotifier.notifier)
         .init(config?.operators ?? []);
 
-    // Check board ips based on machine ip
-    final boardIps = (config?.boardIps ?? [])
-        .firstWhereOrNull((element) => element.ip == machine?.ip);
+    // Init machine config common setting state
+    ref
+        .read(machineConfigCommonSettingNotifier.notifier)
+        .init(config ?? const MachineConfigModel());
 
-    if (boardIps?.status == "on") {
+    if (board?.status == "on") {
       isEnableSyncronize = true;
     }
 
@@ -162,30 +167,34 @@ class _LongDistanceAccessSettingPageState
   }
 
   Future<void> onSubmit(bool isReboot) async {
-    final operators = ref.read(selectedMachineConfigOperatorsNotifier).items;
-    final form = ref.read(
-      CustomFormProvider.ldaSettingForm(widget.idMachine).notifier,
-    )..update(
-        (state) => state.copyWith(
-          wifiName: nameController.text,
-          wifiPassword: passwordController.text,
-          wifiHidden: wifiHidden ? '1' : '0',
-          flashSms: flashSms ? '1' : '0',
-          saveSentList: saveSentList ? '1' : '0',
-          autoArfcn: autoArfcn ? '3' : '0',
-          autoReset: autoReset ? '1' : '0',
-          power: selectedPower ?? "1",
-          operators: operators,
-        ),
-      );
+    final operators = ref.read(machineConfigOperatorsSettingNotifier).items;
+
+    MachineConfigModel commonConfig =
+        ref.read(machineConfigCommonSettingNotifier).item;
+
+    var form = FormMachineUpdateConfigModel.fromMachineConfigModel(
+      widget.idMachine,
+      commonConfig,
+    );
+
+    form = form.copyWith(
+      wifiName: nameController.text,
+      wifiPassword: passwordController.text,
+      wifiHidden: wifiHidden ? '1' : '0',
+      flashSms: flashSms ? '1' : '0',
+      saveSentList: saveSentList ? '1' : '0',
+      autoArfcn: autoArfcn ? '3' : '0',
+      autoReset: autoReset ? '1' : '0',
+      power: selectedPower ?? "1",
+      operators: operators,
+    );
 
     if (isReboot) {
-      form.update((state) => state.copyWith(reboot: '1'));
+      form = form.copyWith(reboot: "1");
     }
 
-    final formState = form.state;
     final notifier = ref.read(machineNotifier.notifier);
-    await notifier.updateConfig(formState);
+    await notifier.updateConfig(form);
   }
 
   @override

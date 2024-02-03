@@ -145,8 +145,7 @@ class _LongDistanceAccessAdminPageState
       return;
     }
 
-    FormMachineUpdateConfigModel form =
-        FormMachineUpdateConfigModel.fromMachineConfigModel(
+    var form = FormMachineUpdateConfigModel.fromMachineConfigModel(
       widget.idMachine,
       config,
     );

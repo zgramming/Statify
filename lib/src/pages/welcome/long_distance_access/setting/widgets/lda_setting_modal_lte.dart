@@ -8,7 +8,7 @@ import '../../../../../model/model/machine/machine_config_4g_data.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/sizes.dart';
 import '../../../../../utils/styles.dart';
-import '../../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../../view_model/custom_notifier/machine_config_common_setting.notifier.dart';
 import '../../../../../view_model/custom_provider/custom_provider.dart';
 
 class LDASettingModalLTE extends ConsumerStatefulWidget {
@@ -27,21 +27,6 @@ class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
   bool isSpecificAll = false;
   bool isAutoCellId = false;
   String? fourGData;
-
-  void init() {
-    final machine = ref.read(
-      CustomProvider.getMachineByIdProvider(widget.idMachine),
-    );
-
-    final config = machine?.config;
-    if (config == null) return;
-
-    isSpecificAll = config.allRotation == "1";
-    isAutoCellId = config.autoCellId == "1";
-    fourGData = config.fourGData;
-
-    setState(() {});
-  }
 
   List<MachineConfig4GDataModel> mapping4GData(String? data) {
     if (data == null) {
@@ -91,13 +76,8 @@ class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
   }
 
   void onTapSpecificAll(bool value) {
-    final form =
-        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
-    form.update(
-      (state) => state.copyWith(
-        allRotation: value ? "1" : "0",
-      ),
-    );
+    final notifier = ref.read(machineConfigCommonSettingNotifier.notifier);
+    notifier.updateAllRotation(value);
 
     setState(() {
       isSpecificAll = value;
@@ -105,13 +85,8 @@ class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
   }
 
   void onTapAutoCellId(bool value) {
-    final form =
-        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
-    form.update(
-      (state) => state.copyWith(
-        autoCellId: value ? "1" : "0",
-      ),
-    );
+    final notifier = ref.read(machineConfigCommonSettingNotifier.notifier);
+    notifier.updateAutoCellId(value);
 
     setState(() {
       isAutoCellId = value;
@@ -140,6 +115,20 @@ class _LDASettingModalLTEState extends ConsumerState<LDASettingModalLTE> {
 
     // Close Modal
     if (context.mounted) context.pop();
+  }
+
+  void init() {
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+
+    final config = machine?.config;
+    if (config == null) return;
+
+    isSpecificAll = config.allRotation == "1";
+    isAutoCellId = config.autoCellId == "1";
+    fourGData = config.fourGData;
+
+    setState(() {});
   }
 
   @override

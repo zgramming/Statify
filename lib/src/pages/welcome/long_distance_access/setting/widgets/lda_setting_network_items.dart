@@ -12,20 +12,6 @@ class LDASettingNetworkItems extends StatefulWidget {
   }) : super(key: key);
   final String idMachine;
 
-  static Future<void> onGSMtap(BuildContext context, String idMachine) async {
-    await showDialog(
-      context: context,
-      builder: (context) => LDASettingModalGSM(idMachine: idMachine),
-    );
-  }
-
-  static Future<void> onLTEtap(BuildContext context, String idMachine) async {
-    await showDialog(
-      context: context,
-      builder: (context) => LDASettingModalLTE(idMachine: idMachine),
-    );
-  }
-
   @override
   State<LDASettingNetworkItems> createState() => _LDASettingNetworkItemsState();
 }
@@ -34,6 +20,20 @@ class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
   bool _isGSM = true;
   bool _isWCDMA = true;
   bool _isLTE = true;
+
+  Future<void> onGSMtap(BuildContext context, String idMachine) async {
+    await showDialog(
+      context: context,
+      builder: (context) => LDASettingModalGSM(idMachine: idMachine),
+    );
+  }
+
+  Future<void> onLTEtap(BuildContext context, String idMachine) async {
+    await showDialog(
+      context: context,
+      builder: (context) => LDASettingModalLTE(idMachine: idMachine),
+    );
+  }
 
   void onTapGSM(bool? value) {
     setState(() {
@@ -60,8 +60,7 @@ class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
       child: Row(
         children: [
           InkWell(
-            onTap: () =>
-                LDASettingNetworkItems.onGSMtap(context, widget.idMachine),
+            onTap: () => onGSMtap(context, widget.idMachine),
             child: Row(
               children: [
                 SizedBox(
@@ -101,8 +100,7 @@ class _LDASettingNetworkItemsState extends State<LDASettingNetworkItems> {
           ),
           const SizedBox(width: 16.0),
           InkWell(
-            onTap: () =>
-                LDASettingNetworkItems.onLTEtap(context, widget.idMachine),
+            onTap: () => onLTEtap(context, widget.idMachine),
             child: Row(
               children: [
                 SizedBox(

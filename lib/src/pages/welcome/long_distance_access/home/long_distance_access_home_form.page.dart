@@ -82,8 +82,10 @@ class _LongDistanceAccessHomeFormPageState
     if (config == null) return;
 
     final index = widget.index;
-    FormMachineUpdateConfigModel form =
-        FormMachineUpdateConfigModel.fromMachineConfigModel(machine.id, config);
+    var form = FormMachineUpdateConfigModel.fromMachineConfigModel(
+      machine.id,
+      config,
+    );
 
     if (index == 1) {
       form = form.copyWith(

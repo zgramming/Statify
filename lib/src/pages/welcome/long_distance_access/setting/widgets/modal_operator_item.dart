@@ -6,7 +6,7 @@ import '../../../../../model/model/machine/machine_config_operator.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/functions.dart';
 import '../../../../../utils/styles.dart';
-import '../../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../../view_model/custom_notifier/machine_config_operators_setting.notifier.dart';
 import '../../../../widgets/form_body_row.dart';
 
 class ModalOperatorItem extends ConsumerStatefulWidget {
@@ -43,36 +43,24 @@ class _ModalOperatorItemState extends ConsumerState<ModalOperatorItem> {
       return;
     }
 
-    final form =
-        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
-    form.update(
-      (state) {
-        final operators = state.operators.map((e) {
-          if (e.mcc == widget.item.mcc && e.mnc == widget.item.mnc) {
-            return e.copyWith(
-              arfcn: arfcnController.text,
-              ltePci: pciController.text,
-              lteTac: tacController.text,
-              lteCellId: cellIdController.text,
-              ltePlmn: plmnController.text,
-              lteDowngrade: downgradeController.text,
-              lteRotationTime: rotationTimeController.text,
-              operatorDefault: isDefault ? "true" : "false",
-            );
-          }
-
-          return e;
-        }).toList();
-
-        return state.copyWith(operators: operators);
-      },
+    final notifier = ref.read(machineConfigOperatorsSettingNotifier.notifier);
+    notifier.updateDetailModal4G(
+      item: widget.item,
+      lteArfcn: arfcnController.text,
+      ltePci: pciController.text,
+      lteTac: tacController.text,
+      lteCellId: cellIdController.text,
+      lteIsDefault: isDefault,
+      ltePlmn: plmnController.text,
+      lteDowngrade: downgradeController.text,
+      lteRotationTime: rotationTimeController.text,
     );
 
     context.pop();
   }
 
   void init() {
-    arfcnController.text = widget.item.arfcn.toString();
+    arfcnController.text = widget.item.lteArfcn.toString();
     pciController.text = widget.item.ltePci.toString();
     tacController.text = widget.item.lteTac.toString();
     cellIdController.text = widget.item.lteCellId.toString();

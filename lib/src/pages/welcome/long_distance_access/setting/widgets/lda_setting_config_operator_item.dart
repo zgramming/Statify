@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,8 +6,7 @@ import '../../../../../model/model/machine/machine_config_operator.model.dart';
 import '../../../../../model/model/machine/machine_model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/styles.dart';
-import '../../../../../view_model/custom_notifier/selected_machine_config_operators.notifier.dart';
-import '../../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../../view_model/custom_notifier/machine_config_operators_setting.notifier.dart';
 import 'modal_operator_item.dart';
 
 class LDASettingConfigOperatorItem extends ConsumerStatefulWidget {
@@ -51,109 +48,32 @@ class LDASettingConfigOperatorItemState
   }
 
   void onChangeAutoSwitch(String value) {
-    final idMachine = widget.machine?.id ?? "";
-    final form =
-        ref.read(CustomFormProvider.ldaSettingForm(idMachine).notifier);
-    form.update(
-      (state) {
-        final prevOperators = state.operators.map((e) {
-          final isMatchMCC = e.mcc == widget.cfgOperator.mcc;
-          final isMatchMNC = e.mnc == widget.cfgOperator.mnc;
-          if (isMatchMCC && isMatchMNC) {
-            return e.copyWith(timeout: value);
-          }
-          return e;
-        }).toList();
-        return state.copyWith(operators: prevOperators);
-      },
-    );
+    final notifier = ref.read(machineConfigOperatorsSettingNotifier.notifier);
+    notifier.updateAutoSwitch(item: widget.cfgOperator, value: value);
   }
 
   void onChange2gArfcn(String value) {
-    final idMachine = widget.machine?.id ?? "";
-    final form = ref.read(CustomFormProvider.ldaSettingForm(
-      idMachine,
-    ).notifier);
-    form.update(
-      (state) {
-        final prevOperators = state.operators.map((e) {
-          final isMatchMCC = e.mcc == widget.cfgOperator.mcc;
-          final isMatchMNC = e.mnc == widget.cfgOperator.mnc;
-          if (isMatchMCC && isMatchMNC) {
-            return e.copyWith(arfcn: value);
-          }
-          return e;
-        }).toList();
-        return state.copyWith(operators: prevOperators);
-      },
-    );
+    final notifier = ref.read(machineConfigOperatorsSettingNotifier.notifier);
+    notifier.update2GArfcn(item: widget.cfgOperator, value: value);
   }
 
   void onChange3gArfcn(String value) {
-    final idMachine = widget.machine?.id ?? "";
-
-    final form = ref.read(CustomFormProvider.ldaSettingForm(
-      idMachine,
-    ).notifier);
-    form.update(
-      (state) {
-        final prevOperators = state.operators.map((e) {
-          final isMatchMCC = e.mcc == widget.cfgOperator.mcc;
-          final isMatchMNC = e.mnc == widget.cfgOperator.mnc;
-          if (isMatchMCC && isMatchMNC) {
-            return e.copyWith(threeGArfcn: value);
-          }
-          return e;
-        }).toList();
-        return state.copyWith(operators: prevOperators);
-      },
-    );
+    final notifier = ref.read(machineConfigOperatorsSettingNotifier.notifier);
+    notifier.update3GArfcn(item: widget.cfgOperator, value: value);
   }
 
   void onChange4gArfcn(String value) {
-    final idMachine = widget.machine?.id ?? "";
-
-    final form = ref.read(CustomFormProvider.ldaSettingForm(
-      idMachine,
-    ).notifier);
-    form.update(
-      (state) {
-        final prevOperators = state.operators.map((e) {
-          final isMatchMCC = e.mcc == widget.cfgOperator.mcc;
-          final isMatchMNC = e.mnc == widget.cfgOperator.mnc;
-          if (isMatchMCC && isMatchMNC) {
-            return e.copyWith(lteArfcn: value);
-          }
-          return e;
-        }).toList();
-        return state.copyWith(operators: prevOperators);
-      },
-    );
+    final notifier = ref.read(machineConfigOperatorsSettingNotifier.notifier);
+    notifier.update4GArfcn(item: widget.cfgOperator, value: value);
   }
 
   void onChange5gArfcn(String value) {
-    final idMachine = widget.machine?.id ?? "";
-
-    final form = ref.read(CustomFormProvider.ldaSettingForm(
-      idMachine,
-    ).notifier);
-    form.update(
-      (state) {
-        final prevOperators = state.operators.map((e) {
-          final isMatchMCC = e.mcc == widget.cfgOperator.mcc;
-          final isMatchMNC = e.mnc == widget.cfgOperator.mnc;
-          if (isMatchMCC && isMatchMNC) {
-            return e.copyWith(fiveGArfcn: value);
-          }
-          return e;
-        }).toList();
-        return state.copyWith(operators: prevOperators);
-      },
-    );
+    final notifier = ref.read(machineConfigOperatorsSettingNotifier.notifier);
+    notifier.update5GArfcn(item: widget.cfgOperator, value: value);
   }
 
   void onChecklistOperator(bool? value) {
-    final notifier = ref.read(selectedMachineConfigOperatorsNotifier.notifier);
+    final notifier = ref.read(machineConfigOperatorsSettingNotifier.notifier);
     notifier.updateChecklist(widget.cfgOperator, value ?? false);
   }
 
@@ -196,8 +116,6 @@ class LDASettingConfigOperatorItemState
         PropsIsMachineConfigOperatorsSelectedModel(
           mcc: widget.cfgOperator.mcc ?? "",
           mnc: widget.cfgOperator.mnc ?? "",
-          country: widget.cfgOperator.country ?? "",
-          label: widget.cfgOperator.label ?? "",
         ),
       ),
     );

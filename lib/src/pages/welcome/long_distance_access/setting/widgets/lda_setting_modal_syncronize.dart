@@ -52,8 +52,7 @@ class _LDASettingModalSyncronizeState
         throw "Config cannot be empty";
       }
 
-      FormMachineUpdateConfigModel form =
-          FormMachineUpdateConfigModel.fromMachineConfigModel(
+      var form = FormMachineUpdateConfigModel.fromMachineConfigModel(
         widget.machineId,
         config,
       );
