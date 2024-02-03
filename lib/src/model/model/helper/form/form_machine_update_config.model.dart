@@ -80,6 +80,9 @@ class FormMachineUpdateConfigModel extends Equatable {
   final List<MachineBoardIpsModel> boardIps;
   final List<MachineConfigCountriesModel> countries;
 
+  // For custom success message when update config success
+  final String? successMessage;
+
   const FormMachineUpdateConfigModel({
     required this.machineId,
     this.count,
@@ -140,6 +143,7 @@ class FormMachineUpdateConfigModel extends Equatable {
     this.operators = const [],
     this.boardIps = const [],
     this.countries = const [],
+    this.successMessage,
   });
 
   factory FormMachineUpdateConfigModel.fromMachineConfigModel(
@@ -271,6 +275,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       operators,
       boardIps,
       countries,
+      successMessage,
     ];
   }
 
@@ -337,6 +342,7 @@ class FormMachineUpdateConfigModel extends Equatable {
     List<MachineConfigOperatorsModel>? operators,
     List<MachineBoardIpsModel>? boardIps,
     List<MachineConfigCountriesModel>? countries,
+    String? successMessage,
   }) {
     return FormMachineUpdateConfigModel(
       machineId: machineId ?? this.machineId,
@@ -398,6 +404,7 @@ class FormMachineUpdateConfigModel extends Equatable {
       operators: operators ?? this.operators,
       boardIps: boardIps ?? this.boardIps,
       countries: countries ?? this.countries,
+      successMessage: successMessage ?? this.successMessage,
     );
   }
 }

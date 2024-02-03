@@ -126,7 +126,7 @@ class MachineRepository {
     }
   }
 
-  Future<Either<Failure, MachineModel>> updateConfig(
+  Future<Either<Failure, String>> updateConfig(
     FormMachineUpdateConfigModel form,
   ) async {
     try {

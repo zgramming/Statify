@@ -22,3 +22,6 @@ const kRawJsonConfigOperators =
 // Application Config Key
 const kIntroductionKey = 'introduction_key';
 const kAutoRespondServer = "auto_respond_server";
+
+// Success Message
+const kSuccessMessageResetMachine = "After reset the device, Click Reboot";

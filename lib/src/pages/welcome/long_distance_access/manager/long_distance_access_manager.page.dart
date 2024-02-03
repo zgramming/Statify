@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +12,7 @@ import '../../../../model/model/machine/machine_config_operator.model.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
-import '../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../view_model/custom_notifier/machine_config_countries.notifier.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import '../../../widgets/form_body_row.dart';
 import 'widgets/modal_add_country.dart';
@@ -45,8 +47,6 @@ class _LongDistanceAccessManagerPageState
   final powerHighController = TextEditingController();
   final powerVeryHighController = TextEditingController();
   final osVersionController = TextEditingController();
-
-  MachineConfigCountriesModel? selectedCountry;
 
   bool isHiddenArfcn2G = false;
   bool isHiddenArfcn3G = false;
@@ -94,10 +94,14 @@ class _LongDistanceAccessManagerPageState
     const kTimeout = "15";
     const kArfcn = "5";
 
+    final selectedCountry = countries.firstWhereOrNull(
+      (element) => element.isActive == 1,
+    );
+
     if (selectedCountry == null) return null;
 
     final country = countries.firstWhereOrNull(
-      (element) => element.label == selectedCountry?.label,
+      (element) => element.label == selectedCountry.label,
     );
 
     if (country == null) {
@@ -114,12 +118,17 @@ class _LongDistanceAccessManagerPageState
   }
 
   List<MachineConfigOperatorsModel>? mappedOperators(
-      List<MachineConfigCountriesModel> countries) {
+    List<MachineConfigCountriesModel> countries,
+  ) {
+    final selectedCountry = countries.firstWhereOrNull(
+      (element) => element.isActive == 1,
+    );
     if (selectedCountry == null) return null;
 
     final country = countries.firstWhereOrNull(
-      (element) => element.label == selectedCountry?.label,
+      (element) => element.label == selectedCountry.label,
     );
+    final mncs = (country?.mncs ?? []).where((e) => e.status == 1).toList();
 
     if (country == null) {
       return null;
@@ -141,7 +150,7 @@ class _LongDistanceAccessManagerPageState
     const k5GArfcn = "1333";
     const kStatus = 1;
 
-    final mapping = country.mncs.map((e) {
+    final mapping = mncs.map((e) {
       return MachineConfigOperatorsModel(
         mcc: e.mcc,
         mnc: e.mnc,
@@ -186,7 +195,10 @@ class _LongDistanceAccessManagerPageState
         return;
       }
 
-      final countries = ref.read(CustomFormProvider.machineConfigCountriesForm);
+      final countries = ref.read(machineConfigCountriesNotifier).items;
+      final selectedCountry = countries.firstWhereOrNull(
+        (element) => element.isActive == 1,
+      );
 
       FormMachineUpdateConfigModel form =
           FormMachineUpdateConfigModel.fromMachineConfigModel(
@@ -218,6 +230,8 @@ class _LongDistanceAccessManagerPageState
           registeredMccMnc: registeredMccMnc,
           operators: operators,
         );
+        log("registeredMccMnc: $registeredMccMnc");
+        log("operators: $operators");
       }
 
       final notifier = ref.read(machineNotifier.notifier);
@@ -235,9 +249,8 @@ class _LongDistanceAccessManagerPageState
 
   void init() {
     // Initialize initial data machine config countries
-    final formMachineConfigCountries = ref.read(
-      CustomFormProvider.machineConfigCountriesForm.notifier,
-    );
+
+    final countriesNotifier = ref.read(machineConfigCountriesNotifier.notifier);
     final machine = ref.read(
       CustomProvider.getMachineByIdProvider(widget.idMachine),
     );
@@ -249,16 +262,7 @@ class _LongDistanceAccessManagerPageState
 
     final countries = config.countries;
 
-    formMachineConfigCountries.update((state) => countries
-        .map(
-          (e) => MachineConfigCountriesModel(
-            label: e.label,
-            name: e.name,
-            isActive: e.isActive,
-            mncs: e.mncs,
-          ),
-        )
-        .toList());
+    countriesNotifier.init(countries);
 
     // Fill data
     final listPower = config.powerConfig?.split("_") ?? [];
@@ -363,12 +367,7 @@ class _LongDistanceAccessManagerPageState
                 ],
               ),
               const SizedBox(height: 16.0),
-              _DeviceSetup(
-                onSelectedCountry: (value) {
-                  selectedCountry = value;
-                  setState(() {});
-                },
-              ),
+              const _DeviceSetup(),
               const SizedBox(height: 16.0),
               FormBodyRow(
                 title: "Sender Unallowed",
@@ -687,11 +686,8 @@ class _LongDistanceAccessManagerPageState
 }
 
 class _DeviceSetup extends ConsumerStatefulWidget {
-  final void Function(MachineConfigCountriesModel? value)? onSelectedCountry;
   const _DeviceSetup({
     Key? key,
-    // ignore: unused_element
-    this.onSelectedCountry,
   }) : super(key: key);
 
   @override
@@ -699,16 +695,9 @@ class _DeviceSetup extends ConsumerStatefulWidget {
 }
 
 class _DeviceSetupState extends ConsumerState<_DeviceSetup> {
-  MachineConfigCountriesModel? selectedCountry;
-
   void removeCountry(WidgetRef ref, String label) {
-    final form =
-        ref.read(CustomFormProvider.machineConfigCountriesForm.notifier);
-    form.update((state) {
-      final newState =
-          state.where((element) => element.label != label).toList();
-      return newState;
-    });
+    final countriesNotifier = ref.read(machineConfigCountriesNotifier.notifier);
+    countriesNotifier.remove(label);
   }
 
   void showModalCountryMNC(
@@ -725,26 +714,17 @@ class _DeviceSetupState extends ConsumerState<_DeviceSetup> {
     required bool value,
     required MachineConfigCountriesModel country,
   }) {
-    if (value) {
-      selectedCountry = country;
-    } else {
-      selectedCountry = null;
-    }
-
-    widget.onSelectedCountry?.call(selectedCountry);
-
-    setState(() {});
+    final countriesNotifier = ref.read(machineConfigCountriesNotifier.notifier);
+    countriesNotifier.updateChecklist(country);
   }
 
   @override
   Widget build(BuildContext context) {
-    final formMachineConfigCountryMnc = ref.watch(
-      CustomFormProvider.machineConfigCountriesForm,
-    );
+    final countries = ref.watch(machineConfigCountriesNotifier).items;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (formMachineConfigCountryMnc.isNotEmpty) ...[
+        if (countries.isNotEmpty) ...[
           DataTable(
             columns: const [
               DataColumn(label: Text("#")),
@@ -752,13 +732,13 @@ class _DeviceSetupState extends ConsumerState<_DeviceSetup> {
               DataColumn(label: Text("")),
             ],
             rows: [
-              ...formMachineConfigCountryMnc
+              ...countries
                   .map(
                     (e) => DataRow(
                       cells: [
                         DataCell(
                           Checkbox(
-                            value: selectedCountry?.label == e.label,
+                            value: e.isActive == 1,
                             onChanged: (value) {
                               onSelectedCountry(
                                 country: e,

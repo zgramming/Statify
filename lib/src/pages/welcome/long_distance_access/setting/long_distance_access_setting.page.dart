@@ -11,6 +11,7 @@ import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
 import '../../../../view_model/custom_notifier/get_all_machine.notifier.dart';
+import '../../../../view_model/custom_notifier/selected_machine_config_operators.notifier.dart';
 import '../../../../view_model/custom_provider/custom_form_provider.dart';
 import '../../../../view_model/custom_provider/custom_provider.dart';
 import 'widgets/lda_setting_config_operator_item.dart';
@@ -70,6 +71,11 @@ class _LongDistanceAccessSettingPageState
     final machine =
         ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
     final config = machine?.config;
+
+    // Init selected operators state
+    ref
+        .read(selectedMachineConfigOperatorsNotifier.notifier)
+        .init(config?.operators ?? []);
 
     // Check board ips based on machine ip
     final boardIps = (config?.boardIps ?? [])
@@ -156,6 +162,7 @@ class _LongDistanceAccessSettingPageState
   }
 
   Future<void> onSubmit(bool isReboot) async {
+    final operators = ref.read(selectedMachineConfigOperatorsNotifier).items;
     final form = ref.read(
       CustomFormProvider.ldaSettingForm(widget.idMachine).notifier,
     )..update(
@@ -168,6 +175,7 @@ class _LongDistanceAccessSettingPageState
           autoArfcn: autoArfcn ? '3' : '0',
           autoReset: autoReset ? '1' : '0',
           power: selectedPower ?? "1",
+          operators: operators,
         ),
       );
 
@@ -195,6 +203,8 @@ class _LongDistanceAccessSettingPageState
 
   @override
   Widget build(BuildContext context) {
+    final machine =
+        ref.watch(CustomProvider.getMachineByIdProvider(widget.idMachine));
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Column(
@@ -586,7 +596,7 @@ class _LongDistanceAccessSettingPageState
                                   .map(
                                     (e) => LDASettingConfigOperatorItem(
                                       cfgOperator: e,
-                                      idMachine: widget.idMachine,
+                                      machine: machine,
                                     ),
                                   )
                                   .toList() ??

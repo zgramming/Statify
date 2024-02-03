@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
+import '../../../utils/constant.dart';
 import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/get_all_machine.notifier.dart';
 import '../../widgets/async_error_builder.dart';
@@ -10,6 +11,7 @@ import 'home/long_distance_access_home.page.dart';
 import 'report/long_distance_access_report.page.dart';
 import 'setting/long_distance_access_setting.page.dart';
 import 'sms/long_distance_access_sms.page.dart';
+import 'widgets/dialog_success_reset_machine.dart';
 
 class LongDistanceAccessPage extends ConsumerStatefulWidget {
   const LongDistanceAccessPage({
@@ -70,13 +72,21 @@ class _LongDistanceAccessPageState
       machineNotifier.select((value) => value.onUpdateConfig),
       (previous, next) {
         next.when(
-          data: (data) {
-            if (data == null) return;
-            showSnackbar(
-              context: context,
-              message: "Update config success",
-              backgroundColor: Colors.green,
-            );
+          data: (message) {
+            if (message == null) return;
+
+            if (message.contains(kSuccessMessageResetMachine)) {
+              showDialog(
+                context: context,
+                builder: (context) => const DialogSuccessResetMachine(),
+              );
+            } else {
+              showSnackbar(
+                context: context,
+                message: message,
+                backgroundColor: Colors.green,
+              );
+            }
 
             // Reload Machine Data
             ref.invalidate(getAllMachineFutureProvider);

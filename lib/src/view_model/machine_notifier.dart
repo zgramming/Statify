@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
@@ -17,7 +18,7 @@ class MachineState extends Equatable {
   final AsyncValue<List<String>?> onGetResults;
   final AsyncValue<MachineModel?> onCreate;
   final AsyncValue<MachineModel?> onUpdate;
-  final AsyncValue<MachineModel?> onUpdateConfig;
+  final AsyncValue<String?> onUpdateConfig;
   final AsyncValue<MachineModel?> onDelete;
 
   const MachineState({
@@ -58,7 +59,7 @@ class MachineState extends Equatable {
     AsyncValue<List<String>?>? onGetResults,
     AsyncValue<MachineModel?>? onCreate,
     AsyncValue<MachineModel?>? onUpdate,
-    AsyncValue<MachineModel?>? onUpdateConfig,
+    AsyncValue<String?>? onUpdateConfig,
     AsyncValue<MachineModel?>? onDelete,
   }) {
     return MachineState(

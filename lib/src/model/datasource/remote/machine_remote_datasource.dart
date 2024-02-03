@@ -287,7 +287,7 @@ class MachineRemoteDatasource {
     }
   }
 
-  Future<MachineModel> updateConfig(FormMachineUpdateConfigModel form) async {
+  Future<String> updateConfig(FormMachineUpdateConfigModel form) async {
     final uri = Uri.parse(
       '$kBaseApiUrl/machines/${form.machineId}/update-config',
     );
@@ -388,7 +388,7 @@ class MachineRemoteDatasource {
         await _updateLogo(machine.id, form.updateLogoFile!);
       }
 
-      return machine;
+      return form.successMessage ?? 'Success to update machine config';
     } else {
       final message = decoded.containsKey('message')
           ? decoded['message']

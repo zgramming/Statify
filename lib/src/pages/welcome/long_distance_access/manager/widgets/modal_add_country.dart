@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../../model/model/machine/machine_config_countries.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/styles.dart';
-import '../../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../../view_model/custom_notifier/machine_config_countries.notifier.dart';
 import '../../../../widgets/form_body_row.dart';
 
 class ModalAddCountryLDAManager extends ConsumerStatefulWidget {
@@ -29,21 +29,14 @@ class _ModalAddCountryLDAManagerState
       return;
     }
 
-    final form =
-        ref.read(CustomFormProvider.machineConfigCountriesForm.notifier);
-    final label = labelController.text;
-    form.update((state) {
-      final isExists = state.any((element) => element.label == label);
-      if (isExists) {
-        return state;
-      }
-      final newState = [
-        ...state,
-        MachineConfigCountriesModel(label: label, name: label)
-      ];
+    final countriesNotifier = ref.read(machineConfigCountriesNotifier.notifier);
 
-      return newState;
-    });
+    final label = labelController.text;
+
+    countriesNotifier.add(MachineConfigCountriesModel(
+      label: label,
+      name: label,
+    ));
 
     // Close modal
     context.pop();

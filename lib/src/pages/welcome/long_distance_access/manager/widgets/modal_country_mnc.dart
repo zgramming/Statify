@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../model/model/machine/machine_config_countries.model.dart';
 import '../../../../../utils/sizes.dart';
-import '../../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../../view_model/custom_notifier/machine_config_countries.notifier.dart';
 import 'modal_add_country_mnc.dart';
 
 class ModalCountryMNC extends ConsumerWidget {
@@ -22,32 +23,24 @@ class ModalCountryMNC extends ConsumerWidget {
 
   static void delete({
     required WidgetRef ref,
-    required String labelCountry,
-    required String labelMnc,
+    required MachineConfigCountriesMNCModel item,
   }) {
-    final form = ref.read(
-      CustomFormProvider.machineConfigCountriesForm.notifier,
-    );
-    form.update((state) {
-      final country = state.firstWhere(
-        (element) => element.label == labelCountry,
-      );
-      final mncs =
-          country.mncs.where((element) => element.label != labelMnc).toList();
-      return state.map((e) {
-        if (e.label == labelCountry) {
-          return e.copyWith(mncs: mncs);
-        }
-        return e;
-      }).toList();
-    });
+    final countriesNotifier = ref.read(machineConfigCountriesNotifier.notifier);
+    countriesNotifier.removeMnc(item);
+  }
+
+  static void onChanged({
+    required bool? value,
+    required WidgetRef ref,
+    required MachineConfigCountriesMNCModel item,
+  }) {
+    final countriesNotifier = ref.read(machineConfigCountriesNotifier.notifier);
+    countriesNotifier.updateChecklistMnc(item);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final country = ref.watch(CustomFormProvider.machineConfigCountriesForm
-        .select(
-            (value) => value.firstWhere((element) => element.label == label)));
+    final country = ref.watch(machineConfigCountriesByLabel(label));
     return AlertDialog(
       insetPadding: const EdgeInsets.all(16.0),
       title: const Text("Country MNC"),
@@ -60,34 +53,47 @@ class ModalCountryMNC extends ConsumerWidget {
             DataTable(
               columnSpacing: 28,
               columns: const [
+                DataColumn(label: Text("#")),
                 DataColumn(label: Text("Name")),
                 DataColumn(label: Text("MCC")),
                 DataColumn(label: Text("MNC")),
-                DataColumn(label: Text("")),
+                // DataColumn(label: Text("")),
               ],
               rows: [
                 ...List.generate(
                   country.mncs.length,
                   (index) {
                     final item = country.mncs[index];
-                    return DataRow(cells: [
-                      DataCell(Text(item.name)),
-                      DataCell(Text(item.mcc)),
-                      DataCell(Text(item.mnc)),
-                      DataCell(
-                        InkWell(
-                          onTap: () => delete(
-                            ref: ref,
-                            labelCountry: label,
-                            labelMnc: item.label,
-                          ),
-                          child: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
+                    return DataRow(
+                      cells: [
+                        DataCell(
+                          Checkbox.adaptive(
+                            value: item.status == 1,
+                            onChanged: (val) => onChanged(
+                              value: val,
+                              ref: ref,
+                              item: item,
+                            ),
+                            visualDensity: VisualDensity.compact,
                           ),
                         ),
-                      ),
-                    ]);
+                        DataCell(Text(item.name)),
+                        DataCell(Text(item.mcc)),
+                        DataCell(
+                          Row(
+                            children: [
+                              Text(item.mnc),
+                              const SizedBox(width: 16),
+                              InkWell(
+                                onTap: () => delete(ref: ref, item: item),
+                                child:
+                                    const Icon(Icons.delete, color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
                   },
                 ).toList()
               ],

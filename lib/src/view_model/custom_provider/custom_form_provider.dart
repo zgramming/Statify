@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../model/model/helper/form/form_survey_create_update.model.dart';
-import '../../model/model/machine/machine_config_countries.model.dart';
 import 'custom_provider.dart';
 
 // Perlu perombakan, seharusnya ini tidak perlu ada
@@ -68,10 +67,5 @@ class CustomFormProvider {
         config,
       );
     },
-  );
-
-  static final machineConfigCountriesForm =
-      StateProvider<List<MachineConfigCountriesModel>>(
-    (ref) => [],
   );
 }

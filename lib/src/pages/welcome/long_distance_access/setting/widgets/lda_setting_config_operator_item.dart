@@ -1,22 +1,26 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../model/model/helper/props_provider/props_is_machine_config_operators_selected.model.dart';
 import '../../../../../model/model/machine/machine_config_operator.model.dart';
+import '../../../../../model/model/machine/machine_model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/styles.dart';
+import '../../../../../view_model/custom_notifier/selected_machine_config_operators.notifier.dart';
 import '../../../../../view_model/custom_provider/custom_form_provider.dart';
-import '../../../../../view_model/custom_provider/custom_provider.dart';
 import 'modal_operator_item.dart';
 
 class LDASettingConfigOperatorItem extends ConsumerStatefulWidget {
   const LDASettingConfigOperatorItem({
     Key? key,
-    required this.idMachine,
     required this.cfgOperator,
+    required this.machine,
   }) : super(key: key);
 
-  final String idMachine;
   final MachineConfigOperatorsModel cfgOperator;
+  final MachineModel? machine;
 
   @override
   ConsumerState<LDASettingConfigOperatorItem> createState() =>
@@ -32,13 +36,14 @@ class LDASettingConfigOperatorItemState
   final arfcn5gController = TextEditingController();
 
   void onTap4g() async {
+    final idMachine = widget.machine?.id ?? "";
     final result = await showModalBottomSheet(
       isScrollControlled: true,
       useSafeArea: true,
       context: context,
       builder: (context) => ModalOperatorItem(
         item: widget.cfgOperator,
-        idMachine: widget.idMachine,
+        idMachine: idMachine,
       ),
     );
 
@@ -46,8 +51,9 @@ class LDASettingConfigOperatorItemState
   }
 
   void onChangeAutoSwitch(String value) {
+    final idMachine = widget.machine?.id ?? "";
     final form =
-        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+        ref.read(CustomFormProvider.ldaSettingForm(idMachine).notifier);
     form.update(
       (state) {
         final prevOperators = state.operators.map((e) {
@@ -64,8 +70,10 @@ class LDASettingConfigOperatorItemState
   }
 
   void onChange2gArfcn(String value) {
-    final form =
-        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    final idMachine = widget.machine?.id ?? "";
+    final form = ref.read(CustomFormProvider.ldaSettingForm(
+      idMachine,
+    ).notifier);
     form.update(
       (state) {
         final prevOperators = state.operators.map((e) {
@@ -82,8 +90,11 @@ class LDASettingConfigOperatorItemState
   }
 
   void onChange3gArfcn(String value) {
-    final form =
-        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    final idMachine = widget.machine?.id ?? "";
+
+    final form = ref.read(CustomFormProvider.ldaSettingForm(
+      idMachine,
+    ).notifier);
     form.update(
       (state) {
         final prevOperators = state.operators.map((e) {
@@ -100,8 +111,11 @@ class LDASettingConfigOperatorItemState
   }
 
   void onChange4gArfcn(String value) {
-    final form =
-        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    final idMachine = widget.machine?.id ?? "";
+
+    final form = ref.read(CustomFormProvider.ldaSettingForm(
+      idMachine,
+    ).notifier);
     form.update(
       (state) {
         final prevOperators = state.operators.map((e) {
@@ -118,8 +132,11 @@ class LDASettingConfigOperatorItemState
   }
 
   void onChange5gArfcn(String value) {
-    final form =
-        ref.read(CustomFormProvider.ldaSettingForm(widget.idMachine).notifier);
+    final idMachine = widget.machine?.id ?? "";
+
+    final form = ref.read(CustomFormProvider.ldaSettingForm(
+      idMachine,
+    ).notifier);
     form.update(
       (state) {
         final prevOperators = state.operators.map((e) {
@@ -133,6 +150,11 @@ class LDASettingConfigOperatorItemState
         return state.copyWith(operators: prevOperators);
       },
     );
+  }
+
+  void onChecklistOperator(bool? value) {
+    final notifier = ref.read(selectedMachineConfigOperatorsNotifier.notifier);
+    notifier.updateChecklist(widget.cfgOperator, value ?? false);
   }
 
   void init() {
@@ -161,17 +183,24 @@ class LDASettingConfigOperatorItemState
 
   @override
   Widget build(BuildContext context) {
-    final machine = ref.watch(
-      CustomProvider.getMachineByIdProvider(
-        widget.idMachine,
-      ),
-    );
+    final machine = widget.machine;
     final config = machine?.config;
     final is2GArfcnHidden = config?.arfcnHidden2g == "1";
     final is3GArfcnHidden = config?.arfcnHidden3g == "1";
     final is4GArfcnHidden = config?.arfcnHidden4g == "1";
     final is5GArfcnHidden = config?.arfcnHidden5g == "1";
     final textStyleInput = bodyFont.copyWith(fontSize: 10.0);
+
+    final isSelectedOperators = ref.watch(
+      isMachineConfigOperatorsSelectedProvider(
+        PropsIsMachineConfigOperatorsSelectedModel(
+          mcc: widget.cfgOperator.mcc ?? "",
+          mnc: widget.cfgOperator.mnc ?? "",
+          country: widget.cfgOperator.country ?? "",
+          label: widget.cfgOperator.label ?? "",
+        ),
+      ),
+    );
     const widthInput = 80.0;
     return Container(
       padding: const EdgeInsets.all(8.0),
@@ -197,8 +226,8 @@ class LDASettingConfigOperatorItemState
                 width: 24,
                 height: 24,
                 child: Checkbox.adaptive(
-                  value: true,
-                  onChanged: (value) {},
+                  value: isSelectedOperators,
+                  onChanged: onChecklistOperator,
                 ),
               ),
               const SizedBox(width: 8),

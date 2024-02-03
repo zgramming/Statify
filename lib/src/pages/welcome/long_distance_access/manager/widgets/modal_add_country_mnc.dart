@@ -6,7 +6,7 @@ import '../../../../../model/model/machine/machine_config_countries.model.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/sizes.dart';
 import '../../../../../utils/styles.dart';
-import '../../../../../view_model/custom_provider/custom_form_provider.dart';
+import '../../../../../view_model/custom_notifier/machine_config_countries.notifier.dart';
 import '../../../../widgets/form_body_row.dart';
 
 class ModalAddCountryMNC extends ConsumerStatefulWidget {
@@ -30,30 +30,19 @@ class _ModalAddCountryMNCState extends ConsumerState<ModalAddCountryMNC> {
     final validate = _formKey.currentState?.validate() ?? false;
     if (!validate) return;
 
-    final form =
-        ref.read(CustomFormProvider.machineConfigCountriesForm.notifier);
+    final countriesNotifier = ref.read(machineConfigCountriesNotifier.notifier);
     final label = labelController.text;
     final mcc = mccController.text;
     final mnc = mncController.text;
 
-    form.update((state) {
-      final country =
-          state.firstWhere((element) => element.label == widget.countryName);
-      final model = MachineConfigCountriesMNCModel(
-        label: label,
-        mcc: mcc,
-        mnc: mnc,
-        name: label,
-        country: widget.countryName,
-      );
-      final mncs = [...country.mncs, model];
-      return state.map((e) {
-        if (e.label == widget.countryName) {
-          return e.copyWith(mncs: mncs);
-        }
-        return e;
-      }).toList();
-    });
+    final body = MachineConfigCountriesMNCModel(
+      mcc: mcc,
+      mnc: mnc,
+      name: label,
+      label: label,
+      country: widget.countryName,
+    );
+    countriesNotifier.addMnc(body);
 
     // Close Modal
     context.pop();
