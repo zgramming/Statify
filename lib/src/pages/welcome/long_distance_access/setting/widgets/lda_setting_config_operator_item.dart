@@ -233,7 +233,7 @@ class LDASettingConfigOperatorItemState
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  "${widget.cfgOperator.name} - ${widget.cfgOperator.ltePlmn} ",
+                  "${widget.cfgOperator.name} - ${widget.cfgOperator.mcc}${widget.cfgOperator.mnc} ",
                   style: bodyFont.copyWith(
                     fontSize: 14.0,
                   ),

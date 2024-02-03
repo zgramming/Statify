@@ -41,7 +41,7 @@ class SelectedMachineConfigOperatorsNotifier
           e.mnc == item.mnc &&
           e.country == item.country &&
           e.label == item.label) {
-        return e.copyWith(status: value ? 1 : 0);
+        return e.copyWith(isPlay: value ? 1 : 0);
       } else {
         return e;
       }
@@ -67,5 +67,5 @@ final isMachineConfigOperatorsSelectedProvider =
       e.country == arg.country &&
       e.label == arg.label);
 
-  return result?.status == 1;
+  return result?.isPlay == 1;
 });
