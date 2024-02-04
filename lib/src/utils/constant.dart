@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 const kBaseApiUrl = "https://sms-api.hitechterminal.com/api";
 // const kBaseApiUrl = kReleaseMode
 //     ? "https://sms-api.hitechterminal.com/api"

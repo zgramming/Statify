@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:marquee/marquee.dart';
@@ -8,6 +7,7 @@ import '../../../../../model/model/helper/form/form_machine_update_config.model.
 import '../../../../../model/model/machine/machine_config.model.dart';
 import '../../../../../utils/constant.dart';
 import '../../../../../utils/fonts.dart';
+import '../../../../../utils/functions.dart';
 import '../../../../../utils/styles.dart';
 import '../../../../../view_model/custom_provider/custom_provider.dart';
 
@@ -33,23 +33,6 @@ class LDAHomeButtonAction extends ConsumerStatefulWidget {
 }
 
 class _LDAHomeButtonActionState extends ConsumerState<LDAHomeButtonAction> {
-  String marqueeText(MachineConfigModel? config) {
-    if (config == null) {
-      return "-";
-    }
-
-    final runningText = config.runningText;
-    final connectedWith = config.operators.firstWhereOrNull((element) {
-      return element.ltePlmn == config.plmn;
-    });
-
-    if (connectedWith == null) {
-      return "Device is not connected | $runningText";
-    }
-
-    return "Device is Connected with ${connectedWith.name} ${connectedWith.arfcn} ${connectedWith.lteArfcn} | $runningText";
-  }
-
   Future<void> onSubmit(_ButtonState currentState) async {
     final machine =
         ref.read(CustomProvider.getMachineByIdProvider(widget.machineId));
@@ -111,7 +94,7 @@ class _LDAHomeButtonActionState extends ConsumerState<LDAHomeButtonAction> {
                 height: 20,
                 child: Marquee(
                   blankSpace: 300.0,
-                  text: marqueeText(widget.config),
+                  text: textMachineConnectOrDisconnected(widget.config),
                   style: bodyFontBold.copyWith(
                     fontSize: 10.0,
                   ),

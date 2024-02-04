@@ -2,9 +2,11 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../model/model/machine/machine_config.model.dart';
 import '../model/model/survey_setting/survey_setting_model.dart';
 import 'enum.dart';
 import 'package:uuid/uuid.dart';
@@ -155,4 +157,22 @@ Disqualified / Banned Numbers for $backoff hours, when $tries times wrong passwo
   }
 
   return "All Numbers Can Join Survey";
+}
+
+String textMachineConnectOrDisconnected(MachineConfigModel? config) {
+  if (config == null) {
+    return "-";
+  }
+
+  final runningText = config.runningText;
+  final connectedWith = config.operators.firstWhereOrNull((element) {
+    final combination = "${element.mcc}${element.mnc}";
+    return combination == config.plmn;
+  });
+
+  if (connectedWith == null) {
+    return "Device is not connected | $runningText";
+  }
+
+  return "Device is Connected with ${connectedWith.name} ${connectedWith.arfcn} ${connectedWith.lteArfcn} | $runningText";
 }

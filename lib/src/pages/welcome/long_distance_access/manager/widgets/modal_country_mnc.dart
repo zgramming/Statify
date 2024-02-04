@@ -50,53 +50,55 @@ class ModalCountryMNC extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            DataTable(
-              columnSpacing: 28,
-              columns: const [
-                DataColumn(label: Text("#")),
-                DataColumn(label: Text("Name")),
-                DataColumn(label: Text("MCC")),
-                DataColumn(label: Text("MNC")),
-                // DataColumn(label: Text("")),
-              ],
-              rows: [
-                ...List.generate(
-                  country.mncs.length,
-                  (index) {
-                    final item = country.mncs[index];
-                    return DataRow(
-                      cells: [
-                        DataCell(
-                          Checkbox.adaptive(
-                            value: item.status == 1,
-                            onChanged: (val) => onChanged(
-                              value: val,
-                              ref: ref,
-                              item: item,
-                            ),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ),
-                        DataCell(Text(item.name)),
-                        DataCell(Text(item.mcc)),
-                        DataCell(
-                          Row(
-                            children: [
-                              Text(item.mnc),
-                              const SizedBox(width: 16),
-                              InkWell(
-                                onTap: () => delete(ref: ref, item: item),
-                                child:
-                                    const Icon(Icons.delete, color: Colors.red),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columnSpacing: 10,
+                columns: const [
+                  DataColumn(label: Text("#")),
+                  DataColumn(label: Text("Name")),
+                  DataColumn(label: Text("MCC")),
+                  DataColumn(label: Text("MNC")),
+                  DataColumn(label: Text("")),
+                ],
+                rows: [
+                  ...List.generate(
+                    country.mncs.length,
+                    (index) {
+                      final item = country.mncs[index];
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Checkbox.adaptive(
+                              value: item.status == 1,
+                              onChanged: (val) => onChanged(
+                                value: val,
+                                ref: ref,
+                                item: item,
                               ),
-                            ],
+                              visualDensity: VisualDensity.compact,
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ).toList()
-              ],
+                          DataCell(Text(item.name)),
+                          DataCell(Text(item.mcc)),
+                          DataCell(
+                            Text(item.mnc),
+                          ),
+                          DataCell(
+                            IconButton(
+                              onPressed: () => delete(
+                                ref: ref,
+                                item: item,
+                              ),
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ).toList()
+                ],
+              ),
             ),
           ],
         ),

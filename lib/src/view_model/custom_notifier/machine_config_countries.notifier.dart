@@ -82,15 +82,16 @@ class MachineConfigCountriesNotifier
     final countryByLabel = temp
         .firstWhere((e) => e.label.toLowerCase() == item.country.toLowerCase());
 
-    final newMncs = countryByLabel.mncs
-        .where((e) => e.mnc != item.mnc && e.mcc != item.mcc)
-        .toList();
+    final mncs = [
+      for (final val in countryByLabel.mncs)
+        if (val.label != item.label) val
+    ];
 
     state = state.copyWith(
       items: [
         for (final val in temp)
           if (val.label.toLowerCase() == item.country.toLowerCase())
-            val.copyWith(mncs: newMncs)
+            val.copyWith(mncs: mncs)
           else
             val
       ],

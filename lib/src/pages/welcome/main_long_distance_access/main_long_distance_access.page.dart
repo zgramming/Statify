@@ -1,13 +1,12 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../model/model/machine/machine_config.model.dart';
 import '../../../model/model/machine/machine_model.dart';
 import '../../../router.dart';
 import '../../../utils/enum.dart';
 import '../../../utils/fonts.dart';
+import '../../../utils/functions.dart';
 import '../../../view_model/custom_notifier/get_alll_machine_group.notifier.dart';
 import '../../../view_model/custom_provider/custom_provider.dart';
 import '../../widgets/async_error_builder.dart';
@@ -164,24 +163,6 @@ class _MachineItem extends ConsumerWidget {
     });
   }
 
-  connectedWith(MachineConfigModel? config) {
-    if (config == null) {
-      return "-";
-    }
-
-    final connectedWith = config.operators.firstWhereOrNull((element) {
-      return element.ltePlmn == config.plmn;
-    });
-
-    if (connectedWith == null) {
-      return "Device is not connected";
-    }
-
-    final runningText = config.runningText;
-
-    return "Device is Connected with ${connectedWith.name} ${connectedWith.arfcn} ${connectedWith.lteArfcn} | $runningText";
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sim1ORsim2 =
@@ -288,7 +269,7 @@ class _MachineItem extends ConsumerWidget {
                         const SizedBox(height: 8.0),
                         RowBody(
                           title: "Connected",
-                          content: connectedWith(config),
+                          content: textMachineConnectOrDisconnected(config),
                           titleFlex: 2,
                           titleStyle: bodyFont.copyWith(fontSize: 12.0),
                           contentStyle: bodyFont.copyWith(fontSize: 12.0),
