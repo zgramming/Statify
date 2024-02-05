@@ -206,11 +206,23 @@ class _LongDistanceAccessManagerPageState
       if (selectedCountry != null) {
         final registeredMccMnc = mappedRegisteredMccMnc(countries);
         final operators = mappedOperators(countries);
+        final mncs = selectedCountry.mncs;
 
         form = form.copyWith(
           registeredMccMnc: registeredMccMnc,
           operators: operators,
         );
+
+        if (mncs.isNotEmpty) {
+          final data = mncs.firstWhereOrNull((element) => element.status == 1);
+          if (data != null) {
+            final mccMnc = "${data.mcc}${data.mnc}";
+            form = form.copyWith(
+              plmn: mccMnc,
+            );
+          }
+        }
+
         log("registeredMccMnc: $registeredMccMnc");
         log("operators: $operators");
       }
