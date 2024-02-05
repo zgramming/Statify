@@ -21,5 +21,22 @@ const kRawJsonConfigOperators =
 const kIntroductionKey = 'introduction_key';
 const kAutoRespondServer = "auto_respond_server";
 
+// Default value registered mcc mns
+const kArfcn = "5";
+const kTimeout = "15";
+const isPlay = 1;
+const kCurr = 1;
+const kLteArfcn = "1850";
+const kLtePci = "111";
+const kLteTac = "1111";
+const kLteCellId = "11111";
+const kLteDowngrade = "5";
+const kLteRotationTime = "70";
+const kLtePlmn = "46010";
+const kDefault = "true";
+const k3GArfcn = "10638";
+const k5GArfcn = "1333";
+const kStatus = 1;
+
 // Success Message
 const kSuccessMessageResetMachine = "After reset the device, Click Reboot";

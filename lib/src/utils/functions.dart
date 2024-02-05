@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../model/model/machine/machine_config.model.dart';
+import '../model/model/machine/machine_model.dart';
 import '../model/model/survey_setting/survey_setting_model.dart';
 import 'enum.dart';
 import 'package:uuid/uuid.dart';
@@ -159,9 +159,23 @@ Disqualified / Banned Numbers for $backoff hours, when $tries times wrong passwo
   return "All Numbers Can Join Survey";
 }
 
-String textMachineConnectOrDisconnected(MachineConfigModel? config) {
+String textMachineConnectOrDisconnected(
+  MachineModel? item,
+) {
+  final config = item?.config;
+  final machineStatus = item?.status;
   if (config == null) {
     return "-";
+  }
+
+  var message = "";
+
+  if (machineStatus == MachineStatusEnum.offline) {
+    message = "Device is not connected";
+  }
+
+  if (machineStatus == MachineStatusEnum.online) {
+    message = "Device is connected";
   }
 
   final runningText = config.runningText;
@@ -171,8 +185,12 @@ String textMachineConnectOrDisconnected(MachineConfigModel? config) {
   });
 
   if (connectedWith == null) {
-    return "Device is not connected | $runningText";
+    message += " | $runningText";
+  } else {
+    final combinationMccMnc = "${connectedWith.mcc}${connectedWith.mnc}";
+    message +=
+        " with ${connectedWith.label} $combinationMccMnc ${connectedWith.arfcn} | $runningText";
   }
 
-  return "Device is Connected with ${connectedWith.name} ${connectedWith.arfcn} ${connectedWith.lteArfcn} | $runningText";
+  return message;
 }

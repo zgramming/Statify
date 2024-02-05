@@ -6,8 +6,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../injection.dart';
 import '../../../../model/model/helper/form/form_machine_update_config.model.dart';
 import '../../../../model/model/machine/machine_config.model.dart';
+import '../../../../model/model/machine/machine_config_operator.model.dart';
 import '../../../../router.dart';
 import '../../../../utils/colors.dart';
+import '../../../../utils/constant.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
@@ -68,41 +70,18 @@ class _LongDistanceAccessSettingPageState
 
   String? selectedPower;
 
-  void init() {
-    final machine =
-        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
-    final config = machine?.config;
-    final boardIps = config?.boardIps ?? [];
-    final board =
-        boardIps.firstWhereOrNull((element) => element.ip == machine?.ip);
+  String mappedRegisteredMccMnc(List<MachineConfigOperatorsModel> operators) {
+    final selectedOperators =
+        operators.where((element) => element.isPlay == 1).toList();
 
-    // Init selected operators state
-    ref
-        .read(machineConfigOperatorsSettingNotifier.notifier)
-        .init(config?.operators ?? []);
+    if (selectedOperators.isEmpty) return "";
 
-    // Init machine config common setting state
-    ref
-        .read(machineConfigCommonSettingNotifier.notifier)
-        .init(config ?? const MachineConfigModel());
-
-    if (board?.status == "on") {
-      isEnableSyncronize = true;
-    }
-
-    nameController.text = config?.wifiName ?? "";
-    passwordController.text = config?.wifiPassword ?? "";
-
-    setState(() {
-      wifiHidden = config?.wifiHidden == "1";
-      flashSms = config?.flashSms == "1";
-      saveSentList = config?.saveSentList == "1";
-      autoArfcn = config?.autoArfcn == "3";
-      autoReset = config?.autoReset == "1";
-      selectedPower = config?.power;
-      machineConfig = config;
-      hiddenManager = config?.hiddenManager == "1";
-    });
+    return selectedOperators
+        .map((e) {
+          return "${e.mcc}_${e.mnc}_${kTimeout}_${kArfcn}_${kLteArfcn}_${kLtePci}_${kLtePci}_${kLteTac}_${kLteCellId}_${kLteDowngrade}_${kLteRotationTime}_$kLtePlmn";
+        })
+        .toList()
+        .join(",");
   }
 
   void onSelectedMenu(String value) {
@@ -187,6 +166,7 @@ class _LongDistanceAccessSettingPageState
       autoReset: autoReset ? '1' : '0',
       power: selectedPower ?? "1",
       operators: operators,
+      registeredMccMnc: mappedRegisteredMccMnc(operators),
     );
 
     if (isReboot) {
@@ -195,6 +175,43 @@ class _LongDistanceAccessSettingPageState
 
     final notifier = ref.read(machineNotifier.notifier);
     await notifier.updateConfig(form);
+  }
+
+  void init() {
+    final machine =
+        ref.read(CustomProvider.getMachineByIdProvider(widget.idMachine));
+    final config = machine?.config;
+    final boardIps = config?.boardIps ?? [];
+    final board =
+        boardIps.firstWhereOrNull((element) => element.ip == machine?.ip);
+
+    // Init selected operators state
+    ref
+        .read(machineConfigOperatorsSettingNotifier.notifier)
+        .init(config?.operators ?? []);
+
+    // Init machine config common setting state
+    ref
+        .read(machineConfigCommonSettingNotifier.notifier)
+        .init(config ?? const MachineConfigModel());
+
+    if (board?.status == "on") {
+      isEnableSyncronize = true;
+    }
+
+    nameController.text = config?.wifiName ?? "";
+    passwordController.text = config?.wifiPassword ?? "";
+
+    setState(() {
+      wifiHidden = config?.wifiHidden == "1";
+      flashSms = config?.flashSms == "1";
+      saveSentList = config?.saveSentList == "1";
+      autoArfcn = config?.autoArfcn == "3";
+      autoReset = config?.autoReset == "1";
+      selectedPower = config?.power;
+      machineConfig = config;
+      hiddenManager = config?.hiddenManager == "1";
+    });
   }
 
   @override

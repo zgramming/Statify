@@ -25,8 +25,8 @@ class LongDistanceAccessHomePage extends ConsumerWidget {
       children: [
         LDAHomeContent(machine: machine),
         LDAHomeButtonAction(
-          config: machine.config,
           machineId: machine.id,
+          machine: machine,
         )
       ],
     );

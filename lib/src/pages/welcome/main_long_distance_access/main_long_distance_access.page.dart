@@ -269,7 +269,7 @@ class _MachineItem extends ConsumerWidget {
                         const SizedBox(height: 8.0),
                         RowBody(
                           title: "Connected",
-                          content: textMachineConnectOrDisconnected(config),
+                          content: textMachineConnectOrDisconnected(item),
                           titleFlex: 2,
                           titleStyle: bodyFont.copyWith(fontSize: 12.0),
                           contentStyle: bodyFont.copyWith(fontSize: 12.0),

@@ -4,7 +4,7 @@ import 'package:marquee/marquee.dart';
 
 import '../../../../../injection.dart';
 import '../../../../../model/model/helper/form/form_machine_update_config.model.dart';
-import '../../../../../model/model/machine/machine_config.model.dart';
+import '../../../../../model/model/machine/machine_model.dart';
 import '../../../../../utils/constant.dart';
 import '../../../../../utils/fonts.dart';
 import '../../../../../utils/functions.dart';
@@ -20,12 +20,12 @@ enum _ButtonState {
 class LDAHomeButtonAction extends ConsumerStatefulWidget {
   const LDAHomeButtonAction({
     Key? key,
-    this.config,
+    this.machine,
     required this.machineId,
   }) : super(key: key);
 
   final String machineId;
-  final MachineConfigModel? config;
+  final MachineModel? machine;
 
   @override
   ConsumerState<LDAHomeButtonAction> createState() =>
@@ -94,7 +94,7 @@ class _LDAHomeButtonActionState extends ConsumerState<LDAHomeButtonAction> {
                 height: 20,
                 child: Marquee(
                   blankSpace: 300.0,
-                  text: textMachineConnectOrDisconnected(widget.config),
+                  text: textMachineConnectOrDisconnected(widget.machine),
                   style: bodyFontBold.copyWith(
                     fontSize: 10.0,
                   ),

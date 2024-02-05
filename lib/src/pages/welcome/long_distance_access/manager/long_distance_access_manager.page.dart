@@ -9,6 +9,7 @@ import '../../../../model/model/helper/form/form_machine_update_config.model.dar
 import '../../../../model/model/machine/machine_config_boardips.model.dart';
 import '../../../../model/model/machine/machine_config_countries.model.dart';
 import '../../../../model/model/machine/machine_config_operator.model.dart';
+import '../../../../utils/constant.dart';
 import '../../../../utils/fonts.dart';
 import '../../../../utils/functions.dart';
 import '../../../../utils/styles.dart';
@@ -91,9 +92,6 @@ class _LongDistanceAccessManagerPageState
   }
 
   String? mappedRegisteredMccMnc(List<MachineConfigCountriesModel> countries) {
-    const kTimeout = "15";
-    const kArfcn = "5";
-
     final selectedCountry = countries.firstWhereOrNull(
       (element) => element.isActive == 1,
     );
@@ -109,7 +107,7 @@ class _LongDistanceAccessManagerPageState
     }
 
     final mapping = country.mncs.map((e) {
-      return "${e.mcc}${e.mnc}_${kTimeout}_$kArfcn";
+      return "${e.mcc}${e.mnc}_${kTimeout}_${kArfcn}_${kLteArfcn}_${kLtePci}_${kLtePci}_${kLteTac}_${kLteCellId}_${kLteDowngrade}_${kLteRotationTime}_$kLtePlmn";
     }).toList();
 
     final joinByComma = mapping.join(",");
@@ -134,22 +132,6 @@ class _LongDistanceAccessManagerPageState
       return null;
     }
 
-    const kArfcn = "5";
-    const kTimeout = "15";
-    const isPlay = 1;
-    const curr = 1;
-    const lteArfcn = "1850";
-    const ltePci = "111";
-    const lteTac = "1111";
-    const lteCellId = "11111";
-    const lteDowngrade = "5";
-    const lteRotationTime = "70";
-    const ltePlmn = "46010";
-    const kDefault = "true";
-    const k3GArfcn = "10638";
-    const k5GArfcn = "1333";
-    const kStatus = 1;
-
     final mapping = mncs.map((e) {
       return MachineConfigOperatorsModel(
         mcc: e.mcc,
@@ -160,15 +142,15 @@ class _LongDistanceAccessManagerPageState
         arfcn: kArfcn,
         timeout: kTimeout,
         isPlay: isPlay,
-        curr: curr,
-        lteArfcn: lteArfcn,
-        ltePci: ltePci,
-        lteTac: lteTac,
-        lteCellId: lteCellId,
-        lteDowngrade: lteDowngrade,
-        lteRotationTime: lteRotationTime,
+        curr: kCurr,
+        lteArfcn: kLteArfcn,
+        ltePci: kLtePci,
+        lteTac: kLteTac,
+        lteCellId: kLteCellId,
+        lteDowngrade: kLteDowngrade,
+        lteRotationTime: kLteRotationTime,
         fiveGArfcn: k5GArfcn,
-        ltePlmn: ltePlmn,
+        ltePlmn: kLtePlmn,
         threeGArfcn: k3GArfcn,
         operatorDefault: kDefault,
         status: kStatus,
